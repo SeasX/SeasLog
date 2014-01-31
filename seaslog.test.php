@@ -1,0 +1,34 @@
+<?php
+/**
+ * @author ciogao@gmail.com
+ * Date: 14-1-27 下午4:41
+ */
+
+echo '<pre>';
+var_dump(SEASLOG_TYPE_INFO);
+var_dump(SEASLOG_TYPE_WARN);
+var_dump(SEASLOG_TYPE_ERRO);
+
+
+var_dump(seaslog_get_basepath());
+var_dump(seaslog_get_lastlogger());
+var_dump(seaslog_get_basepath());
+var_dump(seaslog('test info'));
+var_dump(seaslog('test warning', SEASLOG_TYPE_WARN));
+var_dump(seaslog('test error', SEASLOG_TYPE_ERRO));
+
+
+var_dump(seaslog_set_basepath('/log/base_test'));
+var_dump(seaslog_set_logger('testModule/app1'));
+var_dump(seaslog('test info 2'));
+var_dump(seaslog('test warning 2', SEASLOG_TYPE_WARN));
+var_dump(seaslog('test error 2', SEASLOG_TYPE_ERRO));
+var_dump(seaslog_get_basepath());
+var_dump(seaslog_get_lastlogger());
+var_dump(seaslog_get_basepath());
+
+
+var_dump(seaslog('test error 3', SEASLOG_TYPE_ERRO, 'test/bb'));
+
+
+echo "\n";
