@@ -38,7 +38,7 @@ zend_module_entry seaslog_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
 	STANDARD_MODULE_HEADER,
 #endif
-	"seaslog",
+	"SeasLog",
 	seaslog_functions,
 	PHP_MINIT(seaslog),
 	PHP_MSHUTDOWN(seaslog),
