@@ -17,16 +17,16 @@ extern zend_module_entry seaslog_module_entry;
 #include "TSRM.h"
 #endif
 
-#define SEASLOG_VERSION 					"0.1"
+#define SEASLOG_VERSION                     "0.1"
 #define SEASLOG_AUTHOR                      "ciogao@gmail.com"
 
 #define SEASLOG_TYPE_INFO                   "1"
 #define SEASLOG_TYPE_WARN                   "2"
 #define SEASLOG_TYPE_ERRO                   "3"
 
-#define TYPE_INFO_STR                       "info"
-#define TYPE_WARN_STR                       "warn"
-#define TYPE_ERRO_STR                       "erro"
+#define SEASLOG_TYPE_INFO_STR                       "INFO"
+#define SEASLOG_TYPE_WARN_STR                       "WARN"
+#define SEASLOG_TYPE_ERRO_STR                       "ERRO"
 
 PHP_MINIT_FUNCTION(seaslog);
 PHP_MSHUTDOWN_FUNCTION(seaslog);

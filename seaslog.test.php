@@ -5,9 +5,9 @@
  */
 
 echo '<pre>';
-var_dump(SEASLOG_TYPE_INFO);
-var_dump(SEASLOG_TYPE_WARN);
-var_dump(SEASLOG_TYPE_ERRO);
+var_dump(SEASLOG_TYPE_INFO,SEASLOG_TYPE_INFO_STR);
+var_dump(SEASLOG_TYPE_WARN,SEASLOG_TYPE_WARN_STR);
+var_dump(SEASLOG_TYPE_ERRO,SEASLOG_TYPE_ERRO_STR);
 
 
 var_dump(seaslog_get_basepath());
