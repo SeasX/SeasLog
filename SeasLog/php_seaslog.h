@@ -17,12 +17,12 @@ extern zend_module_entry seaslog_module_entry;
 #include "TSRM.h"
 #endif
 
-#define SEASLOG_VERSION                     "0.1"
+#define SEASLOG_VERSION                     "0.2"
 #define SEASLOG_AUTHOR                      "ciogao@gmail.com"
 
-#define SEASLOG_TYPE_INFO                   "1"
-#define SEASLOG_TYPE_WARN                   "2"
-#define SEASLOG_TYPE_ERRO                   "3"
+#define SEASLOG_TYPE_INFO                   (1<<0)
+#define SEASLOG_TYPE_WARN                   (1<<1)
+#define SEASLOG_TYPE_ERRO                   (1<<1) + 1
 
 #define SEASLOG_TYPE_INFO_STR                       "INFO"
 #define SEASLOG_TYPE_WARN_STR                       "WARN"
@@ -39,6 +39,8 @@ PHP_FUNCTION(seaslog_get_basepath);
 PHP_FUNCTION(seaslog_set_logger);
 PHP_FUNCTION(seaslog_get_lastlogger);
 PHP_FUNCTION(seaslog);
+PHP_FUNCTION(seaslog_analyzer_count);
+PHP_FUNCTION(seaslog_analyzer_detail);
 PHP_FUNCTION();
 
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)

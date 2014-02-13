@@ -27,8 +27,13 @@ var_dump(seaslog_get_basepath());
 var_dump(seaslog_get_lastlogger());
 var_dump(seaslog_get_basepath());
 
-
 var_dump(seaslog('test error 3', SEASLOG_TYPE_ERRO, 'test/bb'));
 
+var_dump(seaslog_analyzer_count()); // == seaslog_analyzer_count(ALL_TYPE);
+var_dump(seaslog_analyzer_count(SEASLOG_TYPE_ERRO)); // == seaslog_analyzer_count(SEASLOG_TYPE_ERRO,'*')
+var_dump(seaslog_analyzer_count(SEASLOG_TYPE_ERRO,'20140211.log'));
 
-echo "\n";
+var_dump(seaslog_analyzer_detail(SEASLOG_TYPE_ERRO)); // == seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,'*')
+var_dump(seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,'20140211.log'));
+
+//~ echo "\n";
