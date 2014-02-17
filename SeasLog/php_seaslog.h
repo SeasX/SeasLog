@@ -47,6 +47,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
 	char *default_basepath;
 	char *default_logger;
 	char *logger;
+    zend_bool disting_type;
 ZEND_END_MODULE_GLOBALS(seaslog)
 
 /* In every utility function you add that needs to use variables 

@@ -16,6 +16,7 @@ ZEND_DECLARE_MODULE_GLOBALS(seaslog)
 static int le_seaslog;
 static char *last_logger = "default";
 static char *base_path = "";
+static zend_bool disting_type = 0;
 
 /* {{{ seaslog_functions[]
  *
@@ -65,6 +66,7 @@ PHP_INI_BEGIN()
     STD_PHP_INI_ENTRY("seaslog.default_basepath", "/log", PHP_INI_ALL, OnUpdateString, default_basepath, zend_seaslog_globals, seaslog_globals)
     STD_PHP_INI_ENTRY("seaslog.default_logger", "default", PHP_INI_ALL, OnUpdateString, default_logger, zend_seaslog_globals, seaslog_globals)
     STD_PHP_INI_ENTRY("seaslog.logger", "default", PHP_INI_ALL, OnUpdateString, logger, zend_seaslog_globals, seaslog_globals)
+    STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
 PHP_INI_END()
 
 /* }}} */
@@ -85,6 +87,7 @@ PHP_MINIT_FUNCTION(seaslog)
 {
     REGISTER_INI_ENTRIES();
     base_path = SEASLOG_G(default_basepath);
+    disting_type = SEASLOG_G(disting_type);
 
     REGISTER_STRINGL_CONSTANT("SEASLOG_VERSION", SEASLOG_VERSION, 	sizeof(SEASLOG_VERSION) - 1, 	CONST_PERSISTENT | CONST_CS);
     REGISTER_STRINGL_CONSTANT("SEASLOG_AUTHOR", SEASLOG_AUTHOR, 	sizeof(SEASLOG_AUTHOR) - 1, 	CONST_PERSISTENT | CONST_CS);
@@ -164,6 +167,19 @@ static char *mk_str_by_type(int stype)
 }
 /* }}} */
 
+/* {{{ char *mk_real_log_path(char *log_path,char *date,char *stype)*/
+static char *mk_real_log_path(char *log_path,char *date,char *stype){
+    char *log_file_path = NULL;
+    if (disting_type){
+        spprintf(&log_file_path,0,"%.78s/%.78s.%.78s.log",log_path,stype,date);
+    }else{
+        spprintf(&log_file_path,0,"%.78s/%.78s.log",log_path,date);
+    }
+    
+    return log_file_path;
+}
+/* }}} */
+
 /* {{{ char *delN(char * a)*/
 static char *delN(char * a){
     int l;
@@ -181,9 +197,15 @@ static long get_type_count(char *log_path,char *stype)
     char *str ,*path ;
     char *sh;
     long count;
-    spprintf(&path,0,"%s/%s/%s",base_path,last_logger,log_path);
+    
+    if (disting_type){
+        spprintf(&path,0,"%s/%s/%s.%s*",base_path,last_logger,mk_str_by_type(stype),log_path);
+    }else{
+        spprintf(&path,0,"%s/%s/%s*",base_path,last_logger,log_path);
+    }
+    
     spprintf(&sh,0,"more %s | grep '%s' -wc",path,mk_str_by_type(stype));
-
+    
     fp = VCWD_POPEN(sh, "r");
     if (!fp){
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to fork [%s]", sh);
@@ -205,11 +227,17 @@ static int get_detail(char *log_path,int stype,zval *return_value TSRMLS_DC)
     char buffer[BUFSIZ+1];
     char *str ,*path ;
     char *sh;
+    
     memset(buffer,'\0',sizeof(buffer));
 
     array_init(return_value);
 
-    spprintf(&path,0,"%s/%s/%s",base_path,last_logger,log_path);
+    if (disting_type){
+        spprintf(&path,0,"%s/%s/%s.%s*",base_path,last_logger,mk_str_by_type(stype),log_path);
+    }else{
+        spprintf(&path,0,"%s/%s/%s*",base_path,last_logger,log_path);
+    }
+
     spprintf(&sh,0,"more %s | grep '%s' -w",path,mk_str_by_type(stype));
 
     fp = VCWD_POPEN(sh, "r");
@@ -219,7 +247,9 @@ static int get_detail(char *log_path,int stype,zval *return_value TSRMLS_DC)
         return -1;
     }else{
        while((fgets(buffer,sizeof(buffer),fp))!= NULL){
-           add_next_index_string(return_value,delN(buffer),1);
+            if (strcspn(buffer,base_path) != 0){
+                add_next_index_string(return_value,delN(buffer),1);
+            }
        }
        pclose(fp);
     }
@@ -297,36 +327,33 @@ PHP_FUNCTION(seaslog)
 
     TSRMLS_FETCH();
 
-    _date = php_format_date("Ymd",3,(long)time(NULL),(long)time(NULL));
-    _time = php_format_date("Y:m:d H:i:s",11,(long)time(NULL),(long)time(NULL));
-
     if (argc > 2){
         logger = module;
     }else{
-        if (strcmp(last_logger,"default") == 0){
-            logger = base_path;
-        }else{
-            logger = last_logger;
-        }
+        logger = last_logger;
     }
 
     spprintf(&last_logger,0,"%s",logger);
 
     spprintf(&_log_path, 0, "%.78s/%.78s", base_path,logger);
     _mk_log_dir(_log_path);
-
+    
     if (argc < 2){
         message_type = SEASLOG_TYPE_INFO;
     }
 
     stype = mk_str_by_type(message_type);
 
-    //	php_printf("%d\n",argc);
-    //	php_printf("%s\n",logger);
-    //	php_printf("%s\n",last_logger);
-    //  php_printf("%s\n",stype);
+    _date = php_format_date("Ymd",3,(long)time(NULL),(long)time(NULL));
+    _time = php_format_date("Y:m:d H:i:s",11,(long)time(NULL),(long)time(NULL));
 
-    spprintf(&log_file_path,0,"%.78s/%.78s.log",_log_path,_date);
+    //~ php_printf("%d\n",argc);
+    //~ php_printf("%s\n",logger);
+    //~ php_printf("%s\n",last_logger);
+    //~ php_printf("%s\n",stype);
+
+    log_file_path = mk_real_log_path(_log_path,_date,stype);
+    
     log_len = spprintf(&log_info, 0, "%.78s | %.78s | %.78s \n",stype, _time, message);
 
     if (_php_log_ex(log_info, log_len, log_file_path) == FAILURE) {
@@ -364,7 +391,7 @@ PHP_FUNCTION (seaslog_analyzer_count)
 
     if (argc == 0){
         array_init(return_value);
-        log_path = "*";
+        log_path = "";
 
         long count_info,count_warn,count_erro;
         count_info = get_type_count(log_path,SEASLOG_TYPE_INFO);
@@ -375,7 +402,7 @@ PHP_FUNCTION (seaslog_analyzer_count)
         add_assoc_long(return_value, SEASLOG_TYPE_WARN_STR, count_warn);
         add_assoc_long(return_value, SEASLOG_TYPE_ERRO_STR, count_erro);
     }else if (argc == 1){
-        log_path = "*";
+        log_path = "";
         count = get_type_count(log_path,message_type);
 
         RETURN_LONG(count);
@@ -427,6 +454,7 @@ PHP_FUNCTION()
 }
 /* }}} */
 
+/* {{{ int _mk_log_dir(char *dir) */
 PHPAPI int _mk_log_dir(char *dir)
 {
     int _ck_dir = _ck_log_dir(dir);
@@ -449,7 +477,9 @@ PHPAPI int _mk_log_dir(char *dir)
     }
 
 }
+/* }}} */
 
+/* {{{ int _ck_log_dir(char *dir) */
 PHPAPI int _ck_log_dir(char *dir)
 {
     zval *function_name;
@@ -474,9 +504,11 @@ PHPAPI int _ck_log_dir(char *dir)
 
     return FAILURE;
 }
+/* }}} */
 
-PHPAPI int _php_log_ex(char *message, int message_len, char *opt) /* {{{ */
-{/* {{{ */
+/* {{{ int _php_log_ex(char *message, int message_len, char *opt) */
+PHPAPI int _php_log_ex(char *message, int message_len, char *opt) 
+{
     php_stream *stream = NULL;
 
     stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
