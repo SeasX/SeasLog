@@ -1,39 +1,306 @@
-SeasLog
-=======
-
-Yat a log extension for PHP.
-
+# SeasLog
+Yet a log extension for PHP.
 @author ciogao@gmail.com
 
+> ---
+- **[简介](#简介)**
+    - **[目前提供了什么](#目前提供了什么)**
+    - **[目标是怎样的](#目标是怎样的)**
+- **[安装](#安装)**
+    - **[编译安装 SeasLog](#编译安装-seaslog)**
+    - **[seaslog.ini的配置](#seaslogini的配置)**
+- **[使用](#使用)**
+    - **[常量与函数](#常量与函数)**
+        - [常量列表](#常量列表)
+        - [函数列表](#函数列表)
+	- **[SeasLog Logger的使用](#seaslog-logger的使用)**
+        - [获取与设置basePath](#获取与设置basepath)
+        - [设置logger与获取lastLogger](#设置logger与获取lastLogger)
+        - [快速写入log](#快速写入log)
+	- **[SeasLog Analyzer的使用](#seaslog-analyzer的使用)**
+		- [快速统计某类型log的count值](#快速统计某类型log的count值)
+		- [获取某类型log列表](#获取某类型log列表)
+	- **[使用SeasLog进行健康预警](#使用seaslog进行健康预警)**
+        - [预警的配置](#预警的配置)
+		- [crontab配置](#crontab配置)
+        
+> ---
 
-### SeasLog目前提供了什么
+## 简介
+
+### 目前提供了什么
 * 在PHP项目中便捷、规范地记录log
 * 可配置的默认log目录与模块
 * 指定log目录与获取当前配置
 
 
-### SeasLog的目标
+### 目标是怎样的
 * 便捷、规范的log记录
 * 高效的海量log分析
 * 可配置、多途径的log预警
 
+## 安装
 
-### SeasLog编译安装
-```conf
-phpize
-
-./configure --with-php-config=php-config
-
-make
-
-make install
+### 编译安装 seaslog
+```sh
+$ /path/to/phpize
+$ ./configure --with-php-config=/path/to/php-config
+$ make && make install
 ```
 
-### seaslog.ini
+### seaslog.ini的配置
 ```conf
 ; configuration for php SeasLog module
-extension=seaslog.so
-seaslog.default_basepath = /log/seaslog-test
-seaslog.default_logger = default
+extension = seaslog.so
+seaslog.default_basepath = /log/seaslog-test    ;默认log根目录
+seaslog.default_logger = default                ;默认logger目录
+seaslog.disting_type = 1                        ;是否以type分文件 1是 0否(默认)
+```
+> `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
+
+> `seaslog.disting_type = 0` 关闭以type分文件，即info\warn\erro统一记录于同一个log文件
+
+## 使用
+
+### 常量与函数
+#### 常量列表
+* SEASLOG_TYPE_INFO = 1
+* SEASLOG_TYPE_WARN = 2
+* SEASLOG_TYPE_ERRO = 3
+```php
+var_dump(SEASLOG_TYPE_INFO,SEASLOG_TYPE_WARN,SEASLOG_TYPE_ERRO);
+/*
+int(1) info类型
+int(2) warn类型
+int(3) erro类型
+*/
+```
+#### 函数列表
+`SeasLog` 提供了这样一组函数，可以方便地获取与设置根目录、模块目录、快速写入与统计log。
+相信从下述伪代码的注释中，您可以快速获取函数信息，具体使用将紧接其后：
+```php
+<?php
+/**
+ * @author ciogao@gmail.com
+ * Date: 14-1-27 下午4:47
+ */
+/**
+ * 设置basePath
+ * @param $basePath
+ * @return bool
+ */
+function seaslog_set_basepath($basePath)
+{
+    return TRUE;
+}
+
+/**
+ * 获取basePath
+ * @return string
+ */
+function seaslog_get_basepath()
+{
+    return 'the base_path';
+}
+
+/**
+ * 设置模块目录
+ * @param $module
+ * @return bool
+ */
+function seaslog_set_logger($module)
+{
+    return TRUE;
+}
+
+/**
+ * 获取最后一次设置的模块目录
+ * @return string
+ */
+function seaslog_get_lastlogger()
+{
+    return 'the lastLogger';
+}
+
+/**
+ * 快速写入log
+ * @param $msg
+ * @param string $module
+ * @param int $type
+ * @return bool
+ */
+function seaslog($msg, $type = SEASLOG_TYPE_INFO, $module = 'defaultPath')
+{
+    return TRUE;
+}
+
+/**
+ * 统计所有类型（或单个类型）行数
+ * @param string $type
+ * @param string $log_path
+ * @return array | long
+ */
+function seaslog_analyzer_count($type = 'allType',$log_path = '*')
+{
+    return array();
+}
+
+/**
+ * 以数组形式，快速取出某类型log的各行详情
+ * @param $type
+ * @param string $log_path
+ * @return array
+ */
+function seaslog_analyzer_detail($type = SEASLOG_TYPE_ERRO,$log_path = '*')
+{
+    return array();
+}
+
 ```
 
+### SeasLog Logger的使用
+#### 获取与设置basePath
+```php
+$basePath_1 = seaslog_get_basepath();
+
+seaslog_set_basepath('/log/base_test');
+$basePath_2 = seaslog_get_basepath();
+
+var_dump($basePath_1,$basePath_2);
+
+/*
+string(19) "/log/seaslog-ciogao"
+string(14) "/log/base_test"
+*/
+```
+> 直接使用 `seaslog_get_basepath()`，将获取php.ini(seaslog.ini)中设置的 `seaslog.default_basepath` 的值。
+
+> 使用 `seaslog_set_basepath()` 函数，将改变 `seaslog_get_basepath()` 的取值。
+
+#### 设置logger与获取lastLogger
+```php
+$lastLogger_1 = seaslog_get_lastlogger();
+
+seaslog_set_logger('testModule/app1');
+$lastLogger_2 = seaslog_get_lastlogger();
+
+var_dump($lastLogger_1,$lastLogger_2);
+/*
+string(7) "default"
+string(15) "testModule/app1"
+*/
+```
+> 与basePath相类似的，
+
+> 直接使用 `seaslog_get_lastlogger()`，将获取php.ini(seaslog.ini)中设置的 `seaslog.default_logger` 的值。
+
+> 使用 `seaslog_set_logger()` 函数，将改变 `seaslog_get_lastlogger()` 的取值。
+
+#### 快速写入log
+上面已经设置过了basePath与logger，于是log记录的目录已经产生了，
+> log记录目录 = basePath / logger / {fileName}.log
+log文件名，以 `年月日` 分文件，如今天是2014年02月18日期，那么 `{fileName}` = `20140218`;
+
+还记得 `php.ini` 中设置的 `seaslog.disting_type` 吗？
+
+默认的 `seaslog.disting_type = 0`，如果今天我使用了 `SeasLog` ，那么将产生最终的log文件：
+* LogFile = basePath / logger / 20140218.log
+
+如果 `seaslog.disting_type = 1`，则最终的log文件将是这样的三个文件
+* infoLogFile = basePath / logger / INFO.20140218.log
+
+* warnLogFile = basePath / logger / WARN.20140218.log
+
+* erroLogFile = basePath / logger / ERRO.20140218.log
+
+```php
+seaslog('this is a info');
+seaslog('this is a error 1', SEASLOG_TYPE_ERRO);
+seaslog('this is a error 2', SEASLOG_TYPE_ERRO);
+seaslog('this is a warning', SEASLOG_TYPE_WARN);
+
+seaslog('test error 3', SEASLOG_TYPE_ERRO, 'test/new/path');
+/*
+seaslog()函数同时也接受第3个参数为logger的设置项
+等同于:
+seaslog_set_logger('test/new/path');
+seaslog('test error 3', SEASLOG_TYPE_ERRO);
+*/
+```
+> log格式统一为： `{type} | {time} | {logInfo}`
+```sh
+INFO | 2014:02:17 22:57:00 | this is a info 
+ERRO | 2014:02:17 22:57:00 | this is a error 1
+ERRO | 2014:02:17 22:57:00 | this is a error 2
+WARN | 2014:02:17 22:57:00 | this is a warning
+```
+
+### SeasLog Analyzer的使用
+#### 快速统计某类型log的count值
+`SeasLog`在扩展中使用管道调用shell命令 `grep -wc`快速地取得count值，并返回值(array || int)给PHP。
+```php
+$countResult_1 = seaslog_analyzer_count();
+$countResult_2 = seaslog_analyzer_count(SEASLOG_TYPE_WARN);
+$countResult_3 = seaslog_analyzer_count(SEASLOG_TYPE_ERRO,date('Ymd',time()));
+
+var_dump($countResult_1,$countResult_2,$countResult_3);
+/*
+array(3) {
+  'INFO' =>
+  int(0)
+  'WARN' =>
+  int(0)
+  'ERRO' =>
+  int(7)
+}
+
+int(7)
+
+int(1)
+
+*/
+```
+#### 获取某类型log列表
+`SeasLog`在扩展中使用管道调用shell命令 `grep -w`快速地取得列表，并返回array给PHP。
+```php
+$detailErrorArray_inAll   = seaslog_analyzer_detail(SEASLOG_TYPE_ERRO);
+$detailErrorArray_today   = seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,date('Ymd',time()));
+
+var_dump($detailErrorArray_inAll,$detailErrorArray_today);
+
+/*
+seaslog_analyzer_detail(SEASLOG_TYPE_ERRO) == seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,'*');
+取当前模块下所有type为 SEASLOG_TYPE_ERRO 的信息列表:
+array(6) {
+  [0] =>
+  string(42) "ERRO | 2014:02:17 22:57:00 | test error 3 "
+  [1] =>
+  string(42) "ERRO | 2014:02:17 22:58:49 | test error 3 "
+  [2] =>
+  string(42) "ERRO | 2014:02:17 22:59:08 | test error 3 "
+  [3] =>
+  string(42) "ERRO | 2014:02:17 23:04:18 | test error 3 "
+  [4] =>
+  string(42) "ERRO | 2014:02:18 00:38:57 | test error 3 "
+  [5] =>
+  string(42) "ERRO | 2014:02:18 00:44:43 | test error 3 "
+}
+
+seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,date('Ymd',time()));
+只取得当前模块下，当前一天内,type为 SEASLOG_TYPE_ERRO 的信息列表:
+array(2) {
+  [0] =>
+  string(42) "ERRO | 2014:02:18 00:38:57 | test error 3 "
+  [1] =>
+  string(42) "ERRO | 2014:02:18 00:44:43 | test error 3 "
+}
+
+同理，取当月 
+$detailErrorArray_mouth = seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,date('Ym',time()));
+
+*/
+```
+
+### 使用SeasLog进行健康预警
+#### 预警的配置
+#### crontab配置
