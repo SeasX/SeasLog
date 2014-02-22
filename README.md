@@ -4,6 +4,7 @@ Yet a log extension for PHP.
 
 > ---
 - **[简介](#简介)**
+    - **[为什么使用SeasLog](#为什么使用seaslog)**
     - **[目前提供了什么](#目前提供了什么)**
     - **[目标是怎样的](#目标是怎样的)**
 - **[安装](#安装)**
@@ -15,7 +16,7 @@ Yet a log extension for PHP.
         - [函数列表](#函数列表)
 	- **[SeasLog Logger的使用](#seaslog-logger的使用)**
         - [获取与设置basePath](#获取与设置basepath)
-        - [设置logger与获取lastLogger](#设置logger与获取lastLogger)
+        - [设置logger与获取lastLogger](#设置logger与获取lastlogger)
         - [快速写入log](#快速写入log)
 	- **[SeasLog Analyzer的使用](#seaslog-analyzer的使用)**
 		- [快速统计某类型log的count值](#快速统计某类型log的count值)
@@ -27,6 +28,20 @@ Yet a log extension for PHP.
 > ---
 
 ## 简介
+### 为什么使用SeasLog
+log日志，通常是系统或软件、应用的运行记录。通过log的分析，可以方便用户了解系统或软件、应用的运行情况；如果你的应用log足够丰富，也可以分析以往用户的操作行为、类型喜好、地域分布或其他更多信息；如果一个应用的log同时也分了多个级别，那么可以很轻易地分析得到该应用的健康状况，及时发现问题并快速定位、解决问题，补救损失。
+
+php内置error_log、syslog函数功能强大且性能极好，但由于各种缺陷(error_log无错误级别、无固定格式，syslog不分模块、与系统日志混合)，灵活度降低了很多，不能满足应用需求。
+
+好消息是，有不少第三方的log类库弥补了上述缺陷，如log4php、plog、Analog等(当然也有很多应用在项目中自己开发的log类)。其中以[log4php](http://logging.apache.org/log4php/)最为著名，设计精良、格式完美、文档完善、功能强大。推荐。(log4php的性能有待测试)
+
+那么有没有一种log类库满足以下需求呢：
+* 分模块、分级别
+* 配置简单(最好是勿须配置)
+* 日志格式清晰易读
+* 应用简单、性能很棒
+
+`SeasLog` 正是应此需求而生。
 
 ### 目前提供了什么
 * 在PHP项目中便捷、规范地记录log
