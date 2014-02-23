@@ -10,6 +10,15 @@
 #include "ext/date/php_date.h"
 #include "php_seaslog.h"
 
+#ifdef PHP_WIN32
+#include "win32/time.h"
+#elif defined(NETWARE)
+#include <sys/timeval.h>
+#include <sys/time.h>
+#else
+#include <sys/time.h>
+#endif
+
 ZEND_DECLARE_MODULE_GLOBALS(seaslog)
 
 /* True global resources - no need for thread safety here */
@@ -189,6 +198,17 @@ static char *delN(char * a){
 }
 /* }}} */
 
+/* {{{ char *mic_time()*/
+static char *mic_time(){
+   struct timeval now;
+   char *tstr;
+   timerclear(&now);
+   gettimeofday(&now,NULL);
+   spprintf(&tstr,0,"%d.%d",time(NULL),now.tv_usec/1000);
+   return tstr;
+}
+/* }}}*/
+
 /* {{{ long get_type_count(char *log_path,char *stype)*/
 static long get_type_count(char *log_path,char *stype)
 {
@@ -329,11 +349,12 @@ PHP_FUNCTION(seaslog)
 
     if (argc > 2){
         logger = module;
+        if (strcmp(last_logger,"default") == 0){
+            spprintf(&last_logger,0,"%s",logger);
+        }
     }else{
         logger = last_logger;
     }
-
-    spprintf(&last_logger,0,"%s",logger);
 
     spprintf(&_log_path, 0, "%.78s/%.78s", base_path,logger);
     _mk_log_dir(_log_path);
@@ -354,7 +375,7 @@ PHP_FUNCTION(seaslog)
 
     log_file_path = mk_real_log_path(_log_path,_date,stype);
     
-    log_len = spprintf(&log_info, 0, "%.78s | %.78s | %.78s \n",stype, _time, message);
+    log_len = spprintf(&log_info, 0, "%.78s | %d | %s | %.78s | %.78s \n",stype,getpid(), mic_time(),_time, message);
 
     if (_php_log_ex(log_info, log_len, log_file_path) == FAILURE) {
         RETURN_FALSE;

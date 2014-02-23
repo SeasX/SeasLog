@@ -237,17 +237,18 @@ seaslog('this is a warning', SEASLOG_TYPE_WARN);
 seaslog('test error 3', SEASLOG_TYPE_ERRO, 'test/new/path');
 /*
 seaslog()函数同时也接受第3个参数为logger的设置项
-等同于:
+注意，当last_logger == 'default'时等同于:
 seaslog_set_logger('test/new/path');
 seaslog('test error 3', SEASLOG_TYPE_ERRO);
+如果已经在前文使用过seaslog_set_logger函数，第3个参数的log只在此处临时使用，不影响下文。
 */
 ```
-> log格式统一为： `{type} | {time} | {logInfo}`
+> log格式统一为： `{type} | {pid} | {timeStamp} |{dateTime} | {logInfo}`
 ```sh
-INFO | 2014:02:17 22:57:00 | this is a info 
-ERRO | 2014:02:17 22:57:00 | this is a error 1
-ERRO | 2014:02:17 22:57:00 | this is a error 2
-WARN | 2014:02:17 22:57:00 | this is a warning
+ERRO | 7670 | 1393171368.875 | 2014:02:24 00:02:48 | test error 3
+INFO | 7670 | 1393171372.344 | 2014:02:24 00:02:52 | this is a info 
+ERRO | 7670 | 1393171515.336 | 2014:02:24 00:05:15 | this is a error 1
+ERRO | 7670 | 1393171609.881 | 2014:02:24 00:06:49 | this is a error 2
 ```
 
 ### SeasLog Analyzer的使用
@@ -287,27 +288,27 @@ var_dump($detailErrorArray_inAll,$detailErrorArray_today);
 seaslog_analyzer_detail(SEASLOG_TYPE_ERRO) == seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,'*');
 取当前模块下所有type为 SEASLOG_TYPE_ERRO 的信息列表:
 array(6) {
-  [0] =>
-  string(42) "ERRO | 2014:02:17 22:57:00 | test error 3 "
+ [0] =>
+  string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
   [1] =>
-  string(42) "ERRO | 2014:02:17 22:58:49 | test error 3 "
+  string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
   [2] =>
-  string(42) "ERRO | 2014:02:17 22:59:08 | test error 3 "
+  string(66) "ERRO | 8620 | 1393172044.862 | 2014:02:24 00:14:04 | test error 3 "
   [3] =>
-  string(42) "ERRO | 2014:02:17 23:04:18 | test error 3 "
+  string(66) "ERRO | 8646 | 1393172045.989 | 2014:02:24 00:14:05 | test error 3 "
   [4] =>
-  string(42) "ERRO | 2014:02:18 00:38:57 | test error 3 "
+  string(66) "ERRO | 8672 | 1393172047.882 | 2014:02:24 00:14:07 | test error 3 "
   [5] =>
-  string(42) "ERRO | 2014:02:18 00:44:43 | test error 3 "
+  string(66) "ERRO | 8698 | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "
 }
 
 seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,date('Ymd',time()));
 只取得当前模块下，当前一天内,type为 SEASLOG_TYPE_ERRO 的信息列表:
 array(2) {
   [0] =>
-  string(42) "ERRO | 2014:02:18 00:38:57 | test error 3 "
+  string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
   [1] =>
-  string(42) "ERRO | 2014:02:18 00:44:43 | test error 3 "
+  string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
 }
 
 同理，取当月 
