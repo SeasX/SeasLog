@@ -40,7 +40,7 @@ const zend_function_entry seaslog_functions[] = {
     PHP_FE(seaslog_analyzer_count, NULL)
     PHP_FE(seaslog_analyzer_detail, NULL)
     PHP_FE(,	NULL)
-    PHP_FE_END	/* Must be the last line in seaslog_functions[] */
+    {NULL, NULL, NULL}	/* Must be the last line in seaslog_functions[] */
 };
 /* }}} */
 
