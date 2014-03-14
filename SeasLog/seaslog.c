@@ -180,9 +180,9 @@ static char *mk_str_by_type(int stype)
 static char *mk_real_log_path(char *log_path,char *date,char *stype){
     char *log_file_path = NULL;
     if (disting_type){
-        spprintf(&log_file_path,0,"%.78s/%.78s.%.78s.log",log_path,stype,date);
+        spprintf(&log_file_path,0,"%s/%s.%s.log",log_path,stype,date);
     }else{
-        spprintf(&log_file_path,0,"%.78s/%.78s.log",log_path,date);
+        spprintf(&log_file_path,0,"%s/%s.log",log_path,date);
     }
     
     return log_file_path;
@@ -356,7 +356,7 @@ PHP_FUNCTION(seaslog)
         logger = last_logger;
     }
 
-    spprintf(&_log_path, 0, "%.78s/%.78s", base_path,logger);
+    spprintf(&_log_path, 0, "%s/%s", base_path,logger);
     _mk_log_dir(_log_path);
     
     if (argc < 2){
@@ -375,7 +375,7 @@ PHP_FUNCTION(seaslog)
 
     log_file_path = mk_real_log_path(_log_path,_date,stype);
     
-    log_len = spprintf(&log_info, 0, "%.78s | %d | %s | %.78s | %.78s \n",stype,getpid(), mic_time(),_time, message);
+    log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n",stype,getpid(), mic_time(),_time, message);
 
     if (_php_log_ex(log_info, log_len, log_file_path) == FAILURE) {
         RETURN_FALSE;
