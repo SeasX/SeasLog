@@ -214,9 +214,14 @@ static long get_type_count(char *log_path,char *stype)
 {
     FILE * fp;
     char buffer[BUFSIZ];
-    char *str ,*path ;
-    char *sh;
+    char *str ,*path,*_log_path,*sh;
     long count;
+
+    spprintf(&_log_path, 0, "%s/%s", base_path,last_logger);
+    int _ck_dir = _ck_log_dir(_log_path);
+    if (_ck_dir == FAILURE){
+        return 0;
+    }
     
     if (disting_type){
         spprintf(&path,0,"%s/%s/%s.%s*",base_path,last_logger,mk_str_by_type(stype),log_path);
