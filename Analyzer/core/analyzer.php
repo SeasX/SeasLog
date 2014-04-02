@@ -12,6 +12,9 @@ use core\analyzer as coreRun;
 
 class analyzer
 {
+    //当前版本
+    const SEASLOG_ANALYZER_VERSION = 0.1;
+
     static public function run()
     {
         config::getConfig();
