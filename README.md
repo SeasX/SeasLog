@@ -319,4 +319,54 @@ $detailErrorArray_mouth = seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,date('Ym',ti
 
 ### 使用SeasLog进行健康预警
 #### 预警的配置
+```conf
+[base]
+wait_analyz_log_path = /log/base_test
+
+[fork]
+;是否开启多线程 1开启 0关闭
+fork_open = 1
+
+;线程个数
+fork_count = 3
+
+[warning]
+email[smtp_host] = smtp.163.com
+email[smtp_port] = 25
+email[subject_pre] = 预警邮件 -
+email[smtp_user] = seaslogdemo@163.com
+email[smtp_pwd] = seaslog#demo
+email[mail_from] = seaslogdemo@163.com
+email[mail_to] = gaochitao@weiboyi.com
+email[mail_cc] = ciogao@gmail.com
+email[mail_bcc] =
+
+[analyz]
+; enum
+;info => SEASLOG_TYPE_INFO
+;warn => SEASLOG_TYPE_WARN
+;erro => SEASLOG_TYPE_ERRO
+
+test1[module] = test/bb
+test1[type] = SEASLOG_TYPE_ERRO
+test1[bar] = 1
+test1[mail_to] = gaochitao@weiboyi.com
+
+test2[module] = 222
+test2[type] = SEASLOG_TYPE_INFO
+
+test3[module] = 333
+test3[type] = SEASLOG_TYPE_WARN
+
+test4[module] = 444
+test4[type] = SEASLOG_TYPE_WARN
+
+test5[module] = 555
+test5[type] = SEASLOG_TYPE_WARN
+
+```
 #### crontab配置
+```conf
+;每天凌晨3点执行
+0 3 * * * /path/to/php /path/to/SeasLog/Analyzer/SeasLogAnalyzer.php
+```
