@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Seaslog : Yet a log extension for PHP." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Seaslog</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Neeke/SeasLog">View on GitHub</a>
+
+          <h1 id="project_title">Seaslog</h1>
+          <h2 id="project_tagline">Yet a log extension for PHP.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Neeke/SeasLog/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Neeke/SeasLog/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="seaslog" class="anchor" href="#seaslog"><span class="octicon octicon-link"></span></a>SeasLog</h1>
+
+<p>Yet a log extension for PHP.
+<a href="https://github.com/author" class="user-mention">@author</a> <a href="mailto:ciogao@gmail.com">ciogao@gmail.com</a></p>
+
+<blockquote>
+<hr>
+<ul>
+<li>
+<strong><a href="#%E7%AE%80%E4%BB%8B">简介</a></strong>
+
+<ul>
+<li><strong><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8seaslog">为什么使用SeasLog</a></strong></li>
+<li><strong><a href="#%E7%9B%AE%E5%89%8D%E6%8F%90%E4%BE%9B%E4%BA%86%E4%BB%80%E4%B9%88">目前提供了什么</a></strong></li>
+<li><strong><a href="#%E7%9B%AE%E6%A0%87%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84">目标是怎样的</a></strong></li>
+</ul>
+</li>
+<li>
+<strong><a href="#%E5%AE%89%E8%A3%85">安装</a></strong>
+
+<ul>
+<li><strong><a href="#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85-seaslog">编译安装 SeasLog</a></strong></li>
+<li><strong><a href="#seaslogini%E7%9A%84%E9%85%8D%E7%BD%AE">seaslog.ini的配置</a></strong></li>
+</ul>
+</li>
+<li>
+<strong><a href="#%E4%BD%BF%E7%94%A8">使用</a></strong>
+
+<ul>
+<li>
+<strong><a href="#%E5%B8%B8%E9%87%8F%E4%B8%8E%E5%87%BD%E6%95%B0">常量与函数</a></strong>
+
+<ul>
+<li><a href="#%E5%B8%B8%E9%87%8F%E5%88%97%E8%A1%A8">常量列表</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0%E5%88%97%E8%A1%A8">函数列表</a></li>
+</ul>
+</li>
+<li>
+<strong><a href="#seaslog-logger%E7%9A%84%E4%BD%BF%E7%94%A8">SeasLog Logger的使用</a></strong>
+
+<ul>
+<li><a href="#%E8%8E%B7%E5%8F%96%E4%B8%8E%E8%AE%BE%E7%BD%AEbasepath">获取与设置basePath</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AElogger%E4%B8%8E%E8%8E%B7%E5%8F%96lastlogger">设置logger与获取lastLogger</a></li>
+<li><a href="#%E5%BF%AB%E9%80%9F%E5%86%99%E5%85%A5log">快速写入log</a></li>
+</ul>
+</li>
+<li>
+<strong><a href="#seaslog-analyzer%E7%9A%84%E4%BD%BF%E7%94%A8">SeasLog Analyzer的使用</a></strong>
+
+<ul>
+<li><a href="#%E5%BF%AB%E9%80%9F%E7%BB%9F%E8%AE%A1%E6%9F%90%E7%B1%BB%E5%9E%8Blog%E7%9A%84count%E5%80%BC">快速统计某类型log的count值</a></li>
+<li><a href="#%E8%8E%B7%E5%8F%96%E6%9F%90%E7%B1%BB%E5%9E%8Blog%E5%88%97%E8%A1%A8">获取某类型log列表</a></li>
+</ul>
+</li>
+<li>
+<strong><a href="#%E4%BD%BF%E7%94%A8seaslog%E8%BF%9B%E8%A1%8C%E5%81%A5%E5%BA%B7%E9%A2%84%E8%AD%A6">使用SeasLog进行健康预警</a></strong>
+
+<ul>
+<li><a href="#%E9%A2%84%E8%AD%A6%E7%9A%84%E9%85%8D%E7%BD%AE">预警的配置</a></li>
+<li><a href="#crontab%E9%85%8D%E7%BD%AE">crontab配置</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+</blockquote>
+
+<h2>
+<a name="%E7%AE%80%E4%BB%8B" class="anchor" href="#%E7%AE%80%E4%BB%8B"><span class="octicon octicon-link"></span></a>简介</h2>
+
+<h3>
+<a name="%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8seaslog" class="anchor" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8seaslog"><span class="octicon octicon-link"></span></a>为什么使用SeasLog</h3>
+
+<p>log日志，通常是系统或软件、应用的运行记录。通过log的分析，可以方便用户了解系统或软件、应用的运行情况；如果你的应用log足够丰富，也可以分析以往用户的操作行为、类型喜好、地域分布或其他更多信息；如果一个应用的log同时也分了多个级别，那么可以很轻易地分析得到该应用的健康状况，及时发现问题并快速定位、解决问题，补救损失。</p>
+
+<p>php内置error_log、syslog函数功能强大且性能极好，但由于各种缺陷(error_log无错误级别、无固定格式，syslog不分模块、与系统日志混合)，灵活度降低了很多，不能满足应用需求。</p>
+
+<p>好消息是，有不少第三方的log类库弥补了上述缺陷，如log4php、plog、Analog等(当然也有很多应用在项目中自己开发的log类)。其中以<a href="http://logging.apache.org/log4php/">log4php</a>最为著名，设计精良、格式完美、文档完善、功能强大。推荐。(log4php的性能有待测试)</p>
+
+<p>那么有没有一种log类库满足以下需求呢：</p>
+
+<ul>
+<li>分模块、分级别</li>
+<li>配置简单(最好是勿须配置)</li>
+<li>日志格式清晰易读</li>
+<li>应用简单、性能很棒</li>
+</ul><p><code>SeasLog</code> 正是应此需求而生。</p>
+
+<h3>
+<a name="%E7%9B%AE%E5%89%8D%E6%8F%90%E4%BE%9B%E4%BA%86%E4%BB%80%E4%B9%88" class="anchor" href="#%E7%9B%AE%E5%89%8D%E6%8F%90%E4%BE%9B%E4%BA%86%E4%BB%80%E4%B9%88"><span class="octicon octicon-link"></span></a>目前提供了什么</h3>
+
+<ul>
+<li>在PHP项目中便捷、规范地记录log</li>
+<li>可配置的默认log目录与模块</li>
+<li>指定log目录与获取当前配置</li>
+<li>初步的分析预警框架</li>
+</ul><h3>
+<a name="%E7%9B%AE%E6%A0%87%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84" class="anchor" href="#%E7%9B%AE%E6%A0%87%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84"><span class="octicon octicon-link"></span></a>目标是怎样的</h3>
+
+<ul>
+<li>便捷、规范的log记录</li>
+<li>高效的海量log分析</li>
+<li>可配置、多途径的log预警</li>
+</ul><h2>
+<a name="%E5%AE%89%E8%A3%85" class="anchor" href="#%E5%AE%89%E8%A3%85"><span class="octicon octicon-link"></span></a>安装</h2>
+
+<h3>
+<a name="%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85-seaslog" class="anchor" href="#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85-seaslog"><span class="octicon octicon-link"></span></a>编译安装 seaslog</h3>
+
+<div class="highlight highlight-sh"><pre><span class="nv">$ </span>/path/to/phpize
+<span class="nv">$ </span>./configure --with-php-config<span class="o">=</span>/path/to/php-config
+<span class="nv">$ </span>make <span class="o">&amp;&amp;</span> make install
+</pre></div>
+
+<h3>
+<a name="seaslogini%E7%9A%84%E9%85%8D%E7%BD%AE" class="anchor" href="#seaslogini%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="octicon octicon-link"></span></a>seaslog.ini的配置</h3>
+
+<div class="highlight highlight-conf"><pre><span class="err">;</span> <span class="nb">configuration</span> for php SeasLog module
+<span class="nb">extension</span> = seaslog.so
+<span class="err">seaslog</span>.<span class="nb">default_basepath</span> = <span class="sx">/log/seaslog-test</span>    ;默认log根目录
+<span class="err">seaslog</span>.<span class="nb">default_logger</span> = default                ;默认logger目录
+<span class="err">seaslog</span>.<span class="nb">disting_type</span> = <span class="m">1</span>                        ;是否以type分文件 <span class="m">1</span>是 <span class="m">0</span>否(默认)
+</pre></div>
+
+<blockquote>
+<p><code>seaslog.disting_type = 1</code> 开启以type分文件，即log文件区分info\warn\erro</p>
+
+<p><code>seaslog.disting_type = 0</code> 关闭以type分文件，即info\warn\erro统一记录于同一个log文件</p>
+</blockquote>
+
+<h2>
+<a name="%E4%BD%BF%E7%94%A8" class="anchor" href="#%E4%BD%BF%E7%94%A8"><span class="octicon octicon-link"></span></a>使用</h2>
+
+<h3>
+<a name="%E5%B8%B8%E9%87%8F%E4%B8%8E%E5%87%BD%E6%95%B0" class="anchor" href="#%E5%B8%B8%E9%87%8F%E4%B8%8E%E5%87%BD%E6%95%B0"><span class="octicon octicon-link"></span></a>常量与函数</h3>
+
+<h4>
+<a name="%E5%B8%B8%E9%87%8F%E5%88%97%E8%A1%A8" class="anchor" href="#%E5%B8%B8%E9%87%8F%E5%88%97%E8%A1%A8"><span class="octicon octicon-link"></span></a>常量列表</h4>
+
+<ul>
+<li>SEASLOG_TYPE_INFO = 1</li>
+<li>SEASLOG_TYPE_WARN = 2</li>
+<li>SEASLOG_TYPE_ERRO = 3</li>
+</ul><div class="highlight highlight-php"><pre><span class="nb">var_dump</span><span class="p">(</span><span class="nx">SEASLOG_TYPE_INFO</span><span class="p">,</span><span class="nx">SEASLOG_TYPE_WARN</span><span class="p">,</span><span class="nx">SEASLOG_TYPE_ERRO</span><span class="p">);</span>
+<span class="cm">/*</span>
+<span class="cm">int(1) info类型</span>
+<span class="cm">int(2) warn类型</span>
+<span class="cm">int(3) erro类型</span>
+<span class="cm">*/</span>
+</pre></div>
+
+<h4>
+<a name="%E5%87%BD%E6%95%B0%E5%88%97%E8%A1%A8" class="anchor" href="#%E5%87%BD%E6%95%B0%E5%88%97%E8%A1%A8"><span class="octicon octicon-link"></span></a>函数列表</h4>
+
+<p><code>SeasLog</code> 提供了这样一组函数，可以方便地获取与设置根目录、模块目录、快速写入与统计log。
+相信从下述伪代码的注释中，您可以快速获取函数信息，具体使用将紧接其后：</p>
+
+<div class="highlight highlight-php"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="sd">/**</span>
+<span class="sd"> * @author ciogao@gmail.com</span>
+<span class="sd"> * Date: 14-1-27 下午4:47</span>
+<span class="sd"> */</span>
+<span class="sd">/**</span>
+<span class="sd"> * 设置basePath</span>
+<span class="sd"> * @param $basePath</span>
+<span class="sd"> * @return bool</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">seaslog_set_basepath</span><span class="p">(</span><span class="nv">$basePath</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">TRUE</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * 获取basePath</span>
+<span class="sd"> * @return string</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">seaslog_get_basepath</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="s1">'the base_path'</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * 设置模块目录</span>
+<span class="sd"> * @param $module</span>
+<span class="sd"> * @return bool</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">seaslog_set_logger</span><span class="p">(</span><span class="nv">$module</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">TRUE</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * 获取最后一次设置的模块目录</span>
+<span class="sd"> * @return string</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">seaslog_get_lastlogger</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="s1">'the lastLogger'</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * 快速写入log</span>
+<span class="sd"> * @param $msg</span>
+<span class="sd"> * @param string $module</span>
+<span class="sd"> * @param int $type</span>
+<span class="sd"> * @return bool</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">seaslog</span><span class="p">(</span><span class="nv">$msg</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">SEASLOG_TYPE_INFO</span><span class="p">,</span> <span class="nv">$module</span> <span class="o">=</span> <span class="s1">'defaultPath'</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">TRUE</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * 统计所有类型（或单个类型）行数</span>
+<span class="sd"> * @param string $type</span>
+<span class="sd"> * @param string $log_path</span>
+<span class="sd"> * @return array | long</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">seaslog_analyzer_count</span><span class="p">(</span><span class="nv">$type</span> <span class="o">=</span> <span class="s1">'allType'</span><span class="p">,</span><span class="nv">$log_path</span> <span class="o">=</span> <span class="s1">'*'</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">array</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * 以数组形式，快速取出某类型log的各行详情</span>
+<span class="sd"> * @param $type</span>
+<span class="sd"> * @param string $log_path</span>
+<span class="sd"> * @return array</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">seaslog_analyzer_detail</span><span class="p">(</span><span class="nv">$type</span> <span class="o">=</span> <span class="nx">SEASLOG_TYPE_ERRO</span><span class="p">,</span><span class="nv">$log_path</span> <span class="o">=</span> <span class="s1">'*'</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">array</span><span class="p">();</span>
+<span class="p">}</span>
+
+</pre></div>
+
+<h3>
+<a name="seaslog-logger%E7%9A%84%E4%BD%BF%E7%94%A8" class="anchor" href="#seaslog-logger%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="octicon octicon-link"></span></a>SeasLog Logger的使用</h3>
+
+<h4>
+<a name="%E8%8E%B7%E5%8F%96%E4%B8%8E%E8%AE%BE%E7%BD%AEbasepath" class="anchor" href="#%E8%8E%B7%E5%8F%96%E4%B8%8E%E8%AE%BE%E7%BD%AEbasepath"><span class="octicon octicon-link"></span></a>获取与设置basePath</h4>
+
+<div class="highlight highlight-php"><pre><span class="nv">$basePath_1</span> <span class="o">=</span> <span class="nx">seaslog_get_basepath</span><span class="p">();</span>
+
+<span class="nx">seaslog_set_basepath</span><span class="p">(</span><span class="s1">'/log/base_test'</span><span class="p">);</span>
+<span class="nv">$basePath_2</span> <span class="o">=</span> <span class="nx">seaslog_get_basepath</span><span class="p">();</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$basePath_1</span><span class="p">,</span><span class="nv">$basePath_2</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm">string(19) "/log/seaslog-ciogao"</span>
+<span class="cm">string(14) "/log/base_test"</span>
+<span class="cm">*/</span>
+</pre></div>
+
+<blockquote>
+<p>直接使用 <code>seaslog_get_basepath()</code>，将获取php.ini(seaslog.ini)中设置的 <code>seaslog.default_basepath</code> 的值。</p>
+
+<p>使用 <code>seaslog_set_basepath()</code> 函数，将改变 <code>seaslog_get_basepath()</code> 的取值。</p>
+</blockquote>
+
+<h4>
+<a name="%E8%AE%BE%E7%BD%AElogger%E4%B8%8E%E8%8E%B7%E5%8F%96lastlogger" class="anchor" href="#%E8%AE%BE%E7%BD%AElogger%E4%B8%8E%E8%8E%B7%E5%8F%96lastlogger"><span class="octicon octicon-link"></span></a>设置logger与获取lastLogger</h4>
+
+<div class="highlight highlight-php"><pre><span class="nv">$lastLogger_1</span> <span class="o">=</span> <span class="nx">seaslog_get_lastlogger</span><span class="p">();</span>
+
+<span class="nx">seaslog_set_logger</span><span class="p">(</span><span class="s1">'testModule/app1'</span><span class="p">);</span>
+<span class="nv">$lastLogger_2</span> <span class="o">=</span> <span class="nx">seaslog_get_lastlogger</span><span class="p">();</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$lastLogger_1</span><span class="p">,</span><span class="nv">$lastLogger_2</span><span class="p">);</span>
+<span class="cm">/*</span>
+<span class="cm">string(7) "default"</span>
+<span class="cm">string(15) "testModule/app1"</span>
+<span class="cm">*/</span>
+</pre></div>
+
+<blockquote>
+<p>与basePath相类似的，</p>
+
+<p>直接使用 <code>seaslog_get_lastlogger()</code>，将获取php.ini(seaslog.ini)中设置的 <code>seaslog.default_logger</code> 的值。</p>
+
+<p>使用 <code>seaslog_set_logger()</code> 函数，将改变 <code>seaslog_get_lastlogger()</code> 的取值。</p>
+</blockquote>
+
+<h4>
+<a name="%E5%BF%AB%E9%80%9F%E5%86%99%E5%85%A5log" class="anchor" href="#%E5%BF%AB%E9%80%9F%E5%86%99%E5%85%A5log"><span class="octicon octicon-link"></span></a>快速写入log</h4>
+
+<p>上面已经设置过了basePath与logger，于是log记录的目录已经产生了，</p>
+
+<blockquote>
+<p>log记录目录 = basePath / logger / {fileName}.log
+log文件名，以 <code>年月日</code> 分文件，如今天是2014年02月18日期，那么 <code>{fileName}</code> = <code>20140218</code>;</p>
+</blockquote>
+
+<p>还记得 <code>php.ini</code> 中设置的 <code>seaslog.disting_type</code> 吗？</p>
+
+<p>默认的 <code>seaslog.disting_type = 0</code>，如果今天我使用了 <code>SeasLog</code> ，那么将产生最终的log文件：</p>
+
+<ul>
+<li>LogFile = basePath / logger / 20140218.log</li>
+</ul><p>如果 <code>seaslog.disting_type = 1</code>，则最终的log文件将是这样的三个文件</p>
+
+<ul>
+<li><p>infoLogFile = basePath / logger / INFO.20140218.log</p></li>
+<li><p>warnLogFile = basePath / logger / WARN.20140218.log</p></li>
+<li><p>erroLogFile = basePath / logger / ERRO.20140218.log</p></li>
+</ul><div class="highlight highlight-php"><pre><span class="nx">seaslog</span><span class="p">(</span><span class="s1">'this is a info'</span><span class="p">);</span>
+<span class="nx">seaslog</span><span class="p">(</span><span class="s1">'this is a error 1'</span><span class="p">,</span> <span class="nx">SEASLOG_TYPE_ERRO</span><span class="p">);</span>
+<span class="nx">seaslog</span><span class="p">(</span><span class="s1">'this is a error 2'</span><span class="p">,</span> <span class="nx">SEASLOG_TYPE_ERRO</span><span class="p">);</span>
+<span class="nx">seaslog</span><span class="p">(</span><span class="s1">'this is a warning'</span><span class="p">,</span> <span class="nx">SEASLOG_TYPE_WARN</span><span class="p">);</span>
+
+<span class="nx">seaslog</span><span class="p">(</span><span class="s1">'test error 3'</span><span class="p">,</span> <span class="nx">SEASLOG_TYPE_ERRO</span><span class="p">,</span> <span class="s1">'test/new/path'</span><span class="p">);</span>
+<span class="cm">/*</span>
+<span class="cm">seaslog()函数同时也接受第3个参数为logger的设置项</span>
+<span class="cm">注意，当last_logger == 'default'时等同于:</span>
+<span class="cm">seaslog_set_logger('test/new/path');</span>
+<span class="cm">seaslog('test error 3', SEASLOG_TYPE_ERRO);</span>
+<span class="cm">如果已经在前文使用过seaslog_set_logger函数，第3个参数的log只在此处临时使用，不影响下文。</span>
+<span class="cm">*/</span>
+</pre></div>
+
+<blockquote>
+<p>log格式统一为： <code>{type} | {pid} | {timeStamp} |{dateTime} | {logInfo}</code></p>
+
+<div class="highlight highlight-sh"><pre>ERRO <span class="p">|</span> 7670 <span class="p">|</span> 1393171368.875 <span class="p">|</span> 2014:02:24 00:02:48 <span class="p">|</span> <span class="nb">test </span>error 3
+INFO <span class="p">|</span> 7670 <span class="p">|</span> 1393171372.344 <span class="p">|</span> 2014:02:24 00:02:52 <span class="p">|</span> this is a info 
+ERRO <span class="p">|</span> 7670 <span class="p">|</span> 1393171515.336 <span class="p">|</span> 2014:02:24 00:05:15 <span class="p">|</span> this is a error 1
+ERRO <span class="p">|</span> 7670 <span class="p">|</span> 1393171609.881 <span class="p">|</span> 2014:02:24 00:06:49 <span class="p">|</span> this is a error 2
+</pre></div>
+</blockquote>
+
+<h3>
+<a name="seaslog-analyzer%E7%9A%84%E4%BD%BF%E7%94%A8" class="anchor" href="#seaslog-analyzer%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="octicon octicon-link"></span></a>SeasLog Analyzer的使用</h3>
+
+<h4>
+<a name="%E5%BF%AB%E9%80%9F%E7%BB%9F%E8%AE%A1%E6%9F%90%E7%B1%BB%E5%9E%8Blog%E7%9A%84count%E5%80%BC" class="anchor" href="#%E5%BF%AB%E9%80%9F%E7%BB%9F%E8%AE%A1%E6%9F%90%E7%B1%BB%E5%9E%8Blog%E7%9A%84count%E5%80%BC"><span class="octicon octicon-link"></span></a>快速统计某类型log的count值</h4>
+
+<p><code>SeasLog</code>在扩展中使用管道调用shell命令 <code>grep -wc</code>快速地取得count值，并返回值(array || int)给PHP。</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$countResult_1</span> <span class="o">=</span> <span class="nx">seaslog_analyzer_count</span><span class="p">();</span>
+<span class="nv">$countResult_2</span> <span class="o">=</span> <span class="nx">seaslog_analyzer_count</span><span class="p">(</span><span class="nx">SEASLOG_TYPE_WARN</span><span class="p">);</span>
+<span class="nv">$countResult_3</span> <span class="o">=</span> <span class="nx">seaslog_analyzer_count</span><span class="p">(</span><span class="nx">SEASLOG_TYPE_ERRO</span><span class="p">,</span><span class="nb">date</span><span class="p">(</span><span class="s1">'Ymd'</span><span class="p">,</span><span class="nb">time</span><span class="p">()));</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$countResult_1</span><span class="p">,</span><span class="nv">$countResult_2</span><span class="p">,</span><span class="nv">$countResult_3</span><span class="p">);</span>
+<span class="cm">/*</span>
+<span class="cm">array(3) {</span>
+<span class="cm">  'INFO' =&gt;</span>
+<span class="cm">  int(0)</span>
+<span class="cm">  'WARN' =&gt;</span>
+<span class="cm">  int(0)</span>
+<span class="cm">  'ERRO' =&gt;</span>
+<span class="cm">  int(7)</span>
+<span class="cm">}</span>
+
+<span class="cm">int(7)</span>
+
+<span class="cm">int(1)</span>
+
+<span class="cm">*/</span>
+</pre></div>
+
+<h4>
+<a name="%E8%8E%B7%E5%8F%96%E6%9F%90%E7%B1%BB%E5%9E%8Blog%E5%88%97%E8%A1%A8" class="anchor" href="#%E8%8E%B7%E5%8F%96%E6%9F%90%E7%B1%BB%E5%9E%8Blog%E5%88%97%E8%A1%A8"><span class="octicon octicon-link"></span></a>获取某类型log列表</h4>
+
+<p><code>SeasLog</code>在扩展中使用管道调用shell命令 <code>grep -w</code>快速地取得列表，并返回array给PHP。</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$detailErrorArray_inAll</span>   <span class="o">=</span> <span class="nx">seaslog_analyzer_detail</span><span class="p">(</span><span class="nx">SEASLOG_TYPE_ERRO</span><span class="p">);</span>
+<span class="nv">$detailErrorArray_today</span>   <span class="o">=</span> <span class="nx">seaslog_analyzer_detail</span><span class="p">(</span><span class="nx">SEASLOG_TYPE_ERRO</span><span class="p">,</span><span class="nb">date</span><span class="p">(</span><span class="s1">'Ymd'</span><span class="p">,</span><span class="nb">time</span><span class="p">()));</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$detailErrorArray_inAll</span><span class="p">,</span><span class="nv">$detailErrorArray_today</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm">seaslog_analyzer_detail(SEASLOG_TYPE_ERRO) == seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,'*');</span>
+<span class="cm">取当前模块下所有type为 SEASLOG_TYPE_ERRO 的信息列表:</span>
+<span class="cm">array(6) {</span>
+<span class="cm"> [0] =&gt;</span>
+<span class="cm">  string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "</span>
+<span class="cm">  [1] =&gt;</span>
+<span class="cm">  string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "</span>
+<span class="cm">  [2] =&gt;</span>
+<span class="cm">  string(66) "ERRO | 8620 | 1393172044.862 | 2014:02:24 00:14:04 | test error 3 "</span>
+<span class="cm">  [3] =&gt;</span>
+<span class="cm">  string(66) "ERRO | 8646 | 1393172045.989 | 2014:02:24 00:14:05 | test error 3 "</span>
+<span class="cm">  [4] =&gt;</span>
+<span class="cm">  string(66) "ERRO | 8672 | 1393172047.882 | 2014:02:24 00:14:07 | test error 3 "</span>
+<span class="cm">  [5] =&gt;</span>
+<span class="cm">  string(66) "ERRO | 8698 | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "</span>
+<span class="cm">}</span>
+
+<span class="cm">seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,date('Ymd',time()));</span>
+<span class="cm">只取得当前模块下，当前一天内,type为 SEASLOG_TYPE_ERRO 的信息列表:</span>
+<span class="cm">array(2) {</span>
+<span class="cm">  [0] =&gt;</span>
+<span class="cm">  string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "</span>
+<span class="cm">  [1] =&gt;</span>
+<span class="cm">  string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "</span>
+<span class="cm">}</span>
+
+<span class="cm">同理，取当月 </span>
+<span class="cm">$detailErrorArray_mouth = seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,date('Ym',time()));</span>
+
+<span class="cm">*/</span>
+</pre></div>
+
+<h3>
+<a name="%E4%BD%BF%E7%94%A8seaslog%E8%BF%9B%E8%A1%8C%E5%81%A5%E5%BA%B7%E9%A2%84%E8%AD%A6" class="anchor" href="#%E4%BD%BF%E7%94%A8seaslog%E8%BF%9B%E8%A1%8C%E5%81%A5%E5%BA%B7%E9%A2%84%E8%AD%A6"><span class="octicon octicon-link"></span></a>使用SeasLog进行健康预警</h3>
+
+<h4>
+<a name="%E9%A2%84%E8%AD%A6%E7%9A%84%E9%85%8D%E7%BD%AE" class="anchor" href="#%E9%A2%84%E8%AD%A6%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="octicon octicon-link"></span></a>预警的配置</h4>
+
+<div class="highlight highlight-conf"><pre><span class="err">[base]</span>
+<span class="nb">wait_analyz_log_path</span> = <span class="sx">/log/base_test</span>
+
+<span class="err">[fork]</span>
+<span class="err">;是否开启多线程</span> <span class="err">1开启</span> <span class="err">0关闭</span>
+<span class="nb">fork_open</span> = <span class="m">1</span>
+
+<span class="err">;线程个数</span>
+<span class="nb">fork_count</span> = <span class="m">3</span>
+
+<span class="err">[warning]</span>
+<span class="err">email[smtp_host]</span> <span class="err">=</span> <span class="err">smtp</span>.<span class="err">163</span>.<span class="nb">com</span>
+<span class="k">email</span>[smtp_port] = <span class="m">25</span>
+<span class="err">email[subject_pre]</span> <span class="err">=</span> <span class="err">预警邮件</span> <span class="err">-</span>
+<span class="err">email[smtp_user]</span> <span class="err">=</span> <span class="err">seaslogdemo@163</span>.<span class="nb">com</span>
+<span class="k">email</span>[smtp_pwd] = seaslog#demo
+<span class="err">email[mail_from]</span> <span class="err">=</span> <span class="err">seaslogdemo@163</span>.<span class="nb">com</span>
+<span class="k">email</span>[mail_to] = gaochitao@weiboyi.com
+<span class="err">email[mail_cc]</span> <span class="err">=</span> <span class="err">ciogao@gmail</span>.<span class="nb">com</span>
+<span class="k">email</span>[mail_bcc] =
+
+<span class="err">[analyz]</span>
+<span class="err">;</span> <span class="nb">enum</span>
+;info =&gt; SEASLOG_TYPE_INFO
+<span class="err">;</span><span class="nb">warn</span> =&gt; SEASLOG_TYPE_WARN
+<span class="err">;</span><span class="nb">erro</span> =&gt; SEASLOG_TYPE_ERRO
+
+<span class="err">test1[module]</span> <span class="err">=</span> <span class="err">test/</span><span class="nb">bb</span>
+test1[type] = SEASLOG_TYPE_ERRO
+<span class="err">test1[bar]</span> <span class="err">=</span> <span class="err">1</span>
+<span class="err">test1[mail_to]</span> <span class="err">=</span> <span class="err">gaochitao@weiboyi</span>.<span class="nb">com</span>
+
+test2[module] = <span class="m">222</span>
+<span class="err">test2[type]</span> <span class="err">=</span> <span class="nb">SEASLOG_TYPE_INFO</span>
+
+test3[module] = <span class="m">333</span>
+<span class="err">test3[type]</span> <span class="err">=</span> <span class="nb">SEASLOG_TYPE_WARN</span>
+
+test4[module] = <span class="m">444</span>
+<span class="err">test4[type]</span> <span class="err">=</span> <span class="nb">SEASLOG_TYPE_WARN</span>
+
+test5[module] = <span class="m">555</span>
+<span class="err">test5[type]</span> <span class="err">=</span> <span class="nb">SEASLOG_TYPE_WARN</span>
+
+</pre></div>
+
+<h4>
+<a name="crontab%E9%85%8D%E7%BD%AE" class="anchor" href="#crontab%E9%85%8D%E7%BD%AE"><span class="octicon octicon-link"></span></a>crontab配置</h4>
+
+<div class="highlight highlight-conf"><pre><span class="err">;每天凌晨3点执行</span>
+<span class="err">0</span> <span class="err">3</span> <span class="err">*</span> <span class="err">*</span> <span class="err">*</span> <span class="err">/path/to/</span><span class="nb">php</span> <span class="sx">/path/to/SeasLog/Analyzer/SeasLogAnalyzer.php</span>
+</pre></div>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Seaslog maintained by <a href="https://github.com/Neeke">Neeke</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
