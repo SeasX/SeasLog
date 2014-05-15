@@ -26,6 +26,7 @@ static int le_seaslog;
 static char *last_logger = "default";
 static char *base_path = "";
 static zend_bool disting_type = 0;
+static zend_bool disting_by_hour = 0;
 
 /* {{{ seaslog_functions[]
  *
@@ -76,6 +77,7 @@ PHP_INI_BEGIN()
     STD_PHP_INI_ENTRY("seaslog.default_logger", "default", PHP_INI_ALL, OnUpdateString, default_logger, zend_seaslog_globals, seaslog_globals)
     STD_PHP_INI_ENTRY("seaslog.logger", "default", PHP_INI_ALL, OnUpdateString, logger, zend_seaslog_globals, seaslog_globals)
     STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
+    STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour","0", PHP_INI_ALL,OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
 PHP_INI_END()
 
 /* }}} */
@@ -97,6 +99,7 @@ PHP_MINIT_FUNCTION(seaslog)
     REGISTER_INI_ENTRIES();
     base_path = SEASLOG_G(default_basepath);
     disting_type = SEASLOG_G(disting_type);
+    disting_by_hour = SEASLOG_G(disting_by_hour);
 
     REGISTER_STRINGL_CONSTANT("SEASLOG_VERSION", SEASLOG_VERSION, 	sizeof(SEASLOG_VERSION) - 1, 	CONST_PERSISTENT | CONST_CS);
     REGISTER_STRINGL_CONSTANT("SEASLOG_AUTHOR", SEASLOG_AUTHOR, 	sizeof(SEASLOG_AUTHOR) - 1, 	CONST_PERSISTENT | CONST_CS);
@@ -150,6 +153,7 @@ PHP_MINFO_FUNCTION(seaslog)
     php_info_print_table_header(2, "seaslog support", "enabled");
     php_info_print_table_row(2, "Version", SEASLOG_VERSION);
     php_info_print_table_row(2, "Author", SEASLOG_AUTHOR);
+    php_info_print_table_row(2,"Supports","https://github.com/Neeke/SeasLog");
     php_info_print_table_end();
 
     DISPLAY_INI_ENTRIES();
@@ -209,8 +213,21 @@ static char *mic_time(){
 }
 /* }}}*/
 
-/* {{{ long get_type_count(char *log_path,char *stype)*/
-static long get_type_count(char *log_path,char *stype)
+/*{{{ char *mk_real_date()*/
+static char *mk_real_date(){
+    char *_date;
+    if (disting_by_hour) {
+        _date = php_format_date("YmdH",5,(long)time(NULL),(long)time(NULL));
+        } else {
+        _date = php_format_date("Ymd",3,(long)time(NULL),(long)time(NULL));
+    }
+
+    return _date;
+}
+/*}}}*/
+
+/* {{{ long get_type_count(char *log_path,int stype)*/
+static long get_type_count(char *log_path,int stype)
 {
     FILE * fp;
     char buffer[BUFSIZ];
@@ -370,7 +387,8 @@ PHP_FUNCTION(seaslog)
 
     stype = mk_str_by_type(message_type);
 
-    _date = php_format_date("Ymd",3,(long)time(NULL),(long)time(NULL));
+    _date = mk_real_date();
+
     _time = php_format_date("Y:m:d H:i:s",11,(long)time(NULL),(long)time(NULL));
 
     //~ php_printf("%d\n",argc);

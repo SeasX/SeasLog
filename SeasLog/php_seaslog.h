@@ -17,7 +17,7 @@ extern zend_module_entry seaslog_module_entry;
 #include "TSRM.h"
 #endif
 
-#define SEASLOG_VERSION                     "0.21"
+#define SEASLOG_VERSION                     "0.22"
 #define SEASLOG_AUTHOR                      "ciogao@gmail.com"
 
 #define SEASLOG_TYPE_INFO                   (1<<0)
@@ -48,6 +48,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
 	char *default_logger;
 	char *logger;
     zend_bool disting_type;
+    zend_bool disting_by_hour;
 ZEND_END_MODULE_GLOBALS(seaslog)
 
 /* In every utility function you add that needs to use variables 
