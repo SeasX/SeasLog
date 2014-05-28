@@ -16,6 +16,9 @@ var_dump(seaslog_get_basepath());
 var_dump(seaslog('test info'));
 var_dump(seaslog('test warning', SEASLOG_TYPE_WARN));
 var_dump(seaslog('test error', SEASLOG_TYPE_ERRO));
+var_dump(seaslog('test error2', SEASLOG_TYPE_ERRO));
+var_dump(seaslog('test error3', SEASLOG_TYPE_ERRO));
+var_dump(seaslog('test error4', SEASLOG_TYPE_ERRO));
 
 
 var_dump(seaslog_set_basepath('/log/base_test'));
@@ -38,4 +41,5 @@ var_dump(seaslog_analyzer_detail(SEASLOG_TYPE_ERRO)); // == seaslog_analyzer_det
 var_dump(seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,date('Ymd',time())));
 var_dump(seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,date('Ym',time())));
 
+var_dump(seaslog_get_buffer());
 echo "\n";

@@ -72,11 +72,15 @@ seaslog.default_basepath = /log/seaslog-test    ;默认log根目录
 seaslog.default_logger = default                ;默认logger目录
 seaslog.disting_type = 1                        ;是否以type分文件 1是 0否(默认)
 seaslog.disting_by_hour = 1                     ;是否每小时划分一个文件 1是 0否(默认)
+seaslog.use_buffer = 1                          ;是否启用buffer 1是 0否(默认)
 ```
 > `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
 
 > `seaslog.disting_type = 0` 关闭以type分文件，即info\warn\erro统一记录于同一个log文件
 
+> 'seaslog.disting_by_hour = 1'开启每小时划分一个文件
+
+> 'seaslog.use_buffer = 1' 开启buffer。默认关闭。当开启此项时，日志预存于内存，当请求结束时(或异常退出时)一次写入文件。
 ## 使用
 
 ### 常量与函数
@@ -169,6 +173,15 @@ function seaslog_analyzer_count($type = 'allType',$log_path = '*')
  * @return array
  */
 function seaslog_analyzer_detail($type = SEASLOG_TYPE_ERRO,$log_path = '*')
+{
+    return array();
+}
+
+/**
+ * 获得当前日志buffer中的内容
+ * @return array
+ */
+function seaslog_get_buffer()
 {
     return array();
 }

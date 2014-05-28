@@ -41,6 +41,7 @@ PHP_FUNCTION(seaslog_get_lastlogger);
 PHP_FUNCTION(seaslog);
 PHP_FUNCTION(seaslog_analyzer_count);
 PHP_FUNCTION(seaslog_analyzer_detail);
+PHP_FUNCTION(seaslog_get_buffer);
 PHP_FUNCTION();
 
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
@@ -49,6 +50,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
 	char *logger;
     zend_bool disting_type;
     zend_bool disting_by_hour;
+    zend_bool use_buffer;
 ZEND_END_MODULE_GLOBALS(seaslog)
 
 /* In every utility function you add that needs to use variables 

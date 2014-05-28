@@ -7,8 +7,12 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "ext/standard/file.h"
+#include "ext/standard/php_string.h"
 #include "ext/date/php_date.h"
 #include "php_seaslog.h"
+#include "zend_extensions.h"
+#include <sys/resource.h>
+#include <stdlib.h>
 
 #ifdef PHP_WIN32
 #include "win32/time.h"
@@ -27,6 +31,18 @@ static char *last_logger = "default";
 static char *base_path = "";
 static zend_bool disting_type = 0;
 static zend_bool disting_by_hour = 0;
+static zend_bool use_buffer = 0;
+
+static zval *log_buffer;
+
+typedef struct sl_global_t {
+  int  started;
+  zval *log_buffer;
+
+} sl_global_t;
+
+static sl_global_t SL_globals;
+
 
 /* {{{ seaslog_functions[]
  *
@@ -40,6 +56,7 @@ const zend_function_entry seaslog_functions[] = {
     PHP_FE(seaslog_get_lastlogger,	NULL)
     PHP_FE(seaslog_analyzer_count, NULL)
     PHP_FE(seaslog_analyzer_detail, NULL)
+    PHP_FE(seaslog_get_buffer, NULL)
     PHP_FE(,	NULL)
     {NULL, NULL, NULL}	/* Must be the last line in seaslog_functions[] */
 };
@@ -78,6 +95,7 @@ PHP_INI_BEGIN()
     STD_PHP_INI_ENTRY("seaslog.logger", "default", PHP_INI_ALL, OnUpdateString, logger, zend_seaslog_globals, seaslog_globals)
     STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
     STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour","0", PHP_INI_ALL,OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
+    STD_PHP_INI_BOOLEAN("seaslog.use_buffer","0",PHP_INI_ALL,OnUpdateBool,use_buffer,zend_seaslog_globals,seaslog_globals)
 PHP_INI_END()
 
 /* }}} */
@@ -100,6 +118,7 @@ PHP_MINIT_FUNCTION(seaslog)
     base_path = SEASLOG_G(default_basepath);
     disting_type = SEASLOG_G(disting_type);
     disting_by_hour = SEASLOG_G(disting_by_hour);
+    use_buffer = SEASLOG_G(use_buffer);
 
     REGISTER_STRINGL_CONSTANT("SEASLOG_VERSION", SEASLOG_VERSION, 	sizeof(SEASLOG_VERSION) - 1, 	CONST_PERSISTENT | CONST_CS);
     REGISTER_STRINGL_CONSTANT("SEASLOG_AUTHOR", SEASLOG_AUTHOR, 	sizeof(SEASLOG_AUTHOR) - 1, 	CONST_PERSISTENT | CONST_CS);
@@ -141,6 +160,7 @@ PHP_RINIT_FUNCTION(seaslog)
  */
 PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
+	seaslog_shutdown_buffer();
     return SUCCESS;
 }
 /* }}} */
@@ -159,6 +179,140 @@ PHP_MINFO_FUNCTION(seaslog)
     DISPLAY_INI_ENTRIES();
 }
 /* }}} */
+
+
+/* {{{ void seaslog_init_buffer(TSRMLS_D)*/
+void seaslog_init_buffer(TSRMLS_D)
+{
+	if (use_buffer) {
+        if (!SL_globals.started) {
+            if (SL_globals.log_buffer) {
+                    zval_dtor(SL_globals.log_buffer);
+                    FREE_ZVAL(SL_globals.log_buffer);
+            }
+            MAKE_STD_ZVAL(SL_globals.log_buffer);
+            array_init(SL_globals.log_buffer);
+            SL_globals.started = 1;
+        }
+	}
+}
+/* }}}*/
+
+/* {{{ void seaslog_buffer_set(char *log_info,char *path)*/
+void seaslog_buffer_set(char *log_info,char *path) {
+    HashTable   *ht;
+    void        *data;
+    zval        *log_array;
+    zval        *old_log_array;
+    zval        *new_log;
+
+    if (!SL_globals.log_buffer || !(ht = HASH_OF(SL_globals.log_buffer))) {
+        return (zval *) 0;
+    }
+
+    if (zend_hash_find(ht, path, strlen(path) + 1, &data) == SUCCESS) {
+        old_log_array = *(zval **) data;
+
+        MAKE_STD_ZVAL(new_log);
+        ZVAL_STRING(new_log,log_info,1);
+
+        zend_hash_next_index_insert(Z_ARRVAL_P(old_log_array), (void *)&new_log, sizeof(zval *), NULL);
+
+    } else {
+        MAKE_STD_ZVAL(log_array);
+        array_init(log_array);
+
+        add_next_index_string(log_array, log_info, 1);
+        add_assoc_zval(SL_globals.log_buffer, path, log_array);
+    }
+}
+/* }}}*/
+
+/* {{{ int _php_log_ex(char *message, int message_len, char *opt) */
+static int _real_php_log_ex(char *message, int message_len, char *opt)
+{
+	php_stream *stream = NULL;
+
+    stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
+    if (!stream) {
+        return FAILURE;
+    }
+    php_stream_write(stream, message, message_len);
+    php_stream_close(stream);
+    return SUCCESS;
+}
+/* }}} */
+
+/* {{{ void seaslog_shutdown_buffer(TSRMLS_D)*/
+void seaslog_shutdown_buffer(TSRMLS_D)
+{
+	if (use_buffer)	{
+		if ((sizeof(SL_globals.log_buffer) / sizeof(int)) > 0) {
+        HashTable   *ht;
+        HashPosition pos;
+
+        if (!SL_globals.log_buffer || !(ht = HASH_OF(SL_globals.log_buffer))) {
+            return (zval *) 0;
+        }
+
+        for(zend_hash_internal_pointer_reset_ex(ht, &pos);
+            zend_hash_has_more_elements_ex(ht, &pos) == SUCCESS;
+            zend_hash_move_forward_ex(ht, &pos))
+            {
+                char *key;
+                uint keylen;
+                ulong idx;
+                int type;
+                int i,num;
+
+                zval **ppzval, tmpcopy;
+
+                type = zend_hash_get_current_key_ex(ht,&key, &keylen,&idx, 0, &pos);
+                if (zend_hash_get_current_data_ex(ht,(void**)&ppzval, &pos) == FAILURE) {
+                    continue;
+                }
+
+                tmpcopy = **ppzval;
+                zval_copy_ctor(&tmpcopy);
+                INIT_PZVAL(&tmpcopy);
+
+                convert_to_array(&tmpcopy);
+
+                HashTable   *ht_child;
+                zval **ppzval_child;
+                char *log_info = NULL;
+                char *log_info_tmp = NULL;
+                char *log_tmp = NULL;
+
+                ht_child = Z_ARRVAL(tmpcopy);
+                for(zend_hash_internal_pointer_reset(ht_child);
+                        zend_hash_has_more_elements(ht_child) == SUCCESS;
+                        zend_hash_move_forward(ht_child))
+                {
+                    if (zend_hash_get_current_data(ht_child, (void**)&ppzval_child) == FAILURE) {
+                        continue;
+                    }
+
+                    if (IS_STRING == Z_TYPE_PP(ppzval_child) && Z_STRLEN_PP(ppzval_child)) {
+                        log_tmp = Z_STRVAL_PP(ppzval_child);
+                        if (log_info) {
+                            log_info_tmp = log_info;
+                            spprintf(&log_info,0,"%s%s",log_info_tmp,log_tmp);
+                        } else {
+                            spprintf(&log_info,0,"%s",log_tmp);
+                        }
+
+                    }
+                }
+
+                _real_php_log_ex(log_info, strlen(log_info),key);
+
+                zval_dtor(&tmpcopy);
+            }
+        }
+	}
+}
+/* }}}*/
 
 /* {{{ char *mk_str_by_type(int stype)*/
 static char *mk_str_by_type(int stype)
@@ -355,6 +509,8 @@ PHP_FUNCTION(seaslog_set_logger)
     */
 PHP_FUNCTION(seaslog)
 {
+    seaslog_init_buffer(TSRMLS_C);
+
     char *message,*module,*log_info,*log_file_path = NULL;
     int argc = ZEND_NUM_ARGS();
     int message_len,module_len,log_len;
@@ -487,6 +643,16 @@ PHP_FUNCTION (seaslog_analyzer_detail)
 }
 /* }}} */
 
+/* {{{ proto array seaslog_get_buffer()
+    */
+PHP_FUNCTION (seaslog_get_buffer)
+{
+    if (use_buffer) {
+        RETURN_ZVAL(SL_globals.log_buffer, 1, 0);
+    }
+}
+/* }}}*/
+
 /* {{{ proto  ()
     */
 PHP_FUNCTION()
@@ -553,16 +719,12 @@ PHPAPI int _ck_log_dir(char *dir)
 /* {{{ int _php_log_ex(char *message, int message_len, char *opt) */
 PHPAPI int _php_log_ex(char *message, int message_len, char *opt) 
 {
-    php_stream *stream = NULL;
-
-    stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
-    if (!stream) {
-        return FAILURE;
-    }
-    php_stream_write(stream, message, message_len);
-    php_stream_close(stream);
-
-    return SUCCESS;
+    if (use_buffer) {
+        seaslog_buffer_set(message,opt);
+		return SUCCESS;
+	} else {
+		return _real_php_log_ex(message, message_len, opt);
+	}
 }
 /* }}} */
 

@@ -74,3 +74,12 @@ function seaslog_analyzer_detail($type = SEASLOG_TYPE_ERRO,$log_path = '*')
 {
     return array();
 }
+
+/**
+ * 获得当前日志buffer中的内容
+ * @return array
+ */
+function seaslog_get_buffer()
+{
+    return array();
+}
