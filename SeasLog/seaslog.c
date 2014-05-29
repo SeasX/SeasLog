@@ -311,6 +311,15 @@ void seaslog_shutdown_buffer(TSRMLS_D)
 
                 zval_dtor(&tmpcopy);
             }
+
+            if (SL_globals.log_buffer) {
+                zval_dtor(SL_globals.log_buffer);
+                FREE_ZVAL(SL_globals.log_buffer);
+            }
+
+            MAKE_STD_ZVAL(SL_globals.log_buffer);
+            array_init(SL_globals.log_buffer);
+            SL_globals.started = 1;
         }
 	}
 }
