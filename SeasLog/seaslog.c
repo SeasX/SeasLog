@@ -198,8 +198,8 @@ void seaslog_init_buffer(TSRMLS_D)
 }
 /* }}}*/
 
-/* {{{ void seaslog_buffer_set(char *log_info,char *path)*/
-void seaslog_buffer_set(char *log_info,char *path) {
+/* {{{ static int seaslog_buffer_set(char *log_info,char *path)*/
+static int seaslog_buffer_set(char *log_info,char *path) {
     HashTable   *ht;
     void        *data;
     zval        *log_array;
@@ -207,7 +207,7 @@ void seaslog_buffer_set(char *log_info,char *path) {
     zval        *new_log;
 
     if (!SL_globals.log_buffer || !(ht = HASH_OF(SL_globals.log_buffer))) {
-        return (zval *) 0;
+        return FAILURE;
     }
 
     if (zend_hash_find(ht, path, strlen(path) + 1, &data) == SUCCESS) {
@@ -225,6 +225,8 @@ void seaslog_buffer_set(char *log_info,char *path) {
         add_next_index_string(log_array, log_info, 1);
         add_assoc_zval(SL_globals.log_buffer, path, log_array);
     }
+
+    return SUCCESS;
 }
 /* }}}*/
 
@@ -319,8 +321,7 @@ static char *mk_str_by_type(int stype)
 {
     char *result;
     int length;
-    zval *str;
-    MAKE_STD_ZVAL(str);
+    char *str;
 
     str = SEASLOG_TYPE_INFO_STR;
     if (stype == SEASLOG_TYPE_WARN){
@@ -362,7 +363,7 @@ static char *mic_time(){
    char *tstr;
    timerclear(&now);
    gettimeofday(&now,NULL);
-   spprintf(&tstr,0,"%d.%d",time(NULL),now.tv_usec/1000);
+   spprintf(&tstr,0,"%d.%d",(long)time(NULL),(long)now.tv_usec/1000);
    return tstr;
 }
 /* }}}*/
