@@ -35,7 +35,7 @@
 <a name="seaslog" class="anchor" href="#seaslog"><span class="octicon octicon-link"></span></a>SeasLog</h1>
 
 <p>Yet a log extension for PHP.
-<a href="https://github.com/author" class="user-mention">@author</a> <a href="mailto:ciogao@gmail.com">ciogao@gmail.com</a></p>
+@author <a href="mailto:ciogao@gmail.com">ciogao@gmail.com</a></p>
 
 <blockquote>
 <hr>
@@ -129,6 +129,7 @@
 <li>可配置的默认log目录与模块</li>
 <li>指定log目录与获取当前配置</li>
 <li>初步的分析预警框架</li>
+<li>高效的日志缓冲、便捷的缓冲debug</li>
 </ul><h3>
 <a name="%E7%9B%AE%E6%A0%87%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84" class="anchor" href="#%E7%9B%AE%E6%A0%87%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84"><span class="octicon octicon-link"></span></a>目标是怎样的</h3>
 
@@ -155,16 +156,22 @@
 <span class="err">seaslog</span>.<span class="nb">default_basepath</span> = <span class="sx">/log/seaslog-test</span>    ;默认log根目录
 <span class="err">seaslog</span>.<span class="nb">default_logger</span> = default                ;默认logger目录
 <span class="err">seaslog</span>.<span class="nb">disting_type</span> = <span class="m">1</span>                        ;是否以type分文件 <span class="m">1</span>是 <span class="m">0</span>否(默认)
+<span class="err">seaslog</span>.<span class="nb">disting_by_hour</span> = <span class="m">1</span>                     ;是否每小时划分一个文件 <span class="m">1</span>是 <span class="m">0</span>否(默认)
+<span class="err">seaslog</span>.<span class="nb">use_buffer</span> = <span class="m">1</span>                          ;是否启用buffer <span class="m">1</span>是 <span class="m">0</span>否(默认)
 </pre></div>
 
 <blockquote>
 <p><code>seaslog.disting_type = 1</code> 开启以type分文件，即log文件区分info\warn\erro</p>
 
 <p><code>seaslog.disting_type = 0</code> 关闭以type分文件，即info\warn\erro统一记录于同一个log文件</p>
-</blockquote>
+
+<p>'seaslog.disting_by_hour = 1'开启每小时划分一个文件</p>
+
+<p>'seaslog.use_buffer = 1' 开启buffer。默认关闭。当开启此项时，日志预存于内存，当请求结束时(或异常退出时)一次写入文件。</p>
 
 <h2>
 <a name="%E4%BD%BF%E7%94%A8" class="anchor" href="#%E4%BD%BF%E7%94%A8"><span class="octicon octicon-link"></span></a>使用</h2>
+</blockquote>
 
 <h3>
 <a name="%E5%B8%B8%E9%87%8F%E4%B8%8E%E5%87%BD%E6%95%B0" class="anchor" href="#%E5%B8%B8%E9%87%8F%E4%B8%8E%E5%87%BD%E6%95%B0"><span class="octicon octicon-link"></span></a>常量与函数</h3>
@@ -263,6 +270,15 @@
 <span class="sd"> * @return array</span>
 <span class="sd"> */</span>
 <span class="k">function</span> <span class="nf">seaslog_analyzer_detail</span><span class="p">(</span><span class="nv">$type</span> <span class="o">=</span> <span class="nx">SEASLOG_TYPE_ERRO</span><span class="p">,</span><span class="nv">$log_path</span> <span class="o">=</span> <span class="s1">'*'</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">array</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * 获得当前日志buffer中的内容</span>
+<span class="sd"> * @return array</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">seaslog_get_buffer</span><span class="p">()</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="k">array</span><span class="p">();</span>
 <span class="p">}</span>
