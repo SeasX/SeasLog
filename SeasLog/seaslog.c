@@ -115,10 +115,7 @@ static void php_seaslog_init_globals(zend_seaslog_globals *seaslog_globals)
 PHP_MINIT_FUNCTION(seaslog)
 {
     REGISTER_INI_ENTRIES();
-    base_path = SEASLOG_G(default_basepath);
-    disting_type = SEASLOG_G(disting_type);
-    disting_by_hour = SEASLOG_G(disting_by_hour);
-    use_buffer = SEASLOG_G(use_buffer);
+    seaslog_init_logger();
 
     REGISTER_STRINGL_CONSTANT("SEASLOG_VERSION", SEASLOG_VERSION, 	sizeof(SEASLOG_VERSION) - 1, 	CONST_PERSISTENT | CONST_CS);
     REGISTER_STRINGL_CONSTANT("SEASLOG_AUTHOR", SEASLOG_AUTHOR, 	sizeof(SEASLOG_AUTHOR) - 1, 	CONST_PERSISTENT | CONST_CS);
@@ -161,6 +158,7 @@ PHP_RINIT_FUNCTION(seaslog)
 PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
 	seaslog_shutdown_buffer();
+    seaslog_init_logger();
     return SUCCESS;
 }
 /* }}} */
@@ -180,6 +178,15 @@ PHP_MINFO_FUNCTION(seaslog)
 }
 /* }}} */
 
+/* {{{ void seaslog_init_logger(TSRMLS_D)*/
+void seaslog_init_logger(TSRMLS_D)
+{
+    base_path = SEASLOG_G(default_basepath);
+    disting_type = SEASLOG_G(disting_type);
+    disting_by_hour = SEASLOG_G(disting_by_hour);
+    use_buffer = SEASLOG_G(use_buffer);
+}
+/* }}}*/
 
 /* {{{ void seaslog_init_buffer(TSRMLS_D)*/
 void seaslog_init_buffer(TSRMLS_D)
