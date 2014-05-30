@@ -168,7 +168,7 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
 PHP_MINFO_FUNCTION(seaslog)
 {
     php_info_print_table_start();
-    php_info_print_table_header(2, "seaslog support", "enabled");
+    php_info_print_table_header(2, "SeasLog support", "Enabled");
     php_info_print_table_row(2, "Version", SEASLOG_VERSION);
     php_info_print_table_row(2, "Author", SEASLOG_AUTHOR);
     php_info_print_table_row(2,"Supports","https://github.com/Neeke/SeasLog");
