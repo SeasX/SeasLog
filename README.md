@@ -1,5 +1,5 @@
 # SeasLog
-Yet a log extension for PHP.
+A effective,fast,stable log extension for PHP
 @author ciogao@gmail.com
 
 > ---
