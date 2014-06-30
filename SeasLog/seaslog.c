@@ -38,6 +38,9 @@
 #include <sys/time.h>
 #endif
 
+void seaslog_init_logger(TSRMLS_D);
+void seaslog_shutdown_buffer(TSRMLS_D);
+
 ZEND_DECLARE_MODULE_GLOBALS(seaslog)
 
 /* True global resources - no need for thread safety here */
@@ -72,7 +75,6 @@ const zend_function_entry seaslog_functions[] = {
     PHP_FE(seaslog_analyzer_count, NULL)
     PHP_FE(seaslog_analyzer_detail, NULL)
     PHP_FE(seaslog_get_buffer, NULL)
-    PHP_FE(,	NULL)
     {NULL, NULL, NULL}	/* Must be the last line in seaslog_functions[] */
 };
 /* }}} */
@@ -130,7 +132,7 @@ static void php_seaslog_init_globals(zend_seaslog_globals *seaslog_globals)
 PHP_MINIT_FUNCTION(seaslog)
 {
     REGISTER_INI_ENTRIES();
-    seaslog_init_logger();
+    seaslog_init_logger(TSRMLS_C);
 
     REGISTER_STRINGL_CONSTANT("SEASLOG_VERSION", SEASLOG_VERSION, 	sizeof(SEASLOG_VERSION) - 1, 	CONST_PERSISTENT | CONST_CS);
     REGISTER_STRINGL_CONSTANT("SEASLOG_AUTHOR", SEASLOG_AUTHOR, 	sizeof(SEASLOG_AUTHOR) - 1, 	CONST_PERSISTENT | CONST_CS);
@@ -151,9 +153,7 @@ PHP_MINIT_FUNCTION(seaslog)
  */
 PHP_MSHUTDOWN_FUNCTION(seaslog)
 {
-    /* uncomment this line if you have INI entries
     UNREGISTER_INI_ENTRIES();
-    */
     return SUCCESS;
 }
 /* }}} */
@@ -172,8 +172,8 @@ PHP_RINIT_FUNCTION(seaslog)
  */
 PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
-	seaslog_shutdown_buffer();
-    seaslog_init_logger();
+	seaslog_shutdown_buffer(TSRMLS_C);
+    seaslog_init_logger(TSRMLS_C);
     return SUCCESS;
 }
 /* }}} */
@@ -196,17 +196,15 @@ PHP_MINFO_FUNCTION(seaslog)
 /* {{{ void seaslog_init_logger(TSRMLS_D)*/
 void seaslog_init_logger(TSRMLS_D)
 {
-    base_path = SEASLOG_G(default_basepath);
-    disting_type = SEASLOG_G(disting_type);
-    disting_by_hour = SEASLOG_G(disting_by_hour);
-    use_buffer = SEASLOG_G(use_buffer);
+    SEASLOG_G(base_path) = SEASLOG_G(default_basepath);
+    SEASLOG_G(last_logger) = SEASLOG_G(default_logger);
 }
 /* }}}*/
 
 /* {{{ void seaslog_init_buffer(TSRMLS_D)*/
 void seaslog_init_buffer(TSRMLS_D)
 {
-	if (use_buffer) {
+	if (SEASLOG_G(use_buffer)) {
         if (!SL_globals.started) {
             if (SL_globals.log_buffer) {
                     zval_dtor(SL_globals.log_buffer);
@@ -221,7 +219,7 @@ void seaslog_init_buffer(TSRMLS_D)
 /* }}}*/
 
 /* {{{ static int seaslog_buffer_set(char *log_info,char *path)*/
-static int seaslog_buffer_set(char *log_info,char *path) {
+static int seaslog_buffer_set(char *log_info,char *path TSRMLS_DC) {
     HashTable   *ht;
     void        *data;
     zval        *log_array;
@@ -253,7 +251,7 @@ static int seaslog_buffer_set(char *log_info,char *path) {
 /* }}}*/
 
 /* {{{ int _php_log_ex(char *message, int message_len, char *opt) */
-static int _real_php_log_ex(char *message, int message_len, char *opt)
+static int real_php_log_ex(char *message, int message_len, char *opt)
 {
 	php_stream *stream = NULL;
 
@@ -270,7 +268,7 @@ static int _real_php_log_ex(char *message, int message_len, char *opt)
 /* {{{ void seaslog_shutdown_buffer(TSRMLS_D)*/
 void seaslog_shutdown_buffer(TSRMLS_D)
 {
-	if (use_buffer)	{
+	if (SEASLOG_G(use_buffer))	{
 		if ((sizeof(SL_globals.log_buffer) / sizeof(int)) > 0) {
         HashTable   *ht;
         HashPosition pos;
@@ -329,7 +327,7 @@ void seaslog_shutdown_buffer(TSRMLS_D)
                     }
                 }
 
-                _real_php_log_ex(log_info, strlen(log_info),key);
+                real_php_log_ex(log_info, strlen(log_info),key);
 
                 zval_dtor(&tmpcopy);
             }
@@ -343,7 +341,7 @@ void seaslog_shutdown_buffer(TSRMLS_D)
             array_init(SL_globals.log_buffer);
             SL_globals.started = 1;
         }
-	}
+    }
 }
 /* }}}*/
 
@@ -367,9 +365,9 @@ static char *mk_str_by_type(int stype)
 /* }}} */
 
 /* {{{ char *mk_real_log_path(char *log_path,char *date,char *stype)*/
-static char *mk_real_log_path(char *log_path,char *date,char *stype){
+static char *mk_real_log_path(char *log_path,char *date,char *stype TSRMLS_DC){
     char *log_file_path = NULL;
-    if (disting_type){
+    if (SEASLOG_G(disting_type)){
         spprintf(&log_file_path,0,"%s/%s.%s.log",log_path,stype,date);
     }else{
         spprintf(&log_file_path,0,"%s/%s.log",log_path,date);
@@ -400,9 +398,9 @@ static char *mic_time(){
 /* }}}*/
 
 /*{{{ char *mk_real_date()*/
-static char *mk_real_date(){
+static char *mk_real_date(TSRMLS_D){
     char *_date;
-    if (disting_by_hour) {
+    if (SEASLOG_G(disting_by_hour)) {
         _date = php_format_date("YmdH",5,(long)time(NULL),(long)time(NULL));
         } else {
         _date = php_format_date("Ymd",3,(long)time(NULL),(long)time(NULL));
@@ -413,23 +411,23 @@ static char *mk_real_date(){
 /*}}}*/
 
 /* {{{ long get_type_count(char *log_path,int stype)*/
-static long get_type_count(char *log_path,int stype)
+static long get_type_count(char *log_path,int stype TSRMLS_DC)
 {
     FILE * fp;
     char buffer[BUFSIZ];
     char *str ,*path,*_log_path,*sh;
     long count;
 
-    spprintf(&_log_path, 0, "%s/%s", base_path,last_logger);
+    spprintf(&_log_path, 0, "%s/%s", SEASLOG_G(base_path),SEASLOG_G(last_logger));
     int _ck_dir = _ck_log_dir(_log_path);
     if (_ck_dir == FAILURE){
         return 0;
     }
     
-    if (disting_type){
-        spprintf(&path,0,"%s/%s/%s.%s*",base_path,last_logger,mk_str_by_type(stype),log_path);
+    if (SEASLOG_G(disting_type)){
+        spprintf(&path,0,"%s/%s/%s.%s*",SEASLOG_G(base_path),SEASLOG_G(last_logger),mk_str_by_type(stype),log_path);
     }else{
-        spprintf(&path,0,"%s/%s/%s*",base_path,last_logger,log_path);
+        spprintf(&path,0,"%s/%s/%s*",SEASLOG_G(base_path),SEASLOG_G(last_logger),log_path);
     }
     
     spprintf(&sh,0,"more %s | grep '%s' -wc",path,mk_str_by_type(stype));
@@ -461,9 +459,9 @@ static int get_detail(char *log_path,int stype,zval *return_value TSRMLS_DC)
     array_init(return_value);
 
     if (disting_type){
-        spprintf(&path,0,"%s/%s/%s.%s*",base_path,last_logger,mk_str_by_type(stype),log_path);
+        spprintf(&path,0,"%s/%s/%s.%s*",SEASLOG_G(base_path),SEASLOG_G(last_logger),mk_str_by_type(stype),log_path);
     }else{
-        spprintf(&path,0,"%s/%s/%s*",base_path,last_logger,log_path);
+        spprintf(&path,0,"%s/%s/%s*",SEASLOG_G(base_path),SEASLOG_G(last_logger),log_path);
     }
 
     spprintf(&sh,0,"more %s | grep '%s' -w",path,mk_str_by_type(stype));
@@ -475,7 +473,7 @@ static int get_detail(char *log_path,int stype,zval *return_value TSRMLS_DC)
         return -1;
     }else{
        while((fgets(buffer,sizeof(buffer),fp))!= NULL){
-            if (strcspn(buffer,base_path) != 0){
+            if (strcspn(buffer,SEASLOG_G(base_path)) != 0){
                 add_next_index_string(return_value,delN(buffer),1);
             }
        }
@@ -498,7 +496,7 @@ PHP_FUNCTION(seaslog_set_basepath)
         return;
 
     if (argc > 0){
-        spprintf(&base_path,0,"%s",_base_path);
+        spprintf(&SEASLOG_G(base_path),0,"%s",_base_path);
         RETURN_TRUE;
     }
 
@@ -510,9 +508,16 @@ PHP_FUNCTION(seaslog_set_basepath)
     */
 PHP_FUNCTION(seaslog_get_basepath)
 {
+    char *module = NULL;
+    int argc = ZEND_NUM_ARGS();
+    int module_len;
+
+    if (zend_parse_parameters(argc TSRMLS_CC, "|s", &module, &module_len) == FAILURE)
+        return;
+
     char *str;
     int len = 0;
-    len = spprintf(&str, 0, "%s", base_path);
+    len = spprintf(&str, 0, "%s", SEASLOG_G(base_path));
     RETURN_STRINGL(str, len, 0);
 }
 /* }}} */
@@ -529,7 +534,7 @@ PHP_FUNCTION(seaslog_set_logger)
         return;
 
     if (argc > 0){
-        spprintf(&last_logger,0,"%s",module);
+        spprintf(&SEASLOG_G(last_logger),0,"%s",module);
         RETURN_TRUE;
     }
 
@@ -555,18 +560,16 @@ PHP_FUNCTION(seaslog)
     if (zend_parse_parameters(argc TSRMLS_CC, "s|ls",&message, &message_len,&message_type,&module, &module_len) == FAILURE)
         return;
 
-    TSRMLS_FETCH();
-
     if (argc > 2){
         logger = module;
-        if (strcmp(last_logger,"default") == 0){
-            spprintf(&last_logger,0,"%s",logger);
+        if (strcmp(SEASLOG_G(last_logger),"default") == 0){
+            spprintf(&SEASLOG_G(last_logger),0,"%s",logger);
         }
     }else{
-        logger = last_logger;
+        logger = SEASLOG_G(last_logger);
     }
 
-    spprintf(&_log_path, 0, "%s/%s", base_path,logger);
+    spprintf(&_log_path, 0, "%s/%s", SEASLOG_G(base_path),logger);
     _mk_log_dir(_log_path);
     
     if (argc < 2){
@@ -584,11 +587,11 @@ PHP_FUNCTION(seaslog)
     //~ php_printf("%s\n",last_logger);
     //~ php_printf("%s\n",stype);
 
-    log_file_path = mk_real_log_path(_log_path,_date,stype);
+    log_file_path = mk_real_log_path(_log_path,_date,stype TSRMLS_CC);
     
     log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n",stype,getpid(), mic_time(),_time, message);
 
-    if (_php_log_ex(log_info, log_len, log_file_path) == FAILURE) {
+    if (_php_log_ex(log_info, log_len, log_file_path TSRMLS_CC) == FAILURE) {
         RETURN_FALSE;
     }
 
@@ -602,7 +605,7 @@ PHP_FUNCTION(seaslog_get_lastlogger)
 {
     char *str;
     int len = 0;
-    len = spprintf(&str, 0, "%s", last_logger);
+    len = spprintf(&str, 0, "%s", SEASLOG_G(last_logger));
     RETURN_STRINGL(str, len, 0);
 }
 /* }}} */
@@ -679,22 +682,12 @@ PHP_FUNCTION (seaslog_analyzer_detail)
     */
 PHP_FUNCTION (seaslog_get_buffer)
 {
-    if (use_buffer) {
+    if (SEASLOG_G(use_buffer)) {
         RETURN_ZVAL(SL_globals.log_buffer, 1, 0);
     }
 }
 /* }}}*/
 
-/* {{{ proto  ()
-    */
-PHP_FUNCTION()
-{
-    if (zend_parse_parameters_none() == FAILURE) {
-        return;
-    }
-    php_error(E_WARNING, ": not yet implemented");
-}
-/* }}} */
 
 /* {{{ int _mk_log_dir(char *dir) */
 PHPAPI int _mk_log_dir(char *dir)
@@ -749,13 +742,13 @@ PHPAPI int _ck_log_dir(char *dir)
 /* }}} */
 
 /* {{{ int _php_log_ex(char *message, int message_len, char *opt) */
-PHPAPI int _php_log_ex(char *message, int message_len, char *opt) 
+PHPAPI int _php_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
 {
-    if (use_buffer) {
-        seaslog_buffer_set(message,opt);
+    if (SEASLOG_G(use_buffer)) {
+        seaslog_buffer_set(message,opt TSRMLS_CC);
 		return SUCCESS;
 	} else {
-		return _real_php_log_ex(message, message_len, opt);
+		return real_php_log_ex(message, message_len, opt);
 	}
 }
 /* }}} */

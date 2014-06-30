@@ -42,12 +42,13 @@ PHP_FUNCTION(seaslog);
 PHP_FUNCTION(seaslog_analyzer_count);
 PHP_FUNCTION(seaslog_analyzer_detail);
 PHP_FUNCTION(seaslog_get_buffer);
-PHP_FUNCTION();
 
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
 	char *default_basepath;
 	char *default_logger;
 	char *logger;
+	char *last_logger;
+	char *base_path;
     zend_bool disting_type;
     zend_bool disting_by_hour;
     zend_bool use_buffer;
