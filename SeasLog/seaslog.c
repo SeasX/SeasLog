@@ -472,7 +472,7 @@ static int get_detail(char *log_path,int stype,zval *return_value TSRMLS_DC)
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to fork [%s]", sh);
         return -1;
     }else{
-       while((fgets(buffer,sizeof(buffer),fp))!= NULL){
+       while((fgets(buffer,sizeof(buffer),fp)) != NULL){
             if (strcspn(buffer,SEASLOG_G(base_path)) != 0){
                 add_next_index_string(return_value,delN(buffer),1);
             }
@@ -665,11 +665,7 @@ PHP_FUNCTION (seaslog_analyzer_detail)
     if (argc < 2){
         log_path = "*";
     }else{
-        if (type == SEASLOG_TYPE_INFO){
-            type = SEASLOG_TYPE_INFO;
-        }else if(type == SEASLOG_TYPE_WARN){
-            type = SEASLOG_TYPE_WARN;
-        }else{
+        if (type != SEASLOG_TYPE_INFO && type != SEASLOG_TYPE_WARN){
             type = SEASLOG_TYPE_ERRO;
         }
     }
