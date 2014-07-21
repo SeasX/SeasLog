@@ -39,7 +39,7 @@
 #endif
 
 void seaslog_init_logger(TSRMLS_D);
-void seaslog_shutdown_buffer(TSRMLS_D);
+static int seaslog_shutdown_buffer(TSRMLS_D);
 
 ZEND_DECLARE_MODULE_GLOBALS(seaslog)
 
@@ -265,8 +265,8 @@ static int real_php_log_ex(char *message, int message_len, char *opt)
 }
 /* }}} */
 
-/* {{{ void seaslog_shutdown_buffer(TSRMLS_D)*/
-void seaslog_shutdown_buffer(TSRMLS_D)
+/* {{{ static int seaslog_shutdown_buffer(TSRMLS_D)*/
+static int seaslog_shutdown_buffer(TSRMLS_D)
 {
 	if (SEASLOG_G(use_buffer))	{
 		if ((sizeof(SL_globals.log_buffer) / sizeof(int)) > 0) {
@@ -274,7 +274,7 @@ void seaslog_shutdown_buffer(TSRMLS_D)
         HashPosition pos;
 
         if (!SL_globals.log_buffer || !(ht = HASH_OF(SL_globals.log_buffer))) {
-            return (zval *) 0;
+            return FAILURE;
         }
 
         for(zend_hash_internal_pointer_reset_ex(ht, &pos);
@@ -340,8 +340,12 @@ void seaslog_shutdown_buffer(TSRMLS_D)
             MAKE_STD_ZVAL(SL_globals.log_buffer);
             array_init(SL_globals.log_buffer);
             SL_globals.started = 1;
+
+            return SUCCESS;
         }
     }
+
+    return SUCCESS;
 }
 /* }}}*/
 
@@ -392,7 +396,7 @@ static char *mic_time(){
    char *tstr;
    timerclear(&now);
    gettimeofday(&now,NULL);
-   spprintf(&tstr,0,"%d.%d",(long)time(NULL),(long)now.tv_usec/1000);
+   spprintf(&tstr,0,"%ld.%ld",(long)time(NULL),(long)now.tv_usec/1000);
    return tstr;
 }
 /* }}}*/
@@ -437,7 +441,7 @@ static long get_type_count(char *log_path,int stype TSRMLS_DC)
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to fork [%s]", sh);
         return -1;
     }else{
-        fgets(buffer, sizeof(buffer), fp);
+        char *temp_p = fgets(buffer, sizeof(buffer), fp);
         pclose(fp);
     }
 

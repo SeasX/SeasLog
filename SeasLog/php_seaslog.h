@@ -17,8 +17,8 @@ extern zend_module_entry seaslog_module_entry;
 #include "TSRM.h"
 #endif
 
-#define SEASLOG_VERSION                     "0.22"
-#define SEASLOG_AUTHOR                      "ciogao@gmail.com"
+#define SEASLOG_VERSION                     "0.23"
+#define SEASLOG_AUTHOR                      "neeke@php.net"
 
 #define SEASLOG_TYPE_INFO                   (1<<0)
 #define SEASLOG_TYPE_WARN                   (1<<1)
