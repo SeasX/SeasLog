@@ -17,12 +17,12 @@ class analyzerBase
             throw new \Exception('$configKey can`t be empty || $config must be an array.');
         }
 
-        seaslog_set_logger($config['module']);
+        \SeasLog::setLogger($config['module']);
 
-        $logType = intval($config['type']);
-        if ($logType < 1) $logType = SEASLOG_TYPE_ERRO;
+        $logLevel = intval($config['level']);
+        if (empty($logLevel)) $logLevel = SEASLOG_ERROR;
 
-        $_analyzer_count = seaslog_analyzer_count($logType);
+        $_analyzer_count = \SeasLog::analyzerCount($logLevel);
 
         $_count_bar = array_key_exists('bar', $config) ? intval($config['bar']) : 1;
 
@@ -35,7 +35,7 @@ class analyzerBase
             $subject = ' report - ' . $configKey . ' - ' . date('Y-m-d H:i:s', time());
             $_title  = $config['module'] . ' 检测到 ' . $_analyzer_count . "个问题\n\n";
 
-            $_detail = seaslog_analyzer_detail($logType);
+            $_detail = \SeasLog::analyzerDetail($logLevel);
             $_detail = '以下是此次检测详情<br /><br />' . implode("<br />", $_detail);
             $content = mailTpl::processMail($_title, $_detail, 'processed time ' . date('Y-m-d H:i:s', time()));
             alarmer::instanse()->SendEmail($subject, $content, $to, $cc, $bcc);

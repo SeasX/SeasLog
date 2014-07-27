@@ -13,13 +13,13 @@ use core\analyzer as coreRun;
 class analyzer
 {
     //当前版本
-    const SEASLOG_ANALYZER_VERSION = 0.1;
+    const SEASLOG_ANALYZER_VERSION = 0.2;
 
     static public function run()
     {
         config::getConfig();
 
-        seaslog_set_basepath(config::getAnalyzerPath());
+        \SeasLog::setBasePath(config::getAnalyzerPath());
 
         if ($forkCount = config::getForkCount()) {
             coreRun\pcntl::setForkCount($forkCount);

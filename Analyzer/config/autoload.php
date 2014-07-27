@@ -5,10 +5,13 @@
  */
 function seaslog_autoloader($class)
 {
-    $filename = BASE_PATH . '/' . str_replace('\\', '/', $class) . '.php';
-    include_once "$filename";
+
+    if (!class_exists($class)) {
+        $filename = BASE_PATH . '/' . str_replace('\\', '/', $class) . '.php';
+        include_once "$filename";
+    }
 }
 
 spl_autoload_register('seaslog_autoloader');
 
-seaslog_set_basepath(BASE_PATH . '/result');
+\SeasLog::setBasePath(BASE_PATH . '/result');

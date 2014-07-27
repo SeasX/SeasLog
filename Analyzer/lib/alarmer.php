@@ -16,6 +16,7 @@ class alarmer
     public static function instanse()
     {
         if (self::$self == NULL) self::$self = new self;
+
         return self::$self;
     }
 
@@ -74,7 +75,7 @@ class alarmer
         $sendResult = $mail->Send();
 
         if (!$sendResult) {
-            seaslog(sprintf("报警邮件发送失败。%s\n", $mail->ErrorInfo), SEASLOG_TYPE_ERRO, 'alarmer');
+            Seaslog::error('报警邮件发送失败。{errorInfo}', array('{errirInfo}' => $mail->ErrorInfo), 'alarmer');
         }
 
         return $sendResult;
