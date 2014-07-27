@@ -1,36 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Seaslog : A effective,fast,stable log extension for PHP" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Seaslog by Neeke</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Seaslog</title>
   </head>
-
   <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/Neeke/SeasLog">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/Neeke/SeasLog/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/Neeke/SeasLog/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/Neeke/SeasLog">View on GitHub</a>
+    <div class="wrapper">
 
-          <h1 id="project_title">Seaslog</h1>
-          <h2 id="project_tagline">A effective,fast,stable log extension for PHP</h2>
+      <section>
+        <div id="title">
+          <h1>Seaslog</h1>
+          <p>A effective,fast,stable log extension for PHP</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/Neeke">Neeke</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/Neeke/SeasLog/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/Neeke/SeasLog/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
         <h1>
 <a name="seaslog" class="anchor" href="#seaslog"><span class="octicon octicon-link"></span></a>SeasLog</h1>
 
@@ -485,9 +492,9 @@ log文件名，以 <code>年月日</code> 分文件，如今天是2014年02月18
 <span class="cm">/*</span>
 <span class="cm">这些函数同时也接受第3个参数为logger的设置项</span>
 <span class="cm">注意，当last_logger == 'default'时等同于:</span>
-<span class="cm">seaslog_set_logger('test/new/path');</span>
-<span class="cm">seaslog('test error 3', SEASLOG_TYPE_ERRO);</span>
-<span class="cm">如果已经在前文使用过seaslog_set_logger函数，第3个参数的log只在此处临时使用，不影响下文。</span>
+<span class="cm">SeasLog::setLogger('test/new/path');</span>
+<span class="cm">SeasLog::error('test error 3');</span>
+<span class="cm">如果已经在前文使用过SeasLog::setLogger()函数，第3个参数的log只在此处临时使用，不影响下文。</span>
 <span class="cm">*/</span>
 </pre></div>
 
@@ -657,17 +664,9 @@ test5[level]<span class="w"> </span>=<span class="w"> </span>SEASLOG_DEBUG<span 
 <span class="m">0</span><span class="w"> </span><span class="m">3</span><span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>*<span class="w"> </span>/path/to/php<span class="w"> </span>/path/to/SeasLog/Analyzer/SeasLogAnalyzer.php<span class="w"></span>
 </pre></div>
       </section>
-    </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Seaslog maintained by <a href="https://github.com/Neeke">Neeke</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
     </div>
-
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
-
   </body>
 </html>
