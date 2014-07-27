@@ -17,16 +17,18 @@ extern zend_module_entry seaslog_module_entry;
 #include "TSRM.h"
 #endif
 
-#define SEASLOG_VERSION                     "0.23"
-#define SEASLOG_AUTHOR                      "neeke@php.net"
+#define SEASLOG_RES_NAME                    "SeasLog"
+#define SEASLOG_VERSION                     "0.26"
+#define SEASLOG_AUTHOR                      "Chitao.Gao [neeke@php.net]"
 
-#define SEASLOG_TYPE_INFO                   (1<<0)
-#define SEASLOG_TYPE_WARN                   (1<<1)
-#define SEASLOG_TYPE_ERRO                   (1<<1) + 1
-
-#define SEASLOG_TYPE_INFO_STR                       "INFO"
-#define SEASLOG_TYPE_WARN_STR                       "WARN"
-#define SEASLOG_TYPE_ERRO_STR                       "ERRO"
+#define SEASLOG_DEBUG                       "debug"
+#define SEASLOG_INFO                        "info"
+#define SEASLOG_NOTICE                      "notice"
+#define SEASLOG_WARNING                     "warning"
+#define SEASLOG_ERROR                       "error"
+#define SEASLOG_CRITICAL                    "critical"
+#define SEASLOG_ALERT                       "alert"
+#define SEASLOG_EMERGENCY                   "emergency"
 
 PHP_MINIT_FUNCTION(seaslog);
 PHP_MSHUTDOWN_FUNCTION(seaslog);
@@ -34,14 +36,28 @@ PHP_RINIT_FUNCTION(seaslog);
 PHP_RSHUTDOWN_FUNCTION(seaslog);
 PHP_MINFO_FUNCTION(seaslog);
 
-PHP_FUNCTION(seaslog_set_basepath);
-PHP_FUNCTION(seaslog_get_basepath);
-PHP_FUNCTION(seaslog_set_logger);
-PHP_FUNCTION(seaslog_get_lastlogger);
-PHP_FUNCTION(seaslog);
-PHP_FUNCTION(seaslog_analyzer_count);
-PHP_FUNCTION(seaslog_analyzer_detail);
-PHP_FUNCTION(seaslog_get_buffer);
+PHP_FUNCTION(seaslog_get_version);
+PHP_FUNCTION(seaslog_get_author);
+
+zend_class_entry *seaslog_ce;
+PHP_METHOD(SEASLOG_RES_NAME,__construct);
+PHP_METHOD(SEASLOG_RES_NAME,__destruct);
+PHP_METHOD(SEASLOG_RES_NAME,setBasePath);
+PHP_METHOD(SEASLOG_RES_NAME,getBasePath);
+PHP_METHOD(SEASLOG_RES_NAME,setLogger);
+PHP_METHOD(SEASLOG_RES_NAME,getLastLogger);
+PHP_METHOD(SEASLOG_RES_NAME,analyzerCount);
+PHP_METHOD(SEASLOG_RES_NAME,analyzerDetail);
+PHP_METHOD(SEASLOG_RES_NAME,getBuffer);
+PHP_METHOD(SEASLOG_RES_NAME,log);
+PHP_METHOD(SEASLOG_RES_NAME,debug);
+PHP_METHOD(SEASLOG_RES_NAME,info);
+PHP_METHOD(SEASLOG_RES_NAME,notice);
+PHP_METHOD(SEASLOG_RES_NAME,warning);
+PHP_METHOD(SEASLOG_RES_NAME,error);
+PHP_METHOD(SEASLOG_RES_NAME,critical);
+PHP_METHOD(SEASLOG_RES_NAME,alert);
+PHP_METHOD(SEASLOG_RES_NAME,emergency);
 
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
 	char *default_basepath;
