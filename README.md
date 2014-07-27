@@ -1,6 +1,6 @@
 # SeasLog
 A effective,fast,stable log extension for PHP
-@author ciogao@gmail.com
+@author Chitao.Gao [neeke@php.net]
 
 > ---
 - **[简介](#简介)**
@@ -375,9 +375,9 @@ SeasLog::emergency('Just now, the house next door was completely burnt out! {not
 /*
 这些函数同时也接受第3个参数为logger的设置项
 注意，当last_logger == 'default'时等同于:
-seaslog_set_logger('test/new/path');
-seaslog('test error 3', SEASLOG_TYPE_ERRO);
-如果已经在前文使用过seaslog_set_logger函数，第3个参数的log只在此处临时使用，不影响下文。
+SeasLog::setLogger('test/new/path');
+SeasLog::error('test error 3');
+如果已经在前文使用过SeasLog::setLogger()函数，第3个参数的log只在此处临时使用，不影响下文。
 */
 ```
 > log格式统一为： `{type} | {pid} | {timeStamp} |{dateTime} | {logInfo}`
