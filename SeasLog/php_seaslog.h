@@ -18,7 +18,7 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "0.26"
+#define SEASLOG_VERSION                     "1.0.0"
 #define SEASLOG_AUTHOR                      "Chitao.Gao [neeke@php.net]"
 
 #define SEASLOG_DEBUG                       "debug"
