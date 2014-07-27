@@ -85,15 +85,21 @@ seaslog.use_buffer = 1                          ;是否启用buffer 1是 0否(�
 
 ### 常量与函数
 #### 常量列表
-* SEASLOG_TYPE_INFO = 1
-* SEASLOG_TYPE_WARN = 2
-* SEASLOG_TYPE_ERRO = 3
+`SeasLog 共将日志分成8个级别`
+* SEASLOG_DEBUG                       "debug"
+* SEASLOG_INFO                        "info"
+* SEASLOG_NOTICE                      "notice"
+* SEASLOG_WARNING                     "warning"
+* SEASLOG_ERROR                       "error"
+* SEASLOG_CRITICAL                    "critical"
+* SEASLOG_ALERT                       "alert"
+* SEASLOG_EMERGENCY                   "emergency"
 ```php
-var_dump(SEASLOG_TYPE_INFO,SEASLOG_TYPE_WARN,SEASLOG_TYPE_ERRO);
+var_dump(SEASLOG_DEBUG,SEASLOG_INFO,SEASLOG_NOTICE);
 /*
-int(1) info类型
-int(2) warn类型
-int(3) erro类型
+string('debug') debug级别
+string('info')  info级别
+string('notice') notice级别
 */
 ```
 #### 函数列表
@@ -105,96 +111,199 @@ int(3) erro类型
  * @author ciogao@gmail.com
  * Date: 14-1-27 下午4:47
  */
-/**
- * 设置basePath
- * @param $basePath
- * @return bool
- */
-function seaslog_set_basepath($basePath)
+
+class SeasLog
 {
-    return TRUE;
+    public function __construct()
+    {
+        #SeasLog init
+    }
+
+    public function __destruct()
+    {
+        #SeasLog distroy
+    }
+
+    /**
+     * 设置basePath
+     * @param $basePath
+     * @return bool
+     */
+    static public function setBasePath($basePath)
+    {
+        return TRUE;
+    }
+
+    /**
+     * 获取basePath
+     * @return string
+     */
+    static public function getBasePath()
+    {
+        return 'the base_path';
+    }
+
+    /**
+     * 设置模块目录
+     * @param $module
+     * @return bool
+     */
+    static public function setLogger($module)
+    {
+        return TRUE;
+    }
+
+    /**
+     * 获取最后一次设置的模块目录
+     * @return string
+     */
+    static public function getLastLogger()
+    {
+        return 'the lastLogger';
+    }
+
+    /**
+     * 统计所有类型（或单个类型）行数
+     * @param $level
+     * @param string $log_path
+     * @return array | long
+     */
+    static public function analyzerCount($level = 'all',$log_path = '*')
+    {
+        return array();
+    }
+
+    /**
+     * 以数组形式，快速取出某类型log的各行详情
+     * @param $level
+     * @param string $log_path
+     * @return array
+     */
+    static public function analyzerDetail($level = SEASLOG_INFO,$log_path = '*')
+    {
+        return array();
+    }
+
+    /**
+     * 获得当前日志buffer中的内容
+     * @return array
+     */
+    static public function getBuffer()
+    {
+        return array();
+    }
+
+    /**
+     * 记录debug日志
+     * @param $message
+     * @param array $content
+     * @param string $module
+     */
+    static public function debug($message,array $content = array(),$module = '')
+    {
+        #$level = SEASLOG_DEBUG
+    }
+
+    /**
+     * 记录info日志
+     * @param $message
+     * @param array $content
+     * @param string $module
+     */
+    static public function info($message,array $content = array(),$module = '')
+    {
+        #$level = SEASLOG_INFO
+    }
+
+    /**
+     * 记录notice日志
+     * @param $message
+     * @param array $content
+     * @param string $module
+     */
+    static public function notice($message,array $content = array(),$module = '')
+    {
+        #$level = SEASLOG_NOTICE
+    }
+
+    /**
+     * 记录warning日志
+     * @param $message
+     * @param array $content
+     * @param string $module
+     */
+    static public function warning($message,array $content = array(),$module = '')
+    {
+        #$level = SEASLOG_WARNING
+    }
+
+    /**
+     * 记录error日志
+     * @param $message
+     * @param array $content
+     * @param string $module
+     */
+    static public function error($message,array $content = array(),$module = '')
+    {
+        #$level = SEASLOG_ERROR
+    }
+
+    /**
+     * 记录critical日志
+     * @param $message
+     * @param array $content
+     * @param string $module
+     */
+    static public function critical($message,array $content = array(),$module = '')
+    {
+        #$level = SEASLOG_CRITICAL
+    }
+
+    /**
+     * 记录alert日志
+     * @param $message
+     * @param array $content
+     * @param string $module
+     */
+    static public function alert($message,array $content = array(),$module = '')
+    {
+        #$level = SEASLOG_ALERT
+    }
+
+    /**
+     * 记录emergency日志
+     * @param $message
+     * @param array $content
+     * @param string $module
+     */
+    static public function emergency($message,array $content = array(),$module = '')
+    {
+        #$level = SEASLOG_EMERGENCY
+    }
+
+    /**
+     * 通用日志方法
+     * @param $level
+     * @param $message
+     * @param array $content
+     * @param string $module
+     */
+    static public function log($level,$message,array $content = array(),$module = '')
+    {
+
+    }
 }
 
-/**
- * 获取basePath
- * @return string
- */
-function seaslog_get_basepath()
-{
-    return 'the base_path';
-}
-
-/**
- * 设置模块目录
- * @param $module
- * @return bool
- */
-function seaslog_set_logger($module)
-{
-    return TRUE;
-}
-
-/**
- * 获取最后一次设置的模块目录
- * @return string
- */
-function seaslog_get_lastlogger()
-{
-    return 'the lastLogger';
-}
-
-/**
- * 快速写入log
- * @param $msg
- * @param string $module
- * @param int $type
- * @return bool
- */
-function seaslog($msg, $type = SEASLOG_TYPE_INFO, $module = 'defaultPath')
-{
-    return TRUE;
-}
-
-/**
- * 统计所有类型（或单个类型）行数
- * @param string $type
- * @param string $log_path
- * @return array | long
- */
-function seaslog_analyzer_count($type = 'allType',$log_path = '*')
-{
-    return array();
-}
-
-/**
- * 以数组形式，快速取出某类型log的各行详情
- * @param $type
- * @param string $log_path
- * @return array
- */
-function seaslog_analyzer_detail($type = SEASLOG_TYPE_ERRO,$log_path = '*')
-{
-    return array();
-}
-
-/**
- * 获得当前日志buffer中的内容
- * @return array
- */
-function seaslog_get_buffer()
-{
-    return array();
-}
 
 ```
 
 ### SeasLog Logger的使用
 #### 获取与设置basePath
 ```php
-$basePath_1 = seaslog_get_basepath();
+$basePath_1 = SeasLog::getBasePath();
 
-seaslog_set_basepath('/log/base_test');
-$basePath_2 = seaslog_get_basepath();
+SeasLog::setBasePath('/log/base_test');
+$basePath_2 = SeasLog::getBasePath();
 
 var_dump($basePath_1,$basePath_2);
 
@@ -203,16 +312,16 @@ string(19) "/log/seaslog-ciogao"
 string(14) "/log/base_test"
 */
 ```
-> 直接使用 `seaslog_get_basepath()`，将获取php.ini(seaslog.ini)中设置的 `seaslog.default_basepath` 的值。
+> 直接使用 `SeasLog::getBasePath()`，将获取php.ini(seaslog.ini)中设置的 `seaslog.default_basepath` 的值。
 
-> 使用 `seaslog_set_basepath()` 函数，将改变 `seaslog_get_basepath()` 的取值。
+> 使用 `SeasLog::getBasePath()` 函数，将改变 `seaslog_get_basepath()` 的取值。
 
 #### 设置logger与获取lastLogger
 ```php
-$lastLogger_1 = seaslog_get_lastlogger();
+$lastLogger_1 = SeasLog::getLastLogger();
 
-seaslog_set_logger('testModule/app1');
-$lastLogger_2 = seaslog_get_lastlogger();
+SeasLog::setLogger('testModule/app1');
+$lastLogger_2 = SeasLog::getLastLogger();
 
 var_dump($lastLogger_1,$lastLogger_2);
 /*
@@ -222,9 +331,9 @@ string(15) "testModule/app1"
 ```
 > 与basePath相类似的，
 
-> 直接使用 `seaslog_get_lastlogger()`，将获取php.ini(seaslog.ini)中设置的 `seaslog.default_logger` 的值。
+> 直接使用 `SeasLog::getLastLogger()`，将获取php.ini(seaslog.ini)中设置的 `seaslog.default_logger` 的值。
 
-> 使用 `seaslog_set_logger()` 函数，将改变 `seaslog_get_lastlogger()` 的取值。
+> 使用 `SeasLog::setLogger()` 函数，将改变 `SeasLog::getLastLogger()` 的取值。
 
 #### 快速写入log
 上面已经设置过了basePath与logger，于是log记录的目录已经产生了，
@@ -244,14 +353,27 @@ log文件名，以 `年月日` 分文件，如今天是2014年02月18日期，�
 * erroLogFile = basePath / logger / ERRO.20140218.log
 
 ```php
-seaslog('this is a info');
-seaslog('this is a error 1', SEASLOG_TYPE_ERRO);
-seaslog('this is a error 2', SEASLOG_TYPE_ERRO);
-seaslog('this is a warning', SEASLOG_TYPE_WARN);
 
-seaslog('test error 3', SEASLOG_TYPE_ERRO, 'test/new/path');
+SeasLog::log(SEASLOG_ERROR,'this is a error test by ::log');
+
+SeasLog::debug('this is a {userName} debug',array('{userName}' => 'neeke'));
+
+SeasLog::info('this is a info log');
+
+SeasLog::notice('this is a notice log');
+
+SeasLog::warning('your {website} was down,please {action} it ASAP!',array('{website}' => 'github.com','{action}' => 'rboot'));
+
+SeasLog::error('a error log');
+
+SeasLog::critical('some thing was critical');
+
+SeasLog::alert('yes this is a {messageName}',array('{messageName}' => 'alertMSG'));
+
+SeasLog::emergency('Just now, the house next door was completely burnt out! {note}',array('{note}' => 'it`s a joke'));
+
 /*
-seaslog()函数同时也接受第3个参数为logger的设置项
+这些函数同时也接受第3个参数为logger的设置项
 注意，当last_logger == 'default'时等同于:
 seaslog_set_logger('test/new/path');
 seaslog('test error 3', SEASLOG_TYPE_ERRO);
@@ -260,30 +382,53 @@ seaslog('test error 3', SEASLOG_TYPE_ERRO);
 ```
 > log格式统一为： `{type} | {pid} | {timeStamp} |{dateTime} | {logInfo}`
 ```sh
-ERRO | 7670 | 1393171368.875 | 2014:02:24 00:02:48 | test error 3
-INFO | 7670 | 1393171372.344 | 2014:02:24 00:02:52 | this is a info 
-ERRO | 7670 | 1393171515.336 | 2014:02:24 00:05:15 | this is a error 1
-ERRO | 7670 | 1393171609.881 | 2014:02:24 00:06:49 | this is a error 2
+error | 23625 | 1406422432.786 | 2014:07:27 08:53:52 | this is a error test by ::log
+
+debug | 23625 | 1406422432.786 | 2014:07:27 08:53:52 | this is a neeke debug
+
+info | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | this is a info log
+
+notice | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | this is a notice log
+
+warning | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | your github.com was down,please rboot it ASAP!
+
+error | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | a error log
+
+critical | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | some thing was critical
+
+emergency | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house next door was completely burnt out! it`s a joke
+
 ```
 
 ### SeasLog Analyzer的使用
 #### 快速统计某类型log的count值
 `SeasLog`在扩展中使用管道调用shell命令 `grep -wc`快速地取得count值，并返回值(array || int)给PHP。
 ```php
-$countResult_1 = seaslog_analyzer_count();
-$countResult_2 = seaslog_analyzer_count(SEASLOG_TYPE_WARN);
-$countResult_3 = seaslog_analyzer_count(SEASLOG_TYPE_ERRO,date('Ymd',time()));
+$countResult_1 = SeasLog::analyzerCount();
+$countResult_2 = SeasLog::analyzerCount(SEASLOG_WARNING);
+$countResult_3 = SeasLog::analyzerCount(SEASLOG_ERRO,date('Ymd',time()));
 
 var_dump($countResult_1,$countResult_2,$countResult_3);
 /*
-array(3) {
-  'INFO' =>
-  int(0)
-  'WARN' =>
-  int(0)
-  'ERRO' =>
-  int(7)
+array(8) {
+  ["debug"]=>
+  int(3)
+  ["info"]=>
+  int(3)
+  ["notice"]=>
+  int(3)
+  ["warning"]=>
+  int(3)
+  ["error"]=>
+  int(6)
+  ["critical"]=>
+  int(3)
+  ["alert"]=>
+  int(3)
+  ["emergency"]=>
+  int(3)
 }
+
 
 int(7)
 
@@ -294,14 +439,14 @@ int(1)
 #### 获取某类型log列表
 `SeasLog`在扩展中使用管道调用shell命令 `grep -w`快速地取得列表，并返回array给PHP。
 ```php
-$detailErrorArray_inAll   = seaslog_analyzer_detail(SEASLOG_TYPE_ERRO);
-$detailErrorArray_today   = seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,date('Ymd',time()));
+$detailErrorArray_inAll   = SeasLog::analyzerDetail(SEASLOG_ERRO);
+$detailErrorArray_today   = SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ymd',time()));
 
 var_dump($detailErrorArray_inAll,$detailErrorArray_today);
 
 /*
-seaslog_analyzer_detail(SEASLOG_TYPE_ERRO) == seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,'*');
-取当前模块下所有type为 SEASLOG_TYPE_ERRO 的信息列表:
+SeasLog::analyzerDetail(SEASLOG_ERRO) == SeasLog::analyzerDetail(SEASLOG_ERRO,'*');
+取当前模块下所有level为 SEASLOG_ERRO 的信息列表:
 array(6) {
  [0] =>
   string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
@@ -317,8 +462,8 @@ array(6) {
   string(66) "ERRO | 8698 | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "
 }
 
-seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,date('Ymd',time()));
-只取得当前模块下，当前一天内,type为 SEASLOG_TYPE_ERRO 的信息列表:
+SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ymd',time()));
+只取得当前模块下，当前一天内,level为SEASLOG_ERRO 的信息列表:
 array(2) {
   [0] =>
   string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
@@ -327,7 +472,7 @@ array(2) {
 }
 
 同理，取当月 
-$detailErrorArray_mouth = seaslog_analyzer_detail(SEASLOG_TYPE_ERRO,date('Ym',time()));
+$detailErrorArray_mouth = SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ym',time()));
 
 */
 ```
@@ -358,26 +503,31 @@ email[mail_bcc] =
 
 [analyz]
 ; enum
-;info => SEASLOG_TYPE_INFO
-;warn => SEASLOG_TYPE_WARN
-;erro => SEASLOG_TYPE_ERRO
+; SEASLOG_DEBUG      "debug"
+; SEASLOG_INFO       "info"
+; SEASLOG_NOTICE     "notice"
+; SEASLOG_WARNING    "warning"
+; SEASLOG_ERROR      "error"
+; SEASLOG_CRITICAL   "critical"
+; SEASLOG_ALERT      "alert"
+; SEASLOG_EMERGENCY  "emergency"
 
 test1[module] = test/bb
-test1[type] = SEASLOG_TYPE_ERRO
+test1[level] = SEASLOG_ERROR
 test1[bar] = 1
 test1[mail_to] = gaochitao@weiboyi.com
 
 test2[module] = 222
-test2[type] = SEASLOG_TYPE_INFO
+test2[level] = SEASLOG_WARNING
 
 test3[module] = 333
-test3[type] = SEASLOG_TYPE_WARN
+test3[level] = SEASLOG_CRITICAL
 
 test4[module] = 444
-test4[type] = SEASLOG_TYPE_WARN
+test4[level] = SEASLOG_EMERGENCY
 
 test5[module] = 555
-test5[type] = SEASLOG_TYPE_WARN
+test5[level] = SEASLOG_DEBUG
 
 ```
 #### crontab配置
