@@ -10,6 +10,7 @@
         - Specify the log directory and get the current configuration
         - Analysis of early warning framework preliminary
         - Buffer debug efficient log buffer, convenient
+        - With PSR-3 Logger interface
     </description>
     <lead>
         <name>Chitao Gao</name>
