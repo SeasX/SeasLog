@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+    <name>SeasLog</name>
+    <channel>pecl.php.net</channel>
+    <summary>A effective,fast,stable log extension for PHP.</summary>
+    <description>
+        A effective,fast,stable log extension for PHP.
+        - In the PHP project, for convenient record log
+        - The default log directory and module configuration.
+        - Specify the log directory and get the current configuration
+        - Analysis of early warning framework preliminary
+        - Buffer debug efficient log buffer, convenient
+    </description>
+    <lead>
+        <name>Chitao Gao</name>
+        <user>neeke</user>
+        <email>neeke@php.net</email>
+        <active>yes</active>
+    </lead>
+    <date>2014-07-28</date>
+    <time>23:00:00</time>
+    <version>
+        <release>1.0.0</release>
+        <api>1.0.0</api>
+    </version>
+    <stability>
+        <release>stable</release>
+        <api>stable</api>
+    </stability>
+    <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+    <notes>- First version for pecl.net</notes>
+    <contents>
+        <dir name="/">
+            <file role="doc" name="CREDITS" />
+            <file role="doc" name="README.md" />
+            <file role="doc" name="LICENSE" />
+            <file role="doc" name="SeasLogCodeTips.php" />
+            <dir name="SeasLog">
+                <file role="src" name="config.m4" />
+                <file role="src" name="config.w32" />
+                <file role="src" name="CREDITS" />
+                <file role="src" name="EXPERIMENTAL" />
+                <file role="src" name="php_seaslog.h" />
+                <file role="src" name="seaslog.c" />
+                <dir name="tests">
+                    <file role="src" name="001.phpt" />
+                    <file role="src" name="seaslog.test.php" />
+                </dir>
+            </dir>
+            <dir name="Analyzer">
+                <file role="src" name="SeasLogAnalyzer.php"/>
+                <dir name="config">
+                    <file role="src" name="autoload.php" />
+                    <file role="doc" name="config.ini" />
+                </dir>
+                <dir name="constant">
+                    <file role="src" name="config.php"/>
+                    <file role="src" name="mailTpl.php"/>
+                </dir>
+                <dir name="core">
+                    <dir name="analyzer">
+                        <file role="src" name="analyzerBase.php" />
+                        <file role="src" name="pcntl.php" />
+                        <file role="src" name="single.php" />
+                    </dir>
+                    <file role="src" name="analyzer.php"/>
+                </dir>
+                <dir name="lib">
+                    <dir name="mailer">
+                        <file role="src" name="PHPMailer.php"/>
+                        <file role="src" name="class.pop3.php"/>
+                        <file role="src" name="class.smtp.php"/>
+                        <file role="src" name="phpmailerException.php"/>
+                    </dir>
+                    <file role="src" name="alarmer.php"/>
+                </dir>
+            </dir>
+        </dir>
+    </contents>
+    <dependencies>
+        <required>
+            <php>
+                <min>5.2.0</min>
+            </php>
+            <pearinstaller>
+                <min>1.4.0</min>
+            </pearinstaller>
+        </required>
+    </dependencies>
+    <providesextension>SeasLog</providesextension>
+    <extsrcrelease />
+</package>
