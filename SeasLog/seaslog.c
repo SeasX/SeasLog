@@ -167,7 +167,7 @@ PHP_RINIT_FUNCTION(seaslog)
 
 PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
-	seaslog_shutdown_buffer(TSRMLS_C);
+    seaslog_shutdown_buffer(TSRMLS_C);
     seaslog_init_logger(TSRMLS_C);
     return SUCCESS;
 }
@@ -192,7 +192,7 @@ void seaslog_init_logger(TSRMLS_D)
 
 void seaslog_init_buffer(TSRMLS_D)
 {
-	if (SEASLOG_G(use_buffer)) {
+    if (SEASLOG_G(use_buffer)) {
         if (!SL_globals.started) {
             if (SL_globals.log_buffer) {
                     zval_dtor(SL_globals.log_buffer);
@@ -202,7 +202,7 @@ void seaslog_init_buffer(TSRMLS_D)
             array_init(SL_globals.log_buffer);
             SL_globals.started = 1;
         }
-	}
+    }
 }
 
 static int seaslog_buffer_set(char *log_info,char *path TSRMLS_DC) {
@@ -237,7 +237,7 @@ static int seaslog_buffer_set(char *log_info,char *path TSRMLS_DC) {
 
 static int real_php_log_ex(char *message, int message_len, char *opt)
 {
-	php_stream *stream = NULL;
+    php_stream *stream = NULL;
 
     stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
     if (!stream) {
@@ -250,8 +250,8 @@ static int real_php_log_ex(char *message, int message_len, char *opt)
 
 static int seaslog_shutdown_buffer(TSRMLS_D)
 {
-	if (SEASLOG_G(use_buffer))	{
-		if ((sizeof(SL_globals.log_buffer) / sizeof(int)) > 0) {
+    if (SEASLOG_G(use_buffer)) {
+    if ((sizeof(SL_globals.log_buffer) / sizeof(int)) > 0) {
         HashTable   *ht;
         HashPosition pos;
 
@@ -698,108 +698,108 @@ PHP_METHOD(SEASLOG_RES_NAME,emergency)
 
 static char *php_strtr_array(char *str, int slen, HashTable *hash)
 {
-	zval **entry;
-	char  *string_key;
-	uint   string_key_len;
-	zval **trans;
-	zval   ctmp;
-	ulong num_key;
-	int minlen = 128*1024;
-	int maxlen = 0, pos, len, found;
-	char *key;
-	HashPosition hpos;
-	smart_str result = {0};
-	HashTable tmp_hash;
+    zval **entry;
+    char  *string_key;
+    uint   string_key_len;
+    zval **trans;
+    zval   ctmp;
+    ulong num_key;
+    int minlen = 128*1024;
+    int maxlen = 0, pos, len, found;
+    char *key;
+    HashPosition hpos;
+    smart_str result = {0};
+    HashTable tmp_hash;
 
-	zend_hash_init(&tmp_hash, zend_hash_num_elements(hash), NULL, NULL, 0);
-	zend_hash_internal_pointer_reset_ex(hash, &hpos);
-	while (zend_hash_get_current_data_ex(hash, (void **)&entry, &hpos) == SUCCESS) {
-		switch (zend_hash_get_current_key_ex(hash, &string_key, &string_key_len, &num_key, 0, &hpos)) {
-			case HASH_KEY_IS_STRING:
-				len = string_key_len-1;
-				if (len < 1) {
-					zend_hash_destroy(&tmp_hash);
-					return;
-				}
-				zend_hash_add(&tmp_hash, string_key, string_key_len, entry, sizeof(zval*), NULL);
-				if (len > maxlen) {
-					maxlen = len;
-				}
-				if (len < minlen) {
-					minlen = len;
-				}
-				break;
+    zend_hash_init(&tmp_hash, zend_hash_num_elements(hash), NULL, NULL, 0);
+    zend_hash_internal_pointer_reset_ex(hash, &hpos);
+    while (zend_hash_get_current_data_ex(hash, (void **)&entry, &hpos) == SUCCESS) {
+        switch (zend_hash_get_current_key_ex(hash, &string_key, &string_key_len, &num_key, 0, &hpos)) {
+        case HASH_KEY_IS_STRING:
+            len = string_key_len-1;
+            if (len < 1) {
+                zend_hash_destroy(&tmp_hash);
+                return;
+            }
+            zend_hash_add(&tmp_hash, string_key, string_key_len, entry, sizeof(zval*), NULL);
+            if (len > maxlen) {
+                maxlen = len;
+            }
+            if (len < minlen) {
+                minlen = len;
+            }
+        break;
 
-			case HASH_KEY_IS_LONG:
-				Z_TYPE(ctmp) = IS_LONG;
-				Z_LVAL(ctmp) = num_key;
+        case HASH_KEY_IS_LONG:
+            Z_TYPE(ctmp) = IS_LONG;
+            Z_LVAL(ctmp) = num_key;
 
-				convert_to_string(&ctmp);
-				len = Z_STRLEN(ctmp);
-				zend_hash_add(&tmp_hash, Z_STRVAL(ctmp), len+1, entry, sizeof(zval*), NULL);
-				zval_dtor(&ctmp);
+            convert_to_string(&ctmp);
+            len = Z_STRLEN(ctmp);
+            zend_hash_add(&tmp_hash, Z_STRVAL(ctmp), len+1, entry, sizeof(zval*), NULL);
+            zval_dtor(&ctmp);
 
-				if (len > maxlen) {
-					maxlen = len;
-				}
-				if (len < minlen) {
-					minlen = len;
-				}
-				break;
-		}
-		zend_hash_move_forward_ex(hash, &hpos);
-	}
+            if (len > maxlen) {
+                maxlen = len;
+            }
+            if (len < minlen) {
+                minlen = len;
+            }
+            break;
+        }
+        zend_hash_move_forward_ex(hash, &hpos);
+    }
 
-	key = emalloc(maxlen+1);
-	pos = 0;
+    key = emalloc(maxlen+1);
+    pos = 0;
 
-	while (pos < slen) {
-		if ((pos + maxlen) > slen) {
-			maxlen = slen - pos;
-		}
+    while (pos < slen) {
+        if ((pos + maxlen) > slen) {
+        maxlen = slen - pos;
+        }
 
-		found = 0;
-		memcpy(key, str+pos, maxlen);
+        found = 0;
+        memcpy(key, str+pos, maxlen);
 
-		for (len = maxlen; len >= minlen; len--) {
-			key[len] = 0;
+        for (len = maxlen; len >= minlen; len--) {
+            key[len] = 0;
 
-			if (zend_hash_find(&tmp_hash, key, len+1, (void**)&trans) == SUCCESS) {
-				char *tval;
-				int tlen;
-				zval tmp;
+            if (zend_hash_find(&tmp_hash, key, len+1, (void**)&trans) == SUCCESS) {
+                char *tval;
+                int tlen;
+                zval tmp;
 
-				if (Z_TYPE_PP(trans) != IS_STRING) {
-					tmp = **trans;
-					zval_copy_ctor(&tmp);
-					convert_to_string(&tmp);
-					tval = Z_STRVAL(tmp);
-					tlen = Z_STRLEN(tmp);
-				} else {
-					tval = Z_STRVAL_PP(trans);
-					tlen = Z_STRLEN_PP(trans);
-				}
+                if (Z_TYPE_PP(trans) != IS_STRING) {
+                    tmp = **trans;
+                    zval_copy_ctor(&tmp);
+                    convert_to_string(&tmp);
+                    tval = Z_STRVAL(tmp);
+                    tlen = Z_STRLEN(tmp);
+                } else {
+                    tval = Z_STRVAL_PP(trans);
+                    tlen = Z_STRLEN_PP(trans);
+                }
 
-				smart_str_appendl(&result, tval, tlen);
-				pos += len;
-				found = 1;
+                smart_str_appendl(&result, tval, tlen);
+                pos += len;
+                found = 1;
 
-				if (Z_TYPE_PP(trans) != IS_STRING) {
-					zval_dtor(&tmp);
-				}
-				break;
-			}
-		}
+                if (Z_TYPE_PP(trans) != IS_STRING) {
+                    zval_dtor(&tmp);
+                }
+                break;
+            }
+        }
 
-		if (! found) {
-			smart_str_appendc(&result, str[pos++]);
-		}
-	}
+        if (! found) {
+            smart_str_appendc(&result, str[pos++]);
+        }
+    }
 
-	efree(key);
-	zend_hash_destroy(&tmp_hash);
-	smart_str_0(&result);
-	return result.c;
+    efree(key);
+    zend_hash_destroy(&tmp_hash);
+    smart_str_0(&result);
+    return result.c;
 }
 
 PHPAPI int _seaslog_log_content(int argc,char *level,char *message,int message_len,HashTable *content,char *module,int module_len TSRMLS_DC)
@@ -892,11 +892,11 @@ PHPAPI int _ck_log_dir(char *dir)
 PHPAPI int _php_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
 {
     if (SEASLOG_G(use_buffer)) {
-        seaslog_buffer_set(message,opt TSRMLS_CC);
-		return SUCCESS;
-	} else {
-		return real_php_log_ex(message, message_len, opt);
-	}
+      seaslog_buffer_set(message,opt TSRMLS_CC);
+        return SUCCESS;
+      } else {
+        return real_php_log_ex(message, message_len, opt);
+      }
 }
 
 /*

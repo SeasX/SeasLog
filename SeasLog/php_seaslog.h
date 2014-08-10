@@ -6,11 +6,11 @@ extern zend_module_entry seaslog_module_entry;
 #define phpext_seaslog_ptr &seaslog_module_entry
 
 #ifdef PHP_WIN32
-#	define PHP_SEASLOG_API __declspec(dllexport)
+# define PHP_SEASLOG_API __declspec(dllexport)
 #elif defined(__GNUC__) && __GNUC__ >= 4
-#	define PHP_SEASLOG_API __attribute__ ((visibility("default")))
+# define PHP_SEASLOG_API __attribute__ ((visibility("default")))
 #else
-#	define PHP_SEASLOG_API
+# define PHP_SEASLOG_API
 #endif
 
 #ifdef ZTS
@@ -60,11 +60,11 @@ PHP_METHOD(SEASLOG_RES_NAME,alert);
 PHP_METHOD(SEASLOG_RES_NAME,emergency);
 
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
-	char *default_basepath;
-	char *default_logger;
-	char *logger;
-	char *last_logger;
-	char *base_path;
+    char *default_basepath;
+    char *default_logger;
+    char *logger;
+    char *last_logger;
+    char *base_path;
     zend_bool disting_type;
     zend_bool disting_by_hour;
     zend_bool use_buffer;
@@ -86,5 +86,5 @@ ZEND_END_MODULE_GLOBALS(seaslog)
 #define SEASLOG_G(v) (seaslog_globals.v)
 #endif
 
-#endif	/* PHP_SEASLOG_H */
+#endif /* PHP_SEASLOG_H */
 
