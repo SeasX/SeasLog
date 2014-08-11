@@ -50,13 +50,14 @@ static char *base_path = "";
 static zend_bool disting_type = 0;
 static zend_bool disting_by_hour = 0;
 static zend_bool use_buffer = 0;
+static int buffer_size = 0;
 
 static zval *log_buffer;
 
 typedef struct sl_global_t {
   int  started;
   zval *log_buffer;
-
+  int  log_buffer_counts;
 } sl_global_t;
 
 static sl_global_t SL_globals;
@@ -120,6 +121,7 @@ PHP_INI_BEGIN()
     STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
     STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour","0", PHP_INI_ALL,OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
     STD_PHP_INI_BOOLEAN("seaslog.use_buffer","0",PHP_INI_ALL,OnUpdateBool,use_buffer,zend_seaslog_globals,seaslog_globals)
+    STD_PHP_INI_ENTRY("seaslog.buffer_size","0",PHP_INI_ALL,OnUpdateLongGEZero,buffer_size,zend_seaslog_globals,seaslog_globals)
 PHP_INI_END()
 
 
@@ -201,6 +203,7 @@ void seaslog_init_buffer(TSRMLS_D)
             MAKE_STD_ZVAL(SL_globals.log_buffer);
             array_init(SL_globals.log_buffer);
             SL_globals.started = 1;
+            SL_globals.log_buffer_counts = 0;
         }
     }
 }
@@ -230,6 +233,13 @@ static int seaslog_buffer_set(char *log_info,char *path TSRMLS_DC) {
 
         add_next_index_string(log_array, log_info, 1);
         add_assoc_zval(SL_globals.log_buffer, path, log_array);
+    }
+
+    if (SEASLOG_G(buffer_size) > 0) {
+        SL_globals.log_buffer_counts++;
+        if (SL_globals.log_buffer_counts >= SEASLOG_G(buffer_size)) {
+            seaslog_shutdown_buffer(TSRMLS_C);
+        }
     }
 
     return SUCCESS;
@@ -322,6 +332,7 @@ static int seaslog_shutdown_buffer(TSRMLS_D)
             MAKE_STD_ZVAL(SL_globals.log_buffer);
             array_init(SL_globals.log_buffer);
             SL_globals.started = 1;
+            SL_globals.log_buffer_counts = 0;
 
             return SUCCESS;
         }

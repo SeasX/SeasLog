@@ -1,11 +1,7 @@
 // $Id$
 // vim:ft=javascript
 
-// If your extension references something external, use ARG_WITH
-// ARG_WITH("seaslog", "for seaslog support", "no");
-
-// Otherwise, use ARG_ENABLE
-// ARG_ENABLE("seaslog", "enable seaslog support", "no");
+ARG_ENABLE("seaslog", "enable seaslog support", "no");
 
 if (PHP_SEASLOG != "no") {
 	EXTENSION("seaslog", "seaslog.c");

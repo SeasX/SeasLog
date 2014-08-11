@@ -18,8 +18,8 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.0.0"
-#define SEASLOG_AUTHOR                      "Chitao.Gao [neeke@php.net]"
+#define SEASLOG_VERSION                     "1.0.2"
+#define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_DEBUG                       "debug"
 #define SEASLOG_INFO                        "info"
@@ -68,6 +68,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool disting_type;
     zend_bool disting_by_hour;
     zend_bool use_buffer;
+    int buffer_size;
 ZEND_END_MODULE_GLOBALS(seaslog)
 
 /* In every utility function you add that needs to use variables 
