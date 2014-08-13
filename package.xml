@@ -18,18 +18,21 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2014-07-28</date>
-    <time>23:00:00</time>
+    <date>2014-08-13</date>
+    <time>12:00:00</time>
     <version>
-        <release>1.0.0</release>
-        <api>1.0.0</api>
+        <release>1.0.2</release>
+        <api>1.0.2</api>
     </version>
     <stability>
         <release>stable</release>
         <api>stable</api>
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
-    <notes>- First version for pecl.net</notes>
+    <notes>
+        - Add buffer_size config bar,when buffer_size full will write log
+        - Code format remove tab to 4space
+    </notes>
     <contents>
         <dir name="/">
             <file role="doc" name="CREDITS" />
@@ -90,4 +93,20 @@
     </dependencies>
     <providesextension>SeasLog</providesextension>
     <extsrcrelease />
+    <changelog>
+        <release>
+            <date>2014-07-28</date>
+            <time>23:00:00</time>
+            <version>
+                <release>1.0.0</release>
+                <api>1.0.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>- First version for pecl.net</notes>
+        </release>
+    </changelog>
 </package>
