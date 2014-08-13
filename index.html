@@ -167,6 +167,7 @@ seaslog.disting_type<span class="w"> </span>=<span class="w"> </span><span class
 seaslog.disting_by_hour<span class="w"> </span>=<span class="w"> </span><span class="m">1</span><span class="w">                     </span>;是否每小时划分一个文件<span class="w"> </span><span class="m">1</span>是<span class="w"> </span><span class="m">0</span>否(默认)<span class="w"></span>
 seaslog.use_buffer<span class="w"> </span>=<span class="w"> </span><span class="m">1</span><span class="w">                          </span>;是否启用buffer<span class="w"> </span><span class="m">1</span>是<span class="w"> </span><span class="m">0</span>否(默认)<span class="w"></span>
 seaslog.buffer_size<span class="w"> </span>=<span class="w"> </span><span class="m">100</span><span class="w">                       </span>;buffer中缓冲数量<span class="w"> </span>默认0(不使用buffer_size)<span class="w"></span>
+seaslog.level<span class="w"> </span>=<span class="w"> </span><span class="m">3</span><span class="w">                               </span>;记录日志级别<span class="w"> </span>默认0(所有日志)<span class="w"></span>
 </pre></div>
 
 <blockquote>
@@ -177,10 +178,12 @@ seaslog.buffer_size<span class="w"> </span>=<span class="w"> </span><span class=
 <p><code>seaslog.use_buffer = 1</code> 开启buffer。默认关闭。当开启此项时，日志预存于内存，当请求结束时(或异常退出时)一次写入文件。</p>
 
 <p><code>seaslog.buffer_size = 100</code> 设置缓冲数量为100. 默认为0,即无缓冲数量限制.当buffer_size大于0时,缓冲量达到该值则写一次文件.</p>
-</blockquote>
+
+<p>'seaslog.level = 3' 记录的日志级别.默认为0,即所有日志均记录。当level为1时,关注debug以上级别(包括debug)，以此类推。level大于8时，所有日志均不记录。</p>
 
 <h2>
 <a name="%E4%BD%BF%E7%94%A8" class="anchor" href="#%E4%BD%BF%E7%94%A8"><span class="octicon octicon-link"></span></a>使用</h2>
+</blockquote>
 
 <h3>
 <a name="%E5%B8%B8%E9%87%8F%E4%B8%8E%E5%87%BD%E6%95%B0" class="anchor" href="#%E5%B8%B8%E9%87%8F%E4%B8%8E%E5%87%BD%E6%95%B0"><span class="octicon octicon-link"></span></a>常量与函数</h3>
