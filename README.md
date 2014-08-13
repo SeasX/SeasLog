@@ -75,6 +75,7 @@ seaslog.disting_type = 1                        ;是否以type分文件 1是 0�
 seaslog.disting_by_hour = 1                     ;是否每小时划分一个文件 1是 0否(默认)
 seaslog.use_buffer = 1                          ;是否启用buffer 1是 0否(默认)
 seaslog.buffer_size = 100                       ;buffer中缓冲数量 默认0(不使用buffer_size)
+seaslog.level = 3                               ;记录日志级别 默认0(所有日志)
 ```
 > `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
 
@@ -84,6 +85,7 @@ seaslog.buffer_size = 100                       ;buffer中缓冲数量 默认0(�
 
 > `seaslog.buffer_size = 100` 设置缓冲数量为100. 默认为0,即无缓冲数量限制.当buffer_size大于0时,缓冲量达到该值则写一次文件.
 
+> 'seaslog.level = 3' 记录的日志级别.默认为0,即所有日志均记录。当level为1时,关注debug以上级别(包括debug)，以此类推。level大于8时，所有日志均不记录。
 ## 使用
 
 ### 常量与函数
