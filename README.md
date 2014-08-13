@@ -74,12 +74,15 @@ seaslog.default_logger = default                ;默认logger目录
 seaslog.disting_type = 1                        ;是否以type分文件 1是 0否(默认)
 seaslog.disting_by_hour = 1                     ;是否每小时划分一个文件 1是 0否(默认)
 seaslog.use_buffer = 1                          ;是否启用buffer 1是 0否(默认)
+seaslog.buffer_size = 100                       ;buffer中缓冲数量 默认0(不使用buffer_size)
 ```
 > `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
 
 > `seaslog.disting_by_hour = 1` 开启每小时划分一个文件
 
 > `seaslog.use_buffer = 1` 开启buffer。默认关闭。当开启此项时，日志预存于内存，当请求结束时(或异常退出时)一次写入文件。
+
+> `seaslog.buffer_size = 100` 设置缓冲数量为100. 默认为0,即无缓冲数量限制.当buffer_size大于0时,缓冲量达到该值则写一次文件.
 
 ## 使用
 
