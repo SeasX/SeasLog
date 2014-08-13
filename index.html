@@ -137,6 +137,7 @@
 <li>指定log目录与获取当前配置</li>
 <li>初步的分析预警框架</li>
 <li>高效的日志缓冲、便捷的缓冲debug</li>
+<li>遵循 PSR-3 日志接口规范</li>
 </ul><h3>
 <a name="%E7%9B%AE%E6%A0%87%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84" class="anchor" href="#%E7%9B%AE%E6%A0%87%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84"><span class="octicon octicon-link"></span></a>目标是怎样的</h3>
 
@@ -165,6 +166,7 @@ seaslog.default_logger<span class="w"> </span>=<span class="w"> </span><span cla
 seaslog.disting_type<span class="w"> </span>=<span class="w"> </span><span class="m">1</span><span class="w">                        </span>;是否以type分文件<span class="w"> </span><span class="m">1</span>是<span class="w"> </span><span class="m">0</span>否(默认)<span class="w"></span>
 seaslog.disting_by_hour<span class="w"> </span>=<span class="w"> </span><span class="m">1</span><span class="w">                     </span>;是否每小时划分一个文件<span class="w"> </span><span class="m">1</span>是<span class="w"> </span><span class="m">0</span>否(默认)<span class="w"></span>
 seaslog.use_buffer<span class="w"> </span>=<span class="w"> </span><span class="m">1</span><span class="w">                          </span>;是否启用buffer<span class="w"> </span><span class="m">1</span>是<span class="w"> </span><span class="m">0</span>否(默认)<span class="w"></span>
+seaslog.buffer_size<span class="w"> </span>=<span class="w"> </span><span class="m">100</span><span class="w">                       </span>;buffer中缓冲数量<span class="w"> </span>默认0(不使用buffer_size)<span class="w"></span>
 </pre></div>
 
 <blockquote>
@@ -173,6 +175,8 @@ seaslog.use_buffer<span class="w"> </span>=<span class="w"> </span><span class="
 <p><code>seaslog.disting_by_hour = 1</code> 开启每小时划分一个文件</p>
 
 <p><code>seaslog.use_buffer = 1</code> 开启buffer。默认关闭。当开启此项时，日志预存于内存，当请求结束时(或异常退出时)一次写入文件。</p>
+
+<p><code>seaslog.buffer_size = 100</code> 设置缓冲数量为100. 默认为0,即无缓冲数量限制.当buffer_size大于0时,缓冲量达到该值则写一次文件.</p>
 </blockquote>
 
 <h2>
