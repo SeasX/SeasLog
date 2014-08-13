@@ -69,6 +69,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool disting_by_hour;
     zend_bool use_buffer;
     int buffer_size;
+    int level;
 ZEND_END_MODULE_GLOBALS(seaslog)
 
 #ifdef ZTS

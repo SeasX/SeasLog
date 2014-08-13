@@ -51,6 +51,7 @@ static zend_bool disting_type = 0;
 static zend_bool disting_by_hour = 0;
 static zend_bool use_buffer = 0;
 static int buffer_size = 0;
+static int level = 0;
 
 static zval *log_buffer;
 
@@ -122,6 +123,7 @@ PHP_INI_BEGIN()
     STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour","0", PHP_INI_ALL,OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
     STD_PHP_INI_BOOLEAN("seaslog.use_buffer","0",PHP_INI_ALL,OnUpdateBool,use_buffer,zend_seaslog_globals,seaslog_globals)
     STD_PHP_INI_ENTRY("seaslog.buffer_size","0",PHP_INI_ALL,OnUpdateLongGEZero,buffer_size,zend_seaslog_globals,seaslog_globals)
+    STD_PHP_INI_ENTRY("seaslog.level","0",PHP_INI_ALL,OnUpdateLongGEZero,level,zend_seaslog_globals,seaslog_globals)
 PHP_INI_END()
 
 
@@ -502,7 +504,7 @@ PHP_METHOD(SEASLOG_RES_NAME,__construct)
 
 PHP_METHOD(SEASLOG_RES_NAME,__destruct)
 {
-	seaslog_shutdown_buffer(TSRMLS_C);
+    seaslog_shutdown_buffer(TSRMLS_C);
     seaslog_init_logger(TSRMLS_C);
 }
 
@@ -834,6 +836,10 @@ PHPAPI int _seaslog_log(int argc,char *level,char *message,int message_len,char 
         logger = SEASLOG_G(last_logger);
     }
 
+    if (_check_level(level TSRMLS_CC) == FAILURE) {
+      return FAILURE;
+    }
+    
     spprintf(&_log_path, 0, "%s/%s", SEASLOG_G(base_path),logger);
     _mk_log_dir(_log_path);
 
@@ -850,6 +856,24 @@ PHPAPI int _seaslog_log(int argc,char *level,char *message,int message_len,char 
     }
 
     return SUCCESS;
+}
+
+/*check the level*/
+PHPAPI int _check_level(char *level TSRMLS_DC)
+{
+  if (SEASLOG_G(level) < 1) return SUCCESS;
+  if (SEASLOG_G(level) > 8) return FAILURE;
+  
+  if (strcmp(level,SEASLOG_DEBUG) == 0 && SEASLOG_G(level) <= 1) return SUCCESS;
+  if (strcmp(level,SEASLOG_INFO) == 0 && SEASLOG_G(level) <= 2) return SUCCESS;
+  if (strcmp(level,SEASLOG_NOTICE) == 0 && SEASLOG_G(level) <= 3) return SUCCESS;
+  if (strcmp(level,SEASLOG_WARNING) == 0 && SEASLOG_G(level) <= 4) return SUCCESS;
+  if (strcmp(level,SEASLOG_ERROR) == 0 && SEASLOG_G(level) <= 5) return SUCCESS;
+  if (strcmp(level,SEASLOG_CRITICAL) == 0 && SEASLOG_G(level) <= 6) return SUCCESS;
+  if (strcmp(level,SEASLOG_ALERT) == 0 && SEASLOG_G(level) <= 7) return SUCCESS;
+  if (strcmp(level,SEASLOG_EMERGENCY) == 0 && SEASLOG_G(level) <= 8) return SUCCESS;
+
+  return FAILURE;
 }
 
 PHPAPI int _mk_log_dir(char *dir)
