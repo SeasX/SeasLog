@@ -732,16 +732,16 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash)
             len = string_key_len-1;
             if (len < 1) {
                 zend_hash_destroy(&tmp_hash);
-                return;
+            } else {
+                zend_hash_add(&tmp_hash, string_key, string_key_len, entry, sizeof(zval*), NULL);
+                if (len > maxlen) {
+                    maxlen = len;
+                }
+                if (len < minlen) {
+                    minlen = len;
+                }
             }
-            zend_hash_add(&tmp_hash, string_key, string_key_len, entry, sizeof(zval*), NULL);
-            if (len > maxlen) {
-                maxlen = len;
-            }
-            if (len < minlen) {
-                minlen = len;
-            }
-        break;
+            break;
 
         case HASH_KEY_IS_LONG:
             Z_TYPE(ctmp) = IS_LONG;
