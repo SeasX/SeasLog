@@ -85,7 +85,7 @@ seaslog.level = 3                               ;记录日志级别 默认0(所�
 
 > `seaslog.buffer_size = 100` 设置缓冲数量为100. 默认为0,即无缓冲数量限制.当buffer_size大于0时,缓冲量达到该值则写一次文件.
 
-> 'seaslog.level = 3' 记录的日志级别.默认为0,即所有日志均记录。当level为1时,关注debug以上级别(包括debug)，以此类推。level大于8时，所有日志均不记录。
+> `seaslog.level = 3` 记录的日志级别.默认为0,即所有日志均记录。当level为1时,关注debug以上级别(包括debug)，以此类推。level大于8时，所有日志均不记录。
 ## 使用
 
 ### 常量与函数
