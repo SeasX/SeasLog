@@ -59,6 +59,12 @@ PHP_METHOD(SEASLOG_RES_NAME,critical);
 PHP_METHOD(SEASLOG_RES_NAME,alert);
 PHP_METHOD(SEASLOG_RES_NAME,emergency);
 
+typedef struct sl_global_t {
+  int  started;
+  zval *log_buffer;
+  int  log_buffer_counts;
+} sl_global_t;
+
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_basepath;
     char *default_logger;
@@ -70,6 +76,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool use_buffer;
     int buffer_size;
     int level;
+    sl_global_t SL_globals;
 ZEND_END_MODULE_GLOBALS(seaslog)
 
 #ifdef ZTS

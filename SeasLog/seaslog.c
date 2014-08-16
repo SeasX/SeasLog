@@ -10,7 +10,7 @@
   | to obtain it through the world-wide-web, please send a note to       |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: Neeke.Gao  <ciogao@gmail.com>                                |
+  | Author: Neeke.Gao  <neeke@php.net>                                   |
   +----------------------------------------------------------------------+
 */
 
@@ -52,16 +52,6 @@ static zend_bool disting_by_hour = 0;
 static zend_bool use_buffer = 0;
 static int buffer_size = 0;
 static int level = 0;
-
-static zval *log_buffer;
-
-typedef struct sl_global_t {
-  int  started;
-  zval *log_buffer;
-  int  log_buffer_counts;
-} sl_global_t;
-
-static sl_global_t SL_globals;
 
 
 const zend_function_entry seaslog_functions[] = {
@@ -136,7 +126,6 @@ static void php_seaslog_init_globals(zend_seaslog_globals *seaslog_globals)
 PHP_MINIT_FUNCTION(seaslog)
 {
     REGISTER_INI_ENTRIES();
-    seaslog_init_logger(TSRMLS_C);
 
     REGISTER_STRINGL_CONSTANT("SEASLOG_VERSION", SEASLOG_VERSION, 	sizeof(SEASLOG_VERSION) - 1, 	CONST_PERSISTENT | CONST_CS);
     REGISTER_STRINGL_CONSTANT("SEASLOG_AUTHOR", SEASLOG_AUTHOR, 	sizeof(SEASLOG_AUTHOR) - 1, 	CONST_PERSISTENT | CONST_CS);
@@ -152,8 +141,8 @@ PHP_MINIT_FUNCTION(seaslog)
 
     zend_class_entry seaslog;
     INIT_CLASS_ENTRY(seaslog,SEASLOG_RES_NAME,seaslog_methods);
-    seaslog_ce=zend_register_internal_class_ex(&seaslog,NULL,NULL TSRMLS_DC);
-    seaslog_ce->ce_flags=ZEND_ACC_IMPLICIT_PUBLIC;
+    seaslog_ce = zend_register_internal_class_ex(&seaslog,NULL,NULL TSRMLS_DC);
+    seaslog_ce->ce_flags = ZEND_ACC_IMPLICIT_PUBLIC;
 
     return SUCCESS;
 }
@@ -166,13 +155,15 @@ PHP_MSHUTDOWN_FUNCTION(seaslog)
 
 PHP_RINIT_FUNCTION(seaslog)
 {
+    seaslog_init_logger(TSRMLS_C);
+    seaslog_init_buffer(TSRMLS_C);
     return SUCCESS;
 }
 
 PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
     seaslog_shutdown_buffer(TSRMLS_C);
-    seaslog_init_logger(TSRMLS_C);
+
     return SUCCESS;
 }
 
@@ -197,17 +188,38 @@ void seaslog_init_logger(TSRMLS_D)
 void seaslog_init_buffer(TSRMLS_D)
 {
     if (SEASLOG_G(use_buffer)) {
-        if (!SL_globals.started) {
-            if (SL_globals.log_buffer) {
-                    zval_dtor(SL_globals.log_buffer);
-                    FREE_ZVAL(SL_globals.log_buffer);
+
+        if (SEASLOG_G(SL_globals.log_buffer_counts) == 0) {
+            if (SEASLOG_G(SL_globals.log_buffer)) {
+                    zval_dtor(SEASLOG_G(SL_globals.log_buffer));
+                    FREE_ZVAL(SEASLOG_G(SL_globals.log_buffer));
             }
-            MAKE_STD_ZVAL(SL_globals.log_buffer);
-            array_init(SL_globals.log_buffer);
-            SL_globals.started = 1;
-            SL_globals.log_buffer_counts = 0;
+            MAKE_STD_ZVAL(SEASLOG_G(SL_globals.log_buffer));
+            array_init(SEASLOG_G(SL_globals.log_buffer));
+            SEASLOG_G(SL_globals.started) = SUCCESS;
+            SEASLOG_G(SL_globals.log_buffer_counts) = 0;
         }
     }
+}
+
+void seaslog_clear_buffer(TSRMLS_D)
+{
+    zval_dtor(SEASLOG_G(SL_globals.log_buffer));
+    FREE_ZVAL(SEASLOG_G(SL_globals.log_buffer));
+    SEASLOG_G(SL_globals.started) = FAILURE;
+    SEASLOG_G(SL_globals.log_buffer_counts) = 0;
+}
+
+static int real_php_log_ex(char *message, int message_len, char *opt)
+{
+    php_stream *stream = NULL;
+    stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
+    if (!stream) {
+        return FAILURE;
+    }
+    php_stream_write(stream, message, message_len);
+    php_stream_close(stream);
+    return SUCCESS;
 }
 
 static int seaslog_buffer_set(char *log_info,char *path TSRMLS_DC) {
@@ -217,7 +229,7 @@ static int seaslog_buffer_set(char *log_info,char *path TSRMLS_DC) {
     zval        *old_log_array;
     zval        *new_log;
 
-    if (!SL_globals.log_buffer || !(ht = HASH_OF(SL_globals.log_buffer))) {
+    if (!SEASLOG_G(SL_globals.log_buffer) || !(ht = HASH_OF(SEASLOG_G(SL_globals.log_buffer)))) {
         return FAILURE;
     }
 
@@ -234,12 +246,13 @@ static int seaslog_buffer_set(char *log_info,char *path TSRMLS_DC) {
         array_init(log_array);
 
         add_next_index_string(log_array, log_info, 1);
-        add_assoc_zval(SL_globals.log_buffer, path, log_array);
+        add_assoc_zval(SEASLOG_G(SL_globals.log_buffer), path, log_array);
     }
 
     if (SEASLOG_G(buffer_size) > 0) {
-        SL_globals.log_buffer_counts++;
-        if (SL_globals.log_buffer_counts >= SEASLOG_G(buffer_size)) {
+        ++SEASLOG_G(SL_globals.log_buffer_counts);
+
+        if (SEASLOG_G(SL_globals.log_buffer_counts) >= SEASLOG_G(buffer_size)) {
             seaslog_shutdown_buffer(TSRMLS_C);
         }
     }
@@ -247,29 +260,19 @@ static int seaslog_buffer_set(char *log_info,char *path TSRMLS_DC) {
     return SUCCESS;
 }
 
-static int real_php_log_ex(char *message, int message_len, char *opt)
-{
-    php_stream *stream = NULL;
-
-    stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
-    if (!stream) {
-        return FAILURE;
-    }
-    php_stream_write(stream, message, message_len);
-    php_stream_close(stream);
-    return SUCCESS;
-}
-
 static int seaslog_shutdown_buffer(TSRMLS_D)
 {
     if (SEASLOG_G(use_buffer)) {
-    if ((sizeof(SL_globals.log_buffer) / sizeof(int)) > 0) {
+
+    if (SEASLOG_G(SL_globals.log_buffer_counts) > 0) {
         HashTable   *ht;
         HashPosition pos;
 
-        if (!SL_globals.log_buffer || !(ht = HASH_OF(SL_globals.log_buffer))) {
+        if (!SEASLOG_G(SL_globals.log_buffer)) {
             return FAILURE;
         }
+
+        ht = HASH_OF(SEASLOG_G(SL_globals.log_buffer));
 
         for(zend_hash_internal_pointer_reset_ex(ht, &pos);
             zend_hash_has_more_elements_ex(ht, &pos) == SUCCESS;
@@ -321,23 +324,14 @@ static int seaslog_shutdown_buffer(TSRMLS_D)
                     }
                 }
 
-                real_php_log_ex(log_info, strlen(log_info),key);
+                int result;
+                result = real_php_log_ex(log_info, strlen(log_info),key);
 
                 zval_dtor(&tmpcopy);
             }
-
-            if (SL_globals.log_buffer) {
-                zval_dtor(SL_globals.log_buffer);
-                FREE_ZVAL(SL_globals.log_buffer);
-            }
-
-            MAKE_STD_ZVAL(SL_globals.log_buffer);
-            array_init(SL_globals.log_buffer);
-            SL_globals.started = 1;
-            SL_globals.log_buffer_counts = 0;
-
-            return SUCCESS;
         }
+
+        seaslog_clear_buffer(TSRMLS_C);
     }
 
     return SUCCESS;
@@ -499,13 +493,13 @@ PHP_FUNCTION(seaslog_get_author)
 
 PHP_METHOD(SEASLOG_RES_NAME,__construct)
 {
+    seaslog_init_logger(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
 }
 
 PHP_METHOD(SEASLOG_RES_NAME,__destruct)
 {
     seaslog_shutdown_buffer(TSRMLS_C);
-    seaslog_init_logger(TSRMLS_C);
 }
 
 PHP_METHOD(SEASLOG_RES_NAME,setBasePath)
@@ -635,7 +629,7 @@ PHP_METHOD(SEASLOG_RES_NAME,analyzerDetail)
 PHP_METHOD(SEASLOG_RES_NAME,getBuffer)
 {
     if (SEASLOG_G(use_buffer)) {
-        RETURN_ZVAL(SL_globals.log_buffer, 1, 0);
+        RETURN_ZVAL(SEASLOG_G(SL_globals.log_buffer), 1, 0);
     }
 }
 
@@ -927,11 +921,11 @@ PHPAPI int _ck_log_dir(char *dir)
 PHPAPI int _php_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
 {
     if (SEASLOG_G(use_buffer)) {
-      seaslog_buffer_set(message,opt TSRMLS_CC);
+        seaslog_buffer_set(message,opt TSRMLS_CC);
         return SUCCESS;
-      } else {
+    } else {
         return real_php_log_ex(message, message_len, opt);
-      }
+    }
 }
 
 /*
