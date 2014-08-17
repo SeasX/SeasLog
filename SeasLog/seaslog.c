@@ -144,6 +144,14 @@ PHP_MINIT_FUNCTION(seaslog)
     seaslog_ce = zend_register_internal_class_ex(&seaslog,NULL,NULL TSRMLS_DC);
     seaslog_ce->ce_flags = ZEND_ACC_IMPLICIT_PUBLIC;
 
+    zend_declare_property_null(seaslog_ce,ZEND_STRL(SEASLOG_BUFFER_NAME),ZEND_ACC_STATIC TSRMLS_CC);
+    zend_declare_property_null(seaslog_ce,ZEND_STRL(SEASLOG_BUFFER_SIZE_NAME),ZEND_ACC_STATIC TSRMLS_CC);
+
+//    zval *buffer_size;
+//    MAKE_STD_ZVAL(buffer_size);
+//    ZVAL_LONG(buffer_size,0);
+//    zend_declare_property_long(seaslog_ce,ZEND_STRL(SEASLOG_BUFFER_SIZE_NAME),Z_LVAL_P(buffer_size),ZEND_ACC_STATIC TSRMLS_CC);
+
     return SUCCESS;
 }
 
@@ -188,26 +196,23 @@ void seaslog_init_logger(TSRMLS_D)
 void seaslog_init_buffer(TSRMLS_D)
 {
     if (SEASLOG_G(use_buffer)) {
+        zval *buffer_count;
+        buffer_count = zend_read_static_property(seaslog_ce,SL_S(SEASLOG_BUFFER_SIZE_NAME),0 TSRMLS_CC);
 
-        if (SEASLOG_G(SL_globals.log_buffer_counts) == 0) {
-            if (SEASLOG_G(SL_globals.log_buffer)) {
-                    zval_dtor(SEASLOG_G(SL_globals.log_buffer));
-                    FREE_ZVAL(SEASLOG_G(SL_globals.log_buffer));
-            }
-            MAKE_STD_ZVAL(SEASLOG_G(SL_globals.log_buffer));
-            array_init(SEASLOG_G(SL_globals.log_buffer));
-            SEASLOG_G(SL_globals.started) = SUCCESS;
-            SEASLOG_G(SL_globals.log_buffer_counts) = 0;
+        if (Z_TYPE_P(buffer_count) == IS_NULL) {
+            seaslog_clear_buffer(TSRMLS_C);
         }
     }
 }
 
 void seaslog_clear_buffer(TSRMLS_D)
 {
-    zval_dtor(SEASLOG_G(SL_globals.log_buffer));
-    FREE_ZVAL(SEASLOG_G(SL_globals.log_buffer));
-    SEASLOG_G(SL_globals.started) = FAILURE;
-    SEASLOG_G(SL_globals.log_buffer_counts) = 0;
+    zval *buffer;MAKE_STD_ZVAL(buffer);array_init(buffer);
+    zend_update_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_NAME), buffer TSRMLS_CC);
+    zval_ptr_dtor(&buffer);
+
+    zval *buffer_size;MAKE_STD_ZVAL(buffer_size);ZVAL_LONG(buffer_size,0);
+    zend_update_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_SIZE_NAME), buffer_size TSRMLS_CC);
 }
 
 static int real_php_log_ex(char *message, int message_len, char *opt)
@@ -222,37 +227,71 @@ static int real_php_log_ex(char *message, int message_len, char *opt)
     return SUCCESS;
 }
 
-static int seaslog_buffer_set(char *log_info,char *path TSRMLS_DC) {
+static int seaslog_buffer_set(char *log_info,int log_info_len,char *path,int path_len,zend_class_entry *ce TSRMLS_DC) {
     HashTable   *ht;
     void        *data;
     zval        *log_array;
     zval        *old_log_array;
+    zval        *new_array;
     zval        *new_log;
+    zval        **ppzval;
+    int         have_old = FAILURE;
+    int         count;
 
-    if (!SEASLOG_G(SL_globals.log_buffer) || !(ht = HASH_OF(SEASLOG_G(SL_globals.log_buffer)))) {
-        return FAILURE;
+    old_log_array = zend_read_static_property(ce, SL_S(SEASLOG_BUFFER_NAME), 1 TSRMLS_CC);
+
+    if (!old_log_array || Z_TYPE_P(old_log_array) != IS_ARRAY) {
+    	return 0;
     }
 
-    if (zend_hash_find(ht, path, strlen(path) + 1, &data) == SUCCESS) {
-        old_log_array = *(zval **) data;
+    MAKE_STD_ZVAL(new_array);
+    array_init(new_array);
 
-        MAKE_STD_ZVAL(new_log);
-        ZVAL_STRING(new_log,log_info,1);
+    ht = Z_ARRVAL_P(old_log_array);
 
-        zend_hash_next_index_insert(Z_ARRVAL_P(old_log_array), (void *)&new_log, sizeof(zval *), NULL);
+    count = zend_hash_num_elements(ht);
 
-    } else {
-        MAKE_STD_ZVAL(log_array);
-        array_init(log_array);
+    zend_hash_internal_pointer_reset(ht);
+    while (zend_hash_get_current_data(ht, (void **)&ppzval) == SUCCESS) {
+        char *key;
+        ulong idx = 0;
 
-        add_next_index_string(log_array, log_info, 1);
-        add_assoc_zval(SEASLOG_G(SL_globals.log_buffer), path, log_array);
+        zend_hash_get_current_key(ht, &key, &idx, 0);
+
+        zval *file_path;
+        MAKE_STD_ZVAL(file_path);
+        ZVAL_STRING(file_path,key,1);
+        int file_path_len;
+        file_path_len = Z_STRLEN_P(file_path)+1;
+
+        if (strcmp(Z_STRVAL_P(file_path),path) == 0) {
+            char        *_new_log;
+            spprintf(&_new_log,0,"%s%s",Z_STRVAL_PP(ppzval),log_info);
+
+            add_assoc_string_ex(new_array,Z_STRVAL_P(file_path),file_path_len,_new_log,1);
+            have_old = SUCCESS;
+        } else {
+            add_assoc_string_ex(new_array,Z_STRVAL_P(file_path),file_path_len,Z_STRVAL_PP(ppzval),1);
+        }
+
+        zend_hash_move_forward(ht);
     }
+
+    if (have_old == FAILURE) {
+        add_assoc_string_ex(new_array,path,path_len+1,log_info,1);
+    }
+
+    zend_update_static_property(ce,SL_S(SEASLOG_BUFFER_NAME),new_array TSRMLS_CC);
+
 
     if (SEASLOG_G(buffer_size) > 0) {
-        ++SEASLOG_G(SL_globals.log_buffer_counts);
+        zval *buffer_count;
+        buffer_count = zend_read_static_property(seaslog_ce,SL_S(SEASLOG_BUFFER_SIZE_NAME),0 TSRMLS_CC);
 
-        if (SEASLOG_G(SL_globals.log_buffer_counts) >= SEASLOG_G(buffer_size)) {
+        zval *buffer_count_new;MAKE_STD_ZVAL(buffer_count_new);ZVAL_LONG(buffer_count_new,Z_LVAL_P(buffer_count)+1);
+        zend_update_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_SIZE_NAME), buffer_count_new TSRMLS_CC);
+
+        if (Z_LVAL_P(buffer_count)+1 >= SEASLOG_G(buffer_size)) {
             seaslog_shutdown_buffer(TSRMLS_C);
         }
     }
@@ -263,72 +302,35 @@ static int seaslog_buffer_set(char *log_info,char *path TSRMLS_DC) {
 static int seaslog_shutdown_buffer(TSRMLS_D)
 {
     if (SEASLOG_G(use_buffer)) {
+        php_printf("seaslog_shutdown_buffer -- start\n");
 
-    if (SEASLOG_G(SL_globals.log_buffer_counts) > 0) {
         HashTable   *ht;
-        HashPosition pos;
+        void        *data;
+        zval        *log_array;
+        zval        *old_log_array;
 
-        if (!SEASLOG_G(SL_globals.log_buffer)) {
-            return FAILURE;
+        old_log_array = zend_read_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_NAME), 1 TSRMLS_CC);
+
+        if (!old_log_array || Z_TYPE_P(old_log_array) != IS_ARRAY) {
+            return 0;
         }
 
-        ht = HASH_OF(SEASLOG_G(SL_globals.log_buffer));
+        zval **ppzval;
+        int  count;
+        ht = Z_ARRVAL_P(old_log_array);
 
-        for(zend_hash_internal_pointer_reset_ex(ht, &pos);
-            zend_hash_has_more_elements_ex(ht, &pos) == SUCCESS;
-            zend_hash_move_forward_ex(ht, &pos))
-            {
-                char *key;
-                uint keylen;
-                ulong idx;
-                int type;
-                int i,num;
+        count = zend_hash_num_elements(ht);
 
-                zval **ppzval, tmpcopy;
+        zend_hash_internal_pointer_reset(ht);
+        while (zend_hash_get_current_data(ht, (void **)&ppzval) == SUCCESS) {
+            char *key;
+            ulong idx = 0;
 
-                type = zend_hash_get_current_key_ex(ht,&key, &keylen,&idx, 0, &pos);
-                if (zend_hash_get_current_data_ex(ht,(void**)&ppzval, &pos) == FAILURE) {
-                    continue;
-                }
+            zend_hash_get_current_key(ht, &key, &idx, 0);
 
-                tmpcopy = **ppzval;
-                zval_copy_ctor(&tmpcopy);
-                INIT_PZVAL(&tmpcopy);
+            real_php_log_ex(Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval),key);
 
-                convert_to_array(&tmpcopy);
-
-                HashTable   *ht_child;
-                zval **ppzval_child;
-                char *log_info = NULL;
-                char *log_info_tmp = NULL;
-                char *log_tmp = NULL;
-
-                ht_child = Z_ARRVAL(tmpcopy);
-                for(zend_hash_internal_pointer_reset(ht_child);
-                        zend_hash_has_more_elements(ht_child) == SUCCESS;
-                        zend_hash_move_forward(ht_child))
-                {
-                    if (zend_hash_get_current_data(ht_child, (void**)&ppzval_child) == FAILURE) {
-                        continue;
-                    }
-
-                    if (IS_STRING == Z_TYPE_PP(ppzval_child) && Z_STRLEN_PP(ppzval_child)) {
-                        log_tmp = Z_STRVAL_PP(ppzval_child);
-                        if (log_info) {
-                            log_info_tmp = log_info;
-                            spprintf(&log_info,0,"%s%s",log_info_tmp,log_tmp);
-                        } else {
-                            spprintf(&log_info,0,"%s",log_tmp);
-                        }
-
-                    }
-                }
-
-                int result;
-                result = real_php_log_ex(log_info, strlen(log_info),key);
-
-                zval_dtor(&tmpcopy);
-            }
+            zend_hash_move_forward(ht);
         }
 
         seaslog_clear_buffer(TSRMLS_C);
@@ -344,7 +346,7 @@ static char *mk_real_log_path(char *log_path,char *date,char *level TSRMLS_DC){
     }else{
         spprintf(&log_file_path,0,"%s/%s.log",log_path,date);
     }
-    
+
     return log_file_path;
 }
 
@@ -463,11 +465,11 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS,char *level
     }
 
     if (argc > 1) {
-        if (_seaslog_log_content(argc,level,message,message_len,HASH_OF(*content),logger,logger_len TSRMLS_CC) == FAILURE) {
+        if (_seaslog_log_content(argc,level,message,message_len,HASH_OF(*content),logger,logger_len,seaslog_ce TSRMLS_CC) == FAILURE) {
             RETURN_FALSE;
         }
     } else {
-        if (_seaslog_log(argc,level,message,message_len,logger,logger_len TSRMLS_CC) == FAILURE) {
+        if (_seaslog_log(argc,level,message,message_len,logger,logger_len,seaslog_ce TSRMLS_CC) == FAILURE) {
             RETURN_FALSE;
         }
     }
@@ -629,7 +631,9 @@ PHP_METHOD(SEASLOG_RES_NAME,analyzerDetail)
 PHP_METHOD(SEASLOG_RES_NAME,getBuffer)
 {
     if (SEASLOG_G(use_buffer)) {
-        RETURN_ZVAL(SEASLOG_G(SL_globals.log_buffer), 1, 0);
+        zval *buffer;
+        buffer = zend_read_static_property(seaslog_ce,ZEND_STRL(SEASLOG_BUFFER_NAME),0 TSRMLS_CC);
+        RETURN_ZVAL(buffer, 1, 0);
     }
 }
 
@@ -809,17 +813,17 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash)
     return result.c;
 }
 
-PHPAPI int _seaslog_log_content(int argc,char *level,char *message,int message_len,HashTable *content,char *module,int module_len TSRMLS_DC)
+PHPAPI int _seaslog_log_content(int argc,char *level,char *message,int message_len,HashTable *content,char *module,int module_len,zend_class_entry *ce TSRMLS_DC)
 {
     char *result = php_strtr_array(message,message_len,content);
 
-    return _seaslog_log(argc,level,result,strlen(result),module,module_len TSRMLS_CC);
+    return _seaslog_log(argc,level,result,strlen(result),module,module_len,ce TSRMLS_CC);
 }
 
-PHPAPI int _seaslog_log(int argc,char *level,char *message,int message_len,char *module,int module_len TSRMLS_DC)
+PHPAPI int _seaslog_log(int argc,char *level,char *message,int message_len,char *module,int module_len,zend_class_entry *ce TSRMLS_DC)
 {
     char *logger,*_log_path,*_date ,*_time,*log_file_path,*log_info;
-    int log_len;
+    int log_len,log_file_path_len;
 
     if (argc > 2){
         logger = module;
@@ -833,7 +837,7 @@ PHPAPI int _seaslog_log(int argc,char *level,char *message,int message_len,char 
     if (_check_level(level TSRMLS_CC) == FAILURE) {
       return FAILURE;
     }
-    
+
     spprintf(&_log_path, 0, "%s/%s", SEASLOG_G(base_path),logger);
     _mk_log_dir(_log_path);
 
@@ -841,11 +845,18 @@ PHPAPI int _seaslog_log(int argc,char *level,char *message,int message_len,char 
 
     _time = php_format_date("Y:m:d H:i:s",11,(long)time(NULL),(long)time(NULL));
 
+
+
     log_file_path = mk_real_log_path(_log_path,_date,level TSRMLS_CC);
+    zval *file_path;
+    MAKE_STD_ZVAL(file_path);
+    ZVAL_STRING(file_path,log_file_path,1);
+
+    log_file_path_len = Z_STRLEN_P(file_path);
 
     log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n",level,getpid(), mic_time(),_time, message);
 
-    if (_php_log_ex(log_info, log_len, log_file_path TSRMLS_CC) == FAILURE) {
+    if (_php_log_ex(log_info, log_len, log_file_path,log_file_path_len,ce TSRMLS_CC) == FAILURE) {
         return FAILURE;
     }
 
@@ -918,13 +929,13 @@ PHPAPI int _ck_log_dir(char *dir)
     return FAILURE;
 }
 
-PHPAPI int _php_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
+PHPAPI int _php_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len,zend_class_entry *ce TSRMLS_DC)
 {
     if (SEASLOG_G(use_buffer)) {
-        seaslog_buffer_set(message,opt TSRMLS_CC);
+        seaslog_buffer_set(message,message_len,log_file_path,log_file_path_len,ce TSRMLS_CC);
         return SUCCESS;
     } else {
-        return real_php_log_ex(message, message_len, opt);
+        return real_php_log_ex(message, message_len, log_file_path);
     }
 }
 
