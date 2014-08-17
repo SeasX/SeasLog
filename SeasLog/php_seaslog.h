@@ -18,7 +18,7 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.0.2"
+#define SEASLOG_VERSION                     "1.1.0"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_DEBUG                       "debug"
@@ -29,6 +29,11 @@ extern zend_module_entry seaslog_module_entry;
 #define SEASLOG_CRITICAL                    "critical"
 #define SEASLOG_ALERT                       "alert"
 #define SEASLOG_EMERGENCY                   "emergency"
+
+#define SEASLOG_BUFFER_NAME                 "seaslog_buffer"
+#define SEASLOG_BUFFER_SIZE_NAME            "seaslog_buffer_size"
+
+#define SL_S(s)                             s, sizeof(s)-1
 
 PHP_MINIT_FUNCTION(seaslog);
 PHP_MSHUTDOWN_FUNCTION(seaslog);
@@ -59,12 +64,6 @@ PHP_METHOD(SEASLOG_RES_NAME,critical);
 PHP_METHOD(SEASLOG_RES_NAME,alert);
 PHP_METHOD(SEASLOG_RES_NAME,emergency);
 
-typedef struct sl_global_t {
-  int  started;
-  zval *log_buffer;
-  int  log_buffer_counts;
-} sl_global_t;
-
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_basepath;
     char *default_logger;
@@ -76,7 +75,6 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool use_buffer;
     int buffer_size;
     int level;
-    sl_global_t SL_globals;
 ZEND_END_MODULE_GLOBALS(seaslog)
 
 #ifdef ZTS
