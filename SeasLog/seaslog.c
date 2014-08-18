@@ -302,8 +302,6 @@ static int seaslog_buffer_set(char *log_info,int log_info_len,char *path,int pat
 static int seaslog_shutdown_buffer(TSRMLS_D)
 {
     if (SEASLOG_G(use_buffer)) {
-        php_printf("seaslog_shutdown_buffer -- start\n");
-
         HashTable   *ht;
         void        *data;
         zval        *log_array;
