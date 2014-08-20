@@ -155,11 +155,6 @@ PHP_MINIT_FUNCTION(seaslog)
     zend_declare_property_null(seaslog_ce,ZEND_STRL(SEASLOG_BUFFER_NAME),ZEND_ACC_STATIC TSRMLS_CC);
     zend_declare_property_null(seaslog_ce,ZEND_STRL(SEASLOG_BUFFER_SIZE_NAME),ZEND_ACC_STATIC TSRMLS_CC);
 
-//    zval *buffer_size;
-//    MAKE_STD_ZVAL(buffer_size);
-//    ZVAL_LONG(buffer_size,0);
-//    zend_declare_property_long(seaslog_ce,ZEND_STRL(SEASLOG_BUFFER_SIZE_NAME),Z_LVAL_P(buffer_size),ZEND_ACC_STATIC TSRMLS_CC);
-
     return SUCCESS;
 }
 
