@@ -661,11 +661,11 @@ PHP_METHOD(SEASLOG_RES_NAME,log)
     }
 
     if (argc > 2) {
-        if (_seaslog_log_content(argc,level,message,message_len,HASH_OF(*content),logger,logger_len TSRMLS_CC) == FAILURE) {
+        if (_seaslog_log_content(argc,level,message,message_len,HASH_OF(*content),logger,logger_len,seaslog_ce TSRMLS_CC) == FAILURE) {
             RETURN_FALSE;
         }
     } else {
-        if (_seaslog_log(argc,level,message,message_len,logger,logger_len TSRMLS_CC) == FAILURE) {
+        if (_seaslog_log(argc,level,message,message_len,logger,logger_len,seaslog_ce TSRMLS_CC) == FAILURE) {
             RETURN_FALSE;
         }
     }
