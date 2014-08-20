@@ -18,11 +18,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2014-08-17</date>
-    <time>16:00:00</time>
+    <date>2014-08-20</date>
+    <time>12:00:00</time>
     <version>
-        <release>1.1.0</release>
-        <api>1.1.0</api>
+        <release>1.1.4</release>
+        <api>1.1.4</api>
     </version>
     <stability>
         <release>stable</release>
@@ -30,9 +30,10 @@
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - fixed Mac under the compiler error
-        - Buffer optimization methods, improve operation efficiency
-        - Optimization of the internal structure, concurrent fault
+        - Define some function at header for C99 Standard
+        - Remove some superfluous comment
+        - Fixed SeasLog::log() function warning
+        - Fixed config "seaslog.level = 0" in Readme
     </notes>
     <contents>
         <dir name="/">
@@ -124,6 +125,24 @@
             <notes>
                 - Add buffer_size config bar,when buffer_size full will write log
                 - Code format remove tab to 4space
+            </notes>
+        </release>
+        <release>
+            <date>2014-08-17</date>
+            <time>16:00:00</time>
+            <version>
+                <release>1.1.0</release>
+                <api>1.1.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - fixed Mac under the compiler error
+                - Buffer optimization methods, improve operation efficiency
+                - Optimization of the internal structure, concurrent fault
             </notes>
         </release>
     </changelog>
