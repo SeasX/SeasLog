@@ -40,6 +40,14 @@
 #endif
 
 void seaslog_init_logger(TSRMLS_D);
+void seaslog_init_buffer(TSRMLS_D);
+void seaslog_clear_buffer(TSRMLS_D);
+int _ck_log_dir(TSRMLS_DC);
+int _seaslog_log_content(TSRMLS_DC);
+int _seaslog_log(TSRMLS_DC);
+int _check_level(TSRMLS_DC);
+int _mk_log_dir(TSRMLS_DC);
+int _php_log_ex(TSRMLS_DC);
 static int seaslog_shutdown_buffer(TSRMLS_D);
 
 ZEND_DECLARE_MODULE_GLOBALS(seaslog)
