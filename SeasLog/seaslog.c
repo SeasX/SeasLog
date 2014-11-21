@@ -89,7 +89,7 @@ const zend_function_entry seaslog_methods[] = {
         PHP_ME(SEASLOG_RES_NAME, alert, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
         PHP_ME(SEASLOG_RES_NAME, emergency, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 
-        PHP_FE_END
+        {NULL, NULL, NULL}
 };
 
 zend_module_entry seaslog_module_entry = {
