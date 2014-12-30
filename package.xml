@@ -18,11 +18,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2014-08-20</date>
-    <time>12:00:00</time>
+    <date>2014-12-30</date>
+    <time>14:30:00</time>
     <version>
-        <release>1.1.4</release>
-        <api>1.1.4</api>
+        <release>1.1.6</release>
+        <api>1.1.6</api>
     </version>
     <stability>
         <release>stable</release>
@@ -30,10 +30,8 @@
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - Define some function at header for C99 Standard
-        - Remove some superfluous comment
-        - Fixed SeasLog::log() function warning
-        - Fixed config "seaslog.level = 0" in Readme
+        - Fixed SeasLog::analyzerCount() function add query by key_word
+        - Fixed SeasLog::analyzerDetail() function add query by key_word,paging by start,limit
     </notes>
     <contents>
         <dir name="/">
@@ -143,6 +141,25 @@
                 - fixed Mac under the compiler error
                 - Buffer optimization methods, improve operation efficiency
                 - Optimization of the internal structure, concurrent fault
+            </notes>
+        </release>
+        <release>
+            <date>2014-08-20</date>
+            <time>12:00:00</time>
+            <version>
+                <release>1.1.4</release>
+                <api>1.1.4</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - Define some function at header for C99 Standard
+                - Remove some superfluous comment
+                - Fixed SeasLog::log() function warning
+                - Fixed config "seaslog.level = 0" in Readme
             </notes>
         </release>
     </changelog>
