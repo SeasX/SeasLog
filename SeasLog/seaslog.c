@@ -378,7 +378,7 @@ static char *mk_real_date(TSRMLS_D){
     return _date;
 }
 
-static long get_type_count(char *log_path,char *level TSRMLS_DC)
+static long get_type_count(char *log_path,char *level,char *key_word TSRMLS_DC)
 {
     FILE * fp;
     char buffer[BUFSIZ];
@@ -396,8 +396,13 @@ static long get_type_count(char *log_path,char *level TSRMLS_DC)
     }else{
         spprintf(&path,0,"%s/%s/%s*",SEASLOG_G(base_path),SEASLOG_G(last_logger),log_path);
     }
-    
-    spprintf(&sh,0,"more %s | grep '%s' -wc",path,level);
+
+    if (key_word) {
+        spprintf(&sh,0,"more %s | grep '%s' | grep '%s' -wc",path,level,key_word);
+    } else {
+        spprintf(&sh,0,"more %s | grep '%s' -wc",path,level);
+    }
+
     
     fp = VCWD_POPEN(sh, "r");
     if (!fp){
@@ -412,7 +417,7 @@ static long get_type_count(char *log_path,char *level TSRMLS_DC)
     return count;
 }
 
-static int get_detail(char *log_path,char *level,zval *return_value TSRMLS_DC)
+static int get_detail(char *log_path,char *level,char *key_word,int start,int limit,zval *return_value TSRMLS_DC)
 {
     FILE * fp;
     char buffer[BUFSIZ+1];
@@ -429,7 +434,11 @@ static int get_detail(char *log_path,char *level,zval *return_value TSRMLS_DC)
         spprintf(&path,0,"%s/%s/%s*",SEASLOG_G(base_path),SEASLOG_G(last_logger),log_path);
     }
 
-    spprintf(&sh,0,"more %s | grep '%s' -w",path,level);
+    if (key_word) {
+        spprintf(&sh,0,"more %s | grep '%s' -w | grep '%s' -w | sed -n '%d,%d'p",path,level,key_word,start,limit);
+    } else {
+        spprintf(&sh,0,"more %s | grep '%s' -w | sed -n '%d,%d'p",path,level,start,limit);
+    }
 
     fp = VCWD_POPEN(sh, "r");
 
@@ -567,12 +576,12 @@ PHP_METHOD(SEASLOG_RES_NAME,getLastLogger)
 PHP_METHOD(SEASLOG_RES_NAME,analyzerCount)
 {
     int argc = ZEND_NUM_ARGS();
-    char *log_path,*result,*level;
+    char *log_path,*result,*level,*key_word = NULL;
     int len = 0;
-    int log_path_len,level_len;
+    int log_path_len,level_len,key_word_len;
     long count;
 
-    if (zend_parse_parameters(argc TSRMLS_CC, "|ss",&level,&level_len,&log_path, &log_path_len) == FAILURE)
+    if (zend_parse_parameters(argc TSRMLS_CC, "|sss",&level,&level_len,&log_path, &log_path_len,&key_word,&key_word_len) == FAILURE)
         return;
 
     if (argc == 0){
@@ -580,14 +589,14 @@ PHP_METHOD(SEASLOG_RES_NAME,analyzerCount)
         log_path = "";
 
         long count_debug,count_info,count_notice,count_warn,count_erro,count_critical,count_alert,count_emergency;
-        count_debug = get_type_count(log_path,SEASLOG_DEBUG);
-        count_info = get_type_count(log_path,SEASLOG_INFO);
-        count_notice = get_type_count(log_path,SEASLOG_NOTICE);
-        count_warn = get_type_count(log_path,SEASLOG_WARNING);
-        count_erro = get_type_count(log_path,SEASLOG_ERROR);
-        count_critical = get_type_count(log_path,SEASLOG_CRITICAL);
-        count_alert = get_type_count(log_path,SEASLOG_ALERT);
-        count_emergency = get_type_count(log_path,SEASLOG_EMERGENCY);
+        count_debug = get_type_count(log_path,SEASLOG_DEBUG,key_word);
+        count_info = get_type_count(log_path,SEASLOG_INFO,key_word);
+        count_notice = get_type_count(log_path,SEASLOG_NOTICE,key_word);
+        count_warn = get_type_count(log_path,SEASLOG_WARNING,key_word);
+        count_erro = get_type_count(log_path,SEASLOG_ERROR,key_word);
+        count_critical = get_type_count(log_path,SEASLOG_CRITICAL,key_word);
+        count_alert = get_type_count(log_path,SEASLOG_ALERT,key_word);
+        count_emergency = get_type_count(log_path,SEASLOG_EMERGENCY,key_word);
 
         add_assoc_long(return_value, SEASLOG_DEBUG, count_debug);
         add_assoc_long(return_value, SEASLOG_INFO, count_info);
@@ -599,11 +608,11 @@ PHP_METHOD(SEASLOG_RES_NAME,analyzerCount)
         add_assoc_long(return_value, SEASLOG_EMERGENCY, count_emergency);
     }else if (argc == 1){
         log_path = "";
-        count = get_type_count(log_path,level);
+        count = get_type_count(log_path,level,key_word);
 
         RETURN_LONG(count);
     }else{
-        count = get_type_count(log_path,level);
+        count = get_type_count(log_path,level,key_word);
 
         RETURN_LONG(count);
     }
@@ -612,11 +621,13 @@ PHP_METHOD(SEASLOG_RES_NAME,analyzerCount)
 
 PHP_METHOD(SEASLOG_RES_NAME,analyzerDetail)
 {
-    char *log_path,*level;
-    int log_path_len,level_len;
+    char *log_path,*level,*key_word = NULL;
+    int log_path_len,level_len,key_word_len;
+    int start = 1;
+    int limit = 20;
     int argc = ZEND_NUM_ARGS();
 
-    if (zend_parse_parameters(argc TSRMLS_CC, "s|s",&level,&level_len,&log_path, &log_path_len) == FAILURE) {
+    if (zend_parse_parameters(argc TSRMLS_CC, "s|ssll",&level,&level_len,&log_path, &log_path_len,&key_word,&key_word_len,&start,&limit) == FAILURE) {
         RETURN_FALSE;
     }
 
@@ -626,7 +637,7 @@ PHP_METHOD(SEASLOG_RES_NAME,analyzerDetail)
 
     }
 
-    get_detail(log_path, level, return_value TSRMLS_CC);
+    get_detail(log_path, level,key_word,start,limit, return_value TSRMLS_CC);
 }
 
 PHP_METHOD(SEASLOG_RES_NAME,getBuffer)
