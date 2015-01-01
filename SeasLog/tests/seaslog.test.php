@@ -30,6 +30,7 @@ SeasLog::emergency('Just now, the house next door was completely burnt out! {not
 
 var_dump(SeasLog::analyzerCount());
 var_dump(SeasLog::analyzerDetail(SEASLOG_INFO,date('Ymd',time())));
+var_dump(SeasLog::analyzerDetail(SEASLOG_DEBUG,date('Ymd',time()),'neeke',1,40));
 var_dump(SeasLog::getLastLogger());
 
 $buffer = SeasLog::getBuffer();

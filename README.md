@@ -75,7 +75,7 @@ seaslog.disting_type = 1                        ;是否以type分文件 1是 0�
 seaslog.disting_by_hour = 1                     ;是否每小时划分一个文件 1是 0否(默认)
 seaslog.use_buffer = 1                          ;是否启用buffer 1是 0否(默认)
 seaslog.buffer_size = 100                       ;buffer中缓冲数量 默认0(不使用buffer_size)
-seaslog.level = 3                               ;记录日志级别 默认0(所有日志)
+seaslog.level = 0                               ;记录日志级别 默认0(所有日志)
 ```
 > `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
 
@@ -169,11 +169,12 @@ class SeasLog
 
     /**
      * 统计所有类型（或单个类型）行数
-     * @param $level
+     * @param string $level
      * @param string $log_path
+     * @param null $key_word
      * @return array | long
      */
-    static public function analyzerCount($level = 'all',$log_path = '*')
+    static public function analyzerCount($level = 'all',$log_path = '*',$key_word = NULL)
     {
         return array();
     }
@@ -182,9 +183,12 @@ class SeasLog
      * 以数组形式，快速取出某类型log的各行详情
      * @param $level
      * @param string $log_path
+     * @param null $key_word
+     * @param int $start
+     * @param int $limit
      * @return array
      */
-    static public function analyzerDetail($level = SEASLOG_INFO,$log_path = '*')
+    static public function analyzerDetail($level = SEASLOG_INFO,$log_path = '*',$key_word = NULL, $start = 1,$limit = 20)
     {
         return array();
     }

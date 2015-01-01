@@ -56,11 +56,12 @@ class SeasLog
 
     /**
      * 统计所有类型（或单个类型）行数
-     * @param $level
+     * @param string $level
      * @param string $log_path
+     * @param null $key_word
      * @return array | long
      */
-    static public function analyzerCount($level = 'all',$log_path = '*')
+    static public function analyzerCount($level = 'all',$log_path = '*',$key_word = NULL)
     {
         return array();
     }
@@ -69,9 +70,12 @@ class SeasLog
      * 以数组形式，快速取出某类型log的各行详情
      * @param $level
      * @param string $log_path
+     * @param null $key_word
+     * @param int $start
+     * @param int $limit
      * @return array
      */
-    static public function analyzerDetail($level = SEASLOG_INFO,$log_path = '*')
+    static public function analyzerDetail($level = SEASLOG_INFO,$log_path = '*',$key_word = NULL, $start = 1,$limit = 20)
     {
         return array();
     }
