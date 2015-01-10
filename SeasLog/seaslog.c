@@ -435,9 +435,9 @@ static int get_detail(char *log_path,char *level,char *key_word,long start,long 
     }
 
     if (key_word && strlen(key_word) >= 1) {
-        spprintf(&sh,0,"more %s | grep '%s' -w | grep '%s' -w | sed -n '%d,%d'p",path,level,key_word,start,limit);
+        spprintf(&sh,0,"more %s | grep '%s' -w | grep '%s' -w | sed -n '%ld,%ld'p",path,level,key_word,start,limit);
     } else {
-        spprintf(&sh,0,"more %s | grep '%s' -w | sed -n '%d,%d'p",path,level,start,limit);
+        spprintf(&sh,0,"more %s | grep '%s' -w | sed -n '%ld,%ld'p",path,level,start,limit);
     }
 
     fp = VCWD_POPEN(sh, "r");
