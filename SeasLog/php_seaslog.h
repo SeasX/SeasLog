@@ -33,7 +33,7 @@ extern zend_module_entry seaslog_module_entry;
 #define SEASLOG_BUFFER_NAME                 "seaslog_buffer"
 #define SEASLOG_BUFFER_SIZE_NAME            "seaslog_buffer_size"
 
-#define SL_S(s)                             s, sizeof(s)-1
+#define SL_S(s)                             s, sizeof(s) - 1
 
 PHP_MINIT_FUNCTION(seaslog);
 PHP_MSHUTDOWN_FUNCTION(seaslog);
@@ -45,24 +45,24 @@ PHP_FUNCTION(seaslog_get_version);
 PHP_FUNCTION(seaslog_get_author);
 
 zend_class_entry *seaslog_ce;
-PHP_METHOD(SEASLOG_RES_NAME,__construct);
-PHP_METHOD(SEASLOG_RES_NAME,__destruct);
-PHP_METHOD(SEASLOG_RES_NAME,setBasePath);
-PHP_METHOD(SEASLOG_RES_NAME,getBasePath);
-PHP_METHOD(SEASLOG_RES_NAME,setLogger);
-PHP_METHOD(SEASLOG_RES_NAME,getLastLogger);
-PHP_METHOD(SEASLOG_RES_NAME,analyzerCount);
-PHP_METHOD(SEASLOG_RES_NAME,analyzerDetail);
-PHP_METHOD(SEASLOG_RES_NAME,getBuffer);
-PHP_METHOD(SEASLOG_RES_NAME,log);
-PHP_METHOD(SEASLOG_RES_NAME,debug);
-PHP_METHOD(SEASLOG_RES_NAME,info);
-PHP_METHOD(SEASLOG_RES_NAME,notice);
-PHP_METHOD(SEASLOG_RES_NAME,warning);
-PHP_METHOD(SEASLOG_RES_NAME,error);
-PHP_METHOD(SEASLOG_RES_NAME,critical);
-PHP_METHOD(SEASLOG_RES_NAME,alert);
-PHP_METHOD(SEASLOG_RES_NAME,emergency);
+PHP_METHOD(SEASLOG_RES_NAME, __construct);
+PHP_METHOD(SEASLOG_RES_NAME, __destruct);
+PHP_METHOD(SEASLOG_RES_NAME, setBasePath);
+PHP_METHOD(SEASLOG_RES_NAME, getBasePath);
+PHP_METHOD(SEASLOG_RES_NAME, setLogger);
+PHP_METHOD(SEASLOG_RES_NAME, getLastLogger);
+PHP_METHOD(SEASLOG_RES_NAME, analyzerCount);
+PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail);
+PHP_METHOD(SEASLOG_RES_NAME, getBuffer);
+PHP_METHOD(SEASLOG_RES_NAME, log);
+PHP_METHOD(SEASLOG_RES_NAME, debug);
+PHP_METHOD(SEASLOG_RES_NAME, info);
+PHP_METHOD(SEASLOG_RES_NAME, notice);
+PHP_METHOD(SEASLOG_RES_NAME, warning);
+PHP_METHOD(SEASLOG_RES_NAME, error);
+PHP_METHOD(SEASLOG_RES_NAME, critical);
+PHP_METHOD(SEASLOG_RES_NAME, alert);
+PHP_METHOD(SEASLOG_RES_NAME, emergency);
 
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_basepath;
