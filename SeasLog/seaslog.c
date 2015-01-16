@@ -417,7 +417,7 @@ static long get_type_count(char *log_path,char *level,char *key_word TSRMLS_DC)
     return count;
 }
 
-static int get_detail(char *log_path,char *level,char *key_word,int start,int limit,zval *return_value TSRMLS_DC)
+static int get_detail(char *log_path,char *level,char *key_word,long start,long limit,zval *return_value TSRMLS_DC)
 {
     FILE * fp;
     char buffer[BUFSIZ+1];
@@ -434,10 +434,10 @@ static int get_detail(char *log_path,char *level,char *key_word,int start,int li
         spprintf(&path,0,"%s/%s/%s*",SEASLOG_G(base_path),SEASLOG_G(last_logger),log_path);
     }
 
-    if (key_word) {
-        spprintf(&sh,0,"more %s | grep '%s' -w | grep '%s' -w | sed -n '%d,%d'p",path,level,key_word,start,limit);
+    if (key_word && strlen(key_word) >= 1) {
+        spprintf(&sh,0,"more %s | grep '%s' -w | grep '%s' -w | sed -n '%ld,%ld'p",path,level,key_word,start,limit);
     } else {
-        spprintf(&sh,0,"more %s | grep '%s' -w | sed -n '%d,%d'p",path,level,start,limit);
+        spprintf(&sh,0,"more %s | grep '%s' -w | sed -n '%ld,%ld'p",path,level,start,limit);
     }
 
     fp = VCWD_POPEN(sh, "r");
@@ -447,7 +447,7 @@ static int get_detail(char *log_path,char *level,char *key_word,int start,int li
         return -1;
     }else{
        while((fgets(buffer,sizeof(buffer),fp)) != NULL){
-            if (strcspn(buffer,SEASLOG_G(base_path)) != 0){
+            if (strstr(buffer,SEASLOG_G(base_path)) == NULL){
                 add_next_index_string(return_value,delN(buffer),1);
             }
        }
@@ -623,8 +623,8 @@ PHP_METHOD(SEASLOG_RES_NAME,analyzerDetail)
 {
     char *log_path,*level,*key_word = NULL;
     int log_path_len,level_len,key_word_len;
-    int start = 1;
-    int limit = 20;
+    long start = 1;
+    long limit = 20;
     int argc = ZEND_NUM_ARGS();
 
     if (zend_parse_parameters(argc TSRMLS_CC, "s|ssll",&level,&level_len,&log_path, &log_path_len,&key_word,&key_word_len,&start,&limit) == FAILURE) {
