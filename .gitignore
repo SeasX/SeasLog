@@ -19,3 +19,10 @@
 
 # tags
 *.tgz
+*~
+*.swp
+*.swo
+*.dSYM
+a.out
+tags
+

@@ -61,7 +61,7 @@ class SeasLog
      * @param null $key_word
      * @return array | long
      */
-    static public function analyzerCount($level = 'all',$log_path = '*',$key_word = NULL)
+    static public function analyzerCount($level = 'all', $log_path = '*', $key_word = NULL)
     {
         return array();
     }
@@ -75,7 +75,7 @@ class SeasLog
      * @param int $limit
      * @return array
      */
-    static public function analyzerDetail($level = SEASLOG_INFO,$log_path = '*',$key_word = NULL, $start = 1,$limit = 20)
+    static public function analyzerDetail($level = SEASLOG_INFO, $log_path = '*', $key_word = NULL, $start = 1, $limit = 20)
     {
         return array();
     }
@@ -95,7 +95,7 @@ class SeasLog
      * @param array $content
      * @param string $module
      */
-    static public function debug($message,array $content = array(),$module = '')
+    static public function debug($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_DEBUG
     }
@@ -106,7 +106,7 @@ class SeasLog
      * @param array $content
      * @param string $module
      */
-    static public function info($message,array $content = array(),$module = '')
+    static public function info($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_INFO
     }
@@ -117,7 +117,7 @@ class SeasLog
      * @param array $content
      * @param string $module
      */
-    static public function notice($message,array $content = array(),$module = '')
+    static public function notice($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_NOTICE
     }
@@ -128,7 +128,7 @@ class SeasLog
      * @param array $content
      * @param string $module
      */
-    static public function warning($message,array $content = array(),$module = '')
+    static public function warning($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_WARNING
     }
@@ -139,7 +139,7 @@ class SeasLog
      * @param array $content
      * @param string $module
      */
-    static public function error($message,array $content = array(),$module = '')
+    static public function error($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_ERROR
     }
@@ -150,7 +150,7 @@ class SeasLog
      * @param array $content
      * @param string $module
      */
-    static public function critical($message,array $content = array(),$module = '')
+    static public function critical($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_CRITICAL
     }
@@ -161,7 +161,7 @@ class SeasLog
      * @param array $content
      * @param string $module
      */
-    static public function alert($message,array $content = array(),$module = '')
+    static public function alert($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_ALERT
     }
@@ -172,7 +172,7 @@ class SeasLog
      * @param array $content
      * @param string $module
      */
-    static public function emergency($message,array $content = array(),$module = '')
+    static public function emergency($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_EMERGENCY
     }
@@ -184,7 +184,7 @@ class SeasLog
      * @param array $content
      * @param string $module
      */
-    static public function log($level,$message,array $content = array(),$module = '')
+    static public function log($level, $message, array $content = array(), $module = '')
     {
 
     }
