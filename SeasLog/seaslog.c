@@ -42,12 +42,12 @@
 void seaslog_init_logger(TSRMLS_D);
 void seaslog_init_buffer(TSRMLS_D);
 void seaslog_clear_buffer(TSRMLS_D);
-int _ck_log_dir(TSRMLS_DC);
-int _seaslog_log_content(TSRMLS_DC);
-int _seaslog_log(TSRMLS_DC);
-int _check_level(TSRMLS_DC);
-int _mk_log_dir(TSRMLS_DC);
-int _php_log_ex(TSRMLS_DC);
+int _ck_log_dir(char *dir TSRMLS_DC);
+int _seaslog_log_content(int argc, char *level, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
+int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
+int _check_level(char *level TSRMLS_DC);
+int _mk_log_dir(char *dir TSRMLS_DC);
+int _php_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
 static int seaslog_shutdown_buffer(TSRMLS_D);
 
 ZEND_DECLARE_MODULE_GLOBALS(seaslog)
@@ -150,7 +150,7 @@ PHP_MINIT_FUNCTION(seaslog)
 
     zend_class_entry seaslog;
     INIT_CLASS_ENTRY(seaslog, SEASLOG_RES_NAME, seaslog_methods);
-    seaslog_ce = zend_register_internal_class_ex(&seaslog, NULL, NULL TSRMLS_DC);
+    seaslog_ce = zend_register_internal_class_ex(&seaslog, NULL, NULL TSRMLS_CC);
     seaslog_ce->ce_flags = ZEND_ACC_IMPLICIT_PUBLIC;
 
     zend_declare_property_null(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_NAME), ZEND_ACC_STATIC TSRMLS_CC);
@@ -227,7 +227,7 @@ void seaslog_clear_buffer(TSRMLS_D)
     zend_update_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_SIZE_NAME), buffer_size TSRMLS_CC);
 }
 
-static int real_php_log_ex(char *message, int message_len, char *opt)
+static int real_php_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
 {
     php_stream *stream = NULL;
     stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
@@ -344,7 +344,7 @@ static int seaslog_shutdown_buffer(TSRMLS_D)
 
             zend_hash_get_current_key(ht, &key, &idx, 0);
 
-            real_php_log_ex(Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval), key);
+            real_php_log_ex(Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval), key TSRMLS_CC);
 
             zend_hash_move_forward(ht);
         }
@@ -394,9 +394,9 @@ static char *mk_real_date(TSRMLS_D)
     char *_date;
 
     if (SEASLOG_G(disting_by_hour)) {
-        _date = php_format_date("YmdH", 5, (long)time(NULL), (long)time(NULL));
+        _date = php_format_date("YmdH", 5, (long)time(NULL), (long)time(NULL) TSRMLS_CC);
     } else {
-        _date = php_format_date("Ymd",  3, (long)time(NULL), (long)time(NULL));
+        _date = php_format_date("Ymd",  3, (long)time(NULL), (long)time(NULL) TSRMLS_CC);
     }
 
     return _date;
@@ -410,7 +410,7 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
     long count;
 
     spprintf(&_log_path, 0, "%s/%s", SEASLOG_G(base_path), SEASLOG_G(last_logger));
-    int _ck_dir = _ck_log_dir(_log_path);
+    int _ck_dir = _ck_log_dir(_log_path TSRMLS_CC);
     if (_ck_dir == FAILURE) {
         return 0;
     }
@@ -619,14 +619,14 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
         log_path = "";
 
         long count_debug, count_info, count_notice, count_warn, count_erro, count_critical, count_alert, count_emergency;
-        count_debug     = get_type_count(log_path, SEASLOG_DEBUG, key_word);
-        count_info      = get_type_count(log_path, SEASLOG_INFO, key_word);
-        count_notice    = get_type_count(log_path, SEASLOG_NOTICE, key_word);
-        count_warn      = get_type_count(log_path, SEASLOG_WARNING, key_word);
-        count_erro      = get_type_count(log_path, SEASLOG_ERROR, key_word);
-        count_critical  = get_type_count(log_path, SEASLOG_CRITICAL, key_word);
-        count_alert     = get_type_count(log_path, SEASLOG_ALERT, key_word);
-        count_emergency = get_type_count(log_path, SEASLOG_EMERGENCY, key_word);
+        count_debug     = get_type_count(log_path, SEASLOG_DEBUG, key_word TSRMLS_CC);
+        count_info      = get_type_count(log_path, SEASLOG_INFO, key_word TSRMLS_CC);
+        count_notice    = get_type_count(log_path, SEASLOG_NOTICE, key_word TSRMLS_CC);
+        count_warn      = get_type_count(log_path, SEASLOG_WARNING, key_word TSRMLS_CC);
+        count_erro      = get_type_count(log_path, SEASLOG_ERROR, key_word TSRMLS_CC);
+        count_critical  = get_type_count(log_path, SEASLOG_CRITICAL, key_word TSRMLS_CC);
+        count_alert     = get_type_count(log_path, SEASLOG_ALERT, key_word TSRMLS_CC);
+        count_emergency = get_type_count(log_path, SEASLOG_EMERGENCY, key_word TSRMLS_CC);
 
         add_assoc_long(return_value, SEASLOG_DEBUG, count_debug);
         add_assoc_long(return_value, SEASLOG_INFO, count_info);
@@ -638,11 +638,11 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
         add_assoc_long(return_value, SEASLOG_EMERGENCY, count_emergency);
     } else if (argc == 1) {
         log_path = "";
-        count = get_type_count(log_path, level, key_word);
+        count = get_type_count(log_path, level, key_word TSRMLS_CC);
 
         RETURN_LONG(count);
     } else {
-        count = get_type_count(log_path, level, key_word);
+        count = get_type_count(log_path, level, key_word TSRMLS_CC);
 
         RETURN_LONG(count);
     }
@@ -896,11 +896,11 @@ PHPAPI int _seaslog_log(
     }
 
     spprintf(&_log_path, 0, "%s/%s", SEASLOG_G(base_path), logger);
-    _mk_log_dir(_log_path);
+    _mk_log_dir(_log_path TSRMLS_CC);
 
-    _date = mk_real_date();
+    _date = mk_real_date(TSRMLS_C);
 
-    _time = php_format_date("Y:m:d H:i:s", 11, (long)time(NULL), (long)time(NULL));
+    _time = php_format_date("Y:m:d H:i:s", 11, (long)time(NULL), (long)time(NULL) TSRMLS_CC);
 
     log_file_path = mk_real_log_path(_log_path, _date, level TSRMLS_CC);
 
@@ -937,9 +937,9 @@ PHPAPI int _check_level(char *level TSRMLS_DC)
   return FAILURE;
 }
 
-PHPAPI int _mk_log_dir(char *dir)
+PHPAPI int _mk_log_dir(char *dir TSRMLS_DC)
 {
-    int _ck_dir = _ck_log_dir(dir);
+    int _ck_dir = _ck_log_dir(dir TSRMLS_CC);
 
     if (_ck_dir == FAILURE) {
         zval *zcontext = NULL;
@@ -960,7 +960,7 @@ PHPAPI int _mk_log_dir(char *dir)
 
 }
 
-PHPAPI int _ck_log_dir(char *dir)
+PHPAPI int _ck_log_dir(char *dir TSRMLS_DC)
 {
     zval *function_name;
     zval *retval;
@@ -974,7 +974,7 @@ PHPAPI int _ck_log_dir(char *dir)
     ZVAL_STRING(str, dir, 1);
     param[0] = &str;
 
-    if (call_user_function_ex(EG(function_table), NULL, function_name, &retval, 1, param, 0, EG(active_symbol_table)) != SUCCESS)
+    if (call_user_function_ex(EG(function_table), NULL, function_name, &retval, 1, param, 0, EG(active_symbol_table) TSRMLS_CC) != SUCCESS)
     {
         zend_error(E_ERROR, "Function call failed");
     }
@@ -992,7 +992,7 @@ PHPAPI int _php_log_ex(char *message, int message_len, char *log_file_path, int 
         seaslog_buffer_set(message, message_len, log_file_path, log_file_path_len, ce TSRMLS_CC);
         return SUCCESS;
     } else {
-        return real_php_log_ex(message, message_len, log_file_path);
+        return real_php_log_ex(message, message_len, log_file_path TSRMLS_CC);
     }
 }
 
