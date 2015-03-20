@@ -134,6 +134,8 @@ static void php_seaslog_init_globals(zend_seaslog_globals *seaslog_globals)
 
 PHP_MINIT_FUNCTION(seaslog)
 {
+    ZEND_INIT_MODULE_GLOBALS(seaslog, php_seaslog_init_globals, NULL);
+
     REGISTER_INI_ENTRIES();
 
     REGISTER_STRINGL_CONSTANT("SEASLOG_VERSION",   SEASLOG_VERSION,   sizeof(SEASLOG_VERSION) - 1,  CONST_PERSISTENT | CONST_CS);
