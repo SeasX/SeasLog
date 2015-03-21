@@ -33,7 +33,11 @@ log日志，通常是系统或软件、应用的运行记录。通过log的分�
 
 php内置error_log、syslog函数功能强大且性能极好，但由于各种缺陷(error_log无错误级别、无固定格式，syslog不分模块、与系统日志混合)，灵活度降低了很多，不能满足应用需求。
 
-好消息是，有不少第三方的log类库弥补了上述缺陷，如log4php、plog、Analog等(当然也有很多应用在项目中自己开发的log类)。其中以[log4php](http://logging.apache.org/log4php/)最为著名，设计精良、格式完美、文档完善、功能强大。推荐。(log4php的性能有待测试)
+好消息是，有不少第三方的log类库弥补了上述缺陷，如log4php、plog、Analog等(当然也有很多应用在项目中自己开发的log类)。其中以[log4php](http://logging.apache.org/log4php/)最为著名，设计精良、格式完美、文档完善、功能强大。推荐。
+
+不过log4php在性能方面表现非常差,下图是SeasLog与log4php的ab并发性能测试( 测试环境:Ubuntu12.04单机,CPU I3,内存 16G,硬盘 SATA 7200):
+![SeasLogVSlog4php](https://raw.githubusercontent.com/Neeke/SeasLog/master/SeasLogVSlog4php.png)
+
 
 那么有没有一种log类库满足以下需求呢：
 * 分模块、分级别
