@@ -912,7 +912,7 @@ PHPAPI int _seaslog_log(
     efree(_log_path);
     efree(_date);
 
-    log_file_path_len = strlen(file_path)+1;
+    log_file_path_len = strlen(log_file_path)+1;
 
     cur_time = mic_time();
     log_len = spprintf(&log_info, 0, "%s:%d| %s | %d | %s | %s | %s \n",zend_get_executed_filename(TSRMLS_C),zend_get_executed_lineno(TSRMLS_C), level, getpid(), cur_time, _time, message);
@@ -920,10 +920,11 @@ PHPAPI int _seaslog_log(
     efree(cur_time);
 
     if (_php_log_ex(log_info, log_len, log_file_path, log_file_path_len, ce TSRMLS_CC) == FAILURE) {
+        efree(log_file_path);
         efree(log_info);
         return FAILURE;
     }
-    
+    efree(log_file_path);
     efree(log_info);
     return SUCCESS;
 }
