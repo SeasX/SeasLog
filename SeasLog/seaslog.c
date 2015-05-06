@@ -885,7 +885,7 @@ PHPAPI int _seaslog_log(
     zend_class_entry *ce TSRMLS_DC
 )
 {
-    char *logger, *_log_path, *_date, *_time, *log_file_path, *log_info;
+    char *logger, *_log_path, *_date, *_time, *log_file_path, *log_info,*cur_time;
     int log_len, log_file_path_len;
 
     if (argc > 2) {
@@ -912,12 +912,7 @@ PHPAPI int _seaslog_log(
     efree(_log_path);
     efree(_date);
 
-    zval *file_path;
-    char * cur_time;
-    MAKE_STD_ZVAL(file_path);
-    ZVAL_STRING(file_path, log_file_path, 1);
-
-    log_file_path_len = Z_STRLEN_P(file_path);
+    log_file_path_len = strlen(file_path)+1;
 
     cur_time = mic_time();
     log_len = spprintf(&log_info, 0, "%s:%d| %s | %d | %s | %s | %s \n",zend_get_executed_filename(TSRMLS_C),zend_get_executed_lineno(TSRMLS_C), level, getpid(), cur_time, _time, message);
@@ -930,8 +925,6 @@ PHPAPI int _seaslog_log(
     }
     
     efree(log_info);
-    efree(log_file_path);
-    zval_ptr_dtor(&file_path);
     return SUCCESS;
 }
 
@@ -997,7 +990,7 @@ PHPAPI int _ck_log_dir(char *dir TSRMLS_DC)
 
     zval_ptr_dtor(&str);
     zval_ptr_dtor(&function_name);
-    
+
     if (retval != NULL && zval_is_true(retval)) {
         zval_ptr_dtor(&retval);
         return SUCCESS;
