@@ -230,6 +230,7 @@ void seaslog_clear_buffer(TSRMLS_D)
     zend_update_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_SIZE_NAME), buffer_size TSRMLS_CC);
 }
 
+//每次log都打开关闭流 @todo
 static int real_php_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
 {
     php_stream *stream = NULL;
@@ -756,7 +757,7 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency)
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_EMERGENCY);
 }
 
-static char *php_strtr_array(char *str, int slen, HashTable *hash)
+static char* php_strtr_array(char *str, int slen, HashTable *hash)
 {
     zval **entry;
     char  *string_key;
@@ -840,7 +841,6 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash)
                     tval = Z_STRVAL_PP(trans);
                     tlen = Z_STRLEN_PP(trans);
                 }
-
                 smart_str_appendl(&result, tval, tlen);
                 pos += len;
                 found = 1;
@@ -874,8 +874,9 @@ PHPAPI int _seaslog_log_content(
 )
 {
     char *result = php_strtr_array(message, message_len, content);
-
-    return _seaslog_log(argc, level, result, strlen(result), module, module_len, ce TSRMLS_CC);
+    int ret =  _seaslog_log(argc, level, result, strlen(result), module, module_len, ce TSRMLS_CC);
+    efree(result);
+    return ret;
 }
 
 PHPAPI int _seaslog_log(
