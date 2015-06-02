@@ -26,6 +26,7 @@
 #include "ext/standard/php_smart_str.h"
 #include "ext/date/php_date.h"
 #include "php_seaslog.h"
+
 #include "zend_extensions.h"
 #include <sys/resource.h>
 #include <stdlib.h>
@@ -229,6 +230,7 @@ void seaslog_clear_buffer(TSRMLS_D)
     zend_update_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_SIZE_NAME), buffer_size TSRMLS_CC);
 }
 
+//每次log都打开关闭流 @todo
 static int real_php_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
 {
     php_stream *stream = NULL;
@@ -286,11 +288,12 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
             spprintf(&_new_log, 0, "%s%s", Z_STRVAL_PP(ppzval), log_info);
 
             add_assoc_string_ex(new_array, Z_STRVAL_P(file_path), file_path_len, _new_log, 1);
+            efree(_new_log);
             have_old = SUCCESS;
         } else {
             add_assoc_string_ex(new_array, Z_STRVAL_P(file_path), file_path_len, Z_STRVAL_PP(ppzval), 1);
         }
-
+        zval_ptr_dtor(&file_path);
         zend_hash_move_forward(ht);
     }
 
@@ -413,6 +416,8 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
 
     spprintf(&_log_path, 0, "%s/%s", SEASLOG_G(base_path), SEASLOG_G(last_logger));
     int _ck_dir = _ck_log_dir(_log_path TSRMLS_CC);
+    efree(_log_path);
+
     if (_ck_dir == FAILURE) {
         return 0;
     }
@@ -752,7 +757,7 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency)
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_EMERGENCY);
 }
 
-static char *php_strtr_array(char *str, int slen, HashTable *hash)
+static char* php_strtr_array(char *str, int slen, HashTable *hash)
 {
     zval **entry;
     char  *string_key;
@@ -836,7 +841,6 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash)
                     tval = Z_STRVAL_PP(trans);
                     tlen = Z_STRLEN_PP(trans);
                 }
-
                 smart_str_appendl(&result, tval, tlen);
                 pos += len;
                 found = 1;
@@ -870,8 +874,9 @@ PHPAPI int _seaslog_log_content(
 )
 {
     char *result = php_strtr_array(message, message_len, content);
-
-    return _seaslog_log(argc, level, result, strlen(result), module, module_len, ce TSRMLS_CC);
+    int ret =  _seaslog_log(argc, level, result, strlen(result), module, module_len, ce TSRMLS_CC);
+    efree(result);
+    return ret;
 }
 
 PHPAPI int _seaslog_log(
@@ -881,7 +886,7 @@ PHPAPI int _seaslog_log(
     zend_class_entry *ce TSRMLS_DC
 )
 {
-    char *logger, *_log_path, *_date, *_time, *log_file_path, *log_info;
+    char *logger, *_log_path, *_date, *_time, *log_file_path, *log_info,*cur_time;
     int log_len, log_file_path_len;
 
     if (argc > 2) {
@@ -905,19 +910,23 @@ PHPAPI int _seaslog_log(
     _time = php_format_date("Y:m:d H:i:s", 11, (long)time(NULL), (long)time(NULL) TSRMLS_CC);
 
     log_file_path = mk_real_log_path(_log_path, _date, level TSRMLS_CC);
+    efree(_log_path);
+    efree(_date);
 
-    zval *file_path;
-    MAKE_STD_ZVAL(file_path);
-    ZVAL_STRING(file_path, log_file_path, 1);
+    log_file_path_len = strlen(log_file_path)+1;
 
-    log_file_path_len = Z_STRLEN_P(file_path);
-
-    log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n", level, getpid(), mic_time(), _time, message);
+    cur_time = mic_time();
+    log_len = spprintf(&log_info, 0, "%s:%d| %s | %d | %s | %s | %s \n",zend_get_executed_filename(TSRMLS_C),zend_get_executed_lineno(TSRMLS_C), level, getpid(), cur_time, _time, message);
+    efree(_time);
+    efree(cur_time);
 
     if (_php_log_ex(log_info, log_len, log_file_path, log_file_path_len, ce TSRMLS_CC) == FAILURE) {
+        efree(log_file_path);
+        efree(log_info);
         return FAILURE;
     }
-
+    efree(log_file_path);
+    efree(log_info);
     return SUCCESS;
 }
 
@@ -982,10 +991,14 @@ PHPAPI int _ck_log_dir(char *dir TSRMLS_DC)
         zend_error(E_ERROR, "Function call failed");
     }
 
+    zval_ptr_dtor(&str);
+    zval_ptr_dtor(&function_name);
+
     if (retval != NULL && zval_is_true(retval)) {
+        zval_ptr_dtor(&retval);
         return SUCCESS;
     }
-
+    zval_ptr_dtor(&retval);
     return FAILURE;
 }
 
