@@ -1,17 +1,17 @@
 /*
-  +----------------------------------------------------------------------+
-  | SeasLog                                                              |
-  +----------------------------------------------------------------------+
-  | This source file is subject to version 2.0 of the Apache license,    |
-  | that is bundled with this package in the file LICENSE, and is        |
-  | available through the world-wide-web at the following url:           |
-  | http://www.apache.org/licenses/LICENSE-2.0.html                      |
-  | If you did not receive a copy of the Apache2.0 license and are unable|
-  | to obtain it through the world-wide-web, please send a note to       |
-  | license@php.net so we can mail you a copy immediately.               |
-  +----------------------------------------------------------------------+
-  | Author: Neeke.Gao  <neeke@php.net>                                   |
-  +----------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| SeasLog                                                              |
++----------------------------------------------------------------------+
+| This source file is subject to version 2.0 of the Apache license,    |
+| that is bundled with this package in the file LICENSE, and is        |
+| available through the world-wide-web at the following url:           |
+| http://www.apache.org/licenses/LICENSE-2.0.html                      |
+| If you did not receive a copy of the Apache2.0 license and are unable|
+| to obtain it through the world-wide-web, please send a note to       |
+| license@php.net so we can mail you a copy immediately.               |
++----------------------------------------------------------------------+
+| Author: Neeke.Gao  <neeke@php.net>                                   |
++----------------------------------------------------------------------+
 */
 
 #ifdef HAVE_CONFIG_H
@@ -27,7 +27,6 @@
 #include "ext/date/php_date.h"
 #include "php_seaslog.h"
 #include "zend_extensions.h"
-#include <sys/resource.h>
 #include <stdlib.h>
 
 #ifdef PHP_WIN32
@@ -49,6 +48,7 @@ int _check_level(char *level TSRMLS_DC);
 int _mk_log_dir(char *dir TSRMLS_DC);
 int _php_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
 static int seaslog_shutdown_buffer(TSRMLS_D);
+static char * str_replace(char *ori, char * rep, char * with);
 
 ZEND_DECLARE_MODULE_GLOBALS(seaslog)
 
@@ -61,7 +61,6 @@ static zend_bool use_buffer = 0;
 static int buffer_size = 0;
 static int level = 0;
 
-
 const zend_function_entry seaslog_functions[] = {
     PHP_FE(seaslog_get_version, NULL)
     PHP_FE(seaslog_get_author,  NULL)
@@ -69,28 +68,28 @@ const zend_function_entry seaslog_functions[] = {
 };
 
 const zend_function_entry seaslog_methods[] = {
-        PHP_ME(SEASLOG_RES_NAME, __construct,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
-        PHP_ME(SEASLOG_RES_NAME, __destruct,    NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
+    PHP_ME(SEASLOG_RES_NAME, __construct,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+    PHP_ME(SEASLOG_RES_NAME, __destruct,    NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
 
-        PHP_ME(SEASLOG_RES_NAME, setBasePath,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, getBasePath,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, setLogger,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, getLastLogger, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, analyzerCount, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, analyzerDetail,NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, getBuffer,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, setBasePath,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getBasePath,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, setLogger,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getLastLogger, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, analyzerCount, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, analyzerDetail,NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getBuffer,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
-        PHP_ME(SEASLOG_RES_NAME, log,           NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, debug,         NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, info,          NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, notice,        NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, warning,       NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, error,         NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, critical,      NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, alert,         NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-        PHP_ME(SEASLOG_RES_NAME, emergency,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, log,           NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, debug,         NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, info,          NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, notice,        NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, warning,       NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, error,         NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, critical,      NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, alert,         NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, emergency,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
-        {NULL, NULL, NULL}
+    {NULL, NULL, NULL}
 };
 
 zend_module_entry seaslog_module_entry = {
@@ -115,14 +114,14 @@ ZEND_GET_MODULE(seaslog)
 #endif
 
 PHP_INI_BEGIN()
-    STD_PHP_INI_ENTRY("seaslog.default_basepath", "/log", PHP_INI_ALL, OnUpdateString, default_basepath, zend_seaslog_globals, seaslog_globals)
-    STD_PHP_INI_ENTRY("seaslog.default_logger", "default", PHP_INI_ALL, OnUpdateString, default_logger, zend_seaslog_globals, seaslog_globals)
-    STD_PHP_INI_ENTRY("seaslog.logger", "default", PHP_INI_ALL, OnUpdateString, logger, zend_seaslog_globals, seaslog_globals)
-    STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
-    STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour", "0", PHP_INI_ALL, OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
-    STD_PHP_INI_BOOLEAN("seaslog.use_buffer", "0", PHP_INI_ALL, OnUpdateBool, use_buffer, zend_seaslog_globals, seaslog_globals)
-    STD_PHP_INI_ENTRY("seaslog.buffer_size", "0", PHP_INI_ALL, OnUpdateLongGEZero, buffer_size, zend_seaslog_globals, seaslog_globals)
-    STD_PHP_INI_ENTRY("seaslog.level", "0", PHP_INI_ALL, OnUpdateLongGEZero, level, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.default_basepath", "/log", PHP_INI_ALL, OnUpdateString, default_basepath, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.default_logger", "default", PHP_INI_ALL, OnUpdateString, default_logger, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.logger", "default", PHP_INI_ALL, OnUpdateString, logger, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour", "0", PHP_INI_ALL, OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_BOOLEAN("seaslog.use_buffer", "0", PHP_INI_ALL, OnUpdateBool, use_buffer, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.buffer_size", "0", PHP_INI_ALL, OnUpdateLongGEZero, buffer_size, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.level", "0", PHP_INI_ALL, OnUpdateLongGEZero, level, zend_seaslog_globals, seaslog_globals)
 PHP_INI_END()
 
 
@@ -134,6 +133,8 @@ static void php_seaslog_init_globals(zend_seaslog_globals *seaslog_globals)
 
 PHP_MINIT_FUNCTION(seaslog)
 {
+    zend_class_entry seaslog;
+
     ZEND_INIT_MODULE_GLOBALS(seaslog, php_seaslog_init_globals, NULL);
 
     REGISTER_INI_ENTRIES();
@@ -150,7 +151,7 @@ PHP_MINIT_FUNCTION(seaslog)
     REGISTER_STRINGL_CONSTANT("SEASLOG_ALERT",     SEASLOG_ALERT,     sizeof(SEASLOG_ALERT) - 1,    CONST_PERSISTENT | CONST_CS);
     REGISTER_STRINGL_CONSTANT("SEASLOG_EMERGENCY", SEASLOG_EMERGENCY, sizeof(SEASLOG_EMERGENCY) - 1,CONST_PERSISTENT | CONST_CS);
 
-    zend_class_entry seaslog;
+
     INIT_CLASS_ENTRY(seaslog, SEASLOG_RES_NAME, seaslog_methods);
     seaslog_ce = zend_register_internal_class_ex(&seaslog, NULL, NULL TSRMLS_CC);
     seaslog_ce->ce_flags = ZEND_ACC_IMPLICIT_PUBLIC;
@@ -179,7 +180,6 @@ PHP_RINIT_FUNCTION(seaslog)
 PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
     seaslog_shutdown_buffer(TSRMLS_C);
-
     return SUCCESS;
 }
 
@@ -216,13 +216,14 @@ void seaslog_init_buffer(TSRMLS_D)
 void seaslog_clear_buffer(TSRMLS_D)
 {
     zval *buffer;
+    zval *buffer_size;
     MAKE_STD_ZVAL(buffer);
     array_init(buffer);
 
     zend_update_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_NAME), buffer TSRMLS_CC);
     zval_ptr_dtor(&buffer);
 
-    zval *buffer_size;
+
     MAKE_STD_ZVAL(buffer_size);
     ZVAL_LONG(buffer_size, 0);
 
@@ -238,6 +239,7 @@ static int real_php_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
     }
     php_stream_write(stream, message, message_len);
     php_stream_close(stream);
+    php_stream_free(stream, PHP_STREAM_FREE_RELEASE_STREAM);
 
     return SUCCESS;
 }
@@ -245,14 +247,13 @@ static int real_php_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
 static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce TSRMLS_DC)
 {
     HashTable   *ht;
-    void        *data;
-    zval        *log_array;
     zval        *old_log_array;
     zval        *new_array;
-    zval        *new_log;
     zval       **ppzval;
     int          have_old = FAILURE;
     int          count;
+
+    zval *file_path;
 
     old_log_array = zend_read_static_property(ce, SL_S(SEASLOG_BUFFER_NAME), 1 TSRMLS_CC);
 
@@ -271,14 +272,13 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
     while (zend_hash_get_current_data(ht, (void **)&ppzval) == SUCCESS) {
         char *key;
         ulong idx = 0;
+        int file_path_len;
 
         zend_hash_get_current_key(ht, &key, &idx, 0);
 
-        zval *file_path;
         MAKE_STD_ZVAL(file_path);
         ZVAL_STRING(file_path, key, 1);
 
-        int file_path_len;
         file_path_len = Z_STRLEN_P(file_path) + 1;
 
         if (strcmp(Z_STRVAL_P(file_path), path) == 0) {
@@ -286,11 +286,12 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
             spprintf(&_new_log, 0, "%s%s", Z_STRVAL_PP(ppzval), log_info);
 
             add_assoc_string_ex(new_array, Z_STRVAL_P(file_path), file_path_len, _new_log, 1);
+            efree(_new_log);
             have_old = SUCCESS;
         } else {
             add_assoc_string_ex(new_array, Z_STRVAL_P(file_path), file_path_len, Z_STRVAL_PP(ppzval), 1);
         }
-
+        zval_ptr_dtor(&file_path);
         zend_hash_move_forward(ht);
     }
 
@@ -303,9 +304,9 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
 
     if (SEASLOG_G(buffer_size) > 0) {
         zval *buffer_count;
+        zval *buffer_count_new;
         buffer_count = zend_read_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_SIZE_NAME), 0 TSRMLS_CC);
 
-        zval *buffer_count_new;
         MAKE_STD_ZVAL(buffer_count_new);
         ZVAL_LONG(buffer_count_new, Z_LVAL_P(buffer_count) + 1);
 
@@ -323,9 +324,9 @@ static int seaslog_shutdown_buffer(TSRMLS_D)
 {
     if (SEASLOG_G(use_buffer)) {
         HashTable   *ht;
-        void        *data;
-        zval        *log_array;
         zval        *old_log_array;
+        zval **ppzval;
+        int  count;
 
         old_log_array = zend_read_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_NAME), 1 TSRMLS_CC);
 
@@ -333,8 +334,6 @@ static int seaslog_shutdown_buffer(TSRMLS_D)
             return 0;
         }
 
-        zval **ppzval;
-        int  count;
         ht = Z_ARRVAL_P(old_log_array);
 
         count = zend_hash_num_elements(ht);
@@ -380,15 +379,15 @@ static char *delN(char *a)
 
 static char *mic_time()
 {
-   struct timeval now;
-   char *tstr;
+    struct timeval now;
+    char *tstr;
 
-   timerclear(&now);
-   gettimeofday(&now, NULL);
+    timerclear(&now);
+    gettimeofday(&now, NULL);
 
-   spprintf(&tstr, 0, "%ld.%ld", (long)time(NULL), (long)now.tv_usec / 1000);
+    spprintf(&tstr, 0, "%ld.%ld", (long)time(NULL), (long)now.tv_usec / 1000);
 
-   return tstr;
+    return tstr;
 }
 
 static char *mk_real_date(TSRMLS_D)
@@ -408,27 +407,39 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
 {
     FILE * fp;
     char buffer[BUFSIZ];
-    char *str, *path, *_log_path, *sh;
+    char *path, *_log_path, *sh;
     long count;
+    int _ck_dir;
 
     spprintf(&_log_path, 0, "%s/%s", SEASLOG_G(base_path), SEASLOG_G(last_logger));
-    int _ck_dir = _ck_log_dir(_log_path TSRMLS_CC);
+    _ck_dir = _ck_log_dir(_log_path TSRMLS_CC);
+    efree(_log_path);
     if (_ck_dir == FAILURE) {
-        return 0;
+        return (long)0;
     }
-
     if (SEASLOG_G(disting_type)) {
         spprintf(&path, 0, "%s/%s/%s.%s*", SEASLOG_G(base_path), SEASLOG_G(last_logger), level, log_path);
     } else {
         spprintf(&path, 0, "%s/%s/%s*",    SEASLOG_G(base_path), SEASLOG_G(last_logger), log_path);
     }
 
-    if (key_word) {
-        spprintf(&sh, 0, "more %s | grep '%s' | grep '%s' -wc", path, level, key_word);
-    } else {
-        spprintf(&sh, 0, "more %s | grep '%s' -wc", path, level);
-    }
+#ifdef WINDOWS
+    path = str_replace(path, "/", "\\");
+#endif
 
+    if (key_word) {
+#ifdef WINDOWS
+        spprintf(&sh, 0, "findstr \"%s\" %s | find /c \"%s\" ", level, path, key_word);
+#else
+        spprintf(&sh, 0, "more %s | grep '%s' | grep '%s' -wc", path, level, key_word);
+#endif
+    } else {
+#ifdef WINDOWS
+        spprintf(&sh, 0, "findstr \"%s\" %s | find /c /v \"\" ", level, path);
+#else
+        spprintf(&sh, 0, "more %s | grep '%s' -wc", path, level);
+#endif
+    }
 
     fp = VCWD_POPEN(sh, "r");
     if (! fp) {
@@ -440,59 +451,118 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
     }
 
     count = atoi(delN(buffer));
+    efree(path);
+    efree(sh);
 
     return count;
+}
+
+
+static char * str_replace(char *ori, char * rep, char * with)
+{
+    char *result;
+    char *ins;
+    char *tmp;
+    int len_rep;
+    int len_with;
+    int len_front;
+    int count;
+
+    if (!ori)
+        return NULL;
+    if (!rep)
+        rep = "";
+    len_rep = strlen(rep);
+    if (!with)
+        with = "";
+    len_with = strlen(with);
+
+    ins = ori;
+    for (count = 0; (tmp = strstr(ins, rep)) != NULL ; ++count) {
+        ins = tmp + len_rep;
+    }
+
+    tmp = result = emalloc(strlen(ori) + (len_with - len_rep) * count + 1);
+
+    if (!result)
+        return NULL;
+
+    while (count--) {
+        ins = strstr(ori, rep);
+        len_front = ins - ori;
+        tmp = strncpy(tmp, ori, len_front) + len_front;
+        tmp = strcpy(tmp, with) + len_with;
+        ori += len_front + len_rep;
+    }
+    strcpy(tmp, ori);
+    return result;
 }
 
 static int get_detail(char *log_path, char *level, char *key_word, long start, long limit, zval *return_value TSRMLS_DC)
 {
     FILE * fp;
     char buffer[BUFSIZ + 1];
-    char *str, *path ;
+    char *path;
     char *sh;
 
     memset(buffer, '\0', sizeof(buffer));
 
     array_init(return_value);
 
-    if (disting_type) {
+    if (SEASLOG_G(disting_type)) {
         spprintf(&path, 0, "%s/%s/%s.%s*", SEASLOG_G(base_path), SEASLOG_G(last_logger), level, log_path);
     } else {
         spprintf(&path, 0, "%s/%s/%s*",    SEASLOG_G(base_path), SEASLOG_G(last_logger), log_path);
     }
 
+#ifdef WINDOWS
+    path = str_replace(path, "/", "\\");
+#endif
+
     if (key_word && strlen(key_word) >= 1) {
+#ifdef WINDOWS
+        spprintf(&sh, 0, "findstr \"%s\" %s | findstr \"%s\" ", level, path, key_word);
+#else
         spprintf(&sh, 0, "more %s | grep '%s' -w | grep '%s' -w | sed -n '%ld,%ld'p", path, level, key_word, start, limit);
+#endif
     } else {
+#ifdef WINDOWS
+        spprintf(&sh, 0, "findstr \"%s\" %s", level, path);
+#else
         spprintf(&sh, 0, "more %s | grep '%s' -w | sed -n '%ld,%ld'p", path, level, start, limit);
+#endif
     }
 
     fp = VCWD_POPEN(sh, "r");
 
     if (!fp) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to fork [%s]", sh);
+
+        efree(buffer);
         return -1;
     } else {
-       while ((fgets(buffer, sizeof(buffer), fp)) != NULL) {
+        while ((fgets(buffer, sizeof(buffer), fp)) != NULL) {
             if (strstr(buffer, SEASLOG_G(base_path)) == NULL) {
                 add_next_index_string(return_value, delN(buffer), 1);
             }
-       }
+        }
 
-       pclose(fp);
+        pclose(fp);
     }
+
+    efree(path);
+    efree(sh);
 
     return 1;
 }
 
 static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *level)
 {
-    seaslog_init_buffer(TSRMLS_C);
-
     int argc = ZEND_NUM_ARGS();
     char *message, *logger = NULL;
     int message_len, logger_len;
     zval **content;
+    seaslog_init_buffer(TSRMLS_C);
 
     if (zend_parse_parameters(argc TSRMLS_CC, "s|Zs", &message, &message_len, &content, &logger, &logger_len) == FAILURE)
         return;
@@ -553,8 +623,8 @@ PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
     if (zend_parse_parameters(argc TSRMLS_CC, "s", &_base_path, &_base_path_len) == FAILURE)
         return;
 
-    if (argc > 0) {
-        spprintf(&SEASLOG_G(base_path), 0, "%s", _base_path);
+    if (argc > 0 && _base_path_len > 0) {
+        SEASLOG_G(base_path) = _base_path;
         RETURN_TRUE;
     }
 
@@ -566,12 +636,12 @@ PHP_METHOD(SEASLOG_RES_NAME, getBasePath)
     char *module = NULL;
     int argc = ZEND_NUM_ARGS();
     int module_len;
+    char *str;
+    int len = 0;
 
     if (zend_parse_parameters(argc TSRMLS_CC, "|s", &module, &module_len) == FAILURE)
         return;
 
-    char *str;
-    int len = 0;
     len = spprintf(&str, 0, "%s", SEASLOG_G(base_path));
 
     RETURN_STRINGL(str, len, 0);
@@ -586,8 +656,8 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
     if (zend_parse_parameters(argc TSRMLS_CC, "s", &module, &module_len) == FAILURE)
         return;
 
-    if (argc > 0) {
-        spprintf(&SEASLOG_G(last_logger), 0, "%s", module);
+    if (argc > 0 && module_len > 0) {
+        SEASLOG_G(last_logger) = module;
         RETURN_TRUE;
     }
 
@@ -608,7 +678,7 @@ PHP_METHOD(SEASLOG_RES_NAME, getLastLogger)
 PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
 {
     int argc = ZEND_NUM_ARGS();
-    char *log_path, *result, *level, *key_word = NULL;
+    char *log_path, *level, *key_word = NULL;
     int len = 0;
     int log_path_len, level_len, key_word_len;
     long count;
@@ -617,10 +687,10 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
         return;
 
     if (argc == 0) {
+        long count_debug, count_info, count_notice, count_warn, count_erro, count_critical, count_alert, count_emergency;
         array_init(return_value);
         log_path = "";
 
-        long count_debug, count_info, count_notice, count_warn, count_erro, count_critical, count_alert, count_emergency;
         count_debug     = get_type_count(log_path, SEASLOG_DEBUG, key_word TSRMLS_CC);
         count_info      = get_type_count(log_path, SEASLOG_INFO, key_word TSRMLS_CC);
         count_notice    = get_type_count(log_path, SEASLOG_NOTICE, key_word TSRMLS_CC);
@@ -665,6 +735,10 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 
     if (argc < 2) {
         log_path = "*";
+    } else if (argc > 3) {
+#ifdef WINDOWS
+        zend_error(E_NOTICE, "Param start and limit don't support Windows");
+#endif
     } else {
         // do nothing
     }
@@ -684,12 +758,12 @@ PHP_METHOD(SEASLOG_RES_NAME, getBuffer)
 
 PHP_METHOD(SEASLOG_RES_NAME, log)
 {
-    seaslog_init_buffer(TSRMLS_C);
-
     int argc = ZEND_NUM_ARGS();
     char *message, *logger, *level = NULL;
-    int message_len, content_len, level_len, logger_len;
+    int message_len, level_len, logger_len;
     zval **content;
+
+    seaslog_init_buffer(TSRMLS_C);
 
     if (zend_parse_parameters(argc TSRMLS_CC, "ss|Zs", &level, &level_len, &message, &message_len, &content, &logger, &logger_len) == FAILURE)
         return;
@@ -854,34 +928,25 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash)
         }
     }
 
-    efree(key);
     zend_hash_destroy(&tmp_hash);
     smart_str_0(&result);
+    efree(key);
 
     return result.c;
 }
 
-PHPAPI int _seaslog_log_content(
-    int argc, char *level,
-    char *message, int message_len,
-    HashTable *content,
-    char *module, int module_len,
-    zend_class_entry *ce TSRMLS_DC
-)
+int _seaslog_log_content(int argc, char *level, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
 {
+    int ret;
     char *result = php_strtr_array(message, message_len, content);
-
-    return _seaslog_log(argc, level, result, strlen(result), module, module_len, ce TSRMLS_CC);
+    ret = _seaslog_log(argc, level, result, strlen(result), module, module_len, ce TSRMLS_CC);
+    efree(result);
+    return ret;
 }
 
-PHPAPI int _seaslog_log(
-    int argc, char *level,
-    char *message, int message_len,
-    char *module, int module_len,
-    zend_class_entry *ce TSRMLS_DC
-)
+int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
 {
-    char *logger, *_log_path, *_date, *_time, *log_file_path, *log_info;
+    char *logger, *_log_path, *_date, *_time, *log_file_path, *log_info,*current_time;
     int log_len, log_file_path_len;
 
     if (argc > 2) {
@@ -894,7 +959,7 @@ PHPAPI int _seaslog_log(
     }
 
     if (_check_level(level TSRMLS_CC) == FAILURE) {
-      return FAILURE;
+        return FAILURE;
     }
 
     spprintf(&_log_path, 0, "%s/%s", SEASLOG_G(base_path), logger);
@@ -905,41 +970,44 @@ PHPAPI int _seaslog_log(
     _time = php_format_date("Y:m:d H:i:s", 11, (long)time(NULL), (long)time(NULL) TSRMLS_CC);
 
     log_file_path = mk_real_log_path(_log_path, _date, level TSRMLS_CC);
+    efree(_date);
+    efree(_log_path);
 
-    zval *file_path;
-    MAKE_STD_ZVAL(file_path);
-    ZVAL_STRING(file_path, log_file_path, 1);
+    log_file_path_len = strlen(log_file_path)+1;
 
-    log_file_path_len = Z_STRLEN_P(file_path);
-
-    log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n", level, getpid(), mic_time(), _time, message);
+    current_time = mic_time();
+    log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n", level, getpid(), current_time, _time, message);
+    efree(_time);
+    efree(current_time);
 
     if (_php_log_ex(log_info, log_len, log_file_path, log_file_path_len, ce TSRMLS_CC) == FAILURE) {
+        efree(log_file_path);
+        efree(log_info);
         return FAILURE;
     }
 
+    efree(log_file_path);
+    efree(log_info);
     return SUCCESS;
 }
 
-/*check the level*/
-PHPAPI int _check_level(char *level TSRMLS_DC)
-{
-  if (SEASLOG_G(level) < 1) return SUCCESS;
-  if (SEASLOG_G(level) > 8) return FAILURE;
+int _check_level(char *level TSRMLS_DC){
+    if (SEASLOG_G(level) < 1) return SUCCESS;
+    if (SEASLOG_G(level) > 8) return FAILURE;
 
-  if (strcmp(level, SEASLOG_DEBUG)      == 0 && SEASLOG_G(level) <= 1) return SUCCESS;
-  if (strcmp(level, SEASLOG_INFO)       == 0 && SEASLOG_G(level) <= 2) return SUCCESS;
-  if (strcmp(level, SEASLOG_NOTICE)     == 0 && SEASLOG_G(level) <= 3) return SUCCESS;
-  if (strcmp(level, SEASLOG_WARNING)    == 0 && SEASLOG_G(level) <= 4) return SUCCESS;
-  if (strcmp(level, SEASLOG_ERROR)      == 0 && SEASLOG_G(level) <= 5) return SUCCESS;
-  if (strcmp(level, SEASLOG_CRITICAL)   == 0 && SEASLOG_G(level) <= 6) return SUCCESS;
-  if (strcmp(level, SEASLOG_ALERT)      == 0 && SEASLOG_G(level) <= 7) return SUCCESS;
-  if (strcmp(level, SEASLOG_EMERGENCY)  == 0 && SEASLOG_G(level) <= 8) return SUCCESS;
+    if (strcmp(level, SEASLOG_DEBUG)      == 0 && SEASLOG_G(level) <= 1) return SUCCESS;
+    if (strcmp(level, SEASLOG_INFO)       == 0 && SEASLOG_G(level) <= 2) return SUCCESS;
+    if (strcmp(level, SEASLOG_NOTICE)     == 0 && SEASLOG_G(level) <= 3) return SUCCESS;
+    if (strcmp(level, SEASLOG_WARNING)    == 0 && SEASLOG_G(level) <= 4) return SUCCESS;
+    if (strcmp(level, SEASLOG_ERROR)      == 0 && SEASLOG_G(level) <= 5) return SUCCESS;
+    if (strcmp(level, SEASLOG_CRITICAL)   == 0 && SEASLOG_G(level) <= 6) return SUCCESS;
+    if (strcmp(level, SEASLOG_ALERT)      == 0 && SEASLOG_G(level) <= 7) return SUCCESS;
+    if (strcmp(level, SEASLOG_EMERGENCY)  == 0 && SEASLOG_G(level) <= 8) return SUCCESS;
 
-  return FAILURE;
+    return FAILURE;
 }
 
-PHPAPI int _mk_log_dir(char *dir TSRMLS_DC)
+int _mk_log_dir(char *dir TSRMLS_DC)
 {
     int _ck_dir = _ck_log_dir(dir TSRMLS_CC);
 
@@ -962,7 +1030,7 @@ PHPAPI int _mk_log_dir(char *dir TSRMLS_DC)
 
 }
 
-PHPAPI int _ck_log_dir(char *dir TSRMLS_DC)
+int _ck_log_dir(char *dir TSRMLS_DC)
 {
     zval *function_name;
     zval *retval;
@@ -981,14 +1049,18 @@ PHPAPI int _ck_log_dir(char *dir TSRMLS_DC)
         zend_error(E_ERROR, "Function call failed");
     }
 
+    zval_ptr_dtor(&str);
+    zval_ptr_dtor(&function_name);
+
     if (retval != NULL && zval_is_true(retval)) {
+        zval_ptr_dtor(&retval);
         return SUCCESS;
     }
-
+    zval_ptr_dtor(&retval);
     return FAILURE;
 }
 
-PHPAPI int _php_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC)
+int _php_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC)
 {
     if (SEASLOG_G(use_buffer)) {
         seaslog_buffer_set(message, message_len, log_file_path, log_file_path_len, ce TSRMLS_CC);
@@ -997,12 +1069,3 @@ PHPAPI int _php_log_ex(char *message, int message_len, char *log_file_path, int 
         return real_php_log_ex(message, message_len, log_file_path TSRMLS_CC);
     }
 }
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */
