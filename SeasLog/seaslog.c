@@ -41,13 +41,14 @@
 void seaslog_init_logger(TSRMLS_D);
 void seaslog_init_buffer(TSRMLS_D);
 void seaslog_clear_buffer(TSRMLS_D);
+static int seaslog_shutdown_buffer(TSRMLS_D);
+void seaslog_clear_logger(TSRMLS_D);
 int _ck_log_dir(char *dir TSRMLS_DC);
 int _seaslog_log_content(int argc, char *level, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
 int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
 int _check_level(char *level TSRMLS_DC);
 int _mk_log_dir(char *dir TSRMLS_DC);
 int _php_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
-static int seaslog_shutdown_buffer(TSRMLS_D);
 static char * str_replace(char *ori, char * rep, char * with);
 
 ZEND_DECLARE_MODULE_GLOBALS(seaslog)
@@ -180,6 +181,8 @@ PHP_RINIT_FUNCTION(seaslog)
 PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
     seaslog_shutdown_buffer(TSRMLS_C);
+    seaslog_clear_logger(TSRMLS_C);
+
     return SUCCESS;
 }
 
@@ -197,8 +200,19 @@ PHP_MINFO_FUNCTION(seaslog)
 
 void seaslog_init_logger(TSRMLS_D)
 {
-    SEASLOG_G(base_path)   = SEASLOG_G(default_basepath);
-    SEASLOG_G(last_logger) = SEASLOG_G(default_logger);
+    SEASLOG_G(base_path)   = estrdup(SEASLOG_G(default_basepath));
+    SEASLOG_G(last_logger) = estrdup(SEASLOG_G(default_logger));
+}
+
+void seaslog_clear_logger(TSRMLS_D)
+{
+    if (SEASLOG_G(base_path)) {
+        efree(SEASLOG_G(base_path));
+    }
+
+    if (SEASLOG_G(last_logger)) {
+        efree(SEASLOG_G(last_logger));
+    }
 }
 
 void seaslog_init_buffer(TSRMLS_D)
@@ -618,15 +632,20 @@ PHP_METHOD(SEASLOG_RES_NAME, __destruct)
 
 PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
 {
-    char *_base_path = NULL;
+    zval *_base_path;
     int argc = ZEND_NUM_ARGS();
-    int _base_path_len;
 
-    if (zend_parse_parameters(argc TSRMLS_CC, "s", &_base_path, &_base_path_len) == FAILURE)
+    if (zend_parse_parameters(argc TSRMLS_CC, "z", &_base_path) == FAILURE)
         return;
 
-    if (argc > 0 && _base_path_len > 0) {
-        SEASLOG_G(base_path) = _base_path;
+    if (argc > 0 && Z_TYPE_P(_base_path) == IS_STRING || Z_STRLEN_P(_base_path) > 0) {
+        if (!strcmp(SEASLOG_G(base_path),SEASLOG_G(default_basepath)))
+        {
+            efree(SEASLOG_G(base_path));
+        }
+
+        SEASLOG_G(base_path) = estrdup(Z_STRVAL_P(_base_path));
+        zval_ptr_dtor(&_base_path);
         RETURN_TRUE;
     }
 
@@ -651,15 +670,20 @@ PHP_METHOD(SEASLOG_RES_NAME, getBasePath)
 
 PHP_METHOD(SEASLOG_RES_NAME, setLogger)
 {
-    char *module = NULL;
+    zval *_module;
     int argc = ZEND_NUM_ARGS();
-    int module_len;
 
-    if (zend_parse_parameters(argc TSRMLS_CC, "s", &module, &module_len) == FAILURE)
+    if (zend_parse_parameters(argc TSRMLS_CC, "z", &_module) == FAILURE)
         return;
 
-    if (argc > 0 && module_len > 0) {
-        SEASLOG_G(last_logger) = module;
+    if (argc > 0 && Z_TYPE_P(_module) == IS_STRING || Z_STRLEN_P(_module) > 0) {
+        if (!strcmp(SEASLOG_G(last_logger),SEASLOG_G(default_logger)))
+        {
+            efree(SEASLOG_G(last_logger));
+        }
+
+        SEASLOG_G(last_logger) = estrdup(Z_STRVAL_P(_module));
+        zval_ptr_dtor(&_module);
         RETURN_TRUE;
     }
 
