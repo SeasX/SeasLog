@@ -62,11 +62,16 @@ php内置error_log、syslog函数功能强大且性能极好，但由于各种�
 
 ## 安装
 
-### 编译安装 seaslog
+### 编译安装 SeasLog
 ```sh
 $ /path/to/phpize
 $ ./configure --with-php-config=/path/to/php-config
 $ make && make install
+```
+
+### PECL安装SeasLog
+```sh
+$ pecl install seaslog
 ```
 
 ### seaslog.ini的配置

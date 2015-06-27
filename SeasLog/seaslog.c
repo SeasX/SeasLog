@@ -1013,6 +1013,7 @@ int _mk_log_dir(char *dir TSRMLS_DC)
 
     if (_ck_dir == FAILURE) {
         zval *zcontext = NULL;
+        umask(1);
         long mode = 0777;
         zend_bool recursive = 1;
         php_stream_context *context;
