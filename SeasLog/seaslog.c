@@ -447,13 +447,13 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s | find /c \"%s\" ", level, path, key_word);
 #else
-        spprintf(&sh, 0, "more %s | grep '%s' | grep '%s' -wc", path, level, key_word);
+        spprintf(&sh, 0, "more %s 2>/dev/null| grep '%s' | grep '%s' -wc", path, level, key_word);
 #endif
     } else {
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s | find /c /v \"\" ", level, path);
 #else
-        spprintf(&sh, 0, "more %s | grep '%s' -wc", path, level);
+        spprintf(&sh, 0, "more %s 2>/dev/null| grep '%s' -wc", path, level);
 #endif
     }
 
@@ -539,13 +539,13 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s | findstr \"%s\" ", level, path, key_word);
 #else
-        spprintf(&sh, 0, "more %s | grep '%s' -w | grep '%s' -w | sed -n '%ld,%ld'p", path, level, key_word, start, limit);
+        spprintf(&sh, 0, "more %s 2>/dev/null| grep '%s' -w | grep '%s' -w | sed -n '%ld,%ld'p", path, level, key_word, start, limit);
 #endif
     } else {
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s", level, path);
 #else
-        spprintf(&sh, 0, "more %s | grep '%s' -w | sed -n '%ld,%ld'p", path, level, start, limit);
+        spprintf(&sh, 0, "more %s 2>/dev/null| grep '%s' -w | sed -n '%ld,%ld'p", path, level, start, limit);
 #endif
     }
 
