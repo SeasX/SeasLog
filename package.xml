@@ -40,17 +40,14 @@
             <file role="doc" name="README.md" />
             <file role="doc" name="LICENSE" />
             <file role="doc" name="SeasLogCodeTips.php" />
-            <dir name="SeasLog">
-                <file role="src" name="config.m4" />
-                <file role="src" name="config.w32" />
-                <file role="src" name="CREDITS" />
-                <file role="src" name="EXPERIMENTAL" />
-                <file role="src" name="php_seaslog.h" />
-                <file role="src" name="seaslog.c" />
-                <dir name="tests">
-                    <file role="src" name="001.phpt" />
-                    <file role="src" name="seaslog.test.php" />
-                </dir>
+            <file role="src" name="config.m4" />
+            <file role="src" name="config.w32" />
+            <file role="src" name="EXPERIMENTAL" />
+            <file role="src" name="php_seaslog.h" />
+            <file role="src" name="seaslog.c" />
+            <dir name="tests">
+                <file role="src" name="001.phpt" />
+                <file role="src" name="seaslog.test.php" />
             </dir>
             <dir name="Analyzer">
                 <file role="src" name="SeasLogAnalyzer.php"/>
