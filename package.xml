@@ -45,9 +45,13 @@
             <file role="src" name="EXPERIMENTAL" />
             <file role="src" name="php_seaslog.h" />
             <file role="src" name="seaslog.c" />
+            <dir name="CodeTips">
+                <file role="src" name="SeasLogCodeTips.php"/>
+            </dir>
             <dir name="tests">
                 <file role="src" name="001.phpt" />
                 <file role="src" name="seaslog.test.php" />
+                <file role="src" name="SeasLogVSlog4php.png" />
             </dir>
             <dir name="Analyzer">
                 <file role="src" name="SeasLogAnalyzer.php"/>
