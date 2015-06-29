@@ -18,11 +18,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2015-03-20</date>
-    <time>17:12:00</time>
+    <date>2015-06-29</date>
+    <time>11:00:00</time>
     <version>
-        <release>1.1.8</release>
-        <api>1.1.8</api>
+        <release>1.2.0</release>
+        <api>1.2.0</api>
     </version>
     <stability>
         <release>stable</release>
@@ -30,8 +30,9 @@
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - Fixed init config error with ZTS
-        - Fixed SeasLog::analyzerDetail() function compatible with CentOS
+        - Fixed SeasLog::analyzerDetail() function compatible with MAC
+        - Fixed memory leak
+        - Support windows
     </notes>
     <contents>
         <dir name="/">
@@ -177,6 +178,23 @@
             <notes>
                 - Fixed SeasLog::analyzerCount() function add query by key_word
                 - Fixed SeasLog::analyzerDetail() function add query by key_word,paging by start,limit
+            </notes>
+        </release>
+        <release>
+            <date>2015-03-20</date>
+            <time>17:12:00</time>
+            <version>
+                <release>1.1.8</release>
+                <api>1.1.8</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - Fixed init config error with ZTS
+                - Fixed SeasLog::analyzerDetail() function compatible with CentOS
             </notes>
         </release>
     </changelog>

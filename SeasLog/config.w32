@@ -1,9 +1,10 @@
-// $Id$
+// $Id: config.w32 765 2015-06-29 11:00:00Z neeke $
 // vim:ft=javascript
 
 ARG_ENABLE("seaslog", "enable seaslog support", "no");
 
 if (PHP_SEASLOG != "no") {
 	EXTENSION("seaslog", "seaslog.c");
-}
 
+	AC_DEFINE("HAVE_SEASLOG", 1, "Have Seaslog Support");
+}
