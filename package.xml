@@ -18,11 +18,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2015-06-29</date>
-    <time>11:00:00</time>
+    <date>2015-06-30</date>
+    <time>14:05:00</time>
     <version>
-        <release>1.2.0</release>
-        <api>1.2.0</api>
+        <release>1.2.2</release>
+        <api>1.2.2</api>
     </version>
     <stability>
         <release>stable</release>
@@ -30,9 +30,10 @@
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - Fixed SeasLog::analyzerDetail() function compatible with MAC
-        - Fixed memory leak
-        - Support windows
+        - Fixed Logger bug with PHP-Version -ge 5.4
+        - Fixed SeasLog::log('level','message','content',['logger']) bug
+        - Support SeasLog::analyzerDetail("all")
+        - Support SeasLog::analyzerCount("all")
     </notes>
     <contents>
         <dir name="/">
@@ -195,6 +196,24 @@
             <notes>
                 - Fixed init config error with ZTS
                 - Fixed SeasLog::analyzerDetail() function compatible with CentOS
+            </notes>
+        </release>
+        <release>
+            <date>2015-06-29</date>
+            <time>11:00:00</time>
+            <version>
+                <release>1.2.0</release>
+                <api>1.2.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - Fixed SeasLog::analyzerDetail() function compatible with MAC
+                - Fixed memory leak
+                - Support windows
             </notes>
         </release>
     </changelog>
