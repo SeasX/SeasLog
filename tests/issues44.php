@@ -20,3 +20,10 @@ SeasLog::log('asdf','错误{aaa}',array());
 var_dump(Seaslog::analyzerDetail("all","*",null,1,1000));
 var_dump(Seaslog::analyzerDetail(SEASLOG_ERROR,"*",null,1,1000));
 var_dump(Seaslog::analyzerDetail(SEASLOG_DEBUG));
+
+var_dump(SeasLog::analyzerCount());
+var_dump(SeasLog::analyzerCount(SEASLOG_ALL));
+var_dump(SeasLog::analyzerCount(SEASLOG_DEBUG));
+
+
+var_dump(SEASLOG_ALL);

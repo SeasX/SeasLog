@@ -143,6 +143,8 @@ PHP_MINIT_FUNCTION(seaslog)
     REGISTER_STRINGL_CONSTANT("SEASLOG_VERSION",   SEASLOG_VERSION,   sizeof(SEASLOG_VERSION) - 1,  CONST_PERSISTENT | CONST_CS);
     REGISTER_STRINGL_CONSTANT("SEASLOG_AUTHOR",    SEASLOG_AUTHOR,    sizeof(SEASLOG_AUTHOR) - 1,   CONST_PERSISTENT | CONST_CS);
 
+    REGISTER_STRINGL_CONSTANT("SEASLOG_ALL",       SEASLOG_ALL,       sizeof(SEASLOG_ALL) - 1,      CONST_PERSISTENT | CONST_CS);
+
     REGISTER_STRINGL_CONSTANT("SEASLOG_DEBUG",     SEASLOG_DEBUG,     sizeof(SEASLOG_DEBUG) - 1,    CONST_PERSISTENT | CONST_CS);
     REGISTER_STRINGL_CONSTANT("SEASLOG_INFO",      SEASLOG_INFO,      sizeof(SEASLOG_INFO) - 1,     CONST_PERSISTENT | CONST_CS);
     REGISTER_STRINGL_CONSTANT("SEASLOG_NOTICE",    SEASLOG_NOTICE,    sizeof(SEASLOG_NOTICE) - 1,   CONST_PERSISTENT | CONST_CS);
@@ -709,7 +711,7 @@ PHP_METHOD(SEASLOG_RES_NAME, getLastLogger)
 PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
 {
     int argc = ZEND_NUM_ARGS();
-    char *log_path, *level, *key_word = NULL;
+    char *log_path, *level = NULL, *key_word = NULL;
     int len = 0;
     int log_path_len, level_len, key_word_len;
     long count;
@@ -717,7 +719,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
     if (zend_parse_parameters(argc TSRMLS_CC, "|sss", &level, &level_len, &log_path, &log_path_len, &key_word, &key_word_len) == FAILURE)
         return;
 
-    if (argc == 0 || !strcmp(level,"all")) {
+    if (argc == 0 || (argc == 1 && level && !strcmp(level, SEASLOG_ALL))) {
         long count_debug, count_info, count_notice, count_warn, count_erro, count_critical, count_alert, count_emergency;
         array_init(return_value);
         log_path = "";
@@ -774,7 +776,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
         // do nothing
     }
 
-    if (level && !strcmp(level,"all")) {
+    if (level && !strcmp(level, SEASLOG_ALL)) {
         level = "|";
     }
 

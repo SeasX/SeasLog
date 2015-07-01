@@ -21,6 +21,7 @@ extern zend_module_entry seaslog_module_entry;
 #define SEASLOG_VERSION                     "1.2.3"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
+#define SEASLOG_ALL                         "all"
 #define SEASLOG_DEBUG                       "debug"
 #define SEASLOG_INFO                        "info"
 #define SEASLOG_NOTICE                      "notice"

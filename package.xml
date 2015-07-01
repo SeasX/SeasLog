@@ -18,11 +18,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2015-06-30</date>
-    <time>14:05:00</time>
+    <date>2015-07-01</date>
+    <time>09:38:00</time>
     <version>
-        <release>1.2.2</release>
-        <api>1.2.2</api>
+        <release>1.2.3</release>
+        <api>1.2.3</api>
     </version>
     <stability>
         <release>stable</release>
@@ -30,10 +30,8 @@
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - Fixed Logger bug with PHP-Version -ge 5.4
-        - Fixed SeasLog::log('level','message','content',['logger']) bug
-        - Support SeasLog::analyzerDetail("all")
-        - Support SeasLog::analyzerCount("all")
+        - Fixed issue #44 Seaslog::analyzerDetail([with out 'all'])
+        - Support CONST SEASLOG_ALL
     </notes>
     <contents>
         <dir name="/">
@@ -214,6 +212,25 @@
                 - Fixed SeasLog::analyzerDetail() function compatible with MAC
                 - Fixed memory leak
                 - Support windows
+            </notes>
+        </release>
+        <release>
+            <date>2015-06-30</date>
+            <time>14:05:00</time>
+            <version>
+                <release>1.2.2</release>
+                <api>1.2.2</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - Fixed Logger bug with PHP-Version -ge 5.4
+                - Fixed SeasLog::log('level','message','content',['logger']) bug
+                - Support SeasLog::analyzerDetail("all")
+                - Support SeasLog::analyzerCount("all")
             </notes>
         </release>
     </changelog>
