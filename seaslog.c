@@ -754,7 +754,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
 
 PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 {
-    char *log_path, *level, *key_word = NULL;
+    char *log_path, *level = NULL, *key_word = NULL;
     int log_path_len, level_len, key_word_len;
     long start = 1;
     long limit = 20;
@@ -764,15 +764,18 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
         RETURN_FALSE;
     }
 
-    if (argc < 2 || !strcmp(level,"all")) {
+    if (argc < 2) {
         log_path = "*";
-        level = "|";
     } else if (argc > 3) {
 #ifdef WINDOWS
         zend_error(E_NOTICE, "Param start and limit don't support Windows");
 #endif
     } else {
         // do nothing
+    }
+
+    if (level && !strcmp(level,"all")) {
+        level = "|";
     }
 
     get_detail(log_path, level, key_word, start, limit, return_value TSRMLS_CC);
