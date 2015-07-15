@@ -14,17 +14,17 @@ A effective,fast,stable log extension for PHP
     - **[常量与函数](#常量与函数)**
         - [常量列表](#常量列表)
         - [函数列表](#函数列表)
-	- **[SeasLog Logger的使用](#seaslog-logger的使用)**
+    - **[SeasLog Logger的使用](#seaslog-logger的使用)**
         - [获取与设置basePath](#获取与设置basepath)
         - [设置logger与获取lastLogger](#设置logger与获取lastlogger)
         - [快速写入log](#快速写入log)
-	- **[SeasLog Analyzer的使用](#seaslog-analyzer的使用)**
-		- [快速统计某类型log的count值](#快速统计某类型log的count值)
-		- [获取某类型log列表](#获取某类型log列表)
-	- **[使用SeasLog进行健康预警](#使用seaslog进行健康预警)**
+    - **[SeasLog Analyzer的使用](#seaslog-analyzer的使用)**
+        - [快速统计某类型log的count值](#快速统计某类型log的count值)
+        - [获取某类型log列表](#获取某类型log列表)
+    - **[使用SeasLog进行健康预警](#使用seaslog进行健康预警)**
         - [预警的配置](#预警的配置)
-		- [crontab配置](#crontab配置)
-        
+        - [crontab配置](#crontab配置)
+
 > ---
 
 ## 简介
@@ -400,22 +400,14 @@ SeasLog::error('test error 3');
 ```
 > log格式统一为： `{type} | {pid} | {timeStamp} |{dateTime} | {logInfo}`
 ```sh
-error | 23625 | 1406422432.786 | 2014:07:27 08:53:52 | this is a error test by ::log
-
+error | 23625 | 1406422432.786 | 2014:07:27 08:53:52 | this is a error test by log
 debug | 23625 | 1406422432.786 | 2014:07:27 08:53:52 | this is a neeke debug
-
 info | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | this is a info log
-
 notice | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | this is a notice log
-
 warning | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | your github.com was down,please rboot it ASAP!
-
 error | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | a error log
-
 critical | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | some thing was critical
-
-emergency | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house next door was completely burnt out! it`s a joke
-
+emergency | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house next door was completely burnt out! it is a joke
 ```
 
 ### SeasLog Analyzer的使用
@@ -489,7 +481,7 @@ array(2) {
   string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
 }
 
-同理，取当月 
+同理，取当月
 $detailErrorArray_mouth = SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ym',time()));
 
 */
