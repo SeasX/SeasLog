@@ -20,13 +20,14 @@
 
 #include "php.h"
 #include "php_ini.h"
+#include "zend_extensions.h"
+#include "zend_exceptions.h"
 #include "ext/standard/info.h"
 #include "ext/standard/file.h"
 #include "ext/standard/php_string.h"
 #include "ext/standard/php_smart_str.h"
 #include "ext/date/php_date.h"
 #include "php_seaslog.h"
-#include "zend_extensions.h"
 #include <stdlib.h>
 
 #ifdef PHP_WIN32
@@ -50,6 +51,11 @@ int _check_level(char *level TSRMLS_DC);
 int _mk_log_dir(char *dir TSRMLS_DC);
 int _php_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
 static char * str_replace(char *ori, char * rep, char * with);
+
+void (*old_error_cb)(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args);
+void seaslog_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args);
+void seaslog_throw_exception_hook(zval *exception TSRMLS_DC);
+static void process_event(int event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC);
 
 ZEND_DECLARE_MODULE_GLOBALS(seaslog)
 
@@ -162,12 +168,20 @@ PHP_MINIT_FUNCTION(seaslog)
     zend_declare_property_null(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_NAME), ZEND_ACC_STATIC TSRMLS_CC);
     zend_declare_property_null(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_SIZE_NAME), ZEND_ACC_STATIC TSRMLS_CC);
 
+    old_error_cb = zend_error_cb;
+
+    zend_error_cb = seaslog_error_cb;
+    zend_throw_exception_hook = seaslog_throw_exception_hook;
+
     return SUCCESS;
 }
 
 PHP_MSHUTDOWN_FUNCTION(seaslog)
 {
     UNREGISTER_INI_ENTRIES();
+
+    zend_error_cb = old_error_cb;
+    zend_throw_exception_hook = NULL;
 
     return SUCCESS;
 }
@@ -198,6 +212,57 @@ PHP_MINFO_FUNCTION(seaslog)
     php_info_print_table_end();
 
     DISPLAY_INI_ENTRIES();
+}
+
+void seaslog_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args)
+{
+	char *msg;
+	va_list args_copy;
+	TSRMLS_FETCH();
+
+	/* A copy of args is needed to be used for the old_error_cb */
+	va_copy(args_copy, args);
+	vspprintf(&msg, 0, format, args_copy);
+	va_end(args_copy);
+
+	process_event(SEASLOG_EVENT_ERROR, type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
+	efree(msg);
+
+	old_error_cb(type, error_filename, error_lineno, format, args);
+}
+/* }}} */
+
+
+void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
+{
+	zval *message, *file, *line;
+#if PHP_VERSION_ID >= 70000
+	zval rv;
+#endif
+	zend_class_entry *default_ce;
+
+    if (!exception) {
+        return;
+    }
+
+    default_ce = zend_exception_get_default(TSRMLS_C);
+
+#if PHP_VERSION_ID >= 70000
+    message = zend_read_property(default_ce, exception, "message", sizeof("message")-1, 0, &rv);
+    file = zend_read_property(default_ce, exception, "file", sizeof("file")-1, 0, &rv);
+    line = zend_read_property(default_ce, exception, "line", sizeof("line")-1, 0, &rv);
+#else
+    message = zend_read_property(default_ce, exception, "message", sizeof("message")-1, 0 TSRMLS_CC);
+    file = zend_read_property(default_ce, exception, "file", sizeof("file")-1, 0 TSRMLS_CC);
+    line = zend_read_property(default_ce, exception, "line", sizeof("line")-1, 0 TSRMLS_CC);
+#endif
+
+    process_event(SEASLOG_EVENT_EXCEPTION, E_EXCEPTION, Z_STRVAL_P(file), Z_LVAL_P(line), Z_STRVAL_P(message) TSRMLS_CC);
+}
+
+static void process_event(int event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC)
+{
+    php_printf("seaslog error - %d - %d - %s - %d - %s\n",event_type,type,error_filename,error_lineno,msg);
 }
 
 void seaslog_init_logger(TSRMLS_D)

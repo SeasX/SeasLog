@@ -18,7 +18,7 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.2.3"
+#define SEASLOG_VERSION                     "1.3.0"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_ALL                         "all"
@@ -34,7 +34,14 @@ extern zend_module_entry seaslog_module_entry;
 #define SEASLOG_BUFFER_NAME                 "seaslog_buffer"
 #define SEASLOG_BUFFER_SIZE_NAME            "seaslog_buffer_size"
 
+#define SEASLOG_EVENT_ERROR 1
+#define SEASLOG_EVENT_EXCEPTION 2
+
 #define SL_S(s)                             s, sizeof(s) - 1
+
+#ifndef E_EXCEPTION
+# define E_EXCEPTION (1<<15L)
+#endif
 
 PHP_MINIT_FUNCTION(seaslog);
 PHP_MSHUTDOWN_FUNCTION(seaslog);
