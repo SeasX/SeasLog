@@ -4,6 +4,7 @@
  * Date: 15-9-14 下午9:35
  */
 
+<?php
 function inverse($x) {
     if (!$x) {
         throw new Exception('Division by zero.');
