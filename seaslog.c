@@ -168,20 +168,12 @@ PHP_MINIT_FUNCTION(seaslog)
     zend_declare_property_null(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_NAME), ZEND_ACC_STATIC TSRMLS_CC);
     zend_declare_property_null(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_SIZE_NAME), ZEND_ACC_STATIC TSRMLS_CC);
 
-    old_error_cb = zend_error_cb;
-
-    zend_error_cb = seaslog_error_cb;
-    zend_throw_exception_hook = seaslog_throw_exception_hook;
-
     return SUCCESS;
 }
 
 PHP_MSHUTDOWN_FUNCTION(seaslog)
 {
     UNREGISTER_INI_ENTRIES();
-
-    zend_error_cb = old_error_cb;
-    zend_throw_exception_hook = NULL;
 
     return SUCCESS;
 }
@@ -191,6 +183,11 @@ PHP_RINIT_FUNCTION(seaslog)
     seaslog_init_logger(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
 
+    old_error_cb = zend_error_cb;
+
+    zend_error_cb = seaslog_error_cb;
+    zend_throw_exception_hook = seaslog_throw_exception_hook;
+
     return SUCCESS;
 }
 
@@ -198,6 +195,9 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
     seaslog_shutdown_buffer(TSRMLS_C);
     seaslog_clear_logger(TSRMLS_C);
+
+    zend_error_cb = old_error_cb;
+    zend_throw_exception_hook = NULL;
 
     return SUCCESS;
 }
@@ -214,8 +214,15 @@ PHP_MINFO_FUNCTION(seaslog)
     DISPLAY_INI_ENTRIES();
 }
 
+static void process_event(int event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC)
+{
+    php_printf("seaslog error - %d - %d - %s - %d - %s\n",event_type,type,error_filename,error_lineno,msg);
+}
+
 void seaslog_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args)
 {
+    php_printf("seaslog_error_cb start\n");
+
 	char *msg;
 	va_list args_copy;
 	TSRMLS_FETCH();
@@ -235,6 +242,8 @@ void seaslog_error_cb(int type, const char *error_filename, const uint error_lin
 
 void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
 {
+    php_printf("seaslog_throw_exception_hook start\n");
+
 	zval *message, *file, *line;
 #if PHP_VERSION_ID >= 70000
 	zval rv;
@@ -258,11 +267,6 @@ void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
 #endif
 
     process_event(SEASLOG_EVENT_EXCEPTION, E_EXCEPTION, Z_STRVAL_P(file), Z_LVAL_P(line), Z_STRVAL_P(message) TSRMLS_CC);
-}
-
-static void process_event(int event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC)
-{
-    php_printf("seaslog error - %d - %d - %s - %d - %s\n",event_type,type,error_filename,error_lineno,msg);
 }
 
 void seaslog_init_logger(TSRMLS_D)
