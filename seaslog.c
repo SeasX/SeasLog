@@ -29,6 +29,7 @@
 #include "ext/date/php_date.h"
 #include "php_seaslog.h"
 #include <stdlib.h>
+#include <unistd.h>
 
 #ifdef PHP_WIN32
 #include "win32/time.h"
@@ -54,6 +55,7 @@ static char * str_replace(char *ori, char * rep, char * with);
 
 void (*old_error_cb)(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args);
 void seaslog_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args);
+void (*old_throw_exception_hook)(zval *exception TSRMLS_DC);
 void seaslog_throw_exception_hook(zval *exception TSRMLS_DC);
 static void process_event(int event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC);
 
@@ -184,6 +186,9 @@ PHP_RINIT_FUNCTION(seaslog)
     seaslog_init_buffer(TSRMLS_C);
 
     old_error_cb = zend_error_cb;
+    if (zend_throw_exception_hook) {
+        old_throw_exception_hook = zend_throw_exception_hook;
+    }
 
     zend_error_cb = seaslog_error_cb;
     zend_throw_exception_hook = seaslog_throw_exception_hook;
@@ -196,8 +201,13 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
     seaslog_shutdown_buffer(TSRMLS_C);
     seaslog_clear_logger(TSRMLS_C);
 
-    zend_error_cb = old_error_cb;
-    zend_throw_exception_hook = NULL;
+    if (old_error_cb) {
+        zend_error_cb = old_error_cb;
+    }
+
+    if (old_throw_exception_hook) {
+        zend_throw_exception_hook = old_throw_exception_hook;
+    }
 
     return SUCCESS;
 }
@@ -216,18 +226,26 @@ PHP_MINFO_FUNCTION(seaslog)
 
 static void process_event(int event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC)
 {
-    php_printf("seaslog error - %d - %d - %s - %d - %s\n",event_type,type,error_filename,error_lineno,msg);
+    char *event_type_str;
+    if (event_type == SEASLOG_EVENT_ERROR) {
+        event_type_str = "Error";
+    } else if (event_type == SEASLOG_EVENT_EXCEPTION) {
+        event_type_str = "Exception";
+    }
+
+    char *event_str;
+    int event_str_len;
+    event_str_len = spprintf(&event_str, 0, "%s - type:%d - file:%s - line:%d - msg:%s", event_type_str, type, error_filename, error_lineno, msg);
+
+    _seaslog_log(1, SEASLOG_CRITICAL, event_str, event_str_len, NULL, 0, seaslog_ce TSRMLS_CC);
 }
 
 void seaslog_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args)
 {
-    php_printf("seaslog_error_cb start\n");
-
 	char *msg;
 	va_list args_copy;
 	TSRMLS_FETCH();
 
-	/* A copy of args is needed to be used for the old_error_cb */
 	va_copy(args_copy, args);
 	vspprintf(&msg, 0, format, args_copy);
 	va_end(args_copy);
@@ -237,13 +255,9 @@ void seaslog_error_cb(int type, const char *error_filename, const uint error_lin
 
 	old_error_cb(type, error_filename, error_lineno, format, args);
 }
-/* }}} */
-
 
 void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
 {
-    php_printf("seaslog_throw_exception_hook start\n");
-
 	zval *message, *file, *line;
 #if PHP_VERSION_ID >= 70000
 	zval rv;
@@ -267,6 +281,10 @@ void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
 #endif
 
     process_event(SEASLOG_EVENT_EXCEPTION, E_EXCEPTION, Z_STRVAL_P(file), Z_LVAL_P(line), Z_STRVAL_P(message) TSRMLS_CC);
+
+    if (old_throw_exception_hook) {
+        old_throw_exception_hook(exception TSRMLS_CC);
+    }
 }
 
 void seaslog_init_logger(TSRMLS_D)
@@ -1141,31 +1159,10 @@ int _mk_log_dir(char *dir TSRMLS_DC)
 
 int _ck_log_dir(char *dir TSRMLS_DC)
 {
-    zval *function_name;
-    zval *retval;
-    zval *str;
-    zval **param[1];
-
-    MAKE_STD_ZVAL(function_name);
-    ZVAL_STRING(function_name , "is_dir", 1);
-
-    MAKE_STD_ZVAL(str);
-    ZVAL_STRING(str, dir, 1);
-    param[0] = &str;
-
-    if (call_user_function_ex(EG(function_table), NULL, function_name, &retval, 1, param, 0, EG(active_symbol_table) TSRMLS_CC) != SUCCESS)
-    {
-        zend_error(E_ERROR, "Function call failed");
-    }
-
-    zval_ptr_dtor(&str);
-    zval_ptr_dtor(&function_name);
-
-    if (retval != NULL && zval_is_true(retval)) {
-        zval_ptr_dtor(&retval);
+    if (!access(dir,0)) {
         return SUCCESS;
     }
-    zval_ptr_dtor(&retval);
+
     return FAILURE;
 }
 
