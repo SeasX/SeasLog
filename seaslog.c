@@ -253,16 +253,18 @@ static void process_event(int event_type, int type, char * error_filename, uint 
 
 void seaslog_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args)
 {
-	char *msg;
-	va_list args_copy;
-	TSRMLS_FETCH();
+    if (type == E_ERROR || type == E_PARSE || type == E_CORE_ERROR || type == E_COMPILE_ERROR || type == E_USER_ERROR || type == E_RECOVERABLE_ERROR) {
+       	char *msg;
+       	va_list args_copy;
+       	TSRMLS_FETCH();
 
-	va_copy(args_copy, args);
-	vspprintf(&msg, 0, format, args_copy);
-	va_end(args_copy);
+       	va_copy(args_copy, args);
+       	vspprintf(&msg, 0, format, args_copy);
+       	va_end(args_copy);
 
-	process_event(SEASLOG_EVENT_ERROR, type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
-	efree(msg);
+       	process_event(SEASLOG_EVENT_ERROR, type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
+       	efree(msg);
+    }
 
 	old_error_cb(type, error_filename, error_lineno, format, args);
 }
