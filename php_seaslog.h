@@ -18,7 +18,7 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.4.0"
+#define SEASLOG_VERSION                     "1.4.2"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_ALL                         "all"
@@ -83,6 +83,8 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool use_buffer;
     int buffer_size;
     int level;
+    int trace_error;
+    int trace_exception;
 ZEND_END_MODULE_GLOBALS(seaslog)
 
 extern ZEND_DECLARE_MODULE_GLOBALS(seaslog);

@@ -88,6 +88,8 @@ seaslog.disting_by_hour = 1                     ;是否每小时划分一个文�
 seaslog.use_buffer = 1                          ;是否启用buffer 1是 0否(默认)
 seaslog.buffer_size = 100                       ;buffer中缓冲数量 默认0(不使用buffer_size)
 seaslog.level = 0                               ;记录日志级别 默认0(所有日志)
+seaslog.trace_error = 0                         ;自动记录错误 默认0(关闭)
+seaslog.trace_exception = 1                     ;自动记录异常信息 默认1(开启)
 ```
 > `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
 

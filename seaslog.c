@@ -131,6 +131,8 @@ STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour", "0", PHP_INI_ALL, OnUpdateBool, d
 STD_PHP_INI_BOOLEAN("seaslog.use_buffer", "0", PHP_INI_ALL, OnUpdateBool, use_buffer, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.buffer_size", "0", PHP_INI_ALL, OnUpdateLongGEZero, buffer_size, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.level", "0", PHP_INI_ALL, OnUpdateLongGEZero, level, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.trace_error", "0", PHP_INI_ALL, OnUpdateLongGEZero, trace_error, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.trace_exception", "1", PHP_INI_ALL, OnUpdateLongGEZero, trace_exception, zend_seaslog_globals, seaslog_globals)
 PHP_INI_END()
 
 
@@ -185,13 +187,18 @@ PHP_RINIT_FUNCTION(seaslog)
     seaslog_init_logger(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
 
-    old_error_cb = zend_error_cb;
-    if (zend_throw_exception_hook) {
-        old_throw_exception_hook = zend_throw_exception_hook;
+    if (SEASLOG_G(trace_error)) {
+         old_error_cb = zend_error_cb;
+         zend_error_cb = seaslog_error_cb;
     }
 
-    zend_error_cb = seaslog_error_cb;
-    zend_throw_exception_hook = seaslog_throw_exception_hook;
+    if (SEASLOG_G(trace_exception)) {
+        if (zend_throw_exception_hook) {
+            old_throw_exception_hook = zend_throw_exception_hook;
+        }
+
+        zend_throw_exception_hook = seaslog_throw_exception_hook;
+    }
 
     return SUCCESS;
 }
@@ -201,12 +208,16 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
     seaslog_shutdown_buffer(TSRMLS_C);
     seaslog_clear_logger(TSRMLS_C);
 
-    if (old_error_cb) {
-        zend_error_cb = old_error_cb;
+    if (SEASLOG_G(trace_error)) {
+        if (old_error_cb) {
+            zend_error_cb = old_error_cb;
+        }
     }
 
-    if (old_throw_exception_hook) {
-        zend_throw_exception_hook = old_throw_exception_hook;
+    if (SEASLOG_G(trace_exception)) {
+        if (old_throw_exception_hook) {
+            zend_throw_exception_hook = old_throw_exception_hook;
+        }
     }
 
     return SUCCESS;
@@ -216,9 +227,9 @@ PHP_MINFO_FUNCTION(seaslog)
 {
     php_info_print_table_start();
     php_info_print_table_header(2, "SeasLog support", "Enabled");
-    php_info_print_table_row(2, "Version", SEASLOG_VERSION);
-    php_info_print_table_row(2, "Author", SEASLOG_AUTHOR);
-    php_info_print_table_row(2,"Supports", "https://github.com/Neeke/SeasLog");
+    php_info_print_table_row(2, "SeasLog Version", SEASLOG_VERSION);
+    php_info_print_table_row(2, "SeasLog Author", SEASLOG_AUTHOR);
+    php_info_print_table_row(2,"SeasLog Supports", "https://github.com/Neeke/SeasLog");
     php_info_print_table_end();
 
     DISPLAY_INI_ENTRIES();
