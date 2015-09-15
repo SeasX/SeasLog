@@ -1,49 +1,32 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>Seaslog by Neeke</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/Neeke/SeasLog">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/Neeke/SeasLog/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/Neeke/SeasLog/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
+    <section class="page-header">
+      <h1 class="project-name">Seaslog</h1>
+      <h2 class="project-tagline">A effective,fast,stable log extension for PHP</h2>
+      <a href="https://github.com/Neeke/SeasLog" class="btn">View on GitHub</a>
+      <a href="https://github.com/Neeke/SeasLog/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Neeke/SeasLog/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-    <div class="wrapper">
-
-      <section>
-        <div id="title">
-          <h1>Seaslog</h1>
-          <p>A effective,fast,stable log extension for PHP</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/Neeke">Neeke</a></span>
-        
-        </div>
-
-        <h1>
+    <section class="main-content">
+      <h1>
 <a id="seaslog" class="anchor" href="#seaslog" aria-hidden="true"><span class="octicon octicon-link"></span></a>SeasLog</h1>
 
-<p>A effective,fast,stable log extension for PHP.</p>
+<p>A effective,fast,stable log extension for PHP</p>
 
-<p>author: <a href="https://github.com/neeke" class="user-mention">@neeke</a> -- Chitao.Gao [<a href="mailto:neeke@php.net">neeke@php.net</a>]</p>
+<p><a href="https://github.com/author" class="user-mention">@author</a> Chitao.Gao [<a href="mailto:neeke@php.net">neeke@php.net</a>]</p>
+
+<p>@交流群 31291011</p>
 
 <blockquote>
 <hr>
@@ -120,7 +103,10 @@
 
 <p>php内置error_log、syslog函数功能强大且性能极好，但由于各种缺陷(error_log无错误级别、无固定格式，syslog不分模块、与系统日志混合)，灵活度降低了很多，不能满足应用需求。</p>
 
-<p>好消息是，有不少第三方的log类库弥补了上述缺陷，如log4php、plog、Analog等(当然也有很多应用在项目中自己开发的log类)。其中以<a href="http://logging.apache.org/log4php/">log4php</a>最为著名，设计精良、格式完美、文档完善、功能强大。推荐。(log4php的性能有待测试)</p>
+<p>好消息是，有不少第三方的log类库弥补了上述缺陷，如log4php、plog、Analog等(当然也有很多应用在项目中自己开发的log类)。其中以<a href="http://logging.apache.org/log4php/">log4php</a>最为著名，设计精良、格式完美、文档完善、功能强大。推荐。</p>
+
+<p>不过log4php在性能方面表现非常差,下图是SeasLog与log4php的ab并发性能测试( 测试环境:Ubuntu12.04单机,CPU I3,内存 16G,硬盘 SATA 7200):
+<img src="https://raw.githubusercontent.com/Neeke/SeasLog/master/tests/SeasLogVSlog4php.png" alt="SeasLogVSlog4php"></p>
 
 <p>那么有没有一种log类库满足以下需求呢：</p>
 
@@ -158,16 +144,21 @@
 <a id="安装" class="anchor" href="#%E5%AE%89%E8%A3%85" aria-hidden="true"><span class="octicon octicon-link"></span></a>安装</h2>
 
 <h3>
-<a id="编译安装-seaslog" class="anchor" href="#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85-seaslog" aria-hidden="true"><span class="octicon octicon-link"></span></a>编译安装 seaslog</h3>
+<a id="编译安装-seaslog" class="anchor" href="#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85-seaslog" aria-hidden="true"><span class="octicon octicon-link"></span></a>编译安装 SeasLog</h3>
 
-<div class="highlight highlight-sh"><pre>$ /path/to/phpize
+<div class="highlight highlight-source-shell"><pre>$ /path/to/phpize
 $ ./configure --with-php-config=/path/to/php-config
 $ make <span class="pl-k">&amp;&amp;</span> make install</pre></div>
 
 <h3>
+<a id="pecl安装seaslog" class="anchor" href="#pecl%E5%AE%89%E8%A3%85seaslog" aria-hidden="true"><span class="octicon octicon-link"></span></a>PECL安装SeasLog</h3>
+
+<div class="highlight highlight-source-shell"><pre>$ pecl install seaslog</pre></div>
+
+<h3>
 <a id="seaslogini的配置" class="anchor" href="#seaslogini%E7%9A%84%E9%85%8D%E7%BD%AE" aria-hidden="true"><span class="octicon octicon-link"></span></a>seaslog.ini的配置</h3>
 
-<div class="highlight highlight-conf"><pre>; configuration for php SeasLog module
+<pre lang="conf"><code>; configuration for php SeasLog module
 extension = seaslog.so
 seaslog.default_basepath = /log/seaslog-test    ;默认log根目录
 seaslog.default_logger = default                ;默认logger目录
@@ -175,7 +166,10 @@ seaslog.disting_type = 1                        ;是否以type分文件 1是 0�
 seaslog.disting_by_hour = 1                     ;是否每小时划分一个文件 1是 0否(默认)
 seaslog.use_buffer = 1                          ;是否启用buffer 1是 0否(默认)
 seaslog.buffer_size = 100                       ;buffer中缓冲数量 默认0(不使用buffer_size)
-seaslog.level = 3                               ;记录日志级别 默认0(所有日志)</pre></div>
+seaslog.level = 0                               ;记录日志级别 默认0(所有日志)
+seaslog.trace_error = 0                         ;自动记录错误 默认0(关闭)
+seaslog.trace_exception = 1                     ;自动记录异常信息 默认1(开启)
+</code></pre>
 
 <blockquote>
 <p><code>seaslog.disting_type = 1</code> 开启以type分文件，即log文件区分info\warn\erro</p>
@@ -186,7 +180,7 @@ seaslog.level = 3                               ;记录日志级别 默认0(所�
 
 <p><code>seaslog.buffer_size = 100</code> 设置缓冲数量为100. 默认为0,即无缓冲数量限制.当buffer_size大于0时,缓冲量达到该值则写一次文件.</p>
 
-<p>'seaslog.level = 3' 记录的日志级别.默认为0,即所有日志均记录。当level为1时,关注debug以上级别(包括debug)，以此类推。level大于8时，所有日志均不记录。</p>
+<p><code>seaslog.level = 3</code> 记录的日志级别.默认为0,即所有日志均记录。当level为1时,关注debug以上级别(包括debug)，以此类推。level大于8时，所有日志均不记录。</p>
 
 <h2>
 <a id="使用" class="anchor" href="#%E4%BD%BF%E7%94%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>使用</h2>
@@ -211,12 +205,12 @@ seaslog.level = 3                               ;记录日志级别 默认0(所�
 <li>SEASLOG_EMERGENCY                   "emergency"</li>
 </ul>
 
-<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-s3">var_dump</span>(<span class="pl-c1">SEASLOG_DEBUG</span>,<span class="pl-c1">SEASLOG_INFO</span>,<span class="pl-c1">SEASLOG_NOTICE</span>);</span>
-<span class="pl-s2"><span class="pl-c">/*</span></span>
-<span class="pl-s2"><span class="pl-c">string('debug') debug级别</span></span>
-<span class="pl-s2"><span class="pl-c">string('info')  info级别</span></span>
-<span class="pl-s2"><span class="pl-c">string('notice') notice级别</span></span>
-<span class="pl-s2"><span class="pl-c">*/</span></span></pre></div>
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-c1">SEASLOG_DEBUG</span>,<span class="pl-c1">SEASLOG_INFO</span>,<span class="pl-c1">SEASLOG_NOTICE</span>);</span>
+<span class="pl-s1"><span class="pl-c">/*</span></span>
+<span class="pl-s1"><span class="pl-c">string('debug') debug级别</span></span>
+<span class="pl-s1"><span class="pl-c">string('info')  info级别</span></span>
+<span class="pl-s1"><span class="pl-c">string('notice') notice级别</span></span>
+<span class="pl-s1"><span class="pl-c">*/</span></span></pre></div>
 
 <h4>
 <a id="函数列表" class="anchor" href="#%E5%87%BD%E6%95%B0%E5%88%97%E8%A1%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>函数列表</h4>
@@ -224,195 +218,199 @@ seaslog.level = 3                               ;记录日志级别 默认0(所�
 <p><code>SeasLog</code> 提供了这样一组函数，可以方便地获取与设置根目录、模块目录、快速写入与统计log。
 相信从下述伪代码的注释中，您可以快速获取函数信息，具体使用将紧接其后：</p>
 
-<div class="highlight highlight-php"><pre><span class="pl-pse">&lt;?php</span><span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c"> * <span class="pl-k">@author</span> ciogao@gmail.com</span></span>
-<span class="pl-s2"><span class="pl-c"> * Date: 14-1-27 下午4:47</span></span>
-<span class="pl-s2"><span class="pl-c"> */</span></span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-st">class</span> <span class="pl-en">SeasLog</span></span>
-<span class="pl-s2">{</span>
-<span class="pl-s2">    <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-s3">__construct</span>()</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-c">#SeasLog init</span></span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-s3">__destruct</span>()</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-c">#SeasLog distroy</span></span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 设置basePath</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $basePath</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@return</span> bool</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">setBasePath</span>(<span class="pl-vo">$basePath</span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-k">return</span> <span class="pl-c1">TRUE</span>;</span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 获取basePath</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@return</span> string</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">getBasePath</span>()</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-k">return</span> <span class="pl-s1"><span class="pl-pds">'</span>the base_path<span class="pl-pds">'</span></span>;</span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 设置模块目录</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $module</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@return</span> bool</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">setLogger</span>(<span class="pl-vo">$module</span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-k">return</span> <span class="pl-c1">TRUE</span>;</span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 获取最后一次设置的模块目录</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@return</span> string</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">getLastLogger</span>()</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-k">return</span> <span class="pl-s1"><span class="pl-pds">'</span>the lastLogger<span class="pl-pds">'</span></span>;</span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 统计所有类型（或单个类型）行数</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $level</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> string $log_path</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@return</span> array | long</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">analyzerCount</span>(<span class="pl-vo">$level</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span>all<span class="pl-pds">'</span></span>,<span class="pl-vo">$log_path</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span>*<span class="pl-pds">'</span></span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-k">return</span> <span class="pl-s3">array</span>();</span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 以数组形式，快速取出某类型log的各行详情</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $level</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> string $log_path</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@return</span> array</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">analyzerDetail</span>(<span class="pl-vo">$level</span> <span class="pl-k">=</span> <span class="pl-c1">SEASLOG_INFO</span>,<span class="pl-vo">$log_path</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span>*<span class="pl-pds">'</span></span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-k">return</span> <span class="pl-s3">array</span>();</span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 获得当前日志buffer中的内容</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@return</span> array</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">getBuffer</span>()</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-k">return</span> <span class="pl-s3">array</span>();</span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 记录debug日志</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">debug</span>(<span class="pl-vo">$message</span>,<span class="pl-st">array</span> <span class="pl-vo">$content</span> <span class="pl-k">=</span> <span class="pl-s3">array</span>(),<span class="pl-vo">$module</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-c">#$level = SEASLOG_DEBUG</span></span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 记录info日志</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">info</span>(<span class="pl-vo">$message</span>,<span class="pl-st">array</span> <span class="pl-vo">$content</span> <span class="pl-k">=</span> <span class="pl-s3">array</span>(),<span class="pl-vo">$module</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-c">#$level = SEASLOG_INFO</span></span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 记录notice日志</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">notice</span>(<span class="pl-vo">$message</span>,<span class="pl-st">array</span> <span class="pl-vo">$content</span> <span class="pl-k">=</span> <span class="pl-s3">array</span>(),<span class="pl-vo">$module</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-c">#$level = SEASLOG_NOTICE</span></span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 记录warning日志</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">warning</span>(<span class="pl-vo">$message</span>,<span class="pl-st">array</span> <span class="pl-vo">$content</span> <span class="pl-k">=</span> <span class="pl-s3">array</span>(),<span class="pl-vo">$module</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-c">#$level = SEASLOG_WARNING</span></span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 记录error日志</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">error</span>(<span class="pl-vo">$message</span>,<span class="pl-st">array</span> <span class="pl-vo">$content</span> <span class="pl-k">=</span> <span class="pl-s3">array</span>(),<span class="pl-vo">$module</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-c">#$level = SEASLOG_ERROR</span></span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 记录critical日志</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">critical</span>(<span class="pl-vo">$message</span>,<span class="pl-st">array</span> <span class="pl-vo">$content</span> <span class="pl-k">=</span> <span class="pl-s3">array</span>(),<span class="pl-vo">$module</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-c">#$level = SEASLOG_CRITICAL</span></span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 记录alert日志</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">alert</span>(<span class="pl-vo">$message</span>,<span class="pl-st">array</span> <span class="pl-vo">$content</span> <span class="pl-k">=</span> <span class="pl-s3">array</span>(),<span class="pl-vo">$module</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-c">#$level = SEASLOG_ALERT</span></span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 记录emergency日志</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">emergency</span>(<span class="pl-vo">$message</span>,<span class="pl-st">array</span> <span class="pl-vo">$content</span> <span class="pl-k">=</span> <span class="pl-s3">array</span>(),<span class="pl-vo">$module</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2">        <span class="pl-c">#$level = SEASLOG_EMERGENCY</span></span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * 通用日志方法</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $level</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
-<span class="pl-s2"><span class="pl-c">     */</span></span>
-<span class="pl-s2">    <span class="pl-s">static</span> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">log</span>(<span class="pl-vo">$level</span>,<span class="pl-vo">$message</span>,<span class="pl-st">array</span> <span class="pl-vo">$content</span> <span class="pl-k">=</span> <span class="pl-s3">array</span>(),<span class="pl-vo">$module</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
-<span class="pl-s2">    {</span>
-<span class="pl-s2"></span>
-<span class="pl-s2">    }</span>
-<span class="pl-s2">}</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"></span></pre></div>
+<div class="highlight highlight-text-html-php"><pre><span class="pl-pse">&lt;?php</span><span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c"> * <span class="pl-k">@author</span> ciogao@gmail.com</span></span>
+<span class="pl-s1"><span class="pl-c"> * Date: 14-1-27 下午4:47</span></span>
+<span class="pl-s1"><span class="pl-c"> */</span></span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">class</span> <span class="pl-en">SeasLog</span></span>
+<span class="pl-s1">{</span>
+<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-c1">__construct</span>()</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-c">#SeasLog init</span></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-c1">__destruct</span>()</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-c">#SeasLog distroy</span></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 设置basePath</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $basePath</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@return</span> bool</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">setBasePath</span>(<span class="pl-smi">$basePath</span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-c1">TRUE</span>;</span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 获取basePath</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@return</span> string</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">getBasePath</span>()</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">'</span>the base_path<span class="pl-pds">'</span></span>;</span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 设置模块目录</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $module</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@return</span> bool</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">setLogger</span>(<span class="pl-smi">$module</span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-c1">TRUE</span>;</span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 获取最后一次设置的模块目录</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@return</span> string</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">getLastLogger</span>()</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">'</span>the lastLogger<span class="pl-pds">'</span></span>;</span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 统计所有类型（或单个类型）行数</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $level</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $log_path</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> null $key_word</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@return</span> array | long</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">analyzerCount</span>(<span class="pl-smi">$level</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>all<span class="pl-pds">'</span></span>,<span class="pl-smi">$log_path</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>*<span class="pl-pds">'</span></span>,<span class="pl-smi">$key_word</span> <span class="pl-k">=</span> <span class="pl-c1">NULL</span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-c1">array</span>();</span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 以数组形式，快速取出某类型log的各行详情</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $level</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $log_path</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> null $key_word</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> int $start</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> int $limit</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@return</span> array</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">analyzerDetail</span>(<span class="pl-smi">$level</span> <span class="pl-k">=</span> <span class="pl-c1">SEASLOG_INFO</span>,<span class="pl-smi">$log_path</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>*<span class="pl-pds">'</span></span>,<span class="pl-smi">$key_word</span> <span class="pl-k">=</span> <span class="pl-c1">NULL</span>, <span class="pl-smi">$start</span> <span class="pl-k">=</span> <span class="pl-c1">1</span>,<span class="pl-smi">$limit</span> <span class="pl-k">=</span> <span class="pl-c1">20</span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-c1">array</span>();</span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 获得当前日志buffer中的内容</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@return</span> array</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">getBuffer</span>()</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-c1">array</span>();</span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 记录debug日志</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">debug</span>(<span class="pl-smi">$message</span>,<span class="pl-k">array</span> <span class="pl-smi">$content</span> <span class="pl-k">=</span> <span class="pl-c1">array</span>(),<span class="pl-smi">$module</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-c">#$level = SEASLOG_DEBUG</span></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 记录info日志</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">info</span>(<span class="pl-smi">$message</span>,<span class="pl-k">array</span> <span class="pl-smi">$content</span> <span class="pl-k">=</span> <span class="pl-c1">array</span>(),<span class="pl-smi">$module</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-c">#$level = SEASLOG_INFO</span></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 记录notice日志</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">notice</span>(<span class="pl-smi">$message</span>,<span class="pl-k">array</span> <span class="pl-smi">$content</span> <span class="pl-k">=</span> <span class="pl-c1">array</span>(),<span class="pl-smi">$module</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-c">#$level = SEASLOG_NOTICE</span></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 记录warning日志</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">warning</span>(<span class="pl-smi">$message</span>,<span class="pl-k">array</span> <span class="pl-smi">$content</span> <span class="pl-k">=</span> <span class="pl-c1">array</span>(),<span class="pl-smi">$module</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-c">#$level = SEASLOG_WARNING</span></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 记录error日志</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">error</span>(<span class="pl-smi">$message</span>,<span class="pl-k">array</span> <span class="pl-smi">$content</span> <span class="pl-k">=</span> <span class="pl-c1">array</span>(),<span class="pl-smi">$module</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-c">#$level = SEASLOG_ERROR</span></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 记录critical日志</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">critical</span>(<span class="pl-smi">$message</span>,<span class="pl-k">array</span> <span class="pl-smi">$content</span> <span class="pl-k">=</span> <span class="pl-c1">array</span>(),<span class="pl-smi">$module</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-c">#$level = SEASLOG_CRITICAL</span></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 记录alert日志</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">alert</span>(<span class="pl-smi">$message</span>,<span class="pl-k">array</span> <span class="pl-smi">$content</span> <span class="pl-k">=</span> <span class="pl-c1">array</span>(),<span class="pl-smi">$module</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-c">#$level = SEASLOG_ALERT</span></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 记录emergency日志</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">emergency</span>(<span class="pl-smi">$message</span>,<span class="pl-k">array</span> <span class="pl-smi">$content</span> <span class="pl-k">=</span> <span class="pl-c1">array</span>(),<span class="pl-smi">$module</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-c">#$level = SEASLOG_EMERGENCY</span></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 通用日志方法</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $level</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $message</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> array $content</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $module</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">log</span>(<span class="pl-smi">$level</span>,<span class="pl-smi">$message</span>,<span class="pl-k">array</span> <span class="pl-smi">$content</span> <span class="pl-k">=</span> <span class="pl-c1">array</span>(),<span class="pl-smi">$module</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"></span></pre></div>
 
 <h3>
 <a id="seaslog-logger的使用" class="anchor" href="#seaslog-logger%E7%9A%84%E4%BD%BF%E7%94%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>SeasLog Logger的使用</h3>
@@ -420,17 +418,17 @@ seaslog.level = 3                               ;记录日志级别 默认0(所�
 <h4>
 <a id="获取与设置basepath" class="anchor" href="#%E8%8E%B7%E5%8F%96%E4%B8%8E%E8%AE%BE%E7%BD%AEbasepath" aria-hidden="true"><span class="octicon octicon-link"></span></a>获取与设置basePath</h4>
 
-<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-vo">$basePath_1</span> <span class="pl-k">=</span> <span class="pl-s3">SeasLog</span><span class="pl-k">::</span>getBasePath();</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">SeasLog</span><span class="pl-k">::</span>setBasePath(<span class="pl-s1"><span class="pl-pds">'</span>/log/base_test<span class="pl-pds">'</span></span>);</span>
-<span class="pl-s2"><span class="pl-vo">$basePath_2</span> <span class="pl-k">=</span> <span class="pl-s3">SeasLog</span><span class="pl-k">::</span>getBasePath();</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">var_dump</span>(<span class="pl-vo">$basePath_1</span>,<span class="pl-vo">$basePath_2</span>);</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-c">/*</span></span>
-<span class="pl-s2"><span class="pl-c">string(19) "/log/seaslog-ciogao"</span></span>
-<span class="pl-s2"><span class="pl-c">string(14) "/log/base_test"</span></span>
-<span class="pl-s2"><span class="pl-c">*/</span></span></pre></div>
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$basePath_1</span> <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>getBasePath();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">SeasLog</span><span class="pl-k">::</span>setBasePath(<span class="pl-s"><span class="pl-pds">'</span>/log/base_test<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"><span class="pl-smi">$basePath_2</span> <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>getBasePath();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$basePath_1</span>,<span class="pl-smi">$basePath_2</span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">/*</span></span>
+<span class="pl-s1"><span class="pl-c">string(19) "/log/seaslog-ciogao"</span></span>
+<span class="pl-s1"><span class="pl-c">string(14) "/log/base_test"</span></span>
+<span class="pl-s1"><span class="pl-c">*/</span></span></pre></div>
 
 <blockquote>
 <p>直接使用 <code>SeasLog::getBasePath()</code>，将获取php.ini(seaslog.ini)中设置的 <code>seaslog.default_basepath</code> 的值。</p>
@@ -441,16 +439,16 @@ seaslog.level = 3                               ;记录日志级别 默认0(所�
 <h4>
 <a id="设置logger与获取lastlogger" class="anchor" href="#%E8%AE%BE%E7%BD%AElogger%E4%B8%8E%E8%8E%B7%E5%8F%96lastlogger" aria-hidden="true"><span class="octicon octicon-link"></span></a>设置logger与获取lastLogger</h4>
 
-<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-vo">$lastLogger_1</span> <span class="pl-k">=</span> <span class="pl-s3">SeasLog</span><span class="pl-k">::</span>getLastLogger();</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">SeasLog</span><span class="pl-k">::</span>setLogger(<span class="pl-s1"><span class="pl-pds">'</span>testModule/app1<span class="pl-pds">'</span></span>);</span>
-<span class="pl-s2"><span class="pl-vo">$lastLogger_2</span> <span class="pl-k">=</span> <span class="pl-s3">SeasLog</span><span class="pl-k">::</span>getLastLogger();</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">var_dump</span>(<span class="pl-vo">$lastLogger_1</span>,<span class="pl-vo">$lastLogger_2</span>);</span>
-<span class="pl-s2"><span class="pl-c">/*</span></span>
-<span class="pl-s2"><span class="pl-c">string(7) "default"</span></span>
-<span class="pl-s2"><span class="pl-c">string(15) "testModule/app1"</span></span>
-<span class="pl-s2"><span class="pl-c">*/</span></span></pre></div>
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$lastLogger_1</span> <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>getLastLogger();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">SeasLog</span><span class="pl-k">::</span>setLogger(<span class="pl-s"><span class="pl-pds">'</span>testModule/app1<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"><span class="pl-smi">$lastLogger_2</span> <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>getLastLogger();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$lastLogger_1</span>,<span class="pl-smi">$lastLogger_2</span>);</span>
+<span class="pl-s1"><span class="pl-c">/*</span></span>
+<span class="pl-s1"><span class="pl-c">string(7) "default"</span></span>
+<span class="pl-s1"><span class="pl-c">string(15) "testModule/app1"</span></span>
+<span class="pl-s1"><span class="pl-c">*/</span></span></pre></div>
 
 <blockquote>
 <p>与basePath相类似的，</p>
@@ -486,132 +484,127 @@ log文件名，以 <code>年月日</code> 分文件，如今天是2014年02月18
 <li><p>erroLogFile = basePath / logger / ERRO.20140218.log</p></li>
 </ul>
 
-<div class="highlight highlight-php"><pre><span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">SeasLog</span><span class="pl-k">::</span>log(<span class="pl-c1">SEASLOG_ERROR</span>,<span class="pl-s1"><span class="pl-pds">'</span>this is a error test by ::log<span class="pl-pds">'</span></span>);</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">SeasLog</span><span class="pl-k">::</span>debug(<span class="pl-s1"><span class="pl-pds">'</span>this is a {userName} debug<span class="pl-pds">'</span></span>,<span class="pl-s3">array</span>(<span class="pl-s1"><span class="pl-pds">'</span>{userName}<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s1"><span class="pl-pds">'</span>neeke<span class="pl-pds">'</span></span>));</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">SeasLog</span><span class="pl-k">::</span>info(<span class="pl-s1"><span class="pl-pds">'</span>this is a info log<span class="pl-pds">'</span></span>);</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">SeasLog</span><span class="pl-k">::</span>notice(<span class="pl-s1"><span class="pl-pds">'</span>this is a notice log<span class="pl-pds">'</span></span>);</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">SeasLog</span><span class="pl-k">::</span>warning(<span class="pl-s1"><span class="pl-pds">'</span>your {website} was down,please {action} it ASAP!<span class="pl-pds">'</span></span>,<span class="pl-s3">array</span>(<span class="pl-s1"><span class="pl-pds">'</span>{website}<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s1"><span class="pl-pds">'</span>github.com<span class="pl-pds">'</span></span>,<span class="pl-s1"><span class="pl-pds">'</span>{action}<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s1"><span class="pl-pds">'</span>rboot<span class="pl-pds">'</span></span>));</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">SeasLog</span><span class="pl-k">::</span>error(<span class="pl-s1"><span class="pl-pds">'</span>a error log<span class="pl-pds">'</span></span>);</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">SeasLog</span><span class="pl-k">::</span>critical(<span class="pl-s1"><span class="pl-pds">'</span>some thing was critical<span class="pl-pds">'</span></span>);</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">SeasLog</span><span class="pl-k">::</span>alert(<span class="pl-s1"><span class="pl-pds">'</span>yes this is a {messageName}<span class="pl-pds">'</span></span>,<span class="pl-s3">array</span>(<span class="pl-s1"><span class="pl-pds">'</span>{messageName}<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s1"><span class="pl-pds">'</span>alertMSG<span class="pl-pds">'</span></span>));</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">SeasLog</span><span class="pl-k">::</span>emergency(<span class="pl-s1"><span class="pl-pds">'</span>Just now, the house next door was completely burnt out! {note}<span class="pl-pds">'</span></span>,<span class="pl-s3">array</span>(<span class="pl-s1"><span class="pl-pds">'</span>{note}<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s1"><span class="pl-pds">'</span>it`s a joke<span class="pl-pds">'</span></span>));</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-c">/*</span></span>
-<span class="pl-s2"><span class="pl-c">这些函数同时也接受第3个参数为logger的设置项</span></span>
-<span class="pl-s2"><span class="pl-c">注意，当last_logger == 'default'时等同于:</span></span>
-<span class="pl-s2"><span class="pl-c">SeasLog::setLogger('test/new/path');</span></span>
-<span class="pl-s2"><span class="pl-c">SeasLog::error('test error 3');</span></span>
-<span class="pl-s2"><span class="pl-c">如果已经在前文使用过SeasLog::setLogger()函数，第3个参数的log只在此处临时使用，不影响下文。</span></span>
-<span class="pl-s2"><span class="pl-c">*/</span></span></pre></div>
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">SeasLog</span><span class="pl-k">::</span>log(<span class="pl-c1">SEASLOG_ERROR</span>,<span class="pl-s"><span class="pl-pds">'</span>this is a error test by ::log<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">SeasLog</span><span class="pl-k">::</span>debug(<span class="pl-s"><span class="pl-pds">'</span>this is a {userName} debug<span class="pl-pds">'</span></span>,<span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">'</span>{userName}<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>neeke<span class="pl-pds">'</span></span>));</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">SeasLog</span><span class="pl-k">::</span>info(<span class="pl-s"><span class="pl-pds">'</span>this is a info log<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">SeasLog</span><span class="pl-k">::</span>notice(<span class="pl-s"><span class="pl-pds">'</span>this is a notice log<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">SeasLog</span><span class="pl-k">::</span>warning(<span class="pl-s"><span class="pl-pds">'</span>your {website} was down,please {action} it ASAP!<span class="pl-pds">'</span></span>,<span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">'</span>{website}<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>github.com<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>{action}<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>rboot<span class="pl-pds">'</span></span>));</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">SeasLog</span><span class="pl-k">::</span>error(<span class="pl-s"><span class="pl-pds">'</span>a error log<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">SeasLog</span><span class="pl-k">::</span>critical(<span class="pl-s"><span class="pl-pds">'</span>some thing was critical<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">SeasLog</span><span class="pl-k">::</span>alert(<span class="pl-s"><span class="pl-pds">'</span>yes this is a {messageName}<span class="pl-pds">'</span></span>,<span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">'</span>{messageName}<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>alertMSG<span class="pl-pds">'</span></span>));</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">SeasLog</span><span class="pl-k">::</span>emergency(<span class="pl-s"><span class="pl-pds">'</span>Just now, the house next door was completely burnt out! {note}<span class="pl-pds">'</span></span>,<span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">'</span>{note}<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>it`s a joke<span class="pl-pds">'</span></span>));</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">/*</span></span>
+<span class="pl-s1"><span class="pl-c">这些函数同时也接受第3个参数为logger的设置项</span></span>
+<span class="pl-s1"><span class="pl-c">注意，当last_logger == 'default'时等同于:</span></span>
+<span class="pl-s1"><span class="pl-c">SeasLog::setLogger('test/new/path');</span></span>
+<span class="pl-s1"><span class="pl-c">SeasLog::error('test error 3');</span></span>
+<span class="pl-s1"><span class="pl-c">如果已经在前文使用过SeasLog::setLogger()函数，第3个参数的log只在此处临时使用，不影响下文。</span></span>
+<span class="pl-s1"><span class="pl-c">*/</span></span></pre></div>
 
 <blockquote>
 <p>log格式统一为： <code>{type} | {pid} | {timeStamp} |{dateTime} | {logInfo}</code></p>
 
-<div class="highlight highlight-sh"><pre>error <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 1406422432.786 <span class="pl-k">|</span> 2014:07:27 08:53:52 <span class="pl-k">|</span> this is a error <span class="pl-s3">test</span> by ::log</pre></div>
+<div class="highlight highlight-source-shell"><pre>error <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 1406422432.786 <span class="pl-k">|</span> 2014:07:27 08:53:52 <span class="pl-k">|</span> this is a error <span class="pl-c1">test</span> by log
+debug <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 1406422432.786 <span class="pl-k">|</span> 2014:07:27 08:53:52 <span class="pl-k">|</span> this is a neeke debug
+info <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 1406422432.787 <span class="pl-k">|</span> 2014:07:27 08:53:52 <span class="pl-k">|</span> this is a info log
+notice <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 1406422432.787 <span class="pl-k">|</span> 2014:07:27 08:53:52 <span class="pl-k">|</span> this is a notice log
+warning <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 1406422432.787 <span class="pl-k">|</span> 2014:07:27 08:53:52 <span class="pl-k">|</span> your github.com was down,please rboot it ASAP<span class="pl-k">!</span>
+error <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 1406422432.787 <span class="pl-k">|</span> 2014:07:27 08:53:52 <span class="pl-k">|</span> a error log
+critical <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 1406422432.787 <span class="pl-k">|</span> 2014:07:27 08:53:52 <span class="pl-k">|</span> some thing was critical
+emergency <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 1406422432.787 <span class="pl-k">|</span> 2014:07:27 08:53:52 <span class="pl-k">|</span> Just now, the house next door was completely burnt out<span class="pl-k">!</span> it is a joke</pre></div>
 </blockquote>
 
-<p>debug | 23625 | 1406422432.786 | 2014:07:27 08:53:52 | this is a neeke debug</p>
+<h3>
+<a id="seaslog-analyzer的使用" class="anchor" href="#seaslog-analyzer%E7%9A%84%E4%BD%BF%E7%94%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>SeasLog Analyzer的使用</h3>
 
-<p>info | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | this is a info log</p>
+<h4>
+<a id="快速统计某类型log的count值" class="anchor" href="#%E5%BF%AB%E9%80%9F%E7%BB%9F%E8%AE%A1%E6%9F%90%E7%B1%BB%E5%9E%8Blog%E7%9A%84count%E5%80%BC" aria-hidden="true"><span class="octicon octicon-link"></span></a>快速统计某类型log的count值</h4>
 
-<p>notice | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | this is a notice log</p>
+<p><code>SeasLog</code>在扩展中使用管道调用shell命令 <code>grep -wc</code>快速地取得count值，并返回值(array || int)给PHP。</p>
 
-<p>warning | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | your github.com was down,please rboot it ASAP!</p>
-
-<p>error | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | a error log</p>
-
-<p>critical | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | some thing was critical</p>
-
-<p>emergency | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house next door was completely burnt out! it`s a joke</p>
-
-<pre><code>
-### SeasLog Analyzer的使用
-#### 快速统计某类型log的count值
-`SeasLog`在扩展中使用管道调用shell命令 `grep -wc`快速地取得count值，并返回值(array || int)给PHP。
-```php
-$countResult_1 = SeasLog::analyzerCount();
-$countResult_2 = SeasLog::analyzerCount(SEASLOG_WARNING);
-$countResult_3 = SeasLog::analyzerCount(SEASLOG_ERRO,date('Ymd',time()));
-
-var_dump($countResult_1,$countResult_2,$countResult_3);
-/*
-array(8) {
-  ["debug"]=&gt;
-  int(3)
-  ["info"]=&gt;
-  int(3)
-  ["notice"]=&gt;
-  int(3)
-  ["warning"]=&gt;
-  int(3)
-  ["error"]=&gt;
-  int(6)
-  ["critical"]=&gt;
-  int(3)
-  ["alert"]=&gt;
-  int(3)
-  ["emergency"]=&gt;
-  int(3)
-}
-
-
-int(7)
-
-int(1)
-
-*/
-</code></pre>
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$countResult_1</span> <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerCount();</span>
+<span class="pl-s1"><span class="pl-smi">$countResult_2</span> <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerCount(<span class="pl-c1">SEASLOG_WARNING</span>);</span>
+<span class="pl-s1"><span class="pl-smi">$countResult_3</span> <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerCount(<span class="pl-c1">SEASLOG_ERRO</span>,<span class="pl-c1">date</span>(<span class="pl-s"><span class="pl-pds">'</span>Ymd<span class="pl-pds">'</span></span>,<span class="pl-c1">time</span>()));</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$countResult_1</span>,<span class="pl-smi">$countResult_2</span>,<span class="pl-smi">$countResult_3</span>);</span>
+<span class="pl-s1"><span class="pl-c">/*</span></span>
+<span class="pl-s1"><span class="pl-c">array(8) {</span></span>
+<span class="pl-s1"><span class="pl-c">  ["debug"]=&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  int(3)</span></span>
+<span class="pl-s1"><span class="pl-c">  ["info"]=&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  int(3)</span></span>
+<span class="pl-s1"><span class="pl-c">  ["notice"]=&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  int(3)</span></span>
+<span class="pl-s1"><span class="pl-c">  ["warning"]=&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  int(3)</span></span>
+<span class="pl-s1"><span class="pl-c">  ["error"]=&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  int(6)</span></span>
+<span class="pl-s1"><span class="pl-c">  ["critical"]=&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  int(3)</span></span>
+<span class="pl-s1"><span class="pl-c">  ["alert"]=&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  int(3)</span></span>
+<span class="pl-s1"><span class="pl-c">  ["emergency"]=&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  int(3)</span></span>
+<span class="pl-s1"><span class="pl-c">}</span></span>
+<span class="pl-s1"><span class="pl-c"></span></span>
+<span class="pl-s1"><span class="pl-c"></span></span>
+<span class="pl-s1"><span class="pl-c">int(7)</span></span>
+<span class="pl-s1"><span class="pl-c"></span></span>
+<span class="pl-s1"><span class="pl-c">int(1)</span></span>
+<span class="pl-s1"><span class="pl-c"></span></span>
+<span class="pl-s1"><span class="pl-c">*/</span></span></pre></div>
 
 <h4>
 <a id="获取某类型log列表" class="anchor" href="#%E8%8E%B7%E5%8F%96%E6%9F%90%E7%B1%BB%E5%9E%8Blog%E5%88%97%E8%A1%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>获取某类型log列表</h4>
 
 <p><code>SeasLog</code>在扩展中使用管道调用shell命令 <code>grep -w</code>快速地取得列表，并返回array给PHP。</p>
 
-<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-vo">$detailErrorArray_inAll</span>   <span class="pl-k">=</span> <span class="pl-s3">SeasLog</span><span class="pl-k">::</span>analyzerDetail(<span class="pl-c1">SEASLOG_ERRO</span>);</span>
-<span class="pl-s2"><span class="pl-vo">$detailErrorArray_today</span>   <span class="pl-k">=</span> <span class="pl-s3">SeasLog</span><span class="pl-k">::</span>analyzerDetail(<span class="pl-c1">SEASLOG_ERRO</span>,<span class="pl-s3">date</span>(<span class="pl-s1"><span class="pl-pds">'</span>Ymd<span class="pl-pds">'</span></span>,<span class="pl-s3">time</span>()));</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-s3">var_dump</span>(<span class="pl-vo">$detailErrorArray_inAll</span>,<span class="pl-vo">$detailErrorArray_today</span>);</span>
-<span class="pl-s2"></span>
-<span class="pl-s2"><span class="pl-c">/*</span></span>
-<span class="pl-s2"><span class="pl-c">SeasLog::analyzerDetail(SEASLOG_ERRO) == SeasLog::analyzerDetail(SEASLOG_ERRO,'*');</span></span>
-<span class="pl-s2"><span class="pl-c">取当前模块下所有level为 SEASLOG_ERRO 的信息列表:</span></span>
-<span class="pl-s2"><span class="pl-c">array(6) {</span></span>
-<span class="pl-s2"><span class="pl-c"> [0] =&gt;</span></span>
-<span class="pl-s2"><span class="pl-c">  string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "</span></span>
-<span class="pl-s2"><span class="pl-c">  [1] =&gt;</span></span>
-<span class="pl-s2"><span class="pl-c">  string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "</span></span>
-<span class="pl-s2"><span class="pl-c">  [2] =&gt;</span></span>
-<span class="pl-s2"><span class="pl-c">  string(66) "ERRO | 8620 | 1393172044.862 | 2014:02:24 00:14:04 | test error 3 "</span></span>
-<span class="pl-s2"><span class="pl-c">  [3] =&gt;</span></span>
-<span class="pl-s2"><span class="pl-c">  string(66) "ERRO | 8646 | 1393172045.989 | 2014:02:24 00:14:05 | test error 3 "</span></span>
-<span class="pl-s2"><span class="pl-c">  [4] =&gt;</span></span>
-<span class="pl-s2"><span class="pl-c">  string(66) "ERRO | 8672 | 1393172047.882 | 2014:02:24 00:14:07 | test error 3 "</span></span>
-<span class="pl-s2"><span class="pl-c">  [5] =&gt;</span></span>
-<span class="pl-s2"><span class="pl-c">  string(66) "ERRO | 8698 | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "</span></span>
-<span class="pl-s2"><span class="pl-c">}</span></span>
-<span class="pl-s2"><span class="pl-c"></span></span>
-<span class="pl-s2"><span class="pl-c">SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ymd',time()));</span></span>
-<span class="pl-s2"><span class="pl-c">只取得当前模块下，当前一天内,level为SEASLOG_ERRO 的信息列表:</span></span>
-<span class="pl-s2"><span class="pl-c">array(2) {</span></span>
-<span class="pl-s2"><span class="pl-c">  [0] =&gt;</span></span>
-<span class="pl-s2"><span class="pl-c">  string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "</span></span>
-<span class="pl-s2"><span class="pl-c">  [1] =&gt;</span></span>
-<span class="pl-s2"><span class="pl-c">  string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "</span></span>
-<span class="pl-s2"><span class="pl-c">}</span></span>
-<span class="pl-s2"><span class="pl-c"></span></span>
-<span class="pl-s2"><span class="pl-c">同理，取当月 </span></span>
-<span class="pl-s2"><span class="pl-c">$detailErrorArray_mouth = SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ym',time()));</span></span>
-<span class="pl-s2"><span class="pl-c"></span></span>
-<span class="pl-s2"><span class="pl-c">*/</span></span></pre></div>
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$detailErrorArray_inAll</span>   <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerDetail(<span class="pl-c1">SEASLOG_ERRO</span>);</span>
+<span class="pl-s1"><span class="pl-smi">$detailErrorArray_today</span>   <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerDetail(<span class="pl-c1">SEASLOG_ERRO</span>,<span class="pl-c1">date</span>(<span class="pl-s"><span class="pl-pds">'</span>Ymd<span class="pl-pds">'</span></span>,<span class="pl-c1">time</span>()));</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$detailErrorArray_inAll</span>,<span class="pl-smi">$detailErrorArray_today</span>);</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">/*</span></span>
+<span class="pl-s1"><span class="pl-c">SeasLog::analyzerDetail(SEASLOG_ERRO) == SeasLog::analyzerDetail(SEASLOG_ERRO,'*');</span></span>
+<span class="pl-s1"><span class="pl-c">取当前模块下所有level为 SEASLOG_ERRO 的信息列表:</span></span>
+<span class="pl-s1"><span class="pl-c">array(6) {</span></span>
+<span class="pl-s1"><span class="pl-c"> [0] =&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  [1] =&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  [2] =&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8620 | 1393172044.862 | 2014:02:24 00:14:04 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  [3] =&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8646 | 1393172045.989 | 2014:02:24 00:14:05 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  [4] =&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8672 | 1393172047.882 | 2014:02:24 00:14:07 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  [5] =&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8698 | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">}</span></span>
+<span class="pl-s1"><span class="pl-c"></span></span>
+<span class="pl-s1"><span class="pl-c">SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ymd',time()));</span></span>
+<span class="pl-s1"><span class="pl-c">只取得当前模块下，当前一天内,level为SEASLOG_ERRO 的信息列表:</span></span>
+<span class="pl-s1"><span class="pl-c">array(2) {</span></span>
+<span class="pl-s1"><span class="pl-c">  [0] =&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  [1] =&gt;</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">}</span></span>
+<span class="pl-s1"><span class="pl-c"></span></span>
+<span class="pl-s1"><span class="pl-c">同理，取当月</span></span>
+<span class="pl-s1"><span class="pl-c">$detailErrorArray_mouth = SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ym',time()));</span></span>
+<span class="pl-s1"><span class="pl-c"></span></span>
+<span class="pl-s1"><span class="pl-c">*/</span></span></pre></div>
 
 <h3>
 <a id="使用seaslog进行健康预警" class="anchor" href="#%E4%BD%BF%E7%94%A8seaslog%E8%BF%9B%E8%A1%8C%E5%81%A5%E5%BA%B7%E9%A2%84%E8%AD%A6" aria-hidden="true"><span class="octicon octicon-link"></span></a>使用SeasLog进行健康预警</h3>
@@ -619,7 +612,7 @@ int(1)
 <h4>
 <a id="预警的配置" class="anchor" href="#%E9%A2%84%E8%AD%A6%E7%9A%84%E9%85%8D%E7%BD%AE" aria-hidden="true"><span class="octicon octicon-link"></span></a>预警的配置</h4>
 
-<div class="highlight highlight-conf"><pre>[base]
+<pre lang="conf"><code>[base]
 wait_analyz_log_path = /log/base_test
 
 [fork]
@@ -634,7 +627,7 @@ email[smtp_host] = smtp.163.com
 email[smtp_port] = 25
 email[subject_pre] = 预警邮件 -
 email[smtp_user] = seaslogdemo@163.com
-email[smtp_pwd] = seaslog<span class="pl-c">#demo</span>
+email[smtp_pwd] = seaslog#demo
 email[mail_from] = seaslogdemo@163.com
 email[mail_to] = gaochitao@weiboyi.com
 email[mail_cc] = ciogao@gmail.com
@@ -642,14 +635,14 @@ email[mail_bcc] =
 
 [analyz]
 ; enum
-; SEASLOG_DEBUG      <span class="pl-s1"><span class="pl-pds">"</span>debug<span class="pl-pds">"</span></span>
-; SEASLOG_INFO       <span class="pl-s1"><span class="pl-pds">"</span>info<span class="pl-pds">"</span></span>
-; SEASLOG_NOTICE     <span class="pl-s1"><span class="pl-pds">"</span>notice<span class="pl-pds">"</span></span>
-; SEASLOG_WARNING    <span class="pl-s1"><span class="pl-pds">"</span>warning<span class="pl-pds">"</span></span>
-; SEASLOG_ERROR      <span class="pl-s1"><span class="pl-pds">"</span>error<span class="pl-pds">"</span></span>
-; SEASLOG_CRITICAL   <span class="pl-s1"><span class="pl-pds">"</span>critical<span class="pl-pds">"</span></span>
-; SEASLOG_ALERT      <span class="pl-s1"><span class="pl-pds">"</span>alert<span class="pl-pds">"</span></span>
-; SEASLOG_EMERGENCY  <span class="pl-s1"><span class="pl-pds">"</span>emergency<span class="pl-pds">"</span></span>
+; SEASLOG_DEBUG      "debug"
+; SEASLOG_INFO       "info"
+; SEASLOG_NOTICE     "notice"
+; SEASLOG_WARNING    "warning"
+; SEASLOG_ERROR      "error"
+; SEASLOG_CRITICAL   "critical"
+; SEASLOG_ALERT      "alert"
+; SEASLOG_EMERGENCY  "emergency"
 
 test1[module] = test/bb
 test1[level] = SEASLOG_ERROR
@@ -667,17 +660,24 @@ test4[level] = SEASLOG_EMERGENCY
 
 test5[module] = 555
 test5[level] = SEASLOG_DEBUG
-</pre></div>
+
+</code></pre>
 
 <h4>
 <a id="crontab配置" class="anchor" href="#crontab%E9%85%8D%E7%BD%AE" aria-hidden="true"><span class="octicon octicon-link"></span></a>crontab配置</h4>
 
-<div class="highlight highlight-conf"><pre>;每天凌晨3点执行
-0 3 * * * /path/to/php /path/to/SeasLog/Analyzer/SeasLogAnalyzer.php</pre></div>
-      </section>
+<pre lang="conf"><code>;每天凌晨3点执行
+0 3 * * * /path/to/php /path/to/SeasLog/Analyzer/SeasLogAnalyzer.php
+</code></pre>
 
-    </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/Neeke/SeasLog">Seaslog</a> is maintained by <a href="https://github.com/Neeke">Neeke</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
   </body>
 </html>
