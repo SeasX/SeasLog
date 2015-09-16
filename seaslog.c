@@ -29,14 +29,15 @@
 #include "ext/date/php_date.h"
 #include "php_seaslog.h"
 #include <stdlib.h>
-#include <unistd.h>
 
 #ifdef PHP_WIN32
 #include "win32/time.h"
+#include <windows.h>
 #elif defined(NETWARE)
 #include <sys/timeval.h>
 #include <sys/time.h>
 #else
+#include <unistd.h>
 #include <sys/time.h>
 #endif
 
@@ -238,14 +239,14 @@ PHP_MINFO_FUNCTION(seaslog)
 static void process_event(int event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC)
 {
     char *event_type_str;
+    char *event_str;
+    int event_str_len;
     if (event_type == SEASLOG_EVENT_ERROR) {
         event_type_str = "Error";
     } else if (event_type == SEASLOG_EVENT_EXCEPTION) {
         event_type_str = "Exception";
     }
 
-    char *event_str;
-    int event_str_len;
     event_str_len = spprintf(&event_str, 0, "%s - type:%d - file:%s - line:%d - msg:%s", event_type_str, type, error_filename, error_lineno, msg);
 
     _seaslog_log(1, SEASLOG_CRITICAL, event_str, event_str_len, NULL, 0, seaslog_ce TSRMLS_CC);
