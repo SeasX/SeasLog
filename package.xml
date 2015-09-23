@@ -11,6 +11,7 @@
         - Analysis of early warning framework preliminary
         - Buffer debug efficient log buffer, convenient
         - With PSR-3 Logger interface
+        - Error and exception automatic logging
     </description>
     <lead>
         <name>Chitao Gao</name>
