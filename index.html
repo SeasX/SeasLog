@@ -129,6 +129,8 @@
 <li>初步的分析预警框架</li>
 <li>高效的日志缓冲、便捷的缓冲debug</li>
 <li>遵循 PSR-3 日志接口规范</li>
+<li>自动记录错误信息</li>
+<li>自动记录异常信息</li>
 </ul>
 
 <h3>
@@ -167,8 +169,8 @@ seaslog.disting_by_hour = 1                     ;是否每小时划分一个文�
 seaslog.use_buffer = 1                          ;是否启用buffer 1是 0否(默认)
 seaslog.buffer_size = 100                       ;buffer中缓冲数量 默认0(不使用buffer_size)
 seaslog.level = 0                               ;记录日志级别 默认0(所有日志)
-seaslog.trace_error = 0                         ;自动记录错误 默认0(关闭)
-seaslog.trace_exception = 1                     ;自动记录异常信息 默认1(开启)
+seaslog.trace_error = 1                         ;自动记录错误 默认1(开启)
+seaslog.trace_exception = 0                     ;自动记录异常信息 默认0(关闭)
 </code></pre>
 
 <blockquote>
