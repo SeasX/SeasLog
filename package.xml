@@ -18,11 +18,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2015-09-15</date>
-    <time>22:17:00</time>
+    <date>2015-09-23</date>
+    <time>19:15:00</time>
     <version>
-        <release>1.4.2</release>
-        <api>1.4.2</api>
+        <release>1.4.4</release>
+        <api>1.4.4</api>
     </version>
     <stability>
         <release>stable</release>
@@ -30,8 +30,9 @@
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - Fixed issue #47 support trace_error and trace_exception switch.
-        - Fixed issue #48 Ignore notice or warning, but error automatic logging.
+        - Fixed issue #50 Fix error and exception hook dead loop.
+        - Fixed support windows with new version.
+        - Fixed trace_error default enable and trace_exception default disable.
     </notes>
     <contents>
         <dir name="/">
@@ -265,6 +266,23 @@
             <notes>
                 - Fixed issue #42 support error and exception automatic logging.
                 - Optimization performance, update is_dir with access.
+            </notes>
+        </release>
+        <release>
+            <date>2015-09-15</date>
+            <time>22:17:00</time>
+            <version>
+                <release>1.4.2</release>
+                <api>1.4.2</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - Fixed issue #47 support trace_error and trace_exception switch.
+                - Fixed issue #48 Ignore notice or warning, but error automatic logging.
             </notes>
         </release>
     </changelog>
