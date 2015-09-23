@@ -173,6 +173,19 @@ PHP_MINIT_FUNCTION(seaslog)
     zend_declare_property_null(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_NAME), ZEND_ACC_STATIC TSRMLS_CC);
     zend_declare_property_null(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_SIZE_NAME), ZEND_ACC_STATIC TSRMLS_CC);
 
+    if (SEASLOG_G(trace_error)) {
+        old_error_cb = zend_error_cb;
+        zend_error_cb = seaslog_error_cb;
+    }
+
+    if (SEASLOG_G(trace_exception)) {
+        if (zend_throw_exception_hook) {
+            old_throw_exception_hook = zend_throw_exception_hook;
+        }
+
+        zend_throw_exception_hook = seaslog_throw_exception_hook;
+    }
+
     return SUCCESS;
 }
 
@@ -187,19 +200,6 @@ PHP_RINIT_FUNCTION(seaslog)
 {
     seaslog_init_logger(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
-
-    if (SEASLOG_G(trace_error)) {
-         old_error_cb = zend_error_cb;
-         zend_error_cb = seaslog_error_cb;
-    }
-
-    if (SEASLOG_G(trace_exception)) {
-        if (zend_throw_exception_hook) {
-            old_throw_exception_hook = zend_throw_exception_hook;
-        }
-
-        zend_throw_exception_hook = seaslog_throw_exception_hook;
-    }
 
     return SUCCESS;
 }
