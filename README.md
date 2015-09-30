@@ -339,7 +339,7 @@ string(14) "/log/base_test"
 ```
 > 直接使用 `SeasLog::getBasePath()`，将获取php.ini(seaslog.ini)中设置的 `seaslog.default_basepath` 的值。
 
-> 使用 `SeasLog::getBasePath()` 函数，将改变 `seaslog_get_basepath()` 的取值。
+> 使用 `SeasLog::setBasePath()` 函数，将改变 `SeasLog::getBasePath()` 的取值。
 
 #### 设置logger与获取lastLogger
 ```php
@@ -423,7 +423,7 @@ emergency | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house n
 ```php
 $countResult_1 = SeasLog::analyzerCount();
 $countResult_2 = SeasLog::analyzerCount(SEASLOG_WARNING);
-$countResult_3 = SeasLog::analyzerCount(SEASLOG_ERRO,date('Ymd',time()));
+$countResult_3 = SeasLog::analyzerCount(SEASLOG_ERROR,date('Ymd',time()));
 
 var_dump($countResult_1,$countResult_2,$countResult_3);
 /*
@@ -456,14 +456,14 @@ int(1)
 #### 获取某类型log列表
 `SeasLog`在扩展中使用管道调用shell命令 `grep -w`快速地取得列表，并返回array给PHP。
 ```php
-$detailErrorArray_inAll   = SeasLog::analyzerDetail(SEASLOG_ERRO);
-$detailErrorArray_today   = SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ymd',time()));
+$detailErrorArray_inAll   = SeasLog::analyzerDetail(SEASLOG_ERROR);
+$detailErrorArray_today   = SeasLog::analyzerDetail(SEASLOG_ERROR,date('Ymd',time()));
 
 var_dump($detailErrorArray_inAll,$detailErrorArray_today);
 
 /*
-SeasLog::analyzerDetail(SEASLOG_ERRO) == SeasLog::analyzerDetail(SEASLOG_ERRO,'*');
-取当前模块下所有level为 SEASLOG_ERRO 的信息列表:
+SeasLog::analyzerDetail(SEASLOG_ERROR) == SeasLog::analyzerDetail(SEASLOG_ERROR,'*');
+取当前模块下所有level为 SEASLOG_ERROR 的信息列表:
 array(6) {
  [0] =>
   string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
@@ -479,8 +479,8 @@ array(6) {
   string(66) "ERRO | 8698 | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "
 }
 
-SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ymd',time()));
-只取得当前模块下，当前一天内,level为SEASLOG_ERRO 的信息列表:
+SeasLog::analyzerDetail(SEASLOG_ERROR,date('Ymd',time()));
+只取得当前模块下，当前一天内,level为SEASLOG_ERROR 的信息列表:
 array(2) {
   [0] =>
   string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
@@ -489,7 +489,7 @@ array(2) {
 }
 
 同理，取当月
-$detailErrorArray_mouth = SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ym',time()));
+$detailErrorArray_mouth = SeasLog::analyzerDetail(SEASLOG_ERROR,date('Ym',time()));
 
 */
 ```
