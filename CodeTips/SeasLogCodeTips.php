@@ -18,7 +18,9 @@ class SeasLog
 
     /**
      * 设置basePath
+     *
      * @param $basePath
+     *
      * @return bool
      */
     static public function setBasePath($basePath)
@@ -28,6 +30,7 @@ class SeasLog
 
     /**
      * 获取basePath
+     *
      * @return string
      */
     static public function getBasePath()
@@ -38,6 +41,7 @@ class SeasLog
     /**
      * 设置模块目录
      * @param $module
+     *
      * @return bool
      */
     static public function setLogger($module)
@@ -58,7 +62,8 @@ class SeasLog
      * 统计所有类型（或单个类型）行数
      * @param string $level
      * @param string $log_path
-     * @param null $key_word
+     * @param null   $key_word
+     *
      * @return array | long
      */
     static public function analyzerCount($level = 'all', $log_path = '*', $key_word = NULL)
@@ -68,11 +73,13 @@ class SeasLog
 
     /**
      * 以数组形式，快速取出某类型log的各行详情
-     * @param $level
+     *
+     * @param        $level
      * @param string $log_path
-     * @param null $key_word
-     * @param int $start
-     * @param int $limit
+     * @param null   $key_word
+     * @param int    $start
+     * @param int    $limit
+     *
      * @return array
      */
     static public function analyzerDetail($level = SEASLOG_INFO, $log_path = '*', $key_word = NULL, $start = 1, $limit = 20)
@@ -82,6 +89,7 @@ class SeasLog
 
     /**
      * 获得当前日志buffer中的内容
+     *
      * @return array
      */
     static public function getBuffer()
@@ -90,9 +98,20 @@ class SeasLog
     }
 
     /**
+     * 将buffer中的日志立刻刷到硬盘
+     *
+     * @return bool
+     */
+    static public function flushBuffer()
+    {
+        return TRUE;
+    }
+
+    /**
      * 记录debug日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
     static public function debug($message, array $content = array(), $module = '')
@@ -102,8 +121,9 @@ class SeasLog
 
     /**
      * 记录info日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
     static public function info($message, array $content = array(), $module = '')
@@ -113,8 +133,9 @@ class SeasLog
 
     /**
      * 记录notice日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
     static public function notice($message, array $content = array(), $module = '')
@@ -124,8 +145,9 @@ class SeasLog
 
     /**
      * 记录warning日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
     static public function warning($message, array $content = array(), $module = '')
@@ -135,8 +157,9 @@ class SeasLog
 
     /**
      * 记录error日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
     static public function error($message, array $content = array(), $module = '')
@@ -146,8 +169,9 @@ class SeasLog
 
     /**
      * 记录critical日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
     static public function critical($message, array $content = array(), $module = '')
@@ -157,8 +181,9 @@ class SeasLog
 
     /**
      * 记录alert日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
     static public function alert($message, array $content = array(), $module = '')
@@ -168,8 +193,9 @@ class SeasLog
 
     /**
      * 记录emergency日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
     static public function emergency($message, array $content = array(), $module = '')
@@ -179,9 +205,9 @@ class SeasLog
 
     /**
      * 通用日志方法
-     * @param $level
-     * @param $message
-     * @param array $content
+     * @param        $level
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
     static public function log($level, $message, array $content = array(), $module = '')

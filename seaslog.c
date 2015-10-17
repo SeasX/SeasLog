@@ -10,8 +10,7 @@
 | to obtain it through the world-wide-web, please send a note to       |
 | license@php.net so we can mail you a copy immediately.               |
 +----------------------------------------------------------------------+
-| Author: Neeke.Gao  <neeke@php.net>  
-          Leandre <leandre.china@gmail.com>                            |
+| Author: Neeke.Gao  <neeke@php.net>                                   |
 +----------------------------------------------------------------------+
 */
 
@@ -899,6 +898,8 @@ PHP_METHOD(SEASLOG_RES_NAME, getBuffer)
 PHP_METHOD(SEASLOG_RES_NAME, flushBuffer)
 {
     seaslog_shutdown_buffer(TSRMLS_C);
+
+    RETURN_TRUE;
 }
 
 PHP_METHOD(SEASLOG_RES_NAME, log)

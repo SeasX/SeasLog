@@ -10,8 +10,7 @@
 | to obtain it through the world-wide-web, please send a note to       |
 | license@php.net so we can mail you a copy immediately.               |
 +----------------------------------------------------------------------+
-| Author: Neeke.Gao  <neeke@php.net>  
-          Leandre <leandre.china@gmail.com>                            |
+| Author: Neeke.Gao  <neeke@php.net>                                   |
 +----------------------------------------------------------------------+
 */
 
@@ -34,7 +33,7 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.4.4"
+#define SEASLOG_VERSION                     "1.4.5"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_ALL                         "all"

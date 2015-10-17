@@ -27,6 +27,9 @@ A effective,fast,stable log extension for PHP
     - **[使用SeasLog进行健康预警](#使用seaslog进行健康预警)**
         - [预警的配置](#预警的配置)
         - [crontab配置](#crontab配置)
+    - **[目前已知使用SeasLog的企业](#目前已知使用SeasLog的企业)**
+        - [企业名单](#企业名单)
+
 
 > ---
 
@@ -216,6 +219,16 @@ class SeasLog
     static public function getBuffer()
     {
         return array();
+    }
+
+    /**
+     * 将buffer中的日志立刻刷到硬盘
+     *
+     * @return bool
+     */
+    static public function flushBuffer()
+    {
+        return TRUE;
     }
 
     /**
@@ -466,26 +479,26 @@ SeasLog::analyzerDetail(SEASLOG_ERROR) == SeasLog::analyzerDetail(SEASLOG_ERROR,
 取当前模块下所有level为 SEASLOG_ERROR 的信息列表:
 array(6) {
  [0] =>
-  string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
+  string(66) "error | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
   [1] =>
-  string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
+  string(66) "error | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
   [2] =>
-  string(66) "ERRO | 8620 | 1393172044.862 | 2014:02:24 00:14:04 | test error 3 "
+  string(66) "error | 8620 | 1393172044.862 | 2014:02:24 00:14:04 | test error 3 "
   [3] =>
-  string(66) "ERRO | 8646 | 1393172045.989 | 2014:02:24 00:14:05 | test error 3 "
+  string(66) "error | 8646 | 1393172045.989 | 2014:02:24 00:14:05 | test error 3 "
   [4] =>
-  string(66) "ERRO | 8672 | 1393172047.882 | 2014:02:24 00:14:07 | test error 3 "
+  string(66) "error | 8672 | 1393172047.882 | 2014:02:24 00:14:07 | test error 3 "
   [5] =>
-  string(66) "ERRO | 8698 | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "
+  string(66) "error | 8698 | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "
 }
 
 SeasLog::analyzerDetail(SEASLOG_ERROR,date('Ymd',time()));
 只取得当前模块下，当前一天内,level为SEASLOG_ERROR 的信息列表:
 array(2) {
   [0] =>
-  string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
+  string(66) "error | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
   [1] =>
-  string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
+  string(66) "error | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
 }
 
 同理，取当月
@@ -552,3 +565,13 @@ test5[level] = SEASLOG_DEBUG
 ;每天凌晨3点执行
 0 3 * * * /path/to/php /path/to/SeasLog/Analyzer/SeasLogAnalyzer.php
 ```
+
+## 目前已知使用SeasLog的企业
+### 企业名单
+ - 云智慧 www.cloudwise.com
+ - 高德(部分项目)
+ - 赶集(部分项目)
+ - Formax  www.jrq.com
+ - 重庆易宠科技(中国最大的独立宠物平台) www.epet.com
+ - 微财富 www.weicaifu.com
+ - 更多请提交PR
