@@ -10,7 +10,8 @@
 | to obtain it through the world-wide-web, please send a note to       |
 | license@php.net so we can mail you a copy immediately.               |
 +----------------------------------------------------------------------+
-| Author: Neeke.Gao  <neeke@php.net>                                   |
+| Author: Neeke.Gao  <neeke@php.net>  
+          Leandre <leandre.china@gmail.com>                            |
 +----------------------------------------------------------------------+
 */
 
@@ -88,6 +89,7 @@ const zend_function_entry seaslog_methods[] = {
     PHP_ME(SEASLOG_RES_NAME, analyzerCount, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, analyzerDetail,NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getBuffer,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, flushBuffer,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
     PHP_ME(SEASLOG_RES_NAME, log,           NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, debug,         NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
@@ -892,6 +894,11 @@ PHP_METHOD(SEASLOG_RES_NAME, getBuffer)
 
         RETURN_ZVAL(buffer, 1, 0);
     }
+}
+
+PHP_METHOD(SEASLOG_RES_NAME, flushBuffer)
+{
+    seaslog_shutdown_buffer(TSRMLS_C);
 }
 
 PHP_METHOD(SEASLOG_RES_NAME, log)
