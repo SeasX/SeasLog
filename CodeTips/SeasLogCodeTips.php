@@ -79,10 +79,11 @@ class SeasLog
      * @param null   $key_word
      * @param int    $start
      * @param int    $limit
+     * @param        $order
      *
      * @return array
      */
-    static public function analyzerDetail($level = SEASLOG_INFO, $log_path = '*', $key_word = NULL, $start = 1, $limit = 20)
+    static public function analyzerDetail($level = SEASLOG_INFO, $log_path = '*', $key_word = NULL, $start = 1, $limit = 20, $order = SEASLOG_DETIAL_ORDER_ASC)
     {
         return array();
     }

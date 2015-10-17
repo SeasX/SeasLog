@@ -200,14 +200,17 @@ class SeasLog
 
     /**
      * 以数组形式，快速取出某类型log的各行详情
-     * @param $level
+     *
+     * @param        $level
      * @param string $log_path
-     * @param null $key_word
-     * @param int $start
-     * @param int $limit
+     * @param null   $key_word
+     * @param int    $start
+     * @param int    $limit
+     * @param        $order
+     *
      * @return array
      */
-    static public function analyzerDetail($level = SEASLOG_INFO,$log_path = '*',$key_word = NULL, $start = 1,$limit = 20)
+    static public function analyzerDetail($level = SEASLOG_INFO, $log_path = '*', $key_word = NULL, $start = 1, $limit = 20, $order = SEASLOG_DETIAL_ORDER_ASC)
     {
         return array();
     }

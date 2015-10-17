@@ -166,6 +166,8 @@ PHP_MINIT_FUNCTION(seaslog)
     REGISTER_STRINGL_CONSTANT("SEASLOG_ALERT",     SEASLOG_ALERT,     sizeof(SEASLOG_ALERT) - 1,    CONST_PERSISTENT | CONST_CS);
     REGISTER_STRINGL_CONSTANT("SEASLOG_EMERGENCY", SEASLOG_EMERGENCY, sizeof(SEASLOG_EMERGENCY) - 1,CONST_PERSISTENT | CONST_CS);
 
+    REGISTER_LONG_CONSTANT("SEASLOG_DETAIL_ORDER_ASC", SEASLOG_DETAIL_ORDER_ASC, CONST_PERSISTENT | CONST_CS);
+    REGISTER_LONG_CONSTANT("SEASLOG_DETAIL_ORDER_DESC", SEASLOG_DETAIL_ORDER_DESC, CONST_PERSISTENT | CONST_CS);
 
     INIT_CLASS_ENTRY(seaslog, SEASLOG_RES_NAME, seaslog_methods);
     seaslog_ce = zend_register_internal_class_ex(&seaslog, NULL, NULL TSRMLS_CC);
@@ -618,12 +620,13 @@ static char * str_replace(char *ori, char * rep, char * with)
     return result;
 }
 
-static int get_detail(char *log_path, char *level, char *key_word, long start, long limit, zval *return_value TSRMLS_DC)
+static int get_detail(char *log_path, char *level, char *key_word, long start, long limit, long order, zval *return_value TSRMLS_DC)
 {
     FILE * fp;
     char buffer[BUFSIZ + 1];
     char *path;
     char *sh;
+    char *command;
 
     memset(buffer, '\0', sizeof(buffer));
 
@@ -642,19 +645,25 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 
 #ifdef WINDOWS
     path = str_replace(path, "/", "\\");
+#else
+    if (order == SEASLOG_DETAIL_ORDER_DESC) {
+        spprintf(&command, 0, "%s", "tac");
+    } else {
+        spprintf(&command, 0, "%s", "more");
+    }
 #endif
 
     if (key_word && strlen(key_word) >= 1) {
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s | findstr \"%s\" ", level, path, key_word);
 #else
-        spprintf(&sh, 0, "more %s 2>/dev/null| grep '%s' -w | grep '%s' -w | sed -n '%ld,%ld'p", path, level, key_word, start, limit);
+        spprintf(&sh, 0, "%s %s 2>/dev/null| grep '%s' -w | grep '%s' -w | sed -n '%ld,%ld'p", command, path, level, key_word, start, limit);
 #endif
     } else {
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s", level, path);
 #else
-        spprintf(&sh, 0, "more %s 2>/dev/null| grep '%s' -w | sed -n '%ld,%ld'p", path, level, start, limit);
+        spprintf(&sh, 0, "%s %s 2>/dev/null| grep '%s' -w | sed -n '%ld,%ld'p", command, path, level, start, limit);
 #endif
     }
 
@@ -676,6 +685,7 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     }
 
     efree(path);
+    efree(command);
     efree(sh);
 
     return 1;
@@ -862,9 +872,10 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
     int log_path_len, level_len, key_word_len;
     long start = 1;
     long limit = 20;
+    long order = SEASLOG_DETAIL_ORDER_ASC;
     int argc = ZEND_NUM_ARGS();
 
-    if (zend_parse_parameters(argc TSRMLS_CC, "s|ssll", &level, &level_len, &log_path, &log_path_len, &key_word, &key_word_len, &start, &limit) == FAILURE) {
+    if (zend_parse_parameters(argc TSRMLS_CC, "s|sslll", &level, &level_len, &log_path, &log_path_len, &key_word, &key_word_len, &start, &limit, &order) == FAILURE) {
         RETURN_FALSE;
     }
 
@@ -882,7 +893,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
         level = "|";
     }
 
-    get_detail(log_path, level, key_word, start, limit, return_value TSRMLS_CC);
+    get_detail(log_path, level, key_word, start, limit, order, return_value TSRMLS_CC);
 }
 
 PHP_METHOD(SEASLOG_RES_NAME, getBuffer)

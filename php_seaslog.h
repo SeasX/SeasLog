@@ -33,7 +33,7 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.4.5"
+#define SEASLOG_VERSION                     "1.4.6"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_ALL                         "all"
@@ -48,6 +48,9 @@ extern zend_module_entry seaslog_module_entry;
 
 #define SEASLOG_BUFFER_NAME                 "seaslog_buffer"
 #define SEASLOG_BUFFER_SIZE_NAME            "seaslog_buffer_size"
+
+#define SEASLOG_DETAIL_ORDER_ASC            1
+#define SEASLOG_DETAIL_ORDER_DESC           2
 
 #define SEASLOG_EVENT_ERROR 1
 #define SEASLOG_EVENT_EXCEPTION 2
