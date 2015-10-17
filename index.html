@@ -86,6 +86,13 @@
 <li><a href="#crontab%E9%85%8D%E7%BD%AE">crontab配置</a></li>
 </ul>
 </li>
+<li>
+<strong><a href="#%E7%9B%AE%E5%89%8D%E5%B7%B2%E7%9F%A5%E4%BD%BF%E7%94%A8SeasLog%E7%9A%84%E4%BC%81%E4%B8%9A">目前已知使用SeasLog的企业</a></strong>
+
+<ul>
+<li><a href="#%E4%BC%81%E4%B8%9A%E5%90%8D%E5%8D%95">企业名单</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -290,14 +297,17 @@ seaslog.trace_exception = 0                     ;自动记录异常信息 默认
 <span class="pl-s1"></span>
 <span class="pl-s1">    <span class="pl-c">/**</span></span>
 <span class="pl-s1"><span class="pl-c">     * 以数组形式，快速取出某类型log的各行详情</span></span>
-<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> $level</span></span>
+<span class="pl-s1"><span class="pl-c">     *</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span>        $level</span></span>
 <span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> string $log_path</span></span>
-<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> null $key_word</span></span>
-<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> int $start</span></span>
-<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> int $limit</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> null   $key_word</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> int    $start</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> int    $limit</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span>        $order</span></span>
+<span class="pl-s1"><span class="pl-c">     *</span></span>
 <span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@return</span> array</span></span>
 <span class="pl-s1"><span class="pl-c">     */</span></span>
-<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">analyzerDetail</span>(<span class="pl-smi">$level</span> <span class="pl-k">=</span> <span class="pl-c1">SEASLOG_INFO</span>,<span class="pl-smi">$log_path</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>*<span class="pl-pds">'</span></span>,<span class="pl-smi">$key_word</span> <span class="pl-k">=</span> <span class="pl-c1">NULL</span>, <span class="pl-smi">$start</span> <span class="pl-k">=</span> <span class="pl-c1">1</span>,<span class="pl-smi">$limit</span> <span class="pl-k">=</span> <span class="pl-c1">20</span>)</span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">analyzerDetail</span>(<span class="pl-smi">$level</span> <span class="pl-k">=</span> <span class="pl-c1">SEASLOG_INFO</span>, <span class="pl-smi">$log_path</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>*<span class="pl-pds">'</span></span>, <span class="pl-smi">$key_word</span> <span class="pl-k">=</span> <span class="pl-c1">NULL</span>, <span class="pl-smi">$start</span> <span class="pl-k">=</span> <span class="pl-c1">1</span>, <span class="pl-smi">$limit</span> <span class="pl-k">=</span> <span class="pl-c1">20</span>, <span class="pl-smi">$order</span> <span class="pl-k">=</span> <span class="pl-c1">SEASLOG_DETIAL_ORDER_ASC</span>)</span>
 <span class="pl-s1">    {</span>
 <span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-c1">array</span>();</span>
 <span class="pl-s1">    }</span>
@@ -309,6 +319,16 @@ seaslog.trace_exception = 0                     ;自动记录异常信息 默认
 <span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">getBuffer</span>()</span>
 <span class="pl-s1">    {</span>
 <span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-c1">array</span>();</span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * 将buffer中的日志立刻刷到硬盘</span></span>
+<span class="pl-s1"><span class="pl-c">     *</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@return</span> bool</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">flushBuffer</span>()</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-c1">TRUE</span>;</span>
 <span class="pl-s1">    }</span>
 <span class="pl-s1"></span>
 <span class="pl-s1">    <span class="pl-c">/**</span></span>
@@ -435,7 +455,7 @@ seaslog.trace_exception = 0                     ;自动记录异常信息 默认
 <blockquote>
 <p>直接使用 <code>SeasLog::getBasePath()</code>，将获取php.ini(seaslog.ini)中设置的 <code>seaslog.default_basepath</code> 的值。</p>
 
-<p>使用 <code>SeasLog::getBasePath()</code> 函数，将改变 <code>seaslog_get_basepath()</code> 的取值。</p>
+<p>使用 <code>SeasLog::setBasePath()</code> 函数，将改变 <code>SeasLog::getBasePath()</code> 的取值。</p>
 </blockquote>
 
 <h4>
@@ -536,7 +556,7 @@ emergency <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 14064224
 
 <div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$countResult_1</span> <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerCount();</span>
 <span class="pl-s1"><span class="pl-smi">$countResult_2</span> <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerCount(<span class="pl-c1">SEASLOG_WARNING</span>);</span>
-<span class="pl-s1"><span class="pl-smi">$countResult_3</span> <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerCount(<span class="pl-c1">SEASLOG_ERRO</span>,<span class="pl-c1">date</span>(<span class="pl-s"><span class="pl-pds">'</span>Ymd<span class="pl-pds">'</span></span>,<span class="pl-c1">time</span>()));</span>
+<span class="pl-s1"><span class="pl-smi">$countResult_3</span> <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerCount(<span class="pl-c1">SEASLOG_ERROR</span>,<span class="pl-c1">date</span>(<span class="pl-s"><span class="pl-pds">'</span>Ymd<span class="pl-pds">'</span></span>,<span class="pl-c1">time</span>()));</span>
 <span class="pl-s1"></span>
 <span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$countResult_1</span>,<span class="pl-smi">$countResult_2</span>,<span class="pl-smi">$countResult_3</span>);</span>
 <span class="pl-s1"><span class="pl-c">/*</span></span>
@@ -571,40 +591,40 @@ emergency <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 14064224
 
 <p><code>SeasLog</code>在扩展中使用管道调用shell命令 <code>grep -w</code>快速地取得列表，并返回array给PHP。</p>
 
-<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$detailErrorArray_inAll</span>   <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerDetail(<span class="pl-c1">SEASLOG_ERRO</span>);</span>
-<span class="pl-s1"><span class="pl-smi">$detailErrorArray_today</span>   <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerDetail(<span class="pl-c1">SEASLOG_ERRO</span>,<span class="pl-c1">date</span>(<span class="pl-s"><span class="pl-pds">'</span>Ymd<span class="pl-pds">'</span></span>,<span class="pl-c1">time</span>()));</span>
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-smi">$detailErrorArray_inAll</span>   <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerDetail(<span class="pl-c1">SEASLOG_ERROR</span>);</span>
+<span class="pl-s1"><span class="pl-smi">$detailErrorArray_today</span>   <span class="pl-k">=</span> <span class="pl-c1">SeasLog</span><span class="pl-k">::</span>analyzerDetail(<span class="pl-c1">SEASLOG_ERROR</span>,<span class="pl-c1">date</span>(<span class="pl-s"><span class="pl-pds">'</span>Ymd<span class="pl-pds">'</span></span>,<span class="pl-c1">time</span>()));</span>
 <span class="pl-s1"></span>
 <span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$detailErrorArray_inAll</span>,<span class="pl-smi">$detailErrorArray_today</span>);</span>
 <span class="pl-s1"></span>
 <span class="pl-s1"><span class="pl-c">/*</span></span>
-<span class="pl-s1"><span class="pl-c">SeasLog::analyzerDetail(SEASLOG_ERRO) == SeasLog::analyzerDetail(SEASLOG_ERRO,'*');</span></span>
-<span class="pl-s1"><span class="pl-c">取当前模块下所有level为 SEASLOG_ERRO 的信息列表:</span></span>
+<span class="pl-s1"><span class="pl-c">SeasLog::analyzerDetail(SEASLOG_ERROR) == SeasLog::analyzerDetail(SEASLOG_ERROR,'*');</span></span>
+<span class="pl-s1"><span class="pl-c">取当前模块下所有level为 SEASLOG_ERROR 的信息列表:</span></span>
 <span class="pl-s1"><span class="pl-c">array(6) {</span></span>
 <span class="pl-s1"><span class="pl-c"> [0] =&gt;</span></span>
-<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "error | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "</span></span>
 <span class="pl-s1"><span class="pl-c">  [1] =&gt;</span></span>
-<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "error | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "</span></span>
 <span class="pl-s1"><span class="pl-c">  [2] =&gt;</span></span>
-<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8620 | 1393172044.862 | 2014:02:24 00:14:04 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "error | 8620 | 1393172044.862 | 2014:02:24 00:14:04 | test error 3 "</span></span>
 <span class="pl-s1"><span class="pl-c">  [3] =&gt;</span></span>
-<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8646 | 1393172045.989 | 2014:02:24 00:14:05 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "error | 8646 | 1393172045.989 | 2014:02:24 00:14:05 | test error 3 "</span></span>
 <span class="pl-s1"><span class="pl-c">  [4] =&gt;</span></span>
-<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8672 | 1393172047.882 | 2014:02:24 00:14:07 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "error | 8672 | 1393172047.882 | 2014:02:24 00:14:07 | test error 3 "</span></span>
 <span class="pl-s1"><span class="pl-c">  [5] =&gt;</span></span>
-<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8698 | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "error | 8698 | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "</span></span>
 <span class="pl-s1"><span class="pl-c">}</span></span>
 <span class="pl-s1"><span class="pl-c"></span></span>
-<span class="pl-s1"><span class="pl-c">SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ymd',time()));</span></span>
-<span class="pl-s1"><span class="pl-c">只取得当前模块下，当前一天内,level为SEASLOG_ERRO 的信息列表:</span></span>
+<span class="pl-s1"><span class="pl-c">SeasLog::analyzerDetail(SEASLOG_ERROR,date('Ymd',time()));</span></span>
+<span class="pl-s1"><span class="pl-c">只取得当前模块下，当前一天内,level为SEASLOG_ERROR 的信息列表:</span></span>
 <span class="pl-s1"><span class="pl-c">array(2) {</span></span>
 <span class="pl-s1"><span class="pl-c">  [0] =&gt;</span></span>
-<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "error | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "</span></span>
 <span class="pl-s1"><span class="pl-c">  [1] =&gt;</span></span>
-<span class="pl-s1"><span class="pl-c">  string(66) "ERRO | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "</span></span>
+<span class="pl-s1"><span class="pl-c">  string(66) "error | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "</span></span>
 <span class="pl-s1"><span class="pl-c">}</span></span>
 <span class="pl-s1"><span class="pl-c"></span></span>
 <span class="pl-s1"><span class="pl-c">同理，取当月</span></span>
-<span class="pl-s1"><span class="pl-c">$detailErrorArray_mouth = SeasLog::analyzerDetail(SEASLOG_ERRO,date('Ym',time()));</span></span>
+<span class="pl-s1"><span class="pl-c">$detailErrorArray_mouth = SeasLog::analyzerDetail(SEASLOG_ERROR,date('Ym',time()));</span></span>
 <span class="pl-s1"><span class="pl-c"></span></span>
 <span class="pl-s1"><span class="pl-c">*/</span></span></pre></div>
 
@@ -671,6 +691,26 @@ test5[level] = SEASLOG_DEBUG
 <pre lang="conf"><code>;每天凌晨3点执行
 0 3 * * * /path/to/php /path/to/SeasLog/Analyzer/SeasLogAnalyzer.php
 </code></pre>
+
+<h2>
+<a id="目前已知使用seaslog的企业" class="anchor" href="#%E7%9B%AE%E5%89%8D%E5%B7%B2%E7%9F%A5%E4%BD%BF%E7%94%A8seaslog%E7%9A%84%E4%BC%81%E4%B8%9A" aria-hidden="true"><span class="octicon octicon-link"></span></a>目前已知使用SeasLog的企业</h2>
+
+<h3>
+<a id="企业名单" class="anchor" href="#%E4%BC%81%E4%B8%9A%E5%90%8D%E5%8D%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>企业名单</h3>
+
+<ul>
+<li>云智慧 <a href="http://www.cloudwise.com">www.cloudwise.com</a>
+</li>
+<li>高德(部分项目)</li>
+<li>赶集(部分项目)</li>
+<li>Formax  <a href="http://www.jrq.com">www.jrq.com</a>
+</li>
+<li>重庆易宠科技(中国最大的独立宠物平台) <a href="http://www.epet.com">www.epet.com</a>
+</li>
+<li>微财富 <a href="http://www.weicaifu.com">www.weicaifu.com</a>
+</li>
+<li>更多请提交PR</li>
+</ul>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/Neeke/SeasLog">Seaslog</a> is maintained by <a href="https://github.com/Neeke">Neeke</a>.</span>
