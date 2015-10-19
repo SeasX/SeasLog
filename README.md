@@ -573,7 +573,7 @@ test5[level] = SEASLOG_DEBUG
 ### 企业名单
  - 云智慧 www.cloudwise.com
  - 高德(部分项目)
- - 赶集(部分项目)
+ - 腾讯(部分项目)
  - Formax  www.jrq.com
  - 重庆易宠科技(中国最大的独立宠物平台) www.epet.com
  - 微财富 www.weicaifu.com
