@@ -647,9 +647,9 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     path = str_replace(path, "/", "\\");
 #else
     if (order == SEASLOG_DETAIL_ORDER_DESC) {
-        spprintf(&command, 0, "%s", "tac");
+        spprintf(&command, 0, "%s `ls -t %s`", "tac", path);
     } else {
-        spprintf(&command, 0, "%s", "more");
+        spprintf(&command, 0, "%s %s", "more", path);
     }
 #endif
 
@@ -657,13 +657,13 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s | findstr \"%s\" ", level, path, key_word);
 #else
-        spprintf(&sh, 0, "%s %s 2>/dev/null| grep '%s' -w | grep '%s' -w | sed -n '%ld,%ld'p", command, path, level, key_word, start, limit);
+        spprintf(&sh, 0, "%s 2>/dev/null| grep '%s' -w | grep '%s' -w | sed -n '%ld,%ld'p", command, level, key_word, start, limit);
 #endif
     } else {
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s", level, path);
 #else
-        spprintf(&sh, 0, "%s %s 2>/dev/null| grep '%s' -w | sed -n '%ld,%ld'p", command, path, level, start, limit);
+        spprintf(&sh, 0, "%s 2>/dev/null| grep '%s' -w | sed -n '%ld,%ld'p", command, level, start, limit);
 #endif
     }
 
