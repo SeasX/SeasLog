@@ -620,7 +620,7 @@ static char * str_replace(char *ori, char * rep, char * with)
     return result;
 }
 
-static int get_detail(char *log_path, char *level, char *key_word, long start, long limit, long order, zval *return_value TSRMLS_DC)
+static int get_detail(char *log_path, char *level, char *key_word, long start, long end, long order, zval *return_value TSRMLS_DC)
 {
     FILE * fp;
     char buffer[BUFSIZ + 1];
@@ -657,13 +657,13 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s | findstr \"%s\" ", level, path, key_word);
 #else
-        spprintf(&sh, 0, "%s 2>/dev/null| grep '%s' -w | grep '%s' -w | sed -n '%ld,%ld'p", command, level, key_word, start, limit);
+        spprintf(&sh, 0, "%s 2>/dev/null| grep '%s' -w | grep '%s' -w | sed -n '%ld,%ld'p", command, level, key_word, start, end);
 #endif
     } else {
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s", level, path);
 #else
-        spprintf(&sh, 0, "%s 2>/dev/null| grep '%s' -w | sed -n '%ld,%ld'p", command, level, start, limit);
+        spprintf(&sh, 0, "%s 2>/dev/null| grep '%s' -w | sed -n '%ld,%ld'p", command, level, start, end);
 #endif
     }
 
@@ -893,7 +893,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
         level = "|";
     }
 
-    get_detail(log_path, level, key_word, start, limit, order, return_value TSRMLS_CC);
+    get_detail(log_path, level, key_word, start, start + limit, order, return_value TSRMLS_CC);
 }
 
 PHP_METHOD(SEASLOG_RES_NAME, getBuffer)
