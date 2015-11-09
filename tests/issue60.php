@@ -8,5 +8,5 @@ for($i=0; $i<100; $i++){
     SeasLog::error(time());
     sleep(1);
 
-    var_dump(count(SeasLog::getBuffer()));
+    var_dump(SeasLog::getBuffer());
 }
