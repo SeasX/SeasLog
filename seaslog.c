@@ -339,18 +339,18 @@ void seaslog_clear_buffer(TSRMLS_D)
 {
     zval *buffer;
     zval *buffer_size;
+
+    zend_update_static_property_null(seaslog_ce, SL_S(SEASLOG_BUFFER_NAME) TSRMLS_CC);
+    zend_update_static_property_null(seaslog_ce, SL_S(SEASLOG_BUFFER_SIZE_NAME) TSRMLS_CC);
+
     MAKE_STD_ZVAL(buffer);
     array_init(buffer);
-
     zend_update_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_NAME), buffer TSRMLS_CC);
-    zval_ptr_dtor(&buffer);
-
 
     MAKE_STD_ZVAL(buffer_size);
     ZVAL_LONG(buffer_size, 0);
 
     zend_update_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_SIZE_NAME), buffer_size TSRMLS_CC);
-    zval_ptr_dtor(&buffer_size);
 }
 
 static int real_php_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
@@ -423,20 +423,19 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
     }
 
     zend_update_static_property(ce, SL_S(SEASLOG_BUFFER_NAME), new_array TSRMLS_CC);
+
+    zval_ptr_dtor(&old_log_array);
     zval_ptr_dtor(&new_array);
 
     if (SEASLOG_G(buffer_size) > 0) {
         zval *buffer_count;
-        zval *buffer_count_new;
         buffer_count = zend_read_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_SIZE_NAME), 0 TSRMLS_CC);
 
-        MAKE_STD_ZVAL(buffer_count_new);
-        ZVAL_LONG(buffer_count_new, Z_LVAL_P(buffer_count) + 1);
+        ++Z_LVAL_P(buffer_count);
 
-        zend_update_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_SIZE_NAME), buffer_count_new TSRMLS_CC);
-        zval_ptr_dtor(&buffer_count_new);
+        zend_update_static_property(seaslog_ce, SL_S(SEASLOG_BUFFER_SIZE_NAME), buffer_count TSRMLS_CC);
 
-        if (Z_LVAL_P(buffer_count) + 1 >= SEASLOG_G(buffer_size)) {
+        if (Z_LVAL_P(buffer_count) >= SEASLOG_G(buffer_size)) {
             seaslog_shutdown_buffer(TSRMLS_C);
         }
     }
