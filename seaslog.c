@@ -275,7 +275,7 @@ void seaslog_error_cb(int type, const char *error_filename, const uint error_lin
 
 void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
 {
-	zval *message, *file, *line;
+	zval *message, *file, *line, *code;
 #if PHP_VERSION_ID >= 70000
 	zval rv;
 #endif
@@ -291,13 +291,15 @@ void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
     message = zend_read_property(default_ce, exception, "message", sizeof("message")-1, 0, &rv);
     file = zend_read_property(default_ce, exception, "file", sizeof("file")-1, 0, &rv);
     line = zend_read_property(default_ce, exception, "line", sizeof("line")-1, 0, &rv);
+    code = zend_read_property(default_ce, exception, "code", sizeof("code")-1, 0, &rv);
 #else
     message = zend_read_property(default_ce, exception, "message", sizeof("message")-1, 0 TSRMLS_CC);
     file = zend_read_property(default_ce, exception, "file", sizeof("file")-1, 0 TSRMLS_CC);
     line = zend_read_property(default_ce, exception, "line", sizeof("line")-1, 0 TSRMLS_CC);
+    code = zend_read_property(default_ce, exception, "code", sizeof("code")-1, 0 TSRMLS_CC);
 #endif
 
-    process_event(SEASLOG_EVENT_EXCEPTION, E_EXCEPTION, Z_STRVAL_P(file), Z_LVAL_P(line), Z_STRVAL_P(message) TSRMLS_CC);
+    process_event(SEASLOG_EVENT_EXCEPTION, Z_LVAL_P(code), Z_STRVAL_P(file), Z_LVAL_P(line), Z_STRVAL_P(message) TSRMLS_CC);
 
     if (old_throw_exception_hook) {
         old_throw_exception_hook(exception TSRMLS_CC);
