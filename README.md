@@ -59,7 +59,7 @@ php内置error_log、syslog函数功能强大且性能极好，但由于各种�
 * 指定log目录与获取当前配置
 * 初步的分析预警框架
 * 高效的日志缓冲、便捷的缓冲debug
-* 遵循 PSR-3 日志接口规范
+* 遵循 [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) 日志接口规范
 * 自动记录错误信息
 * 自动记录异常信息
 
