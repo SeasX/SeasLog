@@ -22,8 +22,8 @@
     <date>2015-10-23</date>
     <time>20:05:00</time>
     <version>
-        <release>1.4.6</release>
-        <api>1.4.6</api>
+        <release>1.4.8</release>
+        <api>1.4.8</api>
     </version>
     <stability>
         <release>stable</release>
@@ -31,9 +31,8 @@
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - Fixed issue #52 update README fixed SEASLOG_ERRO and company list from.
-        - Fixed issue #53 Add function flushBuffer,support independent refresh by manual.
-        - Fixed issue #57 and #58 Update analyzerDetail by desc and fixed limit value.
+        - Fixed issue #60 Fixed use_buffer and buffer_size in config error;
+        - Fixed issue #61 Fixed trace_exception where exception code get error.
     </notes>
     <contents>
         <dir name="/">
@@ -302,6 +301,24 @@
                 - Fixed issue #50 Fix error and exception hook dead loop.
                 - Fixed support windows with new version.
                 - Fixed trace_error default enable and trace_exception default disable.
+            </notes>
+        </release>
+        <release>
+            <date>2015-10-23</date>
+            <time>20:05:00</time>
+            <version>
+                <release>1.4.6</release>
+                <api>1.4.6</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - Fixed issue #52 update README fixed SEASLOG_ERRO and company list from.
+                - Fixed issue #53 Add function flushBuffer,support independent refresh by manual.
+                - Fixed issue #57 and #58 Update analyzerDetail by desc and fixed limit value.
             </notes>
         </release>
     </changelog>
