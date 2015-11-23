@@ -59,6 +59,8 @@ void seaslog_error_cb(int type, const char *error_filename, const uint error_lin
 void (*old_throw_exception_hook)(zval *exception TSRMLS_DC);
 void seaslog_throw_exception_hook(zval *exception TSRMLS_DC);
 static void process_event(int event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC);
+static void initErrorHooks(TSRMLS_D);
+static void recoveryErrorHooks(TSRMLS_D);
 
 ZEND_DECLARE_MODULE_GLOBALS(seaslog)
 
@@ -143,7 +145,6 @@ static void php_seaslog_init_globals(zend_seaslog_globals *seaslog_globals)
 
 }
 
-
 PHP_MINIT_FUNCTION(seaslog)
 {
     zend_class_entry seaslog;
@@ -176,24 +177,15 @@ PHP_MINIT_FUNCTION(seaslog)
     zend_declare_property_null(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_NAME), ZEND_ACC_STATIC TSRMLS_CC);
     zend_declare_property_null(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_SIZE_NAME), ZEND_ACC_STATIC TSRMLS_CC);
 
-    if (SEASLOG_G(trace_error)) {
-        old_error_cb = zend_error_cb;
-        zend_error_cb = seaslog_error_cb;
-    }
-
-    if (SEASLOG_G(trace_exception)) {
-        if (zend_throw_exception_hook) {
-            old_throw_exception_hook = zend_throw_exception_hook;
-        }
-
-        zend_throw_exception_hook = seaslog_throw_exception_hook;
-    }
+    initErrorHooks(TSRMLS_C);
 
     return SUCCESS;
 }
 
 PHP_MSHUTDOWN_FUNCTION(seaslog)
 {
+    recoveryErrorHooks(TSRMLS_C);
+
     UNREGISTER_INI_ENTRIES();
 
     return SUCCESS;
@@ -211,18 +203,6 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
     seaslog_shutdown_buffer(TSRMLS_C);
     seaslog_clear_logger(TSRMLS_C);
-
-    if (SEASLOG_G(trace_error)) {
-        if (old_error_cb) {
-            zend_error_cb = old_error_cb;
-        }
-    }
-
-    if (SEASLOG_G(trace_exception)) {
-        if (old_throw_exception_hook) {
-            zend_throw_exception_hook = old_throw_exception_hook;
-        }
-    }
 
     return SUCCESS;
 }
@@ -303,6 +283,37 @@ void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
 
     if (old_throw_exception_hook) {
         old_throw_exception_hook(exception TSRMLS_CC);
+    }
+}
+
+static void initErrorHooks(TSRMLS_D)
+{
+    if (SEASLOG_G(trace_error)) {
+        old_error_cb = zend_error_cb;
+        zend_error_cb = seaslog_error_cb;
+    }
+
+    if (SEASLOG_G(trace_exception)) {
+        if (zend_throw_exception_hook) {
+            old_throw_exception_hook = zend_throw_exception_hook;
+        }
+
+        zend_throw_exception_hook = seaslog_throw_exception_hook;
+    }
+}
+
+static void recoveryErrorHooks(TSRMLS_D)
+{
+    if (SEASLOG_G(trace_error)) {
+        if (old_error_cb) {
+            zend_error_cb = old_error_cb;
+        }
+    }
+
+    if (SEASLOG_G(trace_exception)) {
+        if (old_throw_exception_hook) {
+            zend_throw_exception_hook = old_throw_exception_hook;
+        }
     }
 }
 
