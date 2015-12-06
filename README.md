@@ -29,6 +29,7 @@ A effective,fast,stable log extension for PHP
         - [crontab配置](#crontab配置)
     - **[目前已知使用SeasLog的企业](#目前已知使用SeasLog的企业)**
         - [企业名单](#企业名单)
+        - [接受捐赠](#接受捐赠)
 
 
 > ---
@@ -578,3 +579,5 @@ test5[level] = SEASLOG_DEBUG
  - 重庆易宠科技(中国最大的独立宠物平台) www.epet.com
  - 微财富 www.weicaifu.com
  - 更多请提交PR
+### 接受捐赠
+![支付宝捐赠](https://raw.githubusercontent.com/Neeke/SeasLog/master/tests/neeke_alipay.jpg)
