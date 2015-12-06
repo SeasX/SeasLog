@@ -40,7 +40,7 @@
 #define SEASLOG_ZVAL_STRING(z,s) ZVAL_STRING(z,s)
 #define SEASLOG_ZVAL_STRINGL(z,s,l) ZVAL_STRINGL(z,s,l)
 #define SEASLOG_RETURN_STRINGL(k,l) RETURN_STRINGL(k,l)
-#define SEASLOG_ADD_ASSOC_STRING_EX(a,k,l,s) add_assoc_string_ex(a,k,l,s)
+#define SEASLOG_ADD_ASSOC_STRING_EX(a,k,l,s) add_assoc_string_ex(&a,k,l,s)
 #define SEASLOG_ADD_NEXT_INDEX_STRING(a,s) add_next_index_string(a,s)
 #define SEASLOG_ZEND_HASH_GET_CURRENT_KEY(ht,key,idx) zend_hash_get_current_key(ht,key,idx)
 
@@ -437,7 +437,7 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
 
     zval        *file_path;
 
-    old_log_array = zend_read_static_property(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_NAME), 1 TSRMLS_CC);
+    old_log_array = zend_read_static_property(ce, ZEND_STRL(SEASLOG_BUFFER_NAME), 1 TSRMLS_CC);
 
     if (!old_log_array || Z_TYPE_P(old_log_array) != IS_ARRAY) {
         return 0;
@@ -466,11 +466,11 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
             char *_new_log;
             spprintf(&_new_log, 0, "%s%s", ZSTR_VAL(s), log_info);
 
-            SEASLOG_ADD_ASSOC_STRING_EX(&new_array, ZSTR_VAL(str_key), ZSTR_LEN(str_key), _new_log);
+            SEASLOG_ADD_ASSOC_STRING_EX(new_array, ZSTR_VAL(str_key), ZSTR_LEN(str_key), _new_log);
             efree(_new_log);
             have_old = SUCCESS;
         } else {
-            SEASLOG_ADD_ASSOC_STRING_EX(&new_array, ZSTR_VAL(str_key), ZSTR_LEN(str_key), ZSTR_VAL(s));
+            SEASLOG_ADD_ASSOC_STRING_EX(new_array, ZSTR_VAL(str_key), ZSTR_LEN(str_key), ZSTR_VAL(s));
         }
 
         zend_string_release(s);
@@ -510,28 +510,24 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
 #endif
 
     if (have_old == FAILURE) {
-#if PHP_VERSION_ID >= 70000
-    SEASLOG_ADD_ASSOC_STRING_EX(&new_array, path, path_len + 1, log_info);
-#else
-    SEASLOG_ADD_ASSOC_STRING_EX(new_array, path, path_len + 1, log_info);
-#endif
+        SEASLOG_ADD_ASSOC_STRING_EX(new_array, path, path_len + 1, log_info);
     }
 
 #if PHP_VERSION_ID >= 70000
-    zend_update_static_property(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_NAME), &new_array TSRMLS_CC);
+    zend_update_static_property(ce, ZEND_STRL(SEASLOG_BUFFER_NAME), &new_array TSRMLS_CC);
 #else
-    zend_update_static_property(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_NAME), new_array TSRMLS_CC);
+    zend_update_static_property(ce, ZEND_STRL(SEASLOG_BUFFER_NAME), new_array TSRMLS_CC);
     zval_ptr_dtor(&old_log_array);
     zval_ptr_dtor(&new_array);
 #endif
 
     if (SEASLOG_G(buffer_size) > 0) {
         zval *buffer_count;
-        buffer_count = zend_read_static_property(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_SIZE_NAME), 0 TSRMLS_CC);
+        buffer_count = zend_read_static_property(ce, ZEND_STRL(SEASLOG_BUFFER_SIZE_NAME), 0 TSRMLS_CC);
 
         ++Z_LVAL_P(buffer_count);
 
-        zend_update_static_property(seaslog_ce, ZEND_STRL(SEASLOG_BUFFER_SIZE_NAME), buffer_count TSRMLS_CC);
+        zend_update_static_property(ce, ZEND_STRL(SEASLOG_BUFFER_SIZE_NAME), buffer_count TSRMLS_CC);
 
         if (Z_LVAL_P(buffer_count) >= SEASLOG_G(buffer_size)) {
             seaslog_shutdown_buffer(TSRMLS_C);
