@@ -592,7 +592,7 @@ static char *mk_real_log_path(char *log_path, char *date, char *level TSRMLS_DC)
 {
     char *log_file_path = NULL;
     if (SEASLOG_G(disting_type)) {
-        spprintf(&log_file_path, 0, "%s/%s_%s.log", log_path, level, date);
+        spprintf(&log_file_path, 0, "%s/%s.%s.log", log_path, level, date);
     } else {
         spprintf(&log_file_path, 0, "%s/%s.log", log_path,date);
     }
