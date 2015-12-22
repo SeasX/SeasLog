@@ -929,7 +929,11 @@ PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
         }
 
         SEASLOG_G(base_path) = estrdup(Z_STRVAL_P(_base_path));
+ #if PHP_VERSION_ID >= 70000
+        zval_ptr_dtor(_base_path);
+#else
         zval_ptr_dtor(&_base_path);
+#endif
         RETURN_TRUE;
     }
 
@@ -967,7 +971,11 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
         }
 
         SEASLOG_G(last_logger) = estrdup(Z_STRVAL_P(_module));
+#if PHP_VERSION_ID >= 70000
+        zval_ptr_dtor(_module);
+#else
         zval_ptr_dtor(&_module);
+#endif
         RETURN_TRUE;
     }
 
