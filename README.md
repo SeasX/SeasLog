@@ -578,6 +578,7 @@ test5[level] = SEASLOG_DEBUG
  - Formax  www.jrq.com
  - 重庆易宠科技(中国最大的独立宠物平台) www.epet.com
  - 微财富 www.weicaifu.com
+ - 美丽说(部分项目) www.meilishuo.com
  - 更多请提交PR
 
 ### 接受捐赠
