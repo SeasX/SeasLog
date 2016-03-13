@@ -660,7 +660,6 @@ static char *mk_real_time(TSRMLS_D)
     time(&rawtime);
     timeinfo = localtime(&rawtime);
 
-    //strftime(buffer,sizeof(buffer),"%Y-%m-%d %H:%M:%S",timeinfo);
     strftime(buffer,sizeof(buffer),SEASLOG_G(current_datetime_format),timeinfo);
 
     char *time;
