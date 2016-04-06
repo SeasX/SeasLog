@@ -92,6 +92,7 @@ ZEND_DECLARE_MODULE_GLOBALS(seaslog)
 static int le_seaslog;
 static char *last_logger = "default";
 static char *base_path = "";
+static char *current_datetime_format = "";
 static zend_bool disting_type = 0;
 static zend_bool disting_by_hour = 0;
 static zend_bool use_buffer = 0;
@@ -112,10 +113,12 @@ const zend_function_entry seaslog_methods[] = {
     PHP_ME(SEASLOG_RES_NAME, getBasePath,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, setLogger,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getLastLogger, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, setDatetimeFormat,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getDatetimeFormat,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, analyzerCount, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, analyzerDetail,NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getBuffer,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, flushBuffer,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, flushBuffer,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
     PHP_ME(SEASLOG_RES_NAME, log,           NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, debug,         NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
@@ -152,8 +155,9 @@ ZEND_GET_MODULE(seaslog)
 #endif
 
 PHP_INI_BEGIN()
-STD_PHP_INI_ENTRY("seaslog.default_basepath", "/log", PHP_INI_ALL, OnUpdateString, default_basepath, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.default_basepath", "/var/log/www", PHP_INI_ALL, OnUpdateString, default_basepath, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_logger", "default", PHP_INI_ALL, OnUpdateString, default_logger, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.default_datetime_format", "%Y:%m:%d %H:%M:%S", PHP_INI_ALL, OnUpdateString, default_datetime_format, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.logger", "default", PHP_INI_ALL, OnUpdateString, logger, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour", "0", PHP_INI_ALL, OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
@@ -350,8 +354,9 @@ static void recoveryErrorHooks(TSRMLS_D)
 
 void seaslog_init_logger(TSRMLS_D)
 {
-    SEASLOG_G(base_path)   = estrdup(SEASLOG_G(default_basepath));
-    SEASLOG_G(last_logger) = estrdup(SEASLOG_G(default_logger));
+    SEASLOG_G(base_path)        = estrdup(SEASLOG_G(default_basepath));
+    SEASLOG_G(last_logger)      = estrdup(SEASLOG_G(default_logger));
+    SEASLOG_G(current_datetime_format)   = estrdup(SEASLOG_G(default_datetime_format));
 }
 
 void seaslog_clear_logger(TSRMLS_D)
@@ -655,7 +660,7 @@ static char *mk_real_time(TSRMLS_D)
     time(&rawtime);
     timeinfo = localtime(&rawtime);
 
-    strftime(buffer,sizeof(buffer),"%Y:%m:%d %H:%M:%S",timeinfo);
+    strftime(buffer,sizeof(buffer),SEASLOG_G(current_datetime_format),timeinfo);
 
     char *time;
     spprintf(&time,0,"%s",buffer);
@@ -988,11 +993,46 @@ PHP_METHOD(SEASLOG_RES_NAME, getLastLogger)
 {
     char *str;
     int len = 0;
-    len = spprintf(&str, 0, "%s", SEASLOG_G(last_logger));
+    len = spprintf(&str, 0, "%s", SEASLOG_G(current_datetime_format));
 
     SEASLOG_RETURN_STRINGL(str, len);
 }
 
+PHP_METHOD(SEASLOG_RES_NAME, setDatetimeFormat)
+{
+    zval *_format;
+    int argc = ZEND_NUM_ARGS();
+
+    if (zend_parse_parameters(argc TSRMLS_CC, "z", &_format) == FAILURE)
+        return;
+
+    if (argc > 0 && (Z_TYPE_P(_format) == IS_STRING || Z_STRLEN_P(_format) > 0)) {
+        if (!strcmp(SEASLOG_G(current_datetime_format),SEASLOG_G(default_datetime_format)))
+        {
+            efree(SEASLOG_G(current_datetime_format));
+        }
+
+        SEASLOG_G(current_datetime_format) = estrdup(Z_STRVAL_P(_format));
+#if PHP_VERSION_ID >= 70000
+        zval_ptr_dtor(_format);
+#else
+        zval_ptr_dtor(&_format);
+#endif
+        RETURN_TRUE;
+    }
+
+    RETURN_FALSE;
+}
+
+/*the current format*/
+PHP_METHOD(SEASLOG_RES_NAME, getDatetimeFormat)
+{
+    char *str;
+    int len = 0;
+    len = spprintf(&str, 0, "%s", SEASLOG_G(current_datetime_format));
+
+    SEASLOG_RETURN_STRINGL(str, len);
+}
 
 PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
 {

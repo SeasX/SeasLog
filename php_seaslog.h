@@ -77,6 +77,8 @@ PHP_METHOD(SEASLOG_RES_NAME, setBasePath);
 PHP_METHOD(SEASLOG_RES_NAME, getBasePath);
 PHP_METHOD(SEASLOG_RES_NAME, setLogger);
 PHP_METHOD(SEASLOG_RES_NAME, getLastLogger);
+PHP_METHOD(SEASLOG_RES_NAME, setDatetimeFormat);
+PHP_METHOD(SEASLOG_RES_NAME, getDatetimeFormat);
 PHP_METHOD(SEASLOG_RES_NAME, analyzerCount);
 PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail);
 PHP_METHOD(SEASLOG_RES_NAME, getBuffer);
@@ -94,6 +96,8 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency);
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_basepath;
     char *default_logger;
+    char *default_datetime_format;
+    char *current_datetime_format;
     char *logger;
     char *last_logger;
     char *base_path;

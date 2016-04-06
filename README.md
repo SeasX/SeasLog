@@ -1,5 +1,5 @@
 # SeasLog
-A effective,fast,stable log extension for PHP
+An effective,fast,stable log extension for PHP
 
 @author Chitao.Gao [neeke@php.net]
 
