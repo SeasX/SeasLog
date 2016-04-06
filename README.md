@@ -87,15 +87,16 @@ $ pecl install seaslog
 ```conf
 ; configuration for php SeasLog module
 extension = seaslog.so
-seaslog.default_basepath = /log/seaslog-test    ;默认log根目录
-seaslog.default_logger = default                ;默认logger目录
-seaslog.disting_type = 1                        ;是否以type分文件 1是 0否(默认)
-seaslog.disting_by_hour = 1                     ;是否每小时划分一个文件 1是 0否(默认)
-seaslog.use_buffer = 1                          ;是否启用buffer 1是 0否(默认)
-seaslog.buffer_size = 100                       ;buffer中缓冲数量 默认0(不使用buffer_size)
-seaslog.level = 0                               ;记录日志级别 默认0(所有日志)
-seaslog.trace_error = 1                         ;自动记录错误 默认1(开启)
-seaslog.trace_exception = 0                     ;自动记录异常信息 默认0(关闭)
+seaslog.default_basepath = /log/seaslog-test            ;默认log根目录
+seaslog.default_logger = default                        ;默认logger目录
+seaslog.disting_type = 1                                ;是否以type分文件 1是 0否(默认)
+seaslog.disting_by_hour = 1                             ;是否每小时划分一个文件 1是 0否(默认)
+seaslog.use_buffer = 1                                  ;是否启用buffer 1是 0否(默认)
+seaslog.buffer_size = 100                               ;buffer中缓冲数量 默认0(不使用buffer_size)
+seaslog.level = 0                                       ;记录日志级别 默认0(所有日志)
+seaslog.trace_error = 1                                 ;自动记录错误 默认1(开启)
+seaslog.trace_exception = 0                             ;自动记录异常信息 默认0(关闭)
+seaslog.default_datetime_format = "%Y:%m:%d %H:%M:%S"   ;日期格式配置 默认"%Y:%m:%d %H:%M:%S"
 ```
 > `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
 
@@ -133,7 +134,7 @@ string('notice') notice级别
 ```php
 <?php
 /**
- * @author ciogao@gmail.com
+ * @author neeke@php.net
  * Date: 14-1-27 下午4:47
  */
 
@@ -151,7 +152,9 @@ class SeasLog
 
     /**
      * 设置basePath
+     *
      * @param $basePath
+     *
      * @return bool
      */
     static public function setBasePath($basePath)
@@ -161,6 +164,7 @@ class SeasLog
 
     /**
      * 获取basePath
+     *
      * @return string
      */
     static public function getBasePath()
@@ -171,6 +175,7 @@ class SeasLog
     /**
      * 设置模块目录
      * @param $module
+     *
      * @return bool
      */
     static public function setLogger($module)
@@ -188,13 +193,34 @@ class SeasLog
     }
 
     /**
+     * 设置DatetimeFormat配置
+     * @param $format
+     *
+     * @return bool
+     */
+    static public function setDatetimeFormat($format)
+    {
+        return TRUE;
+    }
+
+    /**
+     * 返回当前DatetimeFormat配置格式
+     * @return string
+     */
+    static public function getDatetimeFormat()
+    {
+        return 'the datetimeFormat';
+    }
+
+    /**
      * 统计所有类型（或单个类型）行数
      * @param string $level
      * @param string $log_path
-     * @param null $key_word
+     * @param null   $key_word
+     *
      * @return array | long
      */
-    static public function analyzerCount($level = 'all',$log_path = '*',$key_word = NULL)
+    static public function analyzerCount($level = 'all', $log_path = '*', $key_word = NULL)
     {
         return array();
     }
@@ -218,6 +244,7 @@ class SeasLog
 
     /**
      * 获得当前日志buffer中的内容
+     *
      * @return array
      */
     static public function getBuffer()
@@ -237,104 +264,113 @@ class SeasLog
 
     /**
      * 记录debug日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
-    static public function debug($message,array $content = array(),$module = '')
+    static public function debug($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_DEBUG
     }
 
     /**
      * 记录info日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
-    static public function info($message,array $content = array(),$module = '')
+    static public function info($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_INFO
     }
 
     /**
      * 记录notice日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
-    static public function notice($message,array $content = array(),$module = '')
+    static public function notice($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_NOTICE
     }
 
     /**
      * 记录warning日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
-    static public function warning($message,array $content = array(),$module = '')
+    static public function warning($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_WARNING
     }
 
     /**
      * 记录error日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
-    static public function error($message,array $content = array(),$module = '')
+    static public function error($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_ERROR
     }
 
     /**
      * 记录critical日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
-    static public function critical($message,array $content = array(),$module = '')
+    static public function critical($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_CRITICAL
     }
 
     /**
      * 记录alert日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
-    static public function alert($message,array $content = array(),$module = '')
+    static public function alert($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_ALERT
     }
 
     /**
      * 记录emergency日志
-     * @param $message
-     * @param array $content
+     *
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
-    static public function emergency($message,array $content = array(),$module = '')
+    static public function emergency($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_EMERGENCY
     }
 
     /**
      * 通用日志方法
-     * @param $level
-     * @param $message
-     * @param array $content
+     * @param        $level
+     * @param        $message
+     * @param array  $content
      * @param string $module
      */
-    static public function log($level,$message,array $content = array(),$module = '')
+    static public function log($level, $message, array $content = array(), $module = '')
     {
 
     }
 }
+
 
 
 ```

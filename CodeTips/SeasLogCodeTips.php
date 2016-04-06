@@ -1,6 +1,6 @@
 <?php
 /**
- * @author ciogao@gmail.com
+ * @author neeke@php.net
  * Date: 14-1-27 下午4:47
  */
 
@@ -56,6 +56,26 @@ class SeasLog
     static public function getLastLogger()
     {
         return 'the lastLogger';
+    }
+
+    /**
+     * 设置DatetimeFormat配置
+     * @param $format
+     *
+     * @return bool
+     */
+    static public function setDatetimeFormat($format)
+    {
+        return TRUE;
+    }
+
+    /**
+     * 返回当前DatetimeFormat配置格式
+     * @return string
+     */
+    static public function getDatetimeFormat()
+    {
+        return 'the datetimeFormat';
     }
 
     /**
