@@ -19,11 +19,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2015-12-07</date>
-    <time>00:24:00</time>
+    <date>2016-04-06</date>
+    <time>18:53:00</time>
     <version>
-        <release>1.5.0</release>
-        <api>1.5.0</api>
+        <release>1.5.3</release>
+        <api>1.5.3</api>
     </version>
     <stability>
         <release>stable</release>
@@ -31,8 +31,10 @@
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - Support PHP 7.
-        - Fixed issue #63 Fixed trace_exception and trace_error recovery;
+        - Fixed zval_ptr_dtor bug with PHP7.
+        - Fixed issue #68 Fixed _ to . with getDetail function.
+        - Fixed issue #73 Fixed segment fault with setBasePath function.
+        - Support Datetime Format Config.
     </notes>
     <contents>
         <dir name="/">
@@ -336,6 +338,23 @@
             <notes>
                 - Fixed issue #60 Fixed use_buffer and buffer_size in config error;
                 - Fixed issue #61 Fixed trace_exception where exception code get error.
+            </notes>
+        </release>
+        <release>
+            <date>2015-12-07</date>
+            <time>00:24:00</time>
+            <version>
+                <release>1.5.0</release>
+                <api>1.5.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - Support PHP 7.
+                - Fixed issue #63 Fixed trace_exception and trace_error recovery;
             </notes>
         </release>
     </changelog>
