@@ -993,7 +993,7 @@ PHP_METHOD(SEASLOG_RES_NAME, getLastLogger)
 {
     char *str;
     int len = 0;
-    len = spprintf(&str, 0, "%s", SEASLOG_G(current_datetime_format));
+    len = spprintf(&str, 0, "%s", SEASLOG_G(last_logger));
 
     SEASLOG_RETURN_STRINGL(str, len);
 }
