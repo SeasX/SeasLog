@@ -1,0 +1,8 @@
+seaslog.lo: /usr/local/src/lnmp1.3-full/src/php-7.0.3/ext/SeasLog/seaslog.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/usr/local/src/lnmp1.3-full/src/php-7.0.3/ext/SeasLog $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /usr/local/src/lnmp1.3-full/src/php-7.0.3/ext/SeasLog/seaslog.c -o seaslog.lo 
+$(phplibdir)/seaslog.la: ./seaslog.la
+	$(LIBTOOL) --mode=install cp ./seaslog.la $(phplibdir)
+
+./seaslog.la: $(shared_objects_seaslog) $(SEASLOG_SHARED_DEPENDENCIES)
+	$(LIBTOOL) --mode=link $(CC) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS) $(LDFLAGS) -o $@ -export-dynamic -avoid-version -prefer-pic -module -rpath $(phplibdir) $(EXTRA_LDFLAGS) $(shared_objects_seaslog) $(SEASLOG_SHARED_LIBADD)
+

@@ -86,7 +86,6 @@ void seaslog_throw_exception_hook(zval *exception TSRMLS_DC);
 static void process_event(int event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC);
 static void initErrorHooks(TSRMLS_D);
 static void recoveryErrorHooks(TSRMLS_D);
-char *set_log_format(char *message, char *level TSRMLS_DC);
 
 ZEND_DECLARE_MODULE_GLOBALS(seaslog)
 
@@ -1230,7 +1229,26 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency)
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_EMERGENCY);
 }
 
+char *set_log_format(char *message TSRMLS_DC)
+{
+    char *format_message;
+    if (SEASLOG_G(use_pid)) {
+        spprintf(&format_message, 0, "%s | %d", message, getpid());
+    }
+    if (SEASLOG_G(use_current_time)) {
+        spprintf(&format_message, 0, "%s | %s", format_message, mic_time());
+    }
+    if (SEASLOG_G(use_date)) {
+        spprintf(&format_message, 0, "%s | %s", format_message, mk_real_time(TSRMLS_C));
+    }
+    return format_message;
+}
 
+/**
+ * pid
+ * current_time
+ * date
+ */
 PHP_METHOD(SEASLOG_RES_NAME, setLogFormat)
 {
     int argc = ZEND_NUM_ARGS();
@@ -1238,7 +1256,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogFormat)
     zend_bool use_current_time;
     zend_bool use_date;
 
-    if (zend_parse_parameters(argc TSRMLS_CC, "|bbb", 
+    if (zend_parse_parameters(argc TSRMLS_CC(), "|bbb", 
         &use_pid, &use_current_time, &use_date) == FAILURE) {
         return;
     }
@@ -1254,11 +1272,10 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogFormat)
 
 PHP_METHOD(SEASLOG_RES_NAME, getLogFormat)
 {
-    char *message = "getLogFormat";
-    char *level = "level";
+    char *message = "level";
     char *format_message;
     int format_message_len;
-    format_message = set_log_format(message, level TSRMLS_DC);
+    format_message = set_log_format(message TSRMLS_DC);
     format_message_len = strlen(format_message);
     SEASLOG_RETURN_STRINGL(format_message, format_message_len);
 }
@@ -1465,14 +1482,10 @@ int _seaslog_log(int argc, char *level, char *message, int message_len, char *mo
     log_file_path_len = strlen(log_file_path)+1;
 
     current_time = mic_time();
-
-    log_info = set_log_format(message,level TSRMLS_CC);
-
-    log_len = strlen(log_info);
-
-    //log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n", level, getpid(), current_time, mk_real_time(TSRMLS_C), message);
+    log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n", level, getpid(), current_time, mk_real_time(TSRMLS_C), message);
 
     //set_log_format(message TSRMLS_CC);    
+
 
     efree(current_time);
 
@@ -1544,23 +1557,4 @@ int _php_log_ex(char *message, int message_len, char *log_file_path, int log_fil
     } else {
         return real_php_log_ex(message, message_len, log_file_path TSRMLS_CC);
     }
-}
-
-char *set_log_format(char *message, char *level TSRMLS_DC)
-{
-    php_printf("%s\n",message);
-    char *format_message;
-    if (SEASLOG_G(use_pid)) {
-        spprintf(&format_message, 0, "%d | %s", getpid(), message);
-    } else {
-        format_message = strdup(message);
-    }
-    if (SEASLOG_G(use_current_time)) {
-        spprintf(&format_message, 0, "%s | %s",  mic_time(), format_message);
-    }
-    if (SEASLOG_G(use_date)) {
-        spprintf(&format_message, 0, "%s | %s", mk_real_time(TSRMLS_C), format_message );
-    }
-    spprintf(&format_message, 0, "[%s] %s\n", level, format_message);
-    return format_message;
 }

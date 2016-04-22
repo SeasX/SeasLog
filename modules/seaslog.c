@@ -1230,7 +1230,27 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency)
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_EMERGENCY);
 }
 
+char *set_log_format(char *message, char *level TSRMLS_DC)
+{
+    char *format_message;
+    if (SEASLOG_G(use_pid)) {
+        spprintf(&format_message, 0, "%s | %d", message, getpid());
+    }
+    if (SEASLOG_G(use_current_time)) {
+        spprintf(&format_message, 0, "%s | %s", format_message, mic_time());
+    }
+    if (SEASLOG_G(use_date)) {
+        spprintf(&format_message, 0, "%s | %s", format_message, mk_real_time(TSRMLS_C));
+    }
+    spprintf(&format_message, 0, "%s | %s", level, format_message);
+    return format_message;
+}
 
+/**
+ * pid
+ * current_time
+ * date
+ */
 PHP_METHOD(SEASLOG_RES_NAME, setLogFormat)
 {
     int argc = ZEND_NUM_ARGS();
@@ -1474,6 +1494,7 @@ int _seaslog_log(int argc, char *level, char *message, int message_len, char *mo
 
     //set_log_format(message TSRMLS_CC);    
 
+
     efree(current_time);
 
     if (_php_log_ex(log_info, log_len, log_file_path, log_file_path_len, ce TSRMLS_CC) == FAILURE) {
@@ -1544,23 +1565,4 @@ int _php_log_ex(char *message, int message_len, char *log_file_path, int log_fil
     } else {
         return real_php_log_ex(message, message_len, log_file_path TSRMLS_CC);
     }
-}
-
-char *set_log_format(char *message, char *level TSRMLS_DC)
-{
-    php_printf("%s\n",message);
-    char *format_message;
-    if (SEASLOG_G(use_pid)) {
-        spprintf(&format_message, 0, "%d | %s", getpid(), message);
-    } else {
-        format_message = strdup(message);
-    }
-    if (SEASLOG_G(use_current_time)) {
-        spprintf(&format_message, 0, "%s | %s",  mic_time(), format_message);
-    }
-    if (SEASLOG_G(use_date)) {
-        spprintf(&format_message, 0, "%s | %s", mk_real_time(TSRMLS_C), format_message );
-    }
-    spprintf(&format_message, 0, "[%s] %s\n", level, format_message);
-    return format_message;
 }
