@@ -102,7 +102,9 @@ static int level = 0;
 const zend_function_entry seaslog_functions[] = {
     PHP_FE(seaslog_get_version, NULL)
     PHP_FE(seaslog_get_author,  NULL)
-    {NULL, NULL, NULL}
+    {
+        NULL, NULL, NULL
+    }
 };
 
 const zend_function_entry seaslog_methods[] = {
@@ -130,7 +132,9 @@ const zend_function_entry seaslog_methods[] = {
     PHP_ME(SEASLOG_RES_NAME, alert,         NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, emergency,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
-    {NULL, NULL, NULL}
+    {
+        NULL, NULL, NULL
+    }
 };
 
 zend_module_entry seaslog_module_entry = {
@@ -273,28 +277,28 @@ static void process_event(int event_type, int type, char * error_filename, uint 
 void seaslog_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args)
 {
     if (type == E_ERROR || type == E_PARSE || type == E_CORE_ERROR || type == E_COMPILE_ERROR || type == E_USER_ERROR || type == E_RECOVERABLE_ERROR) {
-       	char *msg;
-       	va_list args_copy;
-       	TSRMLS_FETCH();
+        char *msg;
+        va_list args_copy;
+        TSRMLS_FETCH();
 
-       	va_copy(args_copy, args);
-       	vspprintf(&msg, 0, format, args_copy);
-       	va_end(args_copy);
+        va_copy(args_copy, args);
+        vspprintf(&msg, 0, format, args_copy);
+        va_end(args_copy);
 
-       	process_event(SEASLOG_EVENT_ERROR, type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
-       	efree(msg);
+        process_event(SEASLOG_EVENT_ERROR, type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
+        efree(msg);
     }
 
-	old_error_cb(type, error_filename, error_lineno, format, args);
+    old_error_cb(type, error_filename, error_lineno, format, args);
 }
 
 void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
 {
-	zval *message, *file, *line, *code;
+    zval *message, *file, *line, *code;
 #if PHP_VERSION_ID >= 70000
-	zval rv;
+    zval rv;
 #endif
-	zend_class_entry *default_ce;
+    zend_class_entry *default_ce;
 
     if (!exception) {
         return;
@@ -480,7 +484,8 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
 
         zend_string_release(s);
 
-    } ZEND_HASH_FOREACH_END();
+    }
+    ZEND_HASH_FOREACH_END();
 
 #else
     zval        **ppzval;
@@ -558,33 +563,34 @@ static int seaslog_shutdown_buffer(TSRMLS_D)
         ht = Z_ARRVAL_P(old_log_array);
 
 #if PHP_VERSION_ID >= 70000
-    zend_ulong num_key;
-    zend_string *str_key;
-    zval *entry;
+        zend_ulong num_key;
+        zend_string *str_key;
+        zval *entry;
 
-    ZEND_HASH_FOREACH_KEY_VAL(ht, num_key, str_key, entry) {
-        zend_string *s = zval_get_string(entry);
+        ZEND_HASH_FOREACH_KEY_VAL(ht, num_key, str_key, entry) {
+            zend_string *s = zval_get_string(entry);
 
-        real_php_log_ex(ZSTR_VAL(s), ZSTR_LEN(s), ZSTR_VAL(str_key) TSRMLS_CC);
+            real_php_log_ex(ZSTR_VAL(s), ZSTR_LEN(s), ZSTR_VAL(str_key) TSRMLS_CC);
 
-        zend_string_release(s);
+            zend_string_release(s);
 
-    } ZEND_HASH_FOREACH_END();
+        }
+        ZEND_HASH_FOREACH_END();
 
 #else
-    zval **ppzval;
-    count = zend_hash_num_elements(ht);
+        zval **ppzval;
+        count = zend_hash_num_elements(ht);
 
-    zend_hash_internal_pointer_reset(ht);
-    while (zend_hash_get_current_data(ht, (void **)&ppzval) == SUCCESS) {
-        char *key;
-        ulong idx = 0;
+        zend_hash_internal_pointer_reset(ht);
+        while (zend_hash_get_current_data(ht, (void **)&ppzval) == SUCCESS) {
+            char *key;
+            ulong idx = 0;
 
-        zend_hash_get_current_key(ht, &key, &idx, 0);
-        real_php_log_ex(Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval), key TSRMLS_CC);
+            zend_hash_get_current_key(ht, &key, &idx, 0);
+            real_php_log_ex(Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval), key TSRMLS_CC);
 
-        zend_hash_move_forward(ht);
-    }
+            zend_hash_move_forward(ht);
+        }
 #endif
 
         seaslog_clear_buffer(TSRMLS_C);
@@ -843,7 +849,7 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
     zend_string *message, *logger;
     zval *content;
 
-   if (zend_parse_parameters(argc TSRMLS_CC, "S|zS", &message, &content, &logger) == FAILURE)
+    if (zend_parse_parameters(argc TSRMLS_CC, "S|zS", &message, &content, &logger) == FAILURE)
         return;
 
     if (argc > 1 && Z_TYPE_P(content) != IS_ARRAY) {
@@ -866,7 +872,7 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
     int message_len, logger_len = 0;
     zval **content;
 
-   if (zend_parse_parameters(argc TSRMLS_CC, "s|Zs", &message, &message_len, &content, &logger, &logger_len) == FAILURE)
+    if (zend_parse_parameters(argc TSRMLS_CC, "s|Zs", &message, &message_len, &content, &logger, &logger_len) == FAILURE)
         return;
 
     if (argc > 1 && Z_TYPE_PP(content) != IS_ARRAY) {
@@ -1136,7 +1142,7 @@ PHP_METHOD(SEASLOG_RES_NAME, log)
     zend_string *level, *message, *logger;
     zval *content;
 
-   if (zend_parse_parameters(argc TSRMLS_CC, "SS|zS", &level, &message, &content, &logger) == FAILURE)
+    if (zend_parse_parameters(argc TSRMLS_CC, "SS|zS", &level, &message, &content, &logger) == FAILURE)
         return;
 
     if (argc > 2 && Z_TYPE_P(content) != IS_ARRAY) {
@@ -1255,10 +1261,10 @@ char *strreplace(char *dest, char *src, const char *oldstr, const char *newstr, 
 #if PHP_VERSION_ID >= 70000
 static char *php_strtr_array(char *str, int slen, HashTable *pats)
 {
-	zend_ulong num_key;
-	zend_string *str_key;
-	zval *entry;
-	char *key;
+    zend_ulong num_key;
+    zend_string *str_key;
+    zval *entry;
+    char *key;
     char *tmp = NULL;
 
     ZEND_HASH_FOREACH_KEY_VAL(pats, num_key, str_key, entry) {
@@ -1274,7 +1280,8 @@ static char *php_strtr_array(char *str, int slen, HashTable *pats)
 
             zend_string_release(s);
         }
-    } ZEND_HASH_FOREACH_END();
+    }
+    ZEND_HASH_FOREACH_END();
 
     return str;
 }
@@ -1439,7 +1446,7 @@ int _seaslog_log(int argc, char *level, char *message, int message_len, char *mo
     return SUCCESS;
 }
 
-int _check_level(char *level TSRMLS_DC){
+int _check_level(char *level TSRMLS_DC) {
     if (SEASLOG_G(level) < 1) return SUCCESS;
     if (SEASLOG_G(level) > 8) return FAILURE;
 
