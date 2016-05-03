@@ -92,6 +92,8 @@ PHP_METHOD(SEASLOG_RES_NAME, error);
 PHP_METHOD(SEASLOG_RES_NAME, critical);
 PHP_METHOD(SEASLOG_RES_NAME, alert);
 PHP_METHOD(SEASLOG_RES_NAME, emergency);
+PHP_METHOD(SEASLOG_RES_NAME, setLogFormat);
+PHP_METHOD(SEASLOG_RES_NAME, getLogFormat);
 
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_basepath;
@@ -104,6 +106,9 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool disting_type;
     zend_bool disting_by_hour;
     zend_bool use_buffer;
+    zend_bool use_pid;
+    zend_bool use_current_time;
+    zend_bool use_date;
     int buffer_size;
     int level;
     int trace_error;
@@ -119,4 +124,5 @@ extern ZEND_DECLARE_MODULE_GLOBALS(seaslog);
 #endif
 
 #endif /* PHP_SEASLOG_H */
+
 
