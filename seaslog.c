@@ -780,23 +780,18 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     memset(buffer, '\0', sizeof(buffer));
 
     array_init(return_value);
-php_printf("get_detail 111\n");
+
     if (SEASLOG_G(disting_type)) {
-    php_printf("get_detail 111 - 1\n");
+
         if (!strcmp(level,"|")) {
             spprintf(&path, 0, "%s/%s/%s.%s*", SEASLOG_G(base_path), SEASLOG_G(last_logger), "*", log_path);
         } else {
             spprintf(&path, 0, "%s/%s/%s.%s*", SEASLOG_G(base_path), SEASLOG_G(last_logger), level, log_path);
         }
-php_printf("get_detail 111 - 2\n");
     } else {
-    php_printf("get_detail 111 - 3\n");
-    php_printf("SEASLOG_G(base_path) %s\n",SEASLOG_G(base_path));
-    php_printf("SEASLOG_G(last_logger) %s\n",SEASLOG_G(last_logger));
-    php_printf("log_path %s\n",log_path);
         spprintf(&path, 0, "%s/%s/%s*",    SEASLOG_G(base_path), SEASLOG_G(last_logger), log_path);
     }
-php_printf("get_detail 222\n");
+
 #ifdef WINDOWS
     path = str_replace(path, "/", "\\");
 #else
@@ -806,7 +801,7 @@ php_printf("get_detail 222\n");
         spprintf(&command, 0, "%s %s", "more", path);
     }
 #endif
-php_printf("get_detail 333\n");
+
     if (key_word && strlen(key_word) >= 1) {
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s | findstr \"%s\" ", level, path, key_word);
@@ -820,7 +815,7 @@ php_printf("get_detail 333\n");
         spprintf(&sh, 0, "%s 2>/dev/null| grep '%s' -w | sed -n '%ld,%ld'p", command, level, start, end);
 #endif
     }
-php_printf("get_detail 4441\n");
+
     fp = VCWD_POPEN(sh, "r");
 
     if (!fp) {
