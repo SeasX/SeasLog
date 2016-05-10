@@ -780,18 +780,23 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     memset(buffer, '\0', sizeof(buffer));
 
     array_init(return_value);
-
+php_printf("get_detail 111\n");
     if (SEASLOG_G(disting_type)) {
+    php_printf("get_detail 111 - 1\n");
         if (!strcmp(level,"|")) {
             spprintf(&path, 0, "%s/%s/%s.%s*", SEASLOG_G(base_path), SEASLOG_G(last_logger), "*", log_path);
         } else {
             spprintf(&path, 0, "%s/%s/%s.%s*", SEASLOG_G(base_path), SEASLOG_G(last_logger), level, log_path);
         }
-
+php_printf("get_detail 111 - 2\n");
     } else {
+    php_printf("get_detail 111 - 3\n");
+    php_printf("SEASLOG_G(base_path) %s\n",SEASLOG_G(base_path));
+    php_printf("SEASLOG_G(last_logger) %s\n",SEASLOG_G(last_logger));
+    php_printf("log_path %s\n",log_path);
         spprintf(&path, 0, "%s/%s/%s*",    SEASLOG_G(base_path), SEASLOG_G(last_logger), log_path);
     }
-
+php_printf("get_detail 222\n");
 #ifdef WINDOWS
     path = str_replace(path, "/", "\\");
 #else
@@ -801,7 +806,7 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
         spprintf(&command, 0, "%s %s", "more", path);
     }
 #endif
-
+php_printf("get_detail 333\n");
     if (key_word && strlen(key_word) >= 1) {
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s | findstr \"%s\" ", level, path, key_word);
@@ -815,7 +820,7 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
         spprintf(&sh, 0, "%s 2>/dev/null| grep '%s' -w | sed -n '%ld,%ld'p", command, level, start, end);
 #endif
     }
-
+php_printf("get_detail 4441\n");
     fp = VCWD_POPEN(sh, "r");
 
     if (!fp) {
@@ -1090,10 +1095,40 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 {
     char *log_path, *level = NULL, *key_word = NULL;
     int log_path_len, level_len, key_word_len;
+
     long start = 1;
     long limit = 20;
     long order = SEASLOG_DETAIL_ORDER_ASC;
     int argc = ZEND_NUM_ARGS();
+
+#if PHP_VERSION_ID >= 70000
+    zend_string *_log_path, *_level, *_key_word;
+
+    if (zend_parse_parameters(argc TSRMLS_CC, "S|SSlll", &_level, &_log_path, &_key_word, &start, &limit, &order) == FAILURE) {
+        RETURN_FALSE;
+    }
+
+    if (argc < 2) {
+        log_path = "*";
+    } else if (argc > 3) {
+#ifdef WINDOWS
+        zend_error(E_NOTICE, "Param start and limit don't support Windows");
+#endif
+    } else {
+        log_path = ZSTR_VAL(_log_path);
+    }
+
+    if (_level && !strcmp(ZSTR_VAL(_level), SEASLOG_ALL)) {
+        level = "|";
+    } else {
+        level = ZSTR_VAL(_level);
+    }
+
+    if (_key_word) {
+        key_word = ZSTR_VAL(_key_word);
+    }
+
+#else
 
     if (zend_parse_parameters(argc TSRMLS_CC, "s|sslll", &level, &level_len, &log_path, &log_path_len, &key_word, &key_word_len, &start, &limit, &order) == FAILURE) {
         RETURN_FALSE;
@@ -1112,6 +1147,8 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
     if (level && !strcmp(level, SEASLOG_ALL)) {
         level = "|";
     }
+
+#endif
 
     get_detail(log_path, level, key_word, start, start + limit, order, return_value TSRMLS_CC);
 }
