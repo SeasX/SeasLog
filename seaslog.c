@@ -941,11 +941,6 @@ PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
 
         SEASLOG_G(base_path) = estrdup(Z_STRVAL_P(_base_path));
 
-#if PHP_VERSION_ID >= 70000
-        zval_ptr_dtor(_base_path);
-#else
-        zval_dtor((void *)&_base_path);
-#endif
         RETURN_TRUE;
     }
 
@@ -954,14 +949,8 @@ PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
 
 PHP_METHOD(SEASLOG_RES_NAME, getBasePath)
 {
-    char *module = NULL;
-    int argc = ZEND_NUM_ARGS();
-    int module_len;
     char *str;
     int len = 0;
-
-    if (zend_parse_parameters(argc TSRMLS_CC, "|s", &module, &module_len) == FAILURE)
-        return;
 
     len = spprintf(&str, 0, "%s", SEASLOG_G(base_path));
 
@@ -983,11 +972,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
         }
 
         SEASLOG_G(last_logger) = estrdup(Z_STRVAL_P(_module));
-#if PHP_VERSION_ID >= 70000
-        zval_ptr_dtor(_module);
-#else
-        zval_ptr_dtor(&_module);
-#endif
+
         RETURN_TRUE;
     }
 
