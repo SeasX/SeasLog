@@ -372,6 +372,10 @@ void seaslog_clear_logger(TSRMLS_D)
     if (SEASLOG_G(last_logger)) {
         efree(SEASLOG_G(last_logger));
     }
+
+    if (SEASLOG_G(current_datetime_format)) {
+        efree(SEASLOG_G(current_datetime_format));
+    }
 }
 
 void seaslog_init_buffer(TSRMLS_D)
