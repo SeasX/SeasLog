@@ -1086,7 +1086,9 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
     int argc = ZEND_NUM_ARGS();
 
 #if PHP_VERSION_ID >= 70000
-    zend_string *_log_path, *_level, *_key_word;
+    zend_string *_log_path = NULL;
+    zend_string *_level = NULL;
+    zend_string *_key_word = NULL;
 
     if (zend_parse_parameters(argc TSRMLS_CC, "S|SSlll", &_level, &_log_path, &_key_word, &start, &limit, &order) == FAILURE) {
         RETURN_FALSE;
@@ -1160,7 +1162,9 @@ PHP_METHOD(SEASLOG_RES_NAME, log)
     seaslog_init_buffer(TSRMLS_C);
 
 #if PHP_VERSION_ID >= 70000
-    zend_string *level, *message, *logger;
+    zend_string *level = NULL;
+    zend_string *message = NULL;
+    zend_string *logger = NULL;
     zval *content;
 
     if (zend_parse_parameters(argc TSRMLS_CC, "SS|zS", &level, &message, &content, &logger) == FAILURE)
