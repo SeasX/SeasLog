@@ -1100,7 +1100,9 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 #ifdef WINDOWS
         zend_error(E_NOTICE, "Param start and limit don't support Windows");
 #endif
-    } else {
+    }
+
+    if (_log_path) {
         log_path = ZSTR_VAL(_log_path);
     }
 
