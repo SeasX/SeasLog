@@ -1177,8 +1177,12 @@ PHP_METHOD(SEASLOG_RES_NAME, log)
         RETURN_FALSE;
     }
 
-    if (argc > 2) {
+    if (argc > 3) {
         if (_seaslog_log_content(argc, ZSTR_VAL(level), ZSTR_VAL(message), ZSTR_LEN(message), HASH_OF(content), ZSTR_VAL(logger), ZSTR_LEN(logger), seaslog_ce TSRMLS_CC) == FAILURE) {
+            RETURN_FALSE;
+        }
+    } else if (argc > 2) {
+        if (_seaslog_log_content(argc, ZSTR_VAL(level), ZSTR_VAL(message), ZSTR_LEN(message), HASH_OF(content), "", 0, seaslog_ce TSRMLS_CC) == FAILURE) {
             RETURN_FALSE;
         }
     } else {
