@@ -1261,7 +1261,8 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency)
 }
 
 /*Just used by PHP7*/
-char *strreplace(char *dest, char *src, const char *oldstr, const char *newstr, size_t len)
+// We asure the src is on heap, so every call we can safe free than alloc.
+char *strreplace(char *src, const char *oldstr, const char *newstr, size_t len)
 {
     if(strcmp(oldstr, newstr)==0) {
         return src;
@@ -1270,23 +1271,22 @@ char *strreplace(char *dest, char *src, const char *oldstr, const char *newstr, 
     char *needle;
     char *tmp;
 
-    dest = src;
-
-    while((needle = strstr(dest, oldstr)) && (needle -dest <= len))
+    while((needle = strstr(src, oldstr)) && (needle - src <= len))
     {
-        tmp = (char*)malloc(strlen(dest) + (strlen(newstr) - strlen(oldstr)) + 1);
+        tmp = (char*)emalloc(strlen(src) + (strlen(newstr) - strlen(oldstr)) + 1);
 
-        strncpy(tmp, dest, needle-dest);
+        strncpy(tmp, src, needle-src);
 
-        tmp[needle-dest]='\0';
+        tmp[needle-src]='\0';
         strcat(tmp, newstr);
         strcat(tmp, needle+strlen(oldstr));
 
-        dest = strdup(tmp);
-        free(tmp);
+        efree(src);
+        src = tmp;
+        len = strlen(src);
     }
 
-    return dest;
+    return src;
 }
 
 #if PHP_VERSION_ID >= 70000
@@ -1296,7 +1296,7 @@ static char *php_strtr_array(char *str, int slen, HashTable *pats)
     zend_string *str_key;
     zval *entry;
     char *key;
-    char *tmp = NULL;
+    char tmp = estrdup(str);
 
     ZEND_HASH_FOREACH_KEY_VAL(pats, num_key, str_key, entry) {
         if (UNEXPECTED(!str_key)) {
@@ -1305,8 +1305,7 @@ static char *php_strtr_array(char *str, int slen, HashTable *pats)
             zend_string *s = zval_get_string(entry);
 
             if (strstr(str,ZSTR_VAL(str_key))) {
-                tmp = strreplace(tmp,str,ZSTR_VAL(str_key),ZSTR_VAL(s),strlen(str));
-                strcpy(str,tmp);
+                tmp = strreplace(tmp,ZSTR_VAL(str_key),ZSTR_VAL(s),strlen(str));
             }
 
             zend_string_release(s);
@@ -1331,6 +1330,7 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash)
     char  *key;
     HashPosition hpos;
     smart_str result = {0};
+    char  *result_str;
     HashTable tmp_hash;
 
     zend_hash_init(&tmp_hash, zend_hash_num_elements(hash), NULL, NULL, 0);
@@ -1421,10 +1421,11 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash)
     }
 
     zend_hash_destroy(&tmp_hash);
-    smart_str_0(&result);
+    result_str = estrndup(result.c, result.len);
     efree(key);
+    smart_str_free(&result);
 
-    return result.c;
+    return result_str;
 }
 #endif
 
@@ -1433,16 +1434,19 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash)
 int _seaslog_log_content(int argc, char *level, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
 {
     int ret;
-    char *result = strdup(php_strtr_array(message, message_len, content));
+    char *result = php_strtr_array(message, message_len, content);
 
     ret = _seaslog_log(argc, level, result, strlen(result), module, module_len, ce TSRMLS_CC);
+
+    // result is on heap, we need free it.
+    efree(result);
 
     return ret;
 }
 
 int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
 {
-    char *logger, *_log_path = NULL, *log_file_path, *log_info,*current_time;
+    char *logger, *_log_path = NULL, *log_file_path, *log_info, *current_time, *real_date, *real_time;
     int log_len, log_file_path_len;
 
     if (argc > 2 && module_len > 0 && module) {
@@ -1454,17 +1458,21 @@ int _seaslog_log(int argc, char *level, char *message, int message_len, char *mo
     if (_check_level(level TSRMLS_CC) == FAILURE) {
         return FAILURE;
     }
+
     spprintf(&_log_path, 0, "%s/%s", SEASLOG_G(base_path), logger);
     _mk_log_dir(_log_path TSRMLS_CC);
 
-    log_file_path = mk_real_log_path(_log_path, mk_real_date(TSRMLS_C), level TSRMLS_CC);
+    real_date = mk_real_date(TSRMLS_C);
+
+    log_file_path = mk_real_log_path(_log_path, real_date, level TSRMLS_CC);
     efree(_log_path);
 
     log_file_path_len = strlen(log_file_path)+1;
 
     current_time = mic_time();
-    log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n", level, getpid(), current_time, mk_real_time(TSRMLS_C), message);
-    efree(current_time);
+    real_time = mk_real_time(TSRMLS_C);
+
+    log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n", level, getpid(), current_time, real_time, message);
 
     if (_php_log_ex(log_info, log_len, log_file_path, log_file_path_len, ce TSRMLS_CC) == FAILURE) {
         efree(log_file_path);
@@ -1474,6 +1482,9 @@ int _seaslog_log(int argc, char *level, char *message, int message_len, char *mo
 
     efree(log_file_path);
     efree(log_info);
+    efree(real_date);
+    efree(real_time);
+    efree(current_time);
     return SUCCESS;
 }
 
