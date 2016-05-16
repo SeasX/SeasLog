@@ -1261,7 +1261,7 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency)
 }
 
 /*Just used by PHP7*/
-// We asure the src is on heap, so every call we can safe free than alloc.
+// We assume the src is on heap, so every call we can safe free than alloc.
 char *strreplace(char *src, const char *oldstr, const char *newstr, size_t len)
 {
     if(strcmp(oldstr, newstr)==0) {
@@ -1304,7 +1304,7 @@ static char *php_strtr_array(char *str, int slen, HashTable *pats)
         } else {
             zend_string *s = zval_get_string(entry);
 
-            if (strstr(str,ZSTR_VAL(str_key))) {
+            if (strstr(tmp,ZSTR_VAL(str_key))) {
                 tmp = strreplace(tmp,ZSTR_VAL(str_key),ZSTR_VAL(s),strlen(str));
             }
 
@@ -1313,7 +1313,7 @@ static char *php_strtr_array(char *str, int slen, HashTable *pats)
     }
     ZEND_HASH_FOREACH_END();
 
-    return str;
+    return tmp;
 }
 
 #else
