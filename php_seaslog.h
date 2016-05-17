@@ -33,7 +33,7 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.5.4"
+#define SEASLOG_VERSION                     "1.5.6"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_ALL                         "all"
@@ -45,9 +45,6 @@ extern zend_module_entry seaslog_module_entry;
 #define SEASLOG_CRITICAL                    "critical"
 #define SEASLOG_ALERT                       "alert"
 #define SEASLOG_EMERGENCY                   "emergency"
-
-#define SEASLOG_BUFFER_NAME                 "seaslog_buffer"
-#define SEASLOG_BUFFER_SIZE_NAME            "seaslog_buffer_size"
 
 #define SEASLOG_DETAIL_ORDER_ASC            1
 #define SEASLOG_DETAIL_ORDER_DESC           2
@@ -93,6 +90,12 @@ PHP_METHOD(SEASLOG_RES_NAME, critical);
 PHP_METHOD(SEASLOG_RES_NAME, alert);
 PHP_METHOD(SEASLOG_RES_NAME, emergency);
 
+#if PHP_VERSION_ID >= 70000
+#define EX_ARRAY_DESTROY(arr) zval_ptr_dtor((arr));ZVAL_UNDEF((arr));
+#else
+#define EX_ARRAY_DESTROY(arr) zval_dtor(arr);FREE_ZVAL(arr);
+#endif
+
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_basepath;
     char *default_logger;
@@ -108,6 +111,15 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     int level;
     int trace_error;
     int trace_exception;
+
+    int buffer_count;
+
+#if PHP_VERSION_ID >= 70000
+    zval buffer;
+#else
+    zval *buffer;
+#endif
+
 ZEND_END_MODULE_GLOBALS(seaslog)
 
 extern ZEND_DECLARE_MODULE_GLOBALS(seaslog);
