@@ -399,7 +399,7 @@ void seaslog_clear_buffer(TSRMLS_D)
 
 #else
 
-    if (Z_TYPE_P(SEASLOG_G(buffer)) == IS_ARRAY) {
+    if (SEASLOG_G(buffer) && Z_TYPE_P(SEASLOG_G(buffer)) == IS_ARRAY) {
         EX_ARRAY_DESTROY(SEASLOG_G(buffer));
     }
     MAKE_STD_ZVAL(SEASLOG_G(buffer));
