@@ -101,6 +101,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_logger;
     char *default_datetime_format;
     char *current_datetime_format;
+    int  current_datetime_format_len;
     char *logger;
     char *last_logger;
     char *base_path;

@@ -165,7 +165,7 @@ ZEND_GET_MODULE(seaslog)
 PHP_INI_BEGIN()
 STD_PHP_INI_ENTRY("seaslog.default_basepath", "/var/log/www", PHP_INI_ALL, OnUpdateString, default_basepath, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_logger", "default", PHP_INI_ALL, OnUpdateString, default_logger, zend_seaslog_globals, seaslog_globals)
-STD_PHP_INI_ENTRY("seaslog.default_datetime_format", "%Y:%m:%d %H:%M:%S", PHP_INI_ALL, OnUpdateString, default_datetime_format, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.default_datetime_format", "Y:m:d H:i:s", PHP_INI_ALL, OnUpdateString, default_datetime_format, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.logger", "default", PHP_INI_ALL, OnUpdateString, logger, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour", "0", PHP_INI_ALL, OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
@@ -359,9 +359,10 @@ static void recoveryErrorHooks(TSRMLS_D)
 
 void seaslog_init_logger(TSRMLS_D)
 {
-    SEASLOG_G(base_path)        = estrdup(SEASLOG_G(default_basepath));
-    SEASLOG_G(last_logger)      = estrdup(SEASLOG_G(default_logger));
-    SEASLOG_G(current_datetime_format)   = estrdup(SEASLOG_G(default_datetime_format));
+    SEASLOG_G(base_path)                    = estrdup(SEASLOG_G(default_basepath));
+    SEASLOG_G(last_logger)                  = estrdup(SEASLOG_G(default_logger));
+    SEASLOG_G(current_datetime_format)      = estrdup(SEASLOG_G(default_datetime_format));
+    SEASLOG_G(current_datetime_format_len)  = strlen(SEASLOG_G(current_datetime_format));
 }
 
 void seaslog_clear_logger(TSRMLS_D)
@@ -588,18 +589,6 @@ static int seaslog_shutdown_buffer(TSRMLS_D)
     return SUCCESS;
 }
 
-static char *mk_real_log_path(char *log_path, char *date, char *level TSRMLS_DC)
-{
-    char *log_file_path = NULL;
-    if (SEASLOG_G(disting_type)) {
-        spprintf(&log_file_path, 0, "%s/%s.%s.log", log_path, level, date);
-    } else {
-        spprintf(&log_file_path, 0, "%s/%s.log", log_path,date);
-    }
-
-    return log_file_path;
-}
-
 static char *delN(char *a)
 {
     int l;
@@ -624,43 +613,25 @@ static char *mic_time()
 
 static char *mk_real_date(TSRMLS_D)
 {
-    time_t rawtime;
-    struct tm * timeinfo;
-    char buffer[12];
-    char *_format;
+
+    char *_date = NULL;
 
     if (SEASLOG_G(disting_by_hour)) {
-        _format = "%Y%m%d%H";
+        _date = php_format_date("YmdH", 5, (long)time(NULL), (long)time(NULL) TSRMLS_CC);
     } else {
-        _format = "%Y%m%d";
+        _date = php_format_date("Ymd",  3, (long)time(NULL), (long)time(NULL) TSRMLS_CC);
     }
 
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
-
-    strftime(buffer,sizeof(buffer),_format,timeinfo);
-
-    char *date;
-    spprintf(&date,0,"%s",buffer);
-
-    return date;
+    return _date;
 }
 
 static char *mk_real_time(TSRMLS_D)
 {
-    time_t rawtime;
-    struct tm * timeinfo;
-    char buffer[20];
+    char *_time = NULL;
 
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
+    _time = php_format_date(SEASLOG_G(current_datetime_format),  SEASLOG_G(current_datetime_format_len), (long)time(NULL), (long)time(NULL) TSRMLS_CC);
 
-    strftime(buffer,sizeof(buffer),SEASLOG_G(current_datetime_format),timeinfo);
-
-    char *time;
-    spprintf(&time,0,"%s",buffer);
-
-    return time;
+    return _time;
 }
 
 static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
@@ -1429,8 +1400,12 @@ int _seaslog_log_content(int argc, char *level, char *message, int message_len, 
 
 int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
 {
+    if (_check_level(level TSRMLS_CC) == FAILURE) {
+        return FAILURE;
+    }
+
     char *logger, *_log_path = NULL, *log_file_path, *log_info, *current_time, *real_date, *real_time;
-    int log_len, log_file_path_len;
+    int log_len, log_path_len, log_file_path_len;
 
     if (argc > 2 && module_len > 0 && module) {
         logger = module;
@@ -1438,19 +1413,17 @@ int _seaslog_log(int argc, char *level, char *message, int message_len, char *mo
         logger = SEASLOG_G(last_logger);
     }
 
-    if (_check_level(level TSRMLS_CC) == FAILURE) {
-        return FAILURE;
-    }
-
-    spprintf(&_log_path, 0, "%s/%s", SEASLOG_G(base_path), logger);
+    log_path_len = spprintf(&_log_path, 0, "%s/%s", SEASLOG_G(base_path), logger);
     _mk_log_dir(_log_path TSRMLS_CC);
 
     real_date = mk_real_date(TSRMLS_C);
 
-    log_file_path = mk_real_log_path(_log_path, real_date, level TSRMLS_CC);
+    if (SEASLOG_G(disting_type)) {
+        log_file_path_len = spprintf(&log_file_path, 0, "%s/%s.%s.log", _log_path, level, real_date);
+    } else {
+        log_file_path_len = spprintf(&log_file_path, 0, "%s/%s.log", _log_path,real_date);
+    }
     efree(_log_path);
-
-    log_file_path_len = strlen(log_file_path)+1;
 
     current_time = mic_time();
     real_time = mk_real_time(TSRMLS_C);
