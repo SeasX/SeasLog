@@ -832,7 +832,6 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *level)
 {
     int argc = ZEND_NUM_ARGS();
-//    seaslog_init_buffer(TSRMLS_C);
 
 #if PHP_VERSION_ID >= 70000
     zend_string *message, *logger;
