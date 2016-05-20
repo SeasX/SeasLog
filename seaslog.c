@@ -75,6 +75,9 @@ void seaslog_init_buffer(TSRMLS_D);
 void seaslog_clear_buffer(TSRMLS_D);
 static int seaslog_shutdown_buffer(TSRMLS_D);
 void seaslog_clear_logger(TSRMLS_D);
+void seaslog_init_logger_list(TSRMLS_D);
+void seaslog_clear_logger_list(TSRMLS_D);
+
 int _ck_log_dir(char *dir TSRMLS_DC);
 int _seaslog_log_content(int argc, char *level, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
 int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
@@ -233,6 +236,7 @@ PHP_MSHUTDOWN_FUNCTION(seaslog)
 
 PHP_RINIT_FUNCTION(seaslog)
 {
+    seaslog_init_logger_list(TSRMLS_C);
     seaslog_init_logger(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
 
@@ -243,7 +247,7 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
     seaslog_shutdown_buffer(TSRMLS_C);
     seaslog_clear_logger(TSRMLS_C);
-
+    seaslog_clear_logger_list(TSRMLS_C);
     return SUCCESS;
 }
 
@@ -406,6 +410,29 @@ void seaslog_clear_buffer(TSRMLS_D)
     MAKE_STD_ZVAL(SEASLOG_G(buffer));
     array_init(SEASLOG_G(buffer));
 
+#endif
+}
+
+void seaslog_init_logger_list(TSRMLS_D)
+{
+#if PHP_VERSION_ID >= 70000
+    array_init(&SEASLOG_G(logger_list));
+#else
+    MAKE_STD_ZVAL(SEASLOG_G(logger_list));
+    array_init(SEASLOG_G(logger_list));
+#endif
+}
+
+void seaslog_clear_logger_list(TSRMLS_D)
+{
+#if PHP_VERSION_ID >= 70000
+    if (Z_TYPE(SEASLOG_G(logger_list)) == IS_ARRAY) {
+        EX_ARRAY_DESTROY(&SEASLOG_G(logger_list));
+    }
+#else
+    if (SEASLOG_G(logger_list) && Z_TYPE_P(SEASLOG_G(logger_list)) == IS_ARRAY) {
+        EX_ARRAY_DESTROY(SEASLOG_G(logger_list));
+    }
 #endif
 }
 
@@ -931,6 +958,13 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
         }
 
         SEASLOG_G(last_logger) = estrdup(Z_STRVAL_P(_module));
+
+        logger_entry_t **logger_entry;
+        if (zend_hash_find(HASH_OF(SEASLOG_G(logger_list)), Z_STRVAL_P(_module), Z_STRLEN_P(_module), (void**)&logger_entry) == SUCCESS) {
+
+        } else {
+
+        }
 
         RETURN_TRUE;
     }

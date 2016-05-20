@@ -96,6 +96,13 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency);
 #define EX_ARRAY_DESTROY(arr) zval_dtor(arr);FREE_ZVAL(arr);
 #endif
 
+typedef struct _logger_entry_t
+{
+    char *logger_path;
+    int logger_path_len;
+    int access;
+} logger_entry_t;
+
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_basepath;
     char *default_logger;
@@ -117,8 +124,10 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
 
 #if PHP_VERSION_ID >= 70000
     zval buffer;
+    zval logger_list;
 #else
     zval *buffer;
+    zval *logger_list;
 #endif
 
 ZEND_END_MODULE_GLOBALS(seaslog)
