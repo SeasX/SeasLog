@@ -98,6 +98,7 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency);
 
 typedef struct _logger_entry_t
 {
+    char *logger;
     char *logger_path;
     int logger_path_len;
     int access;
