@@ -99,10 +99,17 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency);
 typedef struct _logger_entry_t
 {
     char *logger;
+    int logger_len;
     char *logger_path;
     int logger_path_len;
     int access;
 } logger_entry_t;
+
+typedef struct _last_time_entry_t
+{
+    int  sec;
+    char *real_time;
+} last_time_entry_t;
 
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_basepath;
@@ -110,8 +117,9 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_datetime_format;
     char *current_datetime_format;
     int  current_datetime_format_len;
-    char *logger;
-    char *last_logger;
+    logger_entry_t *logger;
+    logger_entry_t *last_logger;
+    last_time_entry_t *last_sec;
     char *base_path;
     zend_bool disting_type;
     zend_bool disting_by_hour;
