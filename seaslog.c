@@ -411,7 +411,12 @@ void seaslog_init_buffer(TSRMLS_D)
 {
     if (SEASLOG_G(use_buffer)) {
 
-        SEASLOG_G(buffer) = NULL;
+#if PHP_VERSION_ID >= 70000
+    ZVAL_NULL(&SEASLOG_G(buffer));
+#else
+    MAKE_STD_ZVAL(SEASLOG_G(buffer));
+    ZVAL_NULL(SEASLOG_G(buffer));
+#endif
         seaslog_clear_buffer(TSRMLS_C);
     }
 }
@@ -545,7 +550,7 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
             zval      *_buffer_data_;
 
             if ((_buffer_data_ = zend_hash_str_find_ptr(Z_ARRVAL(SEASLOG_G(buffer)),path,path_len)) != NULL) {
-                SEASLOG_ADD_NEXT_INDEX_STRINGL(&_buffer_data_,log_info,log_info_len);
+                SEASLOG_ADD_NEXT_INDEX_STRINGL((void *)&_buffer_data_,log_info,log_info_len);
 
             } else {
                 zval new_array;
