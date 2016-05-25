@@ -45,6 +45,7 @@
 #define SEASLOG_ADD_NEXT_INDEX_STRING(a,s) add_next_index_string(a,s)
 #define SEASLOG_ADD_NEXT_INDEX_STRINGL(a,s,l) add_next_index_stringl(a,s,l)
 #define SEASLOG_ZEND_HASH_GET_CURRENT_KEY(ht,key,idx) zend_hash_get_current_key(ht,key,idx)
+#define SEASLOG_ZEND_HASH_INDEX_UPDATE(ht, h, pData, nDataSize, pDest)  zend_hash_index_update_ptr(ht, h, pData)
 
 #else
 
@@ -56,6 +57,7 @@
 #define SEASLOG_ADD_NEXT_INDEX_STRING(a,s) add_next_index_string(a,s,1)
 #define SEASLOG_ADD_NEXT_INDEX_STRINGL(a,s,l) add_next_index_stringl(a,s,l,1)
 #define SEASLOG_ZEND_HASH_GET_CURRENT_KEY(ht,key,idx) zend_hash_get_current_key(ht,key,idx,0)
+#define SEASLOG_ZEND_HASH_INDEX_UPDATE(ht, h, pData, nDataSize, pDest)  zend_hash_index_update(ht, h, pData, nDataSize, pDest)
 
 #endif
 
@@ -408,6 +410,8 @@ void seaslog_clear_logger(TSRMLS_D)
 void seaslog_init_buffer(TSRMLS_D)
 {
     if (SEASLOG_G(use_buffer)) {
+
+        SEASLOG_G(buffer) = NULL;
         seaslog_clear_buffer(TSRMLS_C);
     }
 }
@@ -660,7 +664,13 @@ static char *mic_time()
 
 static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_DC)
 {
+#if PHP_VERSION_ID >= 70000
+    zend_string *_date;
+    _date = php_format_date(format, format_len, ts, 1 TSRMLS_CC);
+    return ZSTR_VAL(_date);
+#else
     return php_format_date(format, format_len, ts, 1 TSRMLS_CC);
+#endif
 }
 
 static char *mk_real_date(TSRMLS_D)
@@ -707,10 +717,18 @@ static logger_entry_t *process_logger(char *logger,int logger_len TSRMLS_DC)
 {
     ulong logger_entry_hash = zend_inline_hash_func(logger,logger_len);
     logger_entry_t *logger_entry;
-    HashTable *ht = HASH_OF(SEASLOG_G(logger_list));
+    HashTable *ht;
+
+#if PHP_VERSION_ID >= 70000
+    ht = Z_ARRVAL(SEASLOG_G(logger_list));
+    if ((logger_entry = zend_hash_index_find_ptr(ht, logger_entry_hash)) != NULL) {
+            return logger_entry;
+#else
+    ht = HASH_OF(SEASLOG_G(logger_list));
 
     if (zend_hash_index_find(ht, logger_entry_hash, (void*)&logger_entry) == SUCCESS) {
             return logger_entry;
+#endif
     } else {
         logger_entry = ecalloc(sizeof(logger_entry_t),1);
         logger_entry->logger = estrdup(logger);
@@ -722,7 +740,7 @@ static logger_entry_t *process_logger(char *logger,int logger_len TSRMLS_DC)
             logger_entry->access = FAILURE;
         }
 
-        zend_hash_index_update(ht,logger_entry_hash,logger_entry,sizeof(logger_entry_t),NULL);
+        SEASLOG_ZEND_HASH_INDEX_UPDATE(ht,logger_entry_hash,logger_entry,sizeof(logger_entry_t),NULL);
 
         return logger_entry;
     }
@@ -1559,7 +1577,7 @@ int _mk_log_dir(char *dir TSRMLS_DC)
 
         return SUCCESS;
     } else {
-        return FAILURE;
+        return SUCCESS;
     }
 
 }
