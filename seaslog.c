@@ -72,22 +72,23 @@
 #include <sys/time.h>
 #endif
 
-void seaslog_init_logger(TSRMLS_D);
-void seaslog_init_buffer(TSRMLS_D);
-void seaslog_clear_buffer(TSRMLS_D);
-static int seaslog_shutdown_buffer(TSRMLS_D);
-void seaslog_clear_logger(TSRMLS_D);
-void seaslog_init_logger_list(TSRMLS_D);
-void seaslog_clear_logger_list(TSRMLS_D);
+static void seaslog_init_logger(TSRMLS_D);
+static void seaslog_init_buffer(TSRMLS_D);
+static void seaslog_clear_buffer(TSRMLS_D);
+static void seaslog_shutdown_buffer(TSRMLS_D);
+static void seaslog_clear_logger(TSRMLS_D);
+static void seaslog_init_logger_list(TSRMLS_D);
+static void seaslog_clear_logger_list(TSRMLS_D);
 
-int _ck_log_dir(char *dir TSRMLS_DC);
-int _seaslog_log_content(int argc, char *level, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
-int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
-int _check_level(char *level TSRMLS_DC);
-int _mk_log_dir(char *dir TSRMLS_DC);
-int _php_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
-static char * str_replace(char *ori, char * rep, char * with);
+static int _ck_log_dir(char *dir TSRMLS_DC);
+static int _ck_log_level(char *level TSRMLS_DC);
+static int _mk_log_dir(char *dir TSRMLS_DC);
 
+static int _seaslog_log_content(int argc, char *level, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
+static int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
+static int _php_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
+
+static char *str_replace(char *ori, char * rep, char * with);
 static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_DC);
 
 void (*old_error_cb)(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args);
@@ -365,7 +366,7 @@ static void recoveryErrorHooks(TSRMLS_D)
     }
 }
 
-void seaslog_init_logger(TSRMLS_D)
+static void seaslog_init_logger(TSRMLS_D)
 {
     SEASLOG_G(base_path)                    = estrdup(SEASLOG_G(default_basepath));
     SEASLOG_G(current_datetime_format)      = estrdup(SEASLOG_G(default_datetime_format));
@@ -388,7 +389,7 @@ void seaslog_init_logger(TSRMLS_D)
 
 }
 
-void seaslog_clear_logger(TSRMLS_D)
+static void seaslog_clear_logger(TSRMLS_D)
 {
     if (SEASLOG_G(base_path)) {
         efree(SEASLOG_G(base_path));
@@ -407,7 +408,7 @@ void seaslog_clear_logger(TSRMLS_D)
     }
 }
 
-void seaslog_init_buffer(TSRMLS_D)
+static void seaslog_init_buffer(TSRMLS_D)
 {
     if (SEASLOG_G(use_buffer)) {
 
@@ -421,7 +422,7 @@ void seaslog_init_buffer(TSRMLS_D)
     }
 }
 
-void seaslog_clear_buffer(TSRMLS_D)
+static void seaslog_clear_buffer(TSRMLS_D)
 {
     SEASLOG_G(buffer_count) = 0;
 
@@ -443,7 +444,7 @@ void seaslog_clear_buffer(TSRMLS_D)
 #endif
 }
 
-void seaslog_init_logger_list(TSRMLS_D)
+static void seaslog_init_logger_list(TSRMLS_D)
 {
 #if PHP_VERSION_ID >= 70000
     array_init(&SEASLOG_G(logger_list));
@@ -453,7 +454,7 @@ void seaslog_init_logger_list(TSRMLS_D)
 #endif
 }
 
-void seaslog_clear_logger_list(TSRMLS_D)
+static void seaslog_clear_logger_list(TSRMLS_D)
 {
 #if PHP_VERSION_ID >= 70000
     if (Z_TYPE(SEASLOG_G(logger_list)) == IS_ARRAY) {
@@ -603,11 +604,11 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
     return SUCCESS;
 }
 
-static int seaslog_shutdown_buffer(TSRMLS_D)
+static void seaslog_shutdown_buffer(TSRMLS_D)
 {
     if (SEASLOG_G(use_buffer)) {
         if (SEASLOG_G(buffer_count) < 1) {
-            return 0;
+            return;
         }
 
         HashTable   *ht;
@@ -641,8 +642,6 @@ static int seaslog_shutdown_buffer(TSRMLS_D)
 
         seaslog_clear_buffer(TSRMLS_C);
     }
-
-    return SUCCESS;
 }
 
 static char *delN(char *a)
@@ -710,12 +709,6 @@ static char *mk_real_time(TSRMLS_D)
     real_time = estrdup(SEASLOG_G(last_sec)->real_time);
 
     return real_time;
-
-//    char *_time = NULL;
-//
-//    _time = seaslog_format_date(SEASLOG_G(current_datetime_format),  SEASLOG_G(current_datetime_format_len), (long)time(NULL) TSRMLS_CC);
-//
-//    return _time;
 }
 
 static logger_entry_t *process_logger(char *logger,int logger_len TSRMLS_DC)
@@ -802,7 +795,7 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
 }
 
 
-static char * str_replace(char *ori, char * rep, char * with)
+static char *str_replace(char *ori, char * rep, char * with)
 {
     char *result;
     char *ins;
@@ -1490,7 +1483,7 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash)
 
 
 
-int _seaslog_log_content(int argc, char *level, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
+static int _seaslog_log_content(int argc, char *level, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
 {
     int ret;
     char *result = php_strtr_array(message, message_len, content);
@@ -1503,9 +1496,9 @@ int _seaslog_log_content(int argc, char *level, char *message, int message_len, 
     return ret;
 }
 
-int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
+static int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
 {
-    if (_check_level(level TSRMLS_CC) == FAILURE) {
+    if (_ck_log_level(level TSRMLS_CC) == FAILURE) {
         return FAILURE;
     }
 
@@ -1547,7 +1540,7 @@ int _seaslog_log(int argc, char *level, char *message, int message_len, char *mo
     return SUCCESS;
 }
 
-int _check_level(char *level TSRMLS_DC) {
+static int _ck_log_level(char *level TSRMLS_DC) {
     if (SEASLOG_G(level) < 1) return SUCCESS;
     if (SEASLOG_G(level) > 8) return FAILURE;
 
@@ -1563,7 +1556,7 @@ int _check_level(char *level TSRMLS_DC) {
     return FAILURE;
 }
 
-int _mk_log_dir(char *dir TSRMLS_DC)
+static int _mk_log_dir(char *dir TSRMLS_DC)
 {
     int _ck_dir = _ck_log_dir(dir TSRMLS_CC);
 
@@ -1587,7 +1580,7 @@ int _mk_log_dir(char *dir TSRMLS_DC)
 
 }
 
-int _ck_log_dir(char *dir TSRMLS_DC)
+static int _ck_log_dir(char *dir TSRMLS_DC)
 {
     if (!access(dir,0)) {
         return SUCCESS;
@@ -1596,7 +1589,7 @@ int _ck_log_dir(char *dir TSRMLS_DC)
     return FAILURE;
 }
 
-int _php_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC)
+static int _php_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC)
 {
     if (SEASLOG_G(use_buffer)) {
         seaslog_buffer_set(message, message_len, log_file_path, log_file_path_len, ce TSRMLS_CC);
