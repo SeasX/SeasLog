@@ -33,7 +33,7 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.5.8 - beta"
+#define SEASLOG_VERSION                     "1.6.0 - beta"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_ALL                         "all"
@@ -45,6 +45,12 @@ extern zend_module_entry seaslog_module_entry;
 #define SEASLOG_CRITICAL                    "critical"
 #define SEASLOG_ALERT                       "alert"
 #define SEASLOG_EMERGENCY                   "emergency"
+
+#define SEASLOG_APPENDER_FILE               1
+#define SEASLOG_APPENDER_SYSLOG             2
+#define SEASLOG_APPENDER_TCP                3
+#define SEASLOG_APPENDER_UDP                4
+#define SEASLOG_APPENDER_RSYSLOG            5
 
 #define SEASLOG_DETAIL_ORDER_ASC            1
 #define SEASLOG_DETAIL_ORDER_DESC           2
@@ -117,19 +123,26 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_datetime_format;
     char *current_datetime_format;
     int  current_datetime_format_len;
+    char *base_path;
+
     logger_entry_t *logger;
     logger_entry_t *last_logger;
     last_time_entry_t *last_sec;
-    char *base_path;
+
     zend_bool disting_type;
     zend_bool disting_by_hour;
     zend_bool use_buffer;
+    zend_bool trace_error;
+    zend_bool trace_exception;
+
     int buffer_size;
     int level;
-    int trace_error;
-    int trace_exception;
-
     int buffer_count;
+
+    int appender;
+    char *remote_api;
+    char *remote_host;
+    char *remote_port;
 
 #if PHP_VERSION_ID >= 70000
     zval buffer;

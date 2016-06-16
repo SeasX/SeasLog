@@ -175,13 +175,21 @@ STD_PHP_INI_ENTRY("seaslog.default_basepath", "/var/log/www", PHP_INI_ALL, OnUpd
 STD_PHP_INI_ENTRY("seaslog.default_logger", "default", PHP_INI_ALL, OnUpdateString, default_logger, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_datetime_format", "Y:m:d H:i:s", PHP_INI_ALL, OnUpdateString, default_datetime_format, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.logger", "default", PHP_INI_ALL, OnUpdateString, logger, zend_seaslog_globals, seaslog_globals)
+
 STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour", "0", PHP_INI_ALL, OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.use_buffer", "0", PHP_INI_ALL, OnUpdateBool, use_buffer, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_BOOLEAN("seaslog.trace_error", "1", PHP_INI_ALL, OnUpdateBool, trace_error, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_BOOLEAN("seaslog.trace_exception", "0", PHP_INI_ALL, OnUpdateBool, trace_exception, zend_seaslog_globals, seaslog_globals)
+
 STD_PHP_INI_ENTRY("seaslog.buffer_size", "0", PHP_INI_ALL, OnUpdateLongGEZero, buffer_size, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.level", "0", PHP_INI_ALL, OnUpdateLongGEZero, level, zend_seaslog_globals, seaslog_globals)
-STD_PHP_INI_ENTRY("seaslog.trace_error", "1", PHP_INI_ALL, OnUpdateLongGEZero, trace_error, zend_seaslog_globals, seaslog_globals)
-STD_PHP_INI_ENTRY("seaslog.trace_exception", "0", PHP_INI_ALL, OnUpdateLongGEZero, trace_exception, zend_seaslog_globals, seaslog_globals)
+
+
+STD_PHP_INI_ENTRY("seaslog.appender", "1", PHP_INI_ALL, OnUpdateLongGEZero, appender, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.remote_api", "", PHP_INI_ALL, OnUpdateString, remote_api, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.remote_host", "", PHP_INI_ALL, OnUpdateString, remote_host, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.remote_port", "", PHP_INI_ALL, OnUpdateString, remote_port, zend_seaslog_globals, seaslog_globals)
 PHP_INI_END()
 
 
