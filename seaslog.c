@@ -532,23 +532,23 @@ static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
 #endif
 
     switch SEASLOG_G(appender) {
-        case SEASLOG_APPENDER_FILE:
-            stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | REPORT_ERRORS, NULL);
-            break;
-        case SEASLOG_APPENDER_TCP:
-            reslen = spprintf(&res, 0, "tcp://%s:%d", SEASLOG_G(remote_host), SEASLOG_G(remote_port));
-            stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, 0, NULL, NULL, NULL);
-            efree(res);
-            break;
+    case SEASLOG_APPENDER_FILE:
+        stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | REPORT_ERRORS, NULL);
+        break;
+    case SEASLOG_APPENDER_TCP:
+        reslen = spprintf(&res, 0, "tcp://%s:%d", SEASLOG_G(remote_host), SEASLOG_G(remote_port));
+        stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, 0, NULL, NULL, NULL);
+        efree(res);
+        break;
 
-        case SEASLOG_APPENDER_UDP:
-            reslen = spprintf(&res, 0, "udp://%s:%d", SEASLOG_G(remote_host), SEASLOG_G(remote_port));
-            stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, 0, NULL, NULL, NULL);
+    case SEASLOG_APPENDER_UDP:
+        reslen = spprintf(&res, 0, "udp://%s:%d", SEASLOG_G(remote_host), SEASLOG_G(remote_port));
+        stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, 0, NULL, NULL, NULL);
 
-            efree(res);
-            break;
-        default:
-            stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | REPORT_ERRORS, NULL);
+        efree(res);
+        break;
+    default:
+        stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | REPORT_ERRORS, NULL);
     }
 
     return stream;
@@ -1591,13 +1591,13 @@ static int _seaslog_log(int argc, char *level, char *message, int message_len, c
     }
 
     switch SEASLOG_G(appender) {
-        case SEASLOG_APPENDER_TCP:
-        case SEASLOG_APPENDER_UDP:
-            return appender_handle_tcp_udp(message, message_len, level, logger, ce TSRMLS_CC);
-            break;
-        case SEASLOG_APPENDER_FILE:
-        default:
-            return appender_handle_file(message, message_len, level, logger, ce TSRMLS_CC);
+    case SEASLOG_APPENDER_TCP:
+    case SEASLOG_APPENDER_UDP:
+        return appender_handle_tcp_udp(message, message_len, level, logger, ce TSRMLS_CC);
+        break;
+    case SEASLOG_APPENDER_FILE:
+    default:
+        return appender_handle_file(message, message_len, level, logger, ce TSRMLS_CC);
     }
 
     return SUCCESS;
