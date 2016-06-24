@@ -63,6 +63,8 @@ php内置error_log、syslog函数功能强大且性能极好，但由于各种�
 * 遵循 [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) 日志接口规范
 * 自动记录错误信息
 * 自动记录异常信息
+* 连接TCP端口发送
+* 连接UDP端口发送
 
 ### 目标是怎样的
 * 便捷、规范的log记录
@@ -97,6 +99,9 @@ seaslog.level = 0                                       ;记录日志级别 默�
 seaslog.trace_error = 1                                 ;自动记录错误 默认1(开启)
 seaslog.trace_exception = 0                             ;自动记录异常信息 默认0(关闭)
 seaslog.default_datetime_format = "Y:m:d H:i:s"         ;日期格式配置 默认"Y:m:d H:i:s"
+seaslog.appender = 1                                    ;日志存储介质 1File 2TCP 3UDP (默认为1)
+seaslog.remote_host = 127.0.0.1                         ;接收ip 默认127.0.0.1 (当使用TCP或UDP时必填)
+seaslog.remote_port = 514                               ;接收端口 默认514 (当使用TCP或UDP时必填)
 ```
 > `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
 
@@ -468,6 +473,21 @@ warning | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | your github.com was dow
 error | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | a error log
 critical | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | some thing was critical
 emergency | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house next door was completely burnt out! it is a joke
+```
+
+#### 当`seaslog.appender`配置为 `2（TCP）` 或 `3（UDP）` 时，日志将推送至remote_host:remote_port的TCP或UDP端口
+> 此时log格式统一为 `{hostName} | {loggerName} | {type} | {pid} | {timeStamp} |{dateTime} | {logInfo}`
+
+```sh
+vagrant-ubuntu-trusty | test/logger | error | 21423 | 1466787583.321 | 2016:06:25 00:59:43 | this is a error test by ::log 
+vagrant-ubuntu-trusty | test/logger | debug | 21423 | 1466787583.322 | 2016:06:25 00:59:43 | this is a neeke debug 
+vagrant-ubuntu-trusty | test/logger | info | 21423 | 1466787583.323 | 2016:06:25 00:59:43 | this is a info log 
+vagrant-ubuntu-trusty | test/logger | notice | 21423 | 1466787583.324 | 2016:06:25 00:59:43 | this is a notice log 
+vagrant-ubuntu-trusty | test/logger | warning | 21423 | 1466787583.325 | 2016:06:25 00:59:43 | your github.com was down,please rboot it ASAP! 
+vagrant-ubuntu-trusty | test/logger | error | 21423 | 1466787583.326 | 2016:06:25 00:59:43 | a error log 
+vagrant-ubuntu-trusty | test/logger | critical | 21423 | 1466787583.327 | 2016:06:25 00:59:43 | some thing was critical 
+vagrant-ubuntu-trusty | test/logger | alert | 21423 | 1466787583.328 | 2016:06:25 00:59:43 | yes this is a alertMSG 
+vagrant-ubuntu-trusty | test/logger | emergency | 21423 | 1466787583.329 | 2016:06:25 00:59:43 | Just now, the house next door was completely burnt out! it`s a joke
 ```
 
 ### SeasLog Analyzer的使用

@@ -32,6 +32,12 @@ extern zend_module_entry seaslog_module_entry;
 #include "TSRM.h"
 #endif
 
+#ifdef ZTS
+#define SEASLOG_G(v) TSRMG(seaslog_globals_id, zend_seaslog_globals *, v)
+#else
+#define SEASLOG_G(v) (seaslog_globals.v)
+#endif
+
 #define SEASLOG_RES_NAME                    "SeasLog"
 #define SEASLOG_VERSION                     "1.6.0 - beta"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
@@ -47,16 +53,14 @@ extern zend_module_entry seaslog_module_entry;
 #define SEASLOG_EMERGENCY                   "emergency"
 
 #define SEASLOG_APPENDER_FILE               1
-#define SEASLOG_APPENDER_SYSLOG             2
-#define SEASLOG_APPENDER_TCP                3
-#define SEASLOG_APPENDER_UDP                4
-#define SEASLOG_APPENDER_RSYSLOG            5
+#define SEASLOG_APPENDER_TCP                2
+#define SEASLOG_APPENDER_UDP                3
 
 #define SEASLOG_DETAIL_ORDER_ASC            1
 #define SEASLOG_DETAIL_ORDER_DESC           2
 
-#define SEASLOG_EVENT_ERROR 1
-#define SEASLOG_EVENT_EXCEPTION 2
+#define SEASLOG_EVENT_ERROR                 1
+#define SEASLOG_EVENT_EXCEPTION             2
 
 #define SL_S(s)                             s, sizeof(s) - 1
 
@@ -124,6 +128,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *current_datetime_format;
     int  current_datetime_format_len;
     char *base_path;
+    char *host_name;
 
     logger_entry_t *logger;
     logger_entry_t *last_logger;
@@ -140,9 +145,8 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     int buffer_count;
 
     int appender;
-    char *remote_api;
     char *remote_host;
-    char *remote_port;
+    int remote_port;
 
 #if PHP_VERSION_ID >= 70000
     zval buffer;
@@ -153,14 +157,6 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
 #endif
 
 ZEND_END_MODULE_GLOBALS(seaslog)
-
-extern ZEND_DECLARE_MODULE_GLOBALS(seaslog);
-
-#ifdef ZTS
-#define SEASLOG_G(v) TSRMG(seaslog_globals_id, zend_seaslog_globals *, v)
-#else
-#define SEASLOG_G(v) (seaslog_globals.v)
-#endif
 
 #endif /* PHP_SEASLOG_H */
 

@@ -72,6 +72,14 @@
 #include <sys/time.h>
 #endif
 
+ZEND_DECLARE_MODULE_GLOBALS(seaslog);
+static PHP_GINIT_FUNCTION(seaslog);
+static PHP_GSHUTDOWN_FUNCTION(seaslog);
+
+#ifdef COMPILE_DL_SEASLOG
+ZEND_GET_MODULE(seaslog)
+#endif
+
 static void seaslog_init_logger(TSRMLS_D);
 static void seaslog_init_buffer(TSRMLS_D);
 static void seaslog_clear_buffer(TSRMLS_D);
@@ -88,6 +96,13 @@ static int _seaslog_log_content(int argc, char *level, char *message, int messag
 static int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
 static int _php_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
 
+static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC);
+
+static char *getHostName();
+
+static int appender_handle_file(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
+static int appender_handle_tcp_udp(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
+
 static char *str_replace(char *ori, char * rep, char * with);
 static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_DC);
 
@@ -99,8 +114,6 @@ static void process_event(int event_type, int type, char * error_filename, uint 
 static void initErrorHooks(TSRMLS_D);
 static void recoveryErrorHooks(TSRMLS_D);
 
-ZEND_DECLARE_MODULE_GLOBALS(seaslog)
-
 static int le_seaslog;
 //static char *last_logger = "default";
 static char *base_path = "";
@@ -111,13 +124,23 @@ static zend_bool use_buffer = 0;
 static int buffer_size = 0;
 static int level = 0;
 
-const zend_function_entry seaslog_functions[] = {
+const zend_function_entry seaslog_functions[] =
+{
     PHP_FE(seaslog_get_version, NULL)
     PHP_FE(seaslog_get_author,  NULL)
     {
         NULL, NULL, NULL
     }
 };
+
+#if ZEND_MODULE_API_NO >= 20050922
+zend_module_dep seaslog_deps[] =
+{
+    {
+        NULL, NULL, NULL
+    }
+};
+#endif
 
 const zend_function_entry seaslog_methods[] = {
     PHP_ME(SEASLOG_RES_NAME, __construct,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
@@ -149,27 +172,6 @@ const zend_function_entry seaslog_methods[] = {
     }
 };
 
-zend_module_entry seaslog_module_entry = {
-#if ZEND_MODULE_API_NO >= 20010901
-    STANDARD_MODULE_HEADER,
-#endif
-    SEASLOG_RES_NAME,
-    seaslog_functions,
-    PHP_MINIT(seaslog),
-    PHP_MSHUTDOWN(seaslog),
-    PHP_RINIT(seaslog),
-    PHP_RSHUTDOWN(seaslog),
-    PHP_MINFO(seaslog),
-#if ZEND_MODULE_API_NO >= 20010901
-    SEASLOG_VERSION,
-#endif
-    STANDARD_MODULE_PROPERTIES
-};
-
-#ifdef COMPILE_DL_SEASLOG
-ZEND_GET_MODULE(seaslog)
-#endif
-
 PHP_INI_BEGIN()
 STD_PHP_INI_ENTRY("seaslog.default_basepath", "/var/log/www", PHP_INI_ALL, OnUpdateString, default_basepath, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_logger", "default", PHP_INI_ALL, OnUpdateString, default_logger, zend_seaslog_globals, seaslog_globals)
@@ -187,13 +189,17 @@ STD_PHP_INI_ENTRY("seaslog.level", "0", PHP_INI_ALL, OnUpdateLongGEZero, level, 
 
 
 STD_PHP_INI_ENTRY("seaslog.appender", "1", PHP_INI_ALL, OnUpdateLongGEZero, appender, zend_seaslog_globals, seaslog_globals)
-STD_PHP_INI_ENTRY("seaslog.remote_api", "", PHP_INI_ALL, OnUpdateString, remote_api, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.remote_host", "", PHP_INI_ALL, OnUpdateString, remote_host, zend_seaslog_globals, seaslog_globals)
-STD_PHP_INI_ENTRY("seaslog.remote_port", "", PHP_INI_ALL, OnUpdateString, remote_port, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.remote_port", "", PHP_INI_ALL, OnUpdateLongGEZero, remote_port, zend_seaslog_globals, seaslog_globals)
 PHP_INI_END()
 
+static PHP_GINIT_FUNCTION(seaslog)
+{
+    memset(seaslog_globals, 0, sizeof(zend_seaslog_globals));
+    seaslog_globals->host_name = getHostName();
+}
 
-static void php_seaslog_init_globals(zend_seaslog_globals *seaslog_globals)
+static PHP_GSHUTDOWN_FUNCTION(seaslog)
 {
 
 }
@@ -201,8 +207,6 @@ static void php_seaslog_init_globals(zend_seaslog_globals *seaslog_globals)
 PHP_MINIT_FUNCTION(seaslog)
 {
     zend_class_entry seaslog;
-
-    ZEND_INIT_MODULE_GLOBALS(seaslog, php_seaslog_init_globals, NULL);
 
     REGISTER_INI_ENTRIES();
 
@@ -222,6 +226,10 @@ PHP_MINIT_FUNCTION(seaslog)
 
     REGISTER_LONG_CONSTANT("SEASLOG_DETAIL_ORDER_ASC", SEASLOG_DETAIL_ORDER_ASC, CONST_PERSISTENT | CONST_CS);
     REGISTER_LONG_CONSTANT("SEASLOG_DETAIL_ORDER_DESC", SEASLOG_DETAIL_ORDER_DESC, CONST_PERSISTENT | CONST_CS);
+
+    REGISTER_LONG_CONSTANT("SEASLOG_APPENDER_FILE", SEASLOG_APPENDER_FILE, CONST_PERSISTENT | CONST_CS);
+    REGISTER_LONG_CONSTANT("SEASLOG_APPENDER_TCP", SEASLOG_APPENDER_TCP, CONST_PERSISTENT | CONST_CS);
+    REGISTER_LONG_CONSTANT("SEASLOG_APPENDER_UDP", SEASLOG_APPENDER_UDP, CONST_PERSISTENT | CONST_CS);
 
     INIT_CLASS_ENTRY(seaslog, SEASLOG_RES_NAME, seaslog_methods);
 
@@ -274,6 +282,43 @@ PHP_MINFO_FUNCTION(seaslog)
     php_info_print_table_end();
 
     DISPLAY_INI_ENTRIES();
+}
+
+zend_module_entry seaslog_module_entry =
+{
+#if ZEND_MODULE_API_NO >= 20050922
+    STANDARD_MODULE_HEADER_EX, NULL,
+    seaslog_deps,
+#else
+    STANDARD_MODULE_HEADER,
+#endif
+    SEASLOG_RES_NAME,
+    seaslog_functions,
+    PHP_MINIT(seaslog),
+    PHP_MSHUTDOWN(seaslog),
+    PHP_RINIT(seaslog),
+    PHP_RSHUTDOWN(seaslog),
+    PHP_MINFO(seaslog),
+    SEASLOG_VERSION,
+    PHP_MODULE_GLOBALS(seaslog),
+    PHP_GINIT(seaslog),
+    PHP_GSHUTDOWN(seaslog),
+    NULL,
+    STANDARD_MODULE_PROPERTIES_EX
+};
+
+static char *getHostName()
+{
+    char buf[255];
+
+    if (gethostname(buf, sizeof(buf) - 1)) {
+        return "";
+    }
+
+    char *host_name;
+    spprintf(&host_name,0,"%s",buf);
+
+    return host_name;
 }
 
 static void process_event(int event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC)
@@ -475,19 +520,50 @@ static void seaslog_clear_logger_list(TSRMLS_D)
 #endif
 }
 
+static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
+{
+    php_stream *stream = NULL;
+    char *res = NULL;
+
+#if PHP_VERSION_ID >= 70000
+    zend_long reslen;
+#else
+    long reslen;
+#endif
+
+    switch SEASLOG_G(appender) {
+        case SEASLOG_APPENDER_FILE:
+            stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | REPORT_ERRORS, NULL);
+            break;
+        case SEASLOG_APPENDER_TCP:
+            reslen = spprintf(&res, 0, "tcp://%s:%d", SEASLOG_G(remote_host), SEASLOG_G(remote_port));
+            stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, 0, NULL, NULL, NULL);
+            efree(res);
+            break;
+
+        case SEASLOG_APPENDER_UDP:
+            reslen = spprintf(&res, 0, "udp://%s:%d", SEASLOG_G(remote_host), SEASLOG_G(remote_port));
+            stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, 0, NULL, NULL, NULL);
+
+            efree(res);
+            break;
+        default:
+            stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | REPORT_ERRORS, NULL);
+    }
+
+    return stream;
+}
+
 static int real_php_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
 {
     php_stream *stream = NULL;
 
-#if PHP_VERSION_ID >= 70000
-    stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | REPORT_ERRORS, NULL);
-#else
-    stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
-#endif
+    stream = seaslog_stream_open_wrapper(opt TSRMLS_CC);
 
     if (!stream) {
         return FAILURE;
     }
+
     php_stream_write(stream, message, message_len);
     php_stream_close(stream);
     php_stream_free(stream, PHP_STREAM_FREE_RELEASE_STREAM);
@@ -499,11 +575,7 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt TSRMLS_DC)
 {
     php_stream *stream = NULL;
 
-#if PHP_VERSION_ID >= 70000
-    stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | REPORT_ERRORS, NULL);
-#else
-    stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | ENFORCE_SAFE_MODE | REPORT_ERRORS, NULL);
-#endif
+    stream = seaslog_stream_open_wrapper(opt TSRMLS_CC);
 
     if (!stream) {
         return FAILURE;
@@ -1510,9 +1582,6 @@ static int _seaslog_log(int argc, char *level, char *message, int message_len, c
         return FAILURE;
     }
 
-    char *log_file_path, *log_info, *current_time, *real_date, *real_time;
-    int log_len, log_path_len, log_file_path_len;
-
     logger_entry_t *logger;
 
     if (argc > 2 && module_len > 0 && module) {
@@ -1521,18 +1590,37 @@ static int _seaslog_log(int argc, char *level, char *message, int message_len, c
         logger = SEASLOG_G(last_logger);
     }
 
-    real_date = mk_real_date(TSRMLS_C);
+    switch SEASLOG_G(appender) {
+        case SEASLOG_APPENDER_TCP:
+        case SEASLOG_APPENDER_UDP:
+            return appender_handle_tcp_udp(message, message_len, level, logger, ce TSRMLS_CC);
+            break;
+        case SEASLOG_APPENDER_FILE:
+        default:
+            return appender_handle_file(message, message_len, level, logger, ce TSRMLS_CC);
+    }
 
+    return SUCCESS;
+}
+
+static int appender_handle_file(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC)
+{
+
+    char *log_file_path, *log_info, *current_time, *real_date, *real_time;
+    int log_len, log_path_len, log_file_path_len;
+
+    current_time = mic_time();
+    real_time = mk_real_time(TSRMLS_C);
+
+    real_date = mk_real_date(TSRMLS_C);
     if (SEASLOG_G(disting_type)) {
         log_file_path_len = spprintf(&log_file_path, 0, "%s/%s.%s.log", logger->logger_path, level, real_date);
     } else {
         log_file_path_len = spprintf(&log_file_path, 0, "%s/%s.log", logger->logger_path,real_date);
     }
 
-    current_time = mic_time();
-    real_time = mk_real_time(TSRMLS_C);
-
     log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n", level, getpid(), current_time, real_time, message);
+
 
     if (_php_log_ex(log_info, log_len, log_file_path, log_file_path_len + 1, ce TSRMLS_CC) == FAILURE) {
         efree(log_file_path);
@@ -1540,9 +1628,31 @@ static int _seaslog_log(int argc, char *level, char *message, int message_len, c
         return FAILURE;
     }
 
+    efree(real_date);
     efree(log_file_path);
     efree(log_info);
-    efree(real_date);
+    efree(real_time);
+    efree(current_time);
+    return SUCCESS;
+}
+
+static int appender_handle_tcp_udp(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC)
+{
+    char *log_info, *current_time, *real_time;
+    int log_len;
+
+    current_time = mic_time();
+    real_time = mk_real_time(TSRMLS_C);
+
+    log_len = spprintf(&log_info, 0, "%s | %s | %s | %d | %s | %s | %s \n", SEASLOG_G(host_name),logger->logger,level, getpid(), current_time, real_time, message);
+    php_printf(log_info);
+
+    if (_php_log_ex(log_info, log_len, logger->logger, logger->logger_len, ce TSRMLS_CC) == FAILURE) {
+        efree(log_info);
+        return FAILURE;
+    }
+
+    efree(log_info);
     efree(real_time);
     efree(current_time);
     return SUCCESS;
@@ -1566,22 +1676,27 @@ static int _ck_log_level(char *level TSRMLS_DC) {
 
 static int _mk_log_dir(char *dir TSRMLS_DC)
 {
-    int _ck_dir = _ck_log_dir(dir TSRMLS_CC);
 
-    if (_ck_dir == FAILURE) {
-        zval *zcontext = NULL;
-        long mode = 0777;
-        zend_bool recursive = 1;
-        php_stream_context *context;
-        umask(1);
+    if (SEASLOG_G(appender) == SEASLOG_APPENDER_FILE) {
+        int _ck_dir = _ck_log_dir(dir TSRMLS_CC);
 
-        context = php_stream_context_from_zval(zcontext, 0);
+        if (_ck_dir == FAILURE) {
+            zval *zcontext = NULL;
+            long mode = 0777;
+            zend_bool recursive = 1;
+            php_stream_context *context;
+            umask(1);
 
-        if (php_stream_mkdir(dir, mode, (recursive ? PHP_STREAM_MKDIR_RECURSIVE : 0) | REPORT_ERRORS, context)) {
-            return FAILURE;
+            context = php_stream_context_from_zval(zcontext, 0);
+
+            if (php_stream_mkdir(dir, mode, (recursive ? PHP_STREAM_MKDIR_RECURSIVE : 0) | REPORT_ERRORS, context)) {
+                return FAILURE;
+            }
+
+            return SUCCESS;
+        } else {
+            return SUCCESS;
         }
-
-        return SUCCESS;
     } else {
         return SUCCESS;
     }
