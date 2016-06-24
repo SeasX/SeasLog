@@ -1645,7 +1645,6 @@ static int appender_handle_tcp_udp(char *message, int message_len, char *level, 
     real_time = mk_real_time(TSRMLS_C);
 
     log_len = spprintf(&log_info, 0, "%s | %s | %s | %d | %s | %s | %s \n", SEASLOG_G(host_name),logger->logger,level, getpid(), current_time, real_time, message);
-    php_printf(log_info);
 
     if (_php_log_ex(log_info, log_len, logger->logger, logger->logger_len, ce TSRMLS_CC) == FAILURE) {
         efree(log_info);
