@@ -244,6 +244,8 @@ PHP_MINIT_FUNCTION(seaslog)
 
     initErrorHooks(TSRMLS_C);
 
+    SEASLOG_G(host_name) = getHostName();
+
     return SUCCESS;
 }
 
