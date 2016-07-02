@@ -62,6 +62,9 @@ extern zend_module_entry seaslog_module_entry;
 #define SEASLOG_EVENT_ERROR                 1
 #define SEASLOG_EVENT_EXCEPTION             2
 
+#define SEASLOG_DIR_MODE                    0777
+#define SEASLOG_FILE_MODE                   0666
+
 #define SL_S(s)                             s, sizeof(s) - 1
 
 #ifndef E_EXCEPTION
@@ -115,11 +118,17 @@ typedef struct _logger_entry_t
     int access;
 } logger_entry_t;
 
-typedef struct _last_time_entry_t
+typedef struct _last_sec_entry_t
 {
     int  sec;
     char *real_time;
-} last_time_entry_t;
+} last_sec_entry_t;
+
+typedef struct _last_min_entry_t
+{
+    int  sec;
+    char *real_time;
+} last_min_entry_t;
 
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_basepath;
@@ -132,7 +141,8 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
 
     logger_entry_t *logger;
     logger_entry_t *last_logger;
-    last_time_entry_t *last_sec;
+    last_sec_entry_t *last_sec;
+    last_min_entry_t *last_min;
 
     zend_bool disting_type;
     zend_bool disting_by_hour;

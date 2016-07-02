@@ -88,6 +88,9 @@ static void seaslog_clear_logger(TSRMLS_D);
 static void seaslog_init_logger_list(TSRMLS_D);
 static void seaslog_clear_logger_list(TSRMLS_D);
 
+static void seaslog_process_last_sec(int now TSRMLS_DC);
+static void seaslog_process_last_min(int now TSRMLS_DC);
+
 static int _ck_log_dir(char *dir TSRMLS_DC);
 static int _ck_log_level(char *level TSRMLS_DC);
 static int _mk_log_dir(char *dir TSRMLS_DC);
@@ -436,6 +439,29 @@ static void recoveryErrorHooks(TSRMLS_D)
     }
 }
 
+static void seaslog_process_last_sec(int now TSRMLS_DC)
+{
+    last_sec_entry_t *last_sec = ecalloc(sizeof(last_sec_entry_t),1);;
+    last_sec->sec = now;
+    last_sec->real_time = seaslog_format_date(SEASLOG_G(current_datetime_format), SEASLOG_G(current_datetime_format_len), now TSRMLS_CC);
+    SEASLOG_G(last_sec) = last_sec;
+}
+
+static void seaslog_process_last_min(int now TSRMLS_DC)
+{
+    SEASLOG_G(last_min) = ecalloc(sizeof(last_min_entry_t), 1);
+    SEASLOG_G(last_min)->sec = now;
+
+    if (SEASLOG_G(disting_by_hour))
+    {
+        SEASLOG_G(last_min)->real_time = seaslog_format_date("YmdH", 4, now TSRMLS_CC);
+    }
+    else
+    {
+        SEASLOG_G(last_min)->real_time = seaslog_format_date("Ymd",  3, now TSRMLS_CC);
+    }
+}
+
 static void seaslog_init_logger(TSRMLS_D)
 {
     SEASLOG_G(base_path)                    = estrdup(SEASLOG_G(default_basepath));
@@ -456,10 +482,8 @@ static void seaslog_init_logger(TSRMLS_D)
     }
 
     int now = (int)time(NULL);
-    SEASLOG_G(last_sec) = ecalloc(sizeof(last_time_entry_t), 1);
-    SEASLOG_G(last_sec)->sec = now;
-    SEASLOG_G(last_sec)->real_time = seaslog_format_date(SEASLOG_G(current_datetime_format), SEASLOG_G(current_datetime_format_len), now TSRMLS_CC);
-
+    seaslog_process_last_sec(now TSRMLS_CC);
+    seaslog_process_last_min(now TSRMLS_CC);
 }
 
 static void seaslog_clear_logger(TSRMLS_D)
@@ -482,6 +506,11 @@ static void seaslog_clear_logger(TSRMLS_D)
     if (SEASLOG_G(last_sec))
     {
         efree(SEASLOG_G(last_sec));
+    }
+
+    if (SEASLOG_G(last_min))
+    {
+        efree(SEASLOG_G(last_min));
     }
 }
 
@@ -816,14 +845,16 @@ static char *mk_real_date(TSRMLS_D)
 
     char *_date = NULL;
 
-    if (SEASLOG_G(disting_by_hour))
+
+    int now = (long)time(NULL);
+    if (now > SEASLOG_G(last_min)->sec + 60)
     {
-        _date = seaslog_format_date("YmdH", 4, (long)time(NULL) TSRMLS_CC);
+        efree(SEASLOG_G(last_min));
+
+        seaslog_process_last_min(now TSRMLS_CC);
     }
-    else
-    {
-        _date = seaslog_format_date("Ymd",  3, (long)time(NULL) TSRMLS_CC);
-    }
+
+    _date = estrdup(SEASLOG_G(last_min)->real_time);
 
     return _date;
 }
@@ -837,11 +868,7 @@ static char *mk_real_time(TSRMLS_D)
     {
         efree(SEASLOG_G(last_sec));
 
-        last_time_entry_t *last_sec = ecalloc(sizeof(last_time_entry_t),1);;
-        last_sec->sec = now;
-        last_sec->real_time = seaslog_format_date(SEASLOG_G(current_datetime_format), SEASLOG_G(current_datetime_format_len), now TSRMLS_CC);
-        SEASLOG_G(last_sec) = last_sec;
-
+        seaslog_process_last_sec(now TSRMLS_CC);
     }
 
     real_time = estrdup(SEASLOG_G(last_sec)->real_time);
@@ -1864,15 +1891,18 @@ static int _mk_log_dir(char *dir TSRMLS_DC)
         if (_ck_dir == FAILURE)
         {
             zval *zcontext = NULL;
-            long mode = 0777;
-            zend_bool recursive = 1;
             php_stream_context *context;
-            umask(1);
 
             context = php_stream_context_from_zval(zcontext, 0);
 
-            if (php_stream_mkdir(dir, mode, (recursive ? PHP_STREAM_MKDIR_RECURSIVE : 0) | REPORT_ERRORS, context))
+            if (!php_stream_mkdir(dir, SEASLOG_DIR_MODE, PHP_STREAM_MKDIR_RECURSIVE | REPORT_ERRORS, context))
             {
+                return FAILURE;
+            }
+
+            mode_t imode = (mode_t) SEASLOG_DIR_MODE;
+            int ret = VCWD_CHMOD(dir, imode);
+            if (ret == FAILURE) {
                 return FAILURE;
             }
 
