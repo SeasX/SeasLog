@@ -139,6 +139,8 @@
 <li>遵循 <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md">PSR-3</a> 日志接口规范</li>
 <li>自动记录错误信息</li>
 <li>自动记录异常信息</li>
+<li>连接TCP端口发送</li>
+<li>连接UDP端口发送</li>
 </ul>
 
 <h3>
@@ -179,7 +181,10 @@ seaslog.buffer_size = 100                               ;buffer中缓冲数量 �
 seaslog.level = 0                                       ;记录日志级别 默认0(所有日志)
 seaslog.trace_error = 1                                 ;自动记录错误 默认1(开启)
 seaslog.trace_exception = 0                             ;自动记录异常信息 默认0(关闭)
-seaslog.default_datetime_format = "%Y:%m:%d %H:%M:%S"   ;日期格式配置 默认"%Y:%m:%d %H:%M:%S"
+seaslog.default_datetime_format = "Y:m:d H:i:s"         ;日期格式配置 默认"Y:m:d H:i:s"
+seaslog.appender = 1                                    ;日志存储介质 1File 2TCP 3UDP (默认为1)
+seaslog.remote_host = 127.0.0.1                         ;接收ip 默认127.0.0.1 (当使用TCP或UDP时必填)
+seaslog.remote_port = 514                               ;接收端口 默认514 (当使用TCP或UDP时必填)
 </code></pre>
 
 <blockquote>
@@ -330,11 +335,11 @@ seaslog.default_datetime_format = "%Y:%m:%d %H:%M:%S"   ;日期格式配置 默�
 <span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> null   $key_word</span></span>
 <span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> int    $start</span></span>
 <span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> int    $limit</span></span>
-<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span>        $order</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span>        $order 默认为正序 SEASLOG_DETAIL_ORDER_ASC，可选倒序 SEASLOG_DETAIL_ORDER_DESC</span></span>
 <span class="pl-s1"><span class="pl-c">     *</span></span>
 <span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@return</span> array</span></span>
 <span class="pl-s1"><span class="pl-c">     */</span></span>
-<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">analyzerDetail</span>(<span class="pl-smi">$level</span> <span class="pl-k">=</span> <span class="pl-c1">SEASLOG_INFO</span>, <span class="pl-smi">$log_path</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>*<span class="pl-pds">'</span></span>, <span class="pl-smi">$key_word</span> <span class="pl-k">=</span> <span class="pl-c1">NULL</span>, <span class="pl-smi">$start</span> <span class="pl-k">=</span> <span class="pl-c1">1</span>, <span class="pl-smi">$limit</span> <span class="pl-k">=</span> <span class="pl-c1">20</span>, <span class="pl-smi">$order</span> <span class="pl-k">=</span> <span class="pl-c1">SEASLOG_DETIAL_ORDER_ASC</span>)</span>
+<span class="pl-s1">    <span class="pl-k">static</span> <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">analyzerDetail</span>(<span class="pl-smi">$level</span> <span class="pl-k">=</span> <span class="pl-c1">SEASLOG_INFO</span>, <span class="pl-smi">$log_path</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>*<span class="pl-pds">'</span></span>, <span class="pl-smi">$key_word</span> <span class="pl-k">=</span> <span class="pl-c1">NULL</span>, <span class="pl-smi">$start</span> <span class="pl-k">=</span> <span class="pl-c1">1</span>, <span class="pl-smi">$limit</span> <span class="pl-k">=</span> <span class="pl-c1">20</span>, <span class="pl-smi">$order</span> <span class="pl-k">=</span> <span class="pl-c1">SEASLOG_DETAIL_ORDER_ASC</span>)</span>
 <span class="pl-s1">    {</span>
 <span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-c1">array</span>();</span>
 <span class="pl-s1">    }</span>
@@ -582,6 +587,23 @@ error <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 1406422432.7
 critical <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 1406422432.787 <span class="pl-k">|</span> 2014:07:27 08:53:52 <span class="pl-k">|</span> some thing was critical
 emergency <span class="pl-k">|</span> 23625 <span class="pl-k">|</span> 1406422432.787 <span class="pl-k">|</span> 2014:07:27 08:53:52 <span class="pl-k">|</span> Just now, the house next door was completely burnt out<span class="pl-k">!</span> it is a joke</pre></div>
 </blockquote>
+
+<h4>
+<a id="当seaslogappender配置为-2tcp-或-3udp-时日志将推送至remote_hostremote_port的tcp或udp端口" class="anchor" href="#%E5%BD%93seaslogappender%E9%85%8D%E7%BD%AE%E4%B8%BA-2tcp-%E6%88%96-3udp-%E6%97%B6%E6%97%A5%E5%BF%97%E5%B0%86%E6%8E%A8%E9%80%81%E8%87%B3remote_hostremote_port%E7%9A%84tcp%E6%88%96udp%E7%AB%AF%E5%8F%A3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>当<code>seaslog.appender</code>配置为 <code>2（TCP）</code> 或 <code>3（UDP）</code> 时，日志将推送至remote_host:remote_port的TCP或UDP端口</h4>
+
+<blockquote>
+<p>此时log格式统一为 <code>{hostName} | {loggerName} | {type} | {pid} | {timeStamp} |{dateTime} | {logInfo}</code></p>
+</blockquote>
+
+<div class="highlight highlight-source-shell"><pre>vagrant-ubuntu-trusty <span class="pl-k">|</span> test/logger <span class="pl-k">|</span> error <span class="pl-k">|</span> 21423 <span class="pl-k">|</span> 1466787583.321 <span class="pl-k">|</span> 2016:06:25 00:59:43 <span class="pl-k">|</span> this is a error <span class="pl-c1">test</span> by ::log 
+vagrant-ubuntu-trusty <span class="pl-k">|</span> test/logger <span class="pl-k">|</span> debug <span class="pl-k">|</span> 21423 <span class="pl-k">|</span> 1466787583.322 <span class="pl-k">|</span> 2016:06:25 00:59:43 <span class="pl-k">|</span> this is a neeke debug 
+vagrant-ubuntu-trusty <span class="pl-k">|</span> test/logger <span class="pl-k">|</span> info <span class="pl-k">|</span> 21423 <span class="pl-k">|</span> 1466787583.323 <span class="pl-k">|</span> 2016:06:25 00:59:43 <span class="pl-k">|</span> this is a info log 
+vagrant-ubuntu-trusty <span class="pl-k">|</span> test/logger <span class="pl-k">|</span> notice <span class="pl-k">|</span> 21423 <span class="pl-k">|</span> 1466787583.324 <span class="pl-k">|</span> 2016:06:25 00:59:43 <span class="pl-k">|</span> this is a notice log 
+vagrant-ubuntu-trusty <span class="pl-k">|</span> test/logger <span class="pl-k">|</span> warning <span class="pl-k">|</span> 21423 <span class="pl-k">|</span> 1466787583.325 <span class="pl-k">|</span> 2016:06:25 00:59:43 <span class="pl-k">|</span> your github.com was down,please rboot it ASAP<span class="pl-k">!</span> 
+vagrant-ubuntu-trusty <span class="pl-k">|</span> test/logger <span class="pl-k">|</span> error <span class="pl-k">|</span> 21423 <span class="pl-k">|</span> 1466787583.326 <span class="pl-k">|</span> 2016:06:25 00:59:43 <span class="pl-k">|</span> a error log 
+vagrant-ubuntu-trusty <span class="pl-k">|</span> test/logger <span class="pl-k">|</span> critical <span class="pl-k">|</span> 21423 <span class="pl-k">|</span> 1466787583.327 <span class="pl-k">|</span> 2016:06:25 00:59:43 <span class="pl-k">|</span> some thing was critical 
+vagrant-ubuntu-trusty <span class="pl-k">|</span> test/logger <span class="pl-k">|</span> alert <span class="pl-k">|</span> 21423 <span class="pl-k">|</span> 1466787583.328 <span class="pl-k">|</span> 2016:06:25 00:59:43 <span class="pl-k">|</span> yes this is a alertMSG 
+vagrant-ubuntu-trusty <span class="pl-k">|</span> test/logger <span class="pl-k">|</span> emergency <span class="pl-k">|</span> 21423 <span class="pl-k">|</span> 1466787583.329 <span class="pl-k">|</span> 2016:06:25 00:59:43 <span class="pl-k">|</span> Just now, the house next door was completely burnt out<span class="pl-k">!</span> it<span class="pl-s"><span class="pl-pds">`</span>s a joke</span></pre></div>
 
 <h3>
 <a id="seaslog-analyzer的使用" class="anchor" href="#seaslog-analyzer%E7%9A%84%E4%BD%BF%E7%94%A8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SeasLog Analyzer的使用</h3>
