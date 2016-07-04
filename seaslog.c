@@ -865,8 +865,11 @@ static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_
 {
 #if PHP_VERSION_ID >= 70000
     zend_string *_date;
+    char *_date_tmp;
     _date = php_format_date(format, format_len, ts, 1 TSRMLS_CC);
-    return ZSTR_VAL(_date);
+    _date_tmp = estrdup(ZSTR_VAL(_date));
+    zend_string_release(_date);
+    return _date_tmp;
 #else
     return php_format_date(format, format_len, ts, 1 TSRMLS_CC);
 #endif
@@ -1260,12 +1263,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
 
 PHP_METHOD(SEASLOG_RES_NAME, getBasePath)
 {
-    char *str;
-    int len = 0;
-
-    len = spprintf(&str, 0, "%s", SEASLOG_G(base_path));
-
-    SEASLOG_RETURN_STRINGL(str, len);
+    SEASLOG_RETURN_STRINGL((char *)(SEASLOG_G(base_path)), strlen(SEASLOG_G(base_path)));
 }
 
 PHP_METHOD(SEASLOG_RES_NAME, setLogger)
@@ -1295,7 +1293,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
 /*the last logger*/
 PHP_METHOD(SEASLOG_RES_NAME, getLastLogger)
 {
-    SEASLOG_RETURN_STRINGL(estrdup(SEASLOG_G(last_logger)->logger), SEASLOG_G(last_logger)->logger_len);
+    SEASLOG_RETURN_STRINGL((char *)(SEASLOG_G(last_logger)->logger), SEASLOG_G(last_logger)->logger_len);
 }
 
 PHP_METHOD(SEASLOG_RES_NAME, setDatetimeFormat)
@@ -1862,7 +1860,6 @@ static int appender_handle_file(char *message, int message_len, char *level, log
     }
 
     log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n", level, getpid(), current_time, real_time, message);
-
 
     if (_php_log_ex(log_info, log_len, log_file_path, log_file_path_len + 1, ce TSRMLS_CC) == FAILURE)
     {
