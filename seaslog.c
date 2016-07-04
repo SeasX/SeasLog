@@ -715,8 +715,10 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt TSRMLS_DC)
 
 static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce TSRMLS_DC)
 {
-
 #if PHP_VERSION_ID >= 70000
+
+    zval new_array;
+    zval *_buffer_data_;
 
     if (IS_ARRAY != Z_TYPE(SEASLOG_G(buffer)))
     {
@@ -725,24 +727,18 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
 
     if (zend_hash_num_elements(Z_ARRVAL(SEASLOG_G(buffer))) < 1)
     {
-        zval new_array;
         array_init(&new_array);
         SEASLOG_ADD_NEXT_INDEX_STRINGL(&new_array, log_info, log_info_len);
         SEASLOG_ADD_ASSOC_ZVAL_EX(&SEASLOG_G(buffer),path,path_len,&new_array);
-
     }
     else
     {
-        zval *_buffer_data_;
-
         if ((_buffer_data_ = zend_hash_str_find_ptr(Z_ARRVAL(SEASLOG_G(buffer)),path,path_len)) != NULL)
         {
             SEASLOG_ADD_NEXT_INDEX_STRINGL((void *)&_buffer_data_,log_info,log_info_len);
-
         }
         else
         {
-            zval new_array;
             array_init(&new_array);
             SEASLOG_ADD_NEXT_INDEX_STRINGL(&new_array, log_info, log_info_len);
             SEASLOG_ADD_ASSOC_ZVAL_EX(&SEASLOG_G(buffer),path,path_len,&new_array);
@@ -750,6 +746,9 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
     }
 
 #else
+    zval *new_array;
+    zval **_buffer_data_;
+
     if (IS_ARRAY != Z_TYPE_P(SEASLOG_G(buffer)))
     {
         return 0;
@@ -757,28 +756,21 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
 
     if (zend_hash_num_elements(Z_ARRVAL_P(SEASLOG_G(buffer))) < 1)
     {
-
-        zval *new_array;
         MAKE_STD_ZVAL(new_array);
         array_init(new_array);
         SEASLOG_ADD_NEXT_INDEX_STRINGL(new_array, log_info, log_info_len);
         SEASLOG_ADD_ASSOC_ZVAL_EX(SEASLOG_G(buffer),path,path_len,new_array);
-
     }
     else
     {
-        zval      **_buffer_data_;
 
         if (zend_hash_find(HASH_OF(SEASLOG_G(buffer)), path, path_len, (void**)&_buffer_data_) == SUCCESS)
         {
-
             convert_to_array_ex(_buffer_data_);
             SEASLOG_ADD_NEXT_INDEX_STRINGL(*_buffer_data_, log_info, log_info_len);
-
         }
         else
         {
-            zval *new_array;
             MAKE_STD_ZVAL(new_array);
             array_init(new_array);
             SEASLOG_ADD_NEXT_INDEX_STRINGL(new_array, log_info, log_info_len);
