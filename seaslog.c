@@ -323,7 +323,6 @@ static void seaslog_init_host_name(TSRMLS_D)
         }
         else
         {
-            char *host_name;
             spprintf(&SEASLOG_G(host_name), 0, "%s", buf);
         }
     }
@@ -465,6 +464,8 @@ static void seaslog_process_last_min(int now TSRMLS_DC)
 
 static void seaslog_init_logger(TSRMLS_D)
 {
+    int now;
+
     SEASLOG_G(base_path)                    = estrdup(SEASLOG_G(default_basepath));
     SEASLOG_G(current_datetime_format)      = estrdup(SEASLOG_G(default_datetime_format));
     SEASLOG_G(current_datetime_format_len)  = strlen(SEASLOG_G(current_datetime_format));
@@ -483,7 +484,7 @@ static void seaslog_init_logger(TSRMLS_D)
         SEASLOG_G(last_logger)->access = FAILURE;
     }
 
-    int now = (int)time(NULL);
+    now = (int)time(NULL);
     seaslog_process_last_sec(now TSRMLS_CC);
     seaslog_process_last_min(now TSRMLS_CC);
 }
@@ -666,6 +667,15 @@ static int real_php_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
 static int real_php_log_buffer(zval *msg_buffer, char *opt TSRMLS_DC)
 {
     php_stream *stream = NULL;
+    HashTable *ht;
+
+#if PHP_VERSION_ID >= 70000
+    zend_ulong num_key;
+    zend_string *str_key;
+    zval *entry;
+#else
+    zval **log;
+#endif
 
     stream = seaslog_stream_open_wrapper(opt TSRMLS_CC);
 
@@ -675,11 +685,8 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt TSRMLS_DC)
     }
 
 #if PHP_VERSION_ID >= 70000
-    zend_ulong num_key;
-    zend_string *str_key;
-    zval *entry;
 
-    HashTable *ht = HASH_OF(msg_buffer);
+    ht = HASH_OF(msg_buffer);
     ZEND_HASH_FOREACH_KEY_VAL(ht, num_key, str_key, entry)
     {
         zend_string *s = zval_get_string(entry);
@@ -689,8 +696,7 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt TSRMLS_DC)
     ZEND_HASH_FOREACH_END();
 #else
 
-    HashTable *ht = HASH_OF(msg_buffer);
-    zval **log;
+    ht = HASH_OF(msg_buffer);
 
     zend_hash_internal_pointer_reset(ht);
     while (zend_hash_get_current_data(ht, (void **)&log) == SUCCESS)
@@ -797,6 +803,16 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
 
 static void seaslog_shutdown_buffer(TSRMLS_D)
 {
+    HashTable   *ht;
+
+#if PHP_VERSION_ID >= 70000
+    zend_ulong num_key;
+    zend_string *str_key;
+    zval *entry;
+#else
+    zval **ppzval;
+#endif
+
     if (SEASLOG_G(use_buffer))
     {
         if (SEASLOG_G(buffer_count) < 1)
@@ -804,12 +820,7 @@ static void seaslog_shutdown_buffer(TSRMLS_D)
             return;
         }
 
-        HashTable   *ht;
-
 #if PHP_VERSION_ID >= 70000
-        zend_ulong num_key;
-        zend_string *str_key;
-        zval *entry;
 
         ht = Z_ARRVAL(SEASLOG_G(buffer));
         ZEND_HASH_FOREACH_KEY_VAL(ht, num_key, str_key, entry)
@@ -820,7 +831,6 @@ static void seaslog_shutdown_buffer(TSRMLS_D)
 
 #else
         ht = Z_ARRVAL_P(SEASLOG_G(buffer));
-        zval **ppzval;
 
         zend_hash_internal_pointer_reset(ht);
         while (zend_hash_get_current_data(ht, (void **)&ppzval) == SUCCESS)
@@ -1603,15 +1613,15 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency)
 
 /*Just used by PHP7*/
 // We asure the src is on heap, so every call we can safe free than alloc.
-char *strreplace(char *src, const char *oldstr, const char *newstr, size_t len)
+static char *strreplace(char *src, const char *oldstr, const char *newstr, size_t len)
 {
+    char *needle;
+    char *tmp;
+
     if(strcmp(oldstr, newstr)==0)
     {
         return src;
     }
-
-    char *needle;
-    char *tmp;
 
     while((needle = strstr(src, oldstr)) && (needle - src <= len))
     {
@@ -1810,12 +1820,12 @@ static int _seaslog_log_content(int argc, char *level, char *message, int messag
 
 static int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
 {
+    logger_entry_t *logger;
+
     if (_ck_log_level(level TSRMLS_CC) == FAILURE)
     {
         return FAILURE;
     }
-
-    logger_entry_t *logger;
 
     if (argc > 2 && module_len > 0 && module)
     {
@@ -1844,7 +1854,7 @@ static int appender_handle_file(char *message, int message_len, char *level, log
 {
 
     char *log_file_path, *log_info, *current_time, *real_date, *real_time;
-    int log_len, log_path_len, log_file_path_len;
+    int log_len, log_file_path_len;
 
     current_time = mic_time();
     real_time = mk_real_time(TSRMLS_C);
@@ -1926,6 +1936,8 @@ static int _mk_log_dir(char *dir TSRMLS_DC)
         {
             zval *zcontext = NULL;
             php_stream_context *context;
+            mode_t imode;
+            int ret;
 
             context = php_stream_context_from_zval(zcontext, 0);
 
@@ -1934,8 +1946,8 @@ static int _mk_log_dir(char *dir TSRMLS_DC)
                 return FAILURE;
             }
 
-            mode_t imode = (mode_t) SEASLOG_DIR_MODE;
-            int ret = VCWD_CHMOD(dir, imode);
+            imode = (mode_t) SEASLOG_DIR_MODE;
+            ret = VCWD_CHMOD(dir, imode);
             if (ret == FAILURE) {
                 return FAILURE;
             }
