@@ -19,11 +19,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2016-05-19</date>
-    <time>11:20:00</time>
+    <date>2016-07-05</date>
+    <time>23:30:00</time>
     <version>
-        <release>1.5.6</release>
-        <api>1.5.6</api>
+        <release>1.6.0</release>
+        <api>1.6.0</api>
     </version>
     <stability>
         <release>stable</release>
@@ -31,8 +31,10 @@
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - Fixed issue #76 #80 #86 Fixed segment fault with PHP7.
-        - Make memory usage more stable, and clear memory leaks with PHP5.* and PHP7.*.
+        - Fixed issue #90 #92 Date format.
+        - Fixed issue #96 Clear memory leaks.
+        - Fixed issue #91 Support TCP UDP appender.
+        - Support appender with config, switch File TCP UDP; config the remote_host and remote_port.
     </notes>
     <contents>
         <dir name="/">
@@ -372,6 +374,23 @@
                 - Fixed issue #68 Fixed _ to . with getDetail function.
                 - Fixed issue #73 Fixed segment fault with setBasePath function.
                 - Support Datetime Format Config.
+            </notes>
+        </release>
+        <release>
+            <date>2016-05-19</date>
+            <time>11:20:00</time>
+            <version>
+                <release>1.5.6</release>
+                <api>1.5.6</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - Fixed issue #76 #80 #86 Fixed segment fault with PHP7.
+                - Make memory usage more stable, and clear memory leaks with PHP5.* and PHP7.*.
             </notes>
         </release>
     </changelog>
