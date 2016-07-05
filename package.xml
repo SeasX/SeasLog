@@ -12,6 +12,7 @@
         - Buffer debug efficient log buffer, convenient
         - With PSR-3 Logger interface
         - Error and exception automatic logging
+        - Support appender with File,TCP,UDP
     </description>
     <lead>
         <name>Chitao Gao</name>
