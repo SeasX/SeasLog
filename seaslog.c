@@ -1423,7 +1423,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
         log_path = ZSTR_VAL(_log_path);
     }
 
-    if (_level && !strcmp(ZSTR_VAL(_level), SEASLOG_ALL))
+    if (ZSTR_LEN(_level) < 1 || (_level && !strcmp(ZSTR_VAL(_level), SEASLOG_ALL)))
     {
         level = "|";
     }
@@ -1459,7 +1459,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
         // do nothing
     }
 
-    if (level && !strcmp(level, SEASLOG_ALL))
+    if (level_len < 1 || (level && !strcmp(level, SEASLOG_ALL)))
     {
         level = "|";
     }
