@@ -51,7 +51,7 @@
 
 #define SEASLOG_ZVAL_STRING(z, s) ZVAL_STRING(z, s, 1)
 #define SEASLOG_ZVAL_STRINGL(z, s, l) ZVAL_STRING(z, s, l, 1)
-#define SEASLOG_RETURN_STRINGL(k, l) RETURN_STRINGL(k, l, 0)
+#define SEASLOG_RETURN_STRINGL(k, l) RETURN_STRINGL(k, l, 1)
 #define SEASLOG_ADD_ASSOC_ZVAL_EX(z, s, l, zn) add_assoc_zval_ex(z, s, l, zn)
 #define SEASLOG_ADD_ASSOC_STRING_EX(a, k, l, s) add_assoc_string_ex(a, k, l, s, 1)
 #define SEASLOG_ADD_NEXT_INDEX_STRING(a, s) add_next_index_string(a, s, 1)
@@ -1266,7 +1266,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
 
 PHP_METHOD(SEASLOG_RES_NAME, getBasePath)
 {
-    SEASLOG_RETURN_STRINGL((char *)(SEASLOG_G(base_path)), strlen(SEASLOG_G(base_path)));
+    SEASLOG_RETURN_STRINGL(SEASLOG_G(base_path), strlen(SEASLOG_G(base_path)));
 }
 
 PHP_METHOD(SEASLOG_RES_NAME, setLogger)
@@ -1296,7 +1296,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
 /*the last logger*/
 PHP_METHOD(SEASLOG_RES_NAME, getLastLogger)
 {
-    SEASLOG_RETURN_STRINGL((char *)(SEASLOG_G(last_logger)->logger), SEASLOG_G(last_logger)->logger_len);
+    SEASLOG_RETURN_STRINGL(SEASLOG_G(last_logger)->logger, SEASLOG_G(last_logger)->logger_len);
 }
 
 PHP_METHOD(SEASLOG_RES_NAME, setDatetimeFormat)
