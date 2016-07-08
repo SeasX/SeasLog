@@ -20,11 +20,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2016-07-05</date>
-    <time>23:30:00</time>
+    <date>2016-07-08</date>
+    <time>22:36:00</time>
     <version>
-        <release>1.6.0</release>
-        <api>1.6.0</api>
+        <release>1.6.2</release>
+        <api>1.6.2</api>
     </version>
     <stability>
         <release>stable</release>
@@ -32,10 +32,8 @@
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - Fixed issue #90 #92 Date format.
-        - Fixed issue #96 Clear memory leaks.
-        - Fixed issue #91 Support TCP UDP appender.
-        - Support appender with config, switch File TCP UDP; config the remote_host and remote_port.
+        - Fixed issue #97 PHP5.* Cached Block.
+        - Fixed issue #98 SeasLog::analyzerDetail(NULL).
     </notes>
     <contents>
         <dir name="/">
@@ -392,6 +390,25 @@
             <notes>
                 - Fixed issue #76 #80 #86 Fixed segment fault with PHP7.
                 - Make memory usage more stable, and clear memory leaks with PHP5.* and PHP7.*.
+            </notes>
+        </release>
+        <release>
+            <date>2016-07-05</date>
+            <time>23:30:00</time>
+            <version>
+                <release>1.6.0</release>
+                <api>1.6.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - Fixed issue #90 #92 Date format.
+                - Fixed issue #96 Clear memory leaks.
+                - Fixed issue #91 Support TCP UDP appender.
+                - Support appender with config, switch File TCP UDP; config the remote_host and remote_port.
             </notes>
         </release>
     </changelog>
