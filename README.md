@@ -1,4 +1,7 @@
-# SeasLog
+SeasLog
+======
+[![Build Status](https://travis-ci.org/Neeke/SeasLog.svg?branch=master)](https://travis-ci.org/Neeke/SeasLog)
+
 An effective,fast,stable log extension for PHP
 
 @author Chitao.Gao [neeke@php.net]
