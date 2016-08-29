@@ -8,6 +8,8 @@ An effective,fast,stable log extension for PHP
 
 @交流群 312910117
 
+[English Document](https://github.com/Neeke/SeasLog/blob/master/README.md)
+
 > ---
 - **[简介](#简介)**
     - **[为什么使用SeasLog](#为什么使用seaslog)**
