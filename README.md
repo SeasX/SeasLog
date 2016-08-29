@@ -6,7 +6,7 @@ An effective,fast,stable log extension for PHP
 
 @author Chitao.Gao [neeke@php.net]
 
-@中文文档
+![中文文档](https://github.com/Neeke/SeasLog/blob/master/README_zh.md)
 
 > ---
 - **[Synopsis](#synopsis)**
