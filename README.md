@@ -10,9 +10,9 @@ An effective,fast,stable log extension for PHP
 
 > ---
 - **[Synopsis](#synopsis)**
-    - **[Why use seaslog](#shy-use-seaslog)**
-    - **[What is provided at present](#shat-is-provided-at-present)**
-    - **[What is the target](#shat-is-the-target)**
+    - **[Why use seaslog](#why-use-seaslog)**
+    - **[What is provided at present](#what-is-provided-at-present)**
+    - **[What is the target](#what-is-the-target)**
 - **[Install](#install)**
     - **[Make Install SeasLog](#make-Install-SeasLog)**
     - **[seaslog.ini](#seaslog.ini)**
