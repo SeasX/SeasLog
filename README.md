@@ -9,30 +9,30 @@ An effective,fast,stable log extension for PHP
 @中文文档
 
 > ---
-- **[Synopsis](#Synopsis)**
-    - **[Why use seaslog](#Why-use-seaslog)**
-    - **[What is provided at present](#What-is-provided-at-present)**
-    - **[What is the target](#What-is-the-target)**
-- **[Install](#Install)**
-    - **[Make Install SeasLog](#Make-Install-SeasLog)**
+- **[Synopsis](#synopsis)**
+    - **[Why use seaslog](#shy-use-seaslog)**
+    - **[What is provided at present](#shat-is-provided-at-present)**
+    - **[What is the target](#shat-is-the-target)**
+- **[Install](#install)**
+    - **[Make Install SeasLog](#make-Install-SeasLog)**
     - **[seaslog.ini](#seaslog.ini)**
-- **[Use age](#Use-age)**
-    - **[Constants and functions](#Constants-and-functions)**
-        - [Constant list](#Constant-list)
-        - [Function list](#Function-list)
-    - **[The useage of seaslog logger](#The-useage-of-seaslog-logger)**
-        - [Get and set base path](#Get-and-set-base-path)
-        - [Get and set logger](#Get-and-set-logger)
-        - [Fast write log](#Fast-write-log)
-    - **[The useage of SeasLog Analyzer](#The-useage-of-seaslog-analyzer)**
-        - [Fast count some type of log count value](#Fast-count-some-type-of-log-count-value)
-        - [Acquisit some type of log list](#Acquisit-some-type-of-log-list)
-    - **[Using seaslog to conduct healthy warning](#Using-seaslog-to-conduct-healthy-warning)**
-        - [Warning configuration](#Warning-configuration)
-        - [Crontab configuration](#Crontab-configuration)
-    - **[Companies are now known to use](#Companies-are-now-known-to-use)**
-        - [List of companies](#List-of-companies)
-        - [Accepted donations](#Accepted-donations)
+- **[Use age](#use-age)**
+    - **[Constants and functions](#constants-and-functions)**
+        - [Constant list](#constant-list)
+        - [Function list](#function-list)
+    - **[The useage of seaslog logger](#the-useage-of-seaslog-logger)**
+        - [Get and set base path](#get-and-set-base-path)
+        - [Get and set logger](#get-and-set-logger)
+        - [Fast write log](#fast-write-log)
+    - **[The useage of SeasLog Analyzer](#the-useage-of-seaslog-analyzer)**
+        - [Fast count some type of log count value](#fast-count-some-type-of-log-count-value)
+        - [Acquisit some type of log list](#acquisit-some-type-of-log-list)
+    - **[Using seaslog to conduct healthy warning](#using-seaslog-to-conduct-healthy-warning)**
+        - [Warning configuration](#warning-configuration)
+        - [Crontab configuration](#crontab-configuration)
+    - **[Companies are now known to use](#companies-are-now-known-to-use)**
+        - [List of companies](#list-of-companies)
+        - [Accepted donations](#accepted-donations)
 
 
 > ---
