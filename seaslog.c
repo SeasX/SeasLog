@@ -380,7 +380,11 @@ void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
         return;
     }
 
-    default_ce = zend_exception_get_default(TSRMLS_C);
+#if PHP_VERSION_ID >= 70000
+	default_ce = Z_OBJCE_P(exception);
+#else
+	default_ce = zend_exception_get_default(TSRMLS_C);
+#endif
 
 #if PHP_VERSION_ID >= 70000
     message = zend_read_property(default_ce, exception, "message", sizeof("message")-1, 0, &rv);
