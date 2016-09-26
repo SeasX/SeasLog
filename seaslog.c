@@ -270,7 +270,6 @@ PHP_RINIT_FUNCTION(seaslog)
 PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
     seaslog_shutdown_buffer(TSRMLS_C);
-    seaslog_clear_buffer(TSRMLS_C);
     seaslog_clear_logger(TSRMLS_C);
     seaslog_clear_logger_list(TSRMLS_C);
     return SUCCESS;
@@ -548,17 +547,9 @@ static void seaslog_init_buffer(TSRMLS_D)
 
 #if PHP_VERSION_ID >= 70000
 
-    if (Z_TYPE(SEASLOG_G(buffer)) == IS_ARRAY)
-    {
-        EX_ARRAY_DESTROY(&SEASLOG_G(buffer));
-    }
     array_init(&SEASLOG_G(buffer));
 
 #else
-    if (SEASLOG_G(buffer) && Z_TYPE_P(SEASLOG_G(buffer)) == IS_ARRAY)
-    {
-        EX_ARRAY_DESTROY(SEASLOG_G(buffer));
-    }
 
     MAKE_STD_ZVAL(SEASLOG_G(buffer));
     array_init(SEASLOG_G(buffer));
@@ -842,6 +833,7 @@ static void seaslog_shutdown_buffer(TSRMLS_D)
         }
 #endif
 
+        seaslog_clear_buffer(TSRMLS_C);
         seaslog_init_buffer(TSRMLS_C);
     }
 }
