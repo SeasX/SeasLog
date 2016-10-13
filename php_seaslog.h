@@ -39,7 +39,7 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.6.5 - dev"
+#define SEASLOG_VERSION                     "1.6.6 - dev"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_ALL                         "all"
@@ -115,7 +115,7 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency);
 
 #define EX_ARRAY_DESTROY(arr) \
 	do { \
-		zval_ptr_dtor(&arr);\
+		zval_ptr_dtor(arr);\
 	} while(0)
 
 #endif
@@ -150,7 +150,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *base_path;
     char *host_name;
 
-    logger_entry_t *logger;
+    logger_entry_t *tmp_logger;
     logger_entry_t *last_logger;
     last_sec_entry_t *last_sec;
     last_min_entry_t *last_min;
