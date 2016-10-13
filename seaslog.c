@@ -1872,6 +1872,7 @@ static int appender_handle_file(char *message, int message_len, char *level, log
     efree(log_info);
     efree(real_time);
     efree(current_time);
+
     return SUCCESS;
 }
 
@@ -1894,6 +1895,7 @@ static int appender_handle_tcp_udp(char *message, int message_len, char *level, 
     efree(log_info);
     efree(real_time);
     efree(current_time);
+
     return SUCCESS;
 }
 

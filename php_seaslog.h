@@ -39,7 +39,7 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.6.4"
+#define SEASLOG_VERSION                     "1.6.5 - dev"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_ALL                         "all"
@@ -104,9 +104,20 @@ PHP_METHOD(SEASLOG_RES_NAME, alert);
 PHP_METHOD(SEASLOG_RES_NAME, emergency);
 
 #if PHP_VERSION_ID >= 70000
-#define EX_ARRAY_DESTROY(arr) zval_ptr_dtor((arr));ZVAL_UNDEF((arr));
+
+#define EX_ARRAY_DESTROY(arr) \
+	do { \
+		zval_ptr_dtor(arr); \
+		ZVAL_UNDEF(arr); \
+	} while(0)
+
 #else
-#define EX_ARRAY_DESTROY(arr) zval_dtor(arr);FREE_ZVAL(arr);
+
+#define EX_ARRAY_DESTROY(arr) \
+	do { \
+		zval_ptr_dtor(&arr);\
+	} while(0)
+
 #endif
 
 typedef struct _logger_entry_t
