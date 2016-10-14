@@ -83,7 +83,7 @@ ZEND_GET_MODULE(seaslog)
 static void seaslog_init_logger(TSRMLS_D);
 static void seaslog_init_buffer(TSRMLS_D);
 static void seaslog_clear_buffer(TSRMLS_D);
-static void seaslog_shutdown_buffer(TSRMLS_D);
+static void seaslog_shutdown_buffer(int re_init TSRMLS_DC);
 static void seaslog_clear_logger(TSRMLS_D);
 static void seaslog_init_logger_list(TSRMLS_D);
 static void seaslog_clear_logger_list(TSRMLS_D);
@@ -268,7 +268,8 @@ PHP_RINIT_FUNCTION(seaslog)
 
 PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
-    seaslog_shutdown_buffer(TSRMLS_C);
+    seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_NO TSRMLS_C);
+    seaslog_clear_buffer(TSRMLS_C);
     seaslog_clear_logger(TSRMLS_C);
     seaslog_clear_logger_list(TSRMLS_C);
     return SUCCESS;
@@ -637,6 +638,8 @@ static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
 {
     php_stream *stream = NULL;
     char *res = NULL;
+    int first_create_file = 0;
+    mode_t file_mode;
 
 #if PHP_VERSION_ID >= 70000
     zend_long reslen;
@@ -646,9 +649,6 @@ static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
 
     switch SEASLOG_G(appender)
     {
-    case SEASLOG_APPENDER_FILE:
-        stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | REPORT_ERRORS, NULL);
-        break;
     case SEASLOG_APPENDER_TCP:
         reslen = spprintf(&res, 0, "tcp://%s:%d", SEASLOG_G(remote_host), SEASLOG_G(remote_port));
         stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, 0, NULL, NULL, NULL);
@@ -661,8 +661,18 @@ static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
 
         efree(res);
         break;
+    case SEASLOG_APPENDER_FILE:
     default:
+        if (access(opt,F_OK) != 0) {
+            first_create_file = 1;
+        }
+
         stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | REPORT_ERRORS, NULL);
+
+        if (first_create_file == 1) {
+            file_mode = (mode_t) SEASLOG_FILE_MODE;
+            VCWD_CHMOD(opt, file_mode);
+        }
     }
 
     return stream;
@@ -808,14 +818,14 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
 
         if (SEASLOG_G(buffer_count) >= SEASLOG_G(buffer_size))
         {
-            seaslog_shutdown_buffer(TSRMLS_C);
+            seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_C);
         }
     }
 
     return SUCCESS;
 }
 
-static void seaslog_shutdown_buffer(TSRMLS_D)
+static void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
 {
     HashTable   *ht;
 
@@ -859,8 +869,10 @@ static void seaslog_shutdown_buffer(TSRMLS_D)
         }
 #endif
 
-        seaslog_clear_buffer(TSRMLS_C);
-        seaslog_init_buffer(TSRMLS_C);
+        if (re_init == SEASLOG_BUFFER_RE_INIT_YES) {
+            seaslog_clear_buffer(TSRMLS_C);
+            seaslog_init_buffer(TSRMLS_C);
+        }
     }
 }
 
@@ -958,7 +970,7 @@ static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_
     else
     {
 
-        if (last_or_tmp == 1)
+        if (last_or_tmp == SEASLOG_PROCESS_LOGGER_LAST)
         {
             logger_entry = SEASLOG_G(last_logger);
         }
@@ -1279,7 +1291,7 @@ PHP_METHOD(SEASLOG_RES_NAME, __construct)
 
 PHP_METHOD(SEASLOG_RES_NAME, __destruct)
 {
-    seaslog_shutdown_buffer(TSRMLS_C);
+    seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_NO TSRMLS_C);
 }
 
 PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
@@ -1322,7 +1334,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
     {
         if (strncmp(SEASLOG_G(last_logger)->logger,Z_STRVAL_P(_module),Z_STRLEN_P(_module)))
         {
-            SEASLOG_G(last_logger) = process_logger(Z_STRVAL_P(_module), Z_STRLEN_P(_module), 1 TSRMLS_CC);
+            SEASLOG_G(last_logger) = process_logger(Z_STRVAL_P(_module), Z_STRLEN_P(_module), SEASLOG_PROCESS_LOGGER_LAST TSRMLS_CC);
         }
 
         RETURN_TRUE;
@@ -1521,7 +1533,7 @@ PHP_METHOD(SEASLOG_RES_NAME, getBuffer)
 
 PHP_METHOD(SEASLOG_RES_NAME, flushBuffer)
 {
-    seaslog_shutdown_buffer(TSRMLS_C);
+    seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_C);
 
     RETURN_TRUE;
 }
@@ -1860,7 +1872,7 @@ static int _seaslog_log(int argc, char *level, char *message, int message_len, c
 
     if (argc > 2 && module_len > 0 && module)
     {
-        logger = process_logger(module, module_len, 2 TSRMLS_CC);
+        logger = process_logger(module, module_len, SEASLOG_PROCESS_LOGGER_TMP TSRMLS_CC);
     }
     else
     {

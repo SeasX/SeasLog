@@ -39,7 +39,7 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.6.6 - dev"
+#define SEASLOG_VERSION                     "1.6.8 - dev"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_ALL                         "all"
@@ -62,8 +62,14 @@ extern zend_module_entry seaslog_module_entry;
 #define SEASLOG_EVENT_ERROR                 1
 #define SEASLOG_EVENT_EXCEPTION             2
 
-#define SEASLOG_DIR_MODE                    0777
+#define SEASLOG_DIR_MODE                    0755
 #define SEASLOG_FILE_MODE                   0666
+
+#define SEASLOG_BUFFER_RE_INIT_YES          1
+#define SEASLOG_BUFFER_RE_INIT_NO           2
+
+#define SEASLOG_PROCESS_LOGGER_LAST         1
+#define SEASLOG_PROCESS_LOGGER_TMP          2
 
 #define SL_S(s)                             s, sizeof(s) - 1
 
