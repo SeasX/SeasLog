@@ -936,7 +936,7 @@ static char *mk_real_date(TSRMLS_D)
     return _date;
 }
 
-static char *mk_real_time(TSRMLSD)
+static char *mk_real_time(TSRMLS_D)
 {
     char *real_time = NULL;
 
