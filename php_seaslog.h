@@ -73,6 +73,10 @@ extern zend_module_entry seaslog_module_entry;
 
 #define SL_S(s)                             s, sizeof(s) - 1
 
+#define SEASLOG_HASH_VALUE_LOGGER           1
+#define SEASLOG_HASH_VALUE_PATH             2
+#define SEASLOG_HASH_VALUE_ACCESS           3
+
 #ifndef E_EXCEPTION
 # define E_EXCEPTION (1<<15L)
 #endif
@@ -128,6 +132,7 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency);
 
 typedef struct _logger_entry_t
 {
+    ulong logger_hash;
     char *logger;
     int logger_len;
     char *logger_path;

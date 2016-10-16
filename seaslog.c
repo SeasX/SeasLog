@@ -40,6 +40,9 @@
 #define SEASLOG_ZVAL_STRING(z, s) ZVAL_STRING(z, s)
 #define SEASLOG_ZVAL_STRINGL(z, s, l) ZVAL_STRINGL(z, s, l)
 #define SEASLOG_RETURN_STRINGL(k, l) RETURN_STRINGL(k, l)
+#define SEASLOG_ADD_INDEX_STRINGL(z, i, s, l) add_index_stringl(&z, i, s, l)
+#define SEASLOG_ADD_INDEX_LONG(z, i, l) add_index_long(&z, i, l)
+#define SEASLOG_ADD_INDEX_ZVAL(z, i, zn) add_index_zval(&z, i, &zn)
 #define SEASLOG_ADD_ASSOC_ZVAL_EX(z, s, l, zn) add_assoc_zval_ex(z, s, l, zn)
 #define SEASLOG_ADD_ASSOC_STRING_EX(a, k, l, s) add_assoc_string_ex(&a, k, l, s)
 #define SEASLOG_ADD_NEXT_INDEX_STRING(a, s) add_next_index_string(a, s)
@@ -52,6 +55,9 @@
 #define SEASLOG_ZVAL_STRING(z, s) ZVAL_STRING(z, s, 1)
 #define SEASLOG_ZVAL_STRINGL(z, s, l) ZVAL_STRING(z, s, l, 1)
 #define SEASLOG_RETURN_STRINGL(k, l) RETURN_STRINGL(k, l, 1)
+#define SEASLOG_ADD_INDEX_STRINGL(z, i, s, l) add_index_stringl(z, i, s, l, 1)
+#define SEASLOG_ADD_INDEX_LONG(z, i, l) add_index_long(z, i, l)
+#define SEASLOG_ADD_INDEX_ZVAL(z, i, zn) add_index_zval(z, i, zn)
 #define SEASLOG_ADD_ASSOC_ZVAL_EX(z, s, l, zn) add_assoc_zval_ex(z, s, l, zn)
 #define SEASLOG_ADD_ASSOC_STRING_EX(a, k, l, s) add_assoc_string_ex(a, k, l, s, 1)
 #define SEASLOG_ADD_NEXT_INDEX_STRING(a, s) add_next_index_string(a, s, 1)
@@ -268,7 +274,7 @@ PHP_RINIT_FUNCTION(seaslog)
 
 PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
-    seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_NO TSRMLS_C);
+    seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_NO TSRMLS_CC);
     seaslog_clear_buffer(TSRMLS_C);
     seaslog_clear_logger(TSRMLS_C);
     seaslog_clear_logger_list(TSRMLS_C);
@@ -445,7 +451,7 @@ static void recoveryErrorHooks(TSRMLS_D)
 
 static void seaslog_process_last_sec(int now TSRMLS_DC)
 {
-    last_sec_entry_t *last_sec = ecalloc(sizeof(last_sec_entry_t),1);;
+    last_sec_entry_t *last_sec = ecalloc(sizeof(last_sec_entry_t), 1);
     last_sec->sec = now;
     last_sec->real_time = seaslog_format_date(SEASLOG_G(current_datetime_format), SEASLOG_G(current_datetime_format_len), now TSRMLS_CC);
     SEASLOG_G(last_sec) = last_sec;
@@ -818,7 +824,7 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
 
         if (SEASLOG_G(buffer_count) >= SEASLOG_G(buffer_size))
         {
-            seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_C);
+            seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_CC);
         }
     }
 
@@ -930,7 +936,7 @@ static char *mk_real_date(TSRMLS_D)
     return _date;
 }
 
-static char *mk_real_time(TSRMLS_D)
+static char *mk_real_time(TSRMLSD)
 {
     char *real_time = NULL;
 
@@ -952,46 +958,79 @@ static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_
 {
     ulong logger_entry_hash = zend_inline_hash_func(logger, logger_len);
     logger_entry_t *logger_entry;
-    HashTable *ht;
+    HashTable *ht_list;
+    HashTable *ht_logger;
 
 #if PHP_VERSION_ID >= 70000
-    ht = Z_ARRVAL(SEASLOG_G(logger_list));
-    if ((logger_entry = zend_hash_index_find_ptr(ht, logger_entry_hash)) != NULL)
-    {
-        return logger_entry;
+    zval logger_array;
+    zval *logger_find;
+    zval *logger_tmp_find,*logger_path_tmp_find,*logger_access_find;
 #else
-    ht = HASH_OF(SEASLOG_G(logger_list));
+    zval *logger_array;
+    zval **logger_find;
+    zval **logger_tmp_find,**logger_path_tmp_find,**logger_access_find;
+#endif
 
-    if (zend_hash_index_find(ht, logger_entry_hash, (void*)&logger_entry) == SUCCESS)
+    if (last_or_tmp == SEASLOG_PROCESS_LOGGER_LAST)
     {
+        logger_entry = SEASLOG_G(last_logger);
+    }
+    else
+    {
+        logger_entry = SEASLOG_G(tmp_logger);
+    }
+
+    if (logger_entry_hash == logger_entry->logger_hash) {
         return logger_entry;
+    }
+
+    if (logger_entry->logger)
+    {
+        efree(logger_entry->logger);
+    }
+
+    if (logger_entry->logger_path)
+    {
+        efree(logger_entry->logger_path);
+    }
+
+    logger_entry->logger_hash = logger_entry_hash;
+
+#if PHP_VERSION_ID >= 70000
+    ht_list = Z_ARRVAL(SEASLOG_G(logger_list));
+
+    if ((logger_find = zend_hash_index_find(ht_list, logger_entry_hash)) != NULL)
+    {
+        ht_logger = Z_ARRVAL_P(logger_find);
+        logger_tmp_find = zend_hash_index_find(ht_logger, SEASLOG_HASH_VALUE_LOGGER);
+        logger_path_tmp_find = zend_hash_index_find(ht_logger, SEASLOG_HASH_VALUE_PATH);
+        logger_access_find = zend_hash_index_find(ht_logger, SEASLOG_HASH_VALUE_ACCESS);
+
+        logger_entry->logger_len = spprintf(&logger_entry->logger, 0, "%s",Z_STRVAL_P(logger_tmp_find));
+        logger_entry->logger_path_len = spprintf(&logger_entry->logger_path, 0, "%s",Z_STRVAL_P(logger_path_tmp_find));
+        logger_entry->access = Z_LVAL_P(logger_access_find);
+#else
+    ht_list = HASH_OF(SEASLOG_G(logger_list));
+
+    if (zend_hash_index_find(ht_list, logger_entry_hash, (void **)&logger_find) == SUCCESS)
+    {
+        ht_logger = HASH_OF(*logger_find);
+
+        zend_hash_index_find(ht_logger, SEASLOG_HASH_VALUE_LOGGER, (void **)&logger_tmp_find);
+        zend_hash_index_find(ht_logger, SEASLOG_HASH_VALUE_PATH, (void **)&logger_path_tmp_find);
+        zend_hash_index_find(ht_logger, SEASLOG_HASH_VALUE_ACCESS, (void **)&logger_access_find);
+
+        logger_entry->logger_len = spprintf(&logger_entry->logger, 0, "%s",Z_STRVAL_PP(logger_tmp_find));
+        logger_entry->logger_path_len = spprintf(&logger_entry->logger_path, 0, "%s",Z_STRVAL_PP(logger_path_tmp_find));
+        logger_entry->access = Z_LVAL_PP(logger_access_find);
+
 #endif
     }
     else
     {
-
-        if (last_or_tmp == SEASLOG_PROCESS_LOGGER_LAST)
-        {
-            logger_entry = SEASLOG_G(last_logger);
-        }
-        else
-        {
-            logger_entry = SEASLOG_G(tmp_logger);
-        }
-
-        if (logger_entry->logger)
-        {
-            efree(logger_entry->logger);
-        }
-
-        if (logger_entry->logger_path)
-        {
-            efree(logger_entry->logger_path);
-        }
-
         logger_entry->logger_len = spprintf(&logger_entry->logger, 0, "%s",logger);
-
         logger_entry->logger_path_len = spprintf(&logger_entry->logger_path, 0, "%s/%s", SEASLOG_G(base_path), logger_entry->logger);
+
         if (_mk_log_dir(logger_entry->logger_path TSRMLS_CC) == SUCCESS)
         {
             logger_entry->access = SUCCESS;
@@ -1001,10 +1040,21 @@ static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_
             logger_entry->access = FAILURE;
         }
 
-        SEASLOG_ZEND_HASH_INDEX_UPDATE(ht, logger_entry_hash, logger_entry, sizeof(logger_entry_t), NULL);
+#if PHP_VERSION_ID >= 70000
+        array_init(&logger_array);
+#else
+        MAKE_STD_ZVAL(logger_array);
+        array_init(logger_array);
+#endif
 
-        return logger_entry;
+        SEASLOG_ADD_INDEX_STRINGL(logger_array,SEASLOG_HASH_VALUE_LOGGER,logger_entry->logger,logger_entry->logger_len);
+        SEASLOG_ADD_INDEX_STRINGL(logger_array,SEASLOG_HASH_VALUE_PATH,logger_entry->logger_path,logger_entry->logger_path_len);
+        SEASLOG_ADD_INDEX_LONG(logger_array,SEASLOG_HASH_VALUE_ACCESS,logger_entry->access);
+
+        SEASLOG_ADD_INDEX_ZVAL(SEASLOG_G(logger_list),logger_entry_hash,logger_array);
     }
+
+    return logger_entry;
 }
 
 static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
@@ -1291,7 +1341,7 @@ PHP_METHOD(SEASLOG_RES_NAME, __construct)
 
 PHP_METHOD(SEASLOG_RES_NAME, __destruct)
 {
-    seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_NO TSRMLS_C);
+    seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_NO TSRMLS_CC);
 }
 
 PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
@@ -1334,7 +1384,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
     {
         if (strncmp(SEASLOG_G(last_logger)->logger,Z_STRVAL_P(_module),Z_STRLEN_P(_module)))
         {
-            SEASLOG_G(last_logger) = process_logger(Z_STRVAL_P(_module), Z_STRLEN_P(_module), SEASLOG_PROCESS_LOGGER_LAST TSRMLS_CC);
+            process_logger(Z_STRVAL_P(_module), Z_STRLEN_P(_module), SEASLOG_PROCESS_LOGGER_LAST TSRMLS_CC);
         }
 
         RETURN_TRUE;
@@ -1533,7 +1583,7 @@ PHP_METHOD(SEASLOG_RES_NAME, getBuffer)
 
 PHP_METHOD(SEASLOG_RES_NAME, flushBuffer)
 {
-    seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_C);
+    seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_CC);
 
     RETURN_TRUE;
 }
