@@ -20,11 +20,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2016-07-08</date>
-    <time>22:36:00</time>
+    <date>2016-10-17</date>
+    <time>15:00:00</time>
     <version>
-        <release>1.6.2</release>
-        <api>1.6.2</api>
+        <release>1.6.8</release>
+        <api>1.6.8</api>
     </version>
     <stability>
         <release>stable</release>
@@ -32,8 +32,8 @@
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - Fixed issue #97 PHP5.* Cached Block.
-        - Fixed issue #98 SeasLog::analyzerDetail(NULL).
+        - Fixed issue #100 #102 #103 memory leak.
+        - Fixed Dir chmod 0755 and File chmod 0666.
     </notes>
     <contents>
         <dir name="/">
@@ -410,6 +410,23 @@
                 - Fixed issue #96 Clear memory leaks.
                 - Fixed issue #91 Support TCP UDP appender.
                 - Support appender with config, switch File TCP UDP; config the remote_host and remote_port.
+            </notes>
+        </release>
+        <release>
+            <date>2016-07-08</date>
+            <time>22:36:00</time>
+            <version>
+                <release>1.6.2</release>
+                <api>1.6.2</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - Fixed issue #97 PHP5.* Cached Block.
+                - Fixed issue #98 SeasLog::analyzerDetail(NULL).
             </notes>
         </release>
     </changelog>
