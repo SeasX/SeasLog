@@ -563,6 +563,8 @@ static void seaslog_clear_logger(TSRMLS_D)
 
 static void seaslog_init_buffer(TSRMLS_D)
 {
+    zval *z_buffer;
+
     if (SEASLOG_G(use_buffer))
     {
 
@@ -575,7 +577,6 @@ static void seaslog_init_buffer(TSRMLS_D)
 #else
 
     SEASLOG_G(buffer) = NULL;
-    zval *z_buffer;
 
     MAKE_STD_ZVAL(z_buffer);
     array_init(z_buffer);
@@ -612,11 +613,12 @@ static void seaslog_clear_buffer(TSRMLS_D)
 
 static void seaslog_init_logger_list(TSRMLS_D)
 {
+    zval *z_logger_list;
+
 #if PHP_VERSION_ID >= 70000
     array_init(&SEASLOG_G(logger_list));
 #else
     SEASLOG_G(logger_list) = NULL;
-    zval *z_logger_list;
 
     MAKE_STD_ZVAL(z_logger_list);
     array_init(z_logger_list);
