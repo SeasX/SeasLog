@@ -91,7 +91,7 @@ $ pecl install seaslog
 ```
 
 ### Windows环境中使用SeasLog
-到PECL/SeasLog主页找到对应的dll进行安装 [PECL/SeasLog Windows Dll](http://pecl.php.net/package/SeasLog/1.6.0/windows) 
+到PECL/SeasLog主页找到对应的dll进行安装 [PECL/SeasLog Windows Dll](http://pecl.php.net/package/SeasLog/1.6.0/windows)
 
 ### seaslog.ini的配置
 ```conf
@@ -487,14 +487,14 @@ emergency | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house n
 > 此时log格式统一为 `{hostName} | {loggerName} | {type} | {pid} | {timeStamp} |{dateTime} | {logInfo}`
 
 ```sh
-vagrant-ubuntu-trusty | test/logger | error | 21423 | 1466787583.321 | 2016:06:25 00:59:43 | this is a error test by ::log 
-vagrant-ubuntu-trusty | test/logger | debug | 21423 | 1466787583.322 | 2016:06:25 00:59:43 | this is a neeke debug 
-vagrant-ubuntu-trusty | test/logger | info | 21423 | 1466787583.323 | 2016:06:25 00:59:43 | this is a info log 
-vagrant-ubuntu-trusty | test/logger | notice | 21423 | 1466787583.324 | 2016:06:25 00:59:43 | this is a notice log 
-vagrant-ubuntu-trusty | test/logger | warning | 21423 | 1466787583.325 | 2016:06:25 00:59:43 | your github.com was down,please rboot it ASAP! 
-vagrant-ubuntu-trusty | test/logger | error | 21423 | 1466787583.326 | 2016:06:25 00:59:43 | a error log 
-vagrant-ubuntu-trusty | test/logger | critical | 21423 | 1466787583.327 | 2016:06:25 00:59:43 | some thing was critical 
-vagrant-ubuntu-trusty | test/logger | alert | 21423 | 1466787583.328 | 2016:06:25 00:59:43 | yes this is a alertMSG 
+vagrant-ubuntu-trusty | test/logger | error | 21423 | 1466787583.321 | 2016:06:25 00:59:43 | this is a error test by ::log
+vagrant-ubuntu-trusty | test/logger | debug | 21423 | 1466787583.322 | 2016:06:25 00:59:43 | this is a neeke debug
+vagrant-ubuntu-trusty | test/logger | info | 21423 | 1466787583.323 | 2016:06:25 00:59:43 | this is a info log
+vagrant-ubuntu-trusty | test/logger | notice | 21423 | 1466787583.324 | 2016:06:25 00:59:43 | this is a notice log
+vagrant-ubuntu-trusty | test/logger | warning | 21423 | 1466787583.325 | 2016:06:25 00:59:43 | your github.com was down,please rboot it ASAP!
+vagrant-ubuntu-trusty | test/logger | error | 21423 | 1466787583.326 | 2016:06:25 00:59:43 | a error log
+vagrant-ubuntu-trusty | test/logger | critical | 21423 | 1466787583.327 | 2016:06:25 00:59:43 | some thing was critical
+vagrant-ubuntu-trusty | test/logger | alert | 21423 | 1466787583.328 | 2016:06:25 00:59:43 | yes this is a alertMSG
 vagrant-ubuntu-trusty | test/logger | emergency | 21423 | 1466787583.329 | 2016:06:25 00:59:43 | Just now, the house next door was completely burnt out! it`s a joke
 ```
 
@@ -643,6 +643,7 @@ test5[level] = SEASLOG_DEBUG
  - 重庆易宠科技(中国最大的独立宠物平台) www.epet.com
  - 微财富 www.weicaifu.com
  - 美丽说(部分项目) www.meilishuo.com
+ - 百度Crab平台 crab.baidu.com
  - 更多请提交PR
 
 ### 接受捐赠
