@@ -644,6 +644,7 @@ test5[level] = SEASLOG_DEBUG
  - 微财富 www.weicaifu.com
  - 美丽说(部分项目) www.meilishuo.com
  - 百度Crab平台 crab.baidu.com
+ - 爱宠医生(中国最大的互联网宠物医疗平台) www.5ichong.com
  - 更多请提交PR
 
 ### 接受捐赠
