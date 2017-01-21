@@ -87,6 +87,7 @@ ZEND_GET_MODULE(seaslog)
 #endif
 
 static void seaslog_init_logger(TSRMLS_D);
+static void seaslog_init_default_last_logger(TSRMLS_D);
 static void seaslog_init_buffer(TSRMLS_D);
 static void seaslog_clear_buffer(TSRMLS_D);
 static void seaslog_shutdown_buffer(int re_init TSRMLS_DC);
@@ -472,17 +473,22 @@ static void seaslog_process_last_min(int now TSRMLS_DC)
     }
 }
 
-static void seaslog_init_logger(TSRMLS_D)
+static void seaslog_init_default_last_logger(TSRMLS_D)
 {
-    int now;
+    if (SEASLOG_G(last_logger)->logger)
+    {
+        // do nothing
+    }
+    else
+    {
+        SEASLOG_G(last_logger)->logger_len = spprintf(&SEASLOG_G(last_logger)->logger, 0, "%s",SEASLOG_G(default_logger));
+    }
 
-    SEASLOG_G(base_path)                    = estrdup(SEASLOG_G(default_basepath));
-    SEASLOG_G(current_datetime_format)      = estrdup(SEASLOG_G(default_datetime_format));
-    SEASLOG_G(current_datetime_format_len)  = strlen(SEASLOG_G(current_datetime_format));
+    if (SEASLOG_G(last_logger)->logger_path)
+    {
+        efree(SEASLOG_G(last_logger)->logger_path);
+    }
 
-    SEASLOG_G(last_logger) = ecalloc(1,sizeof(logger_entry_t));
-
-    SEASLOG_G(last_logger)->logger_len = spprintf(&SEASLOG_G(last_logger)->logger, 0, "%s",SEASLOG_G(default_logger));
     SEASLOG_G(last_logger)->logger_path_len = spprintf(&SEASLOG_G(last_logger)->logger_path, 0, "%s/%s", SEASLOG_G(base_path), SEASLOG_G(last_logger)->logger);
 
     if (_mk_log_dir(SEASLOG_G(last_logger)->logger_path TSRMLS_CC) == SUCCESS)
@@ -493,12 +499,24 @@ static void seaslog_init_logger(TSRMLS_D)
     {
         SEASLOG_G(last_logger)->access = FAILURE;
     }
+}
 
+static void seaslog_init_logger(TSRMLS_D)
+{
+    int now;
+
+    SEASLOG_G(base_path)                    = estrdup(SEASLOG_G(default_basepath));
+    SEASLOG_G(current_datetime_format)      = estrdup(SEASLOG_G(default_datetime_format));
+    SEASLOG_G(current_datetime_format_len)  = strlen(SEASLOG_G(current_datetime_format));
+
+    SEASLOG_G(last_logger) = ecalloc(1,sizeof(logger_entry_t));
     SEASLOG_G(tmp_logger) = ecalloc(1,sizeof(logger_entry_t));
 
     now = (int)time(NULL);
     seaslog_process_last_sec(now TSRMLS_CC);
     seaslog_process_last_min(now TSRMLS_CC);
+
+    seaslog_init_default_last_logger(TSRMLS_C);
 }
 
 static void seaslog_clear_logger(TSRMLS_D)
@@ -1356,12 +1374,14 @@ PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
 
     if (argc > 0 && (Z_TYPE_P(_base_path) == IS_STRING || Z_STRLEN_P(_base_path) > 0))
     {
-        if (!strcmp(SEASLOG_G(base_path),SEASLOG_G(default_basepath)))
+        if (SEASLOG_G(base_path))
         {
             efree(SEASLOG_G(base_path));
-        }
 
-        SEASLOG_G(base_path) = estrdup(Z_STRVAL_P(_base_path));
+            SEASLOG_G(base_path) = estrdup(Z_STRVAL_P(_base_path));
+
+            seaslog_init_default_last_logger(TSRMLS_C);
+        }
 
         RETURN_TRUE;
     }
