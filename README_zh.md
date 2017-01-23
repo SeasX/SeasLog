@@ -22,6 +22,7 @@ An effective,fast,stable log extension for PHP
     - **[常量与函数](#常量与函数)**
         - [常量列表](#常量列表)
         - [函数列表](#函数列表)
+    - **[PHP Re 结果](#php-re-结果)**
     - **[SeasLog Logger的使用](#seaslog-logger的使用)**
         - [获取与设置basePath](#获取与设置basepath)
         - [设置logger与获取lastLogger](#设置logger与获取lastlogger)
@@ -387,6 +388,251 @@ class SeasLog
 
 
 ```
+
+### PHP Re 结果
+
+```php
+/usr/local/php/php-7.0.6-zts-debug/bin/php --re seaslog
+
+Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
+
+  - Dependencies {
+  }
+
+  - INI {
+    Entry [ seaslog.default_basepath <ALL> ]
+      Current = '/var/log/www'
+    }
+    Entry [ seaslog.default_logger <ALL> ]
+      Current = 'defauult'
+    }
+    Entry [ seaslog.default_datetime_format <ALL> ]
+      Current = 'Y:m:d H:i:s'
+    }
+    Entry [ seaslog.disting_type <ALL> ]
+      Current = '0'
+    }
+    Entry [ seaslog.disting_by_hour <ALL> ]
+      Current = '0'
+    }
+    Entry [ seaslog.use_buffer <ALL> ]
+      Current = '1'
+    }
+    Entry [ seaslog.trace_error <ALL> ]
+      Current = '1'
+    }
+    Entry [ seaslog.trace_exception <ALL> ]
+      Current = '1'
+    }
+    Entry [ seaslog.buffer_size <ALL> ]
+      Current = '10'
+    }
+    Entry [ seaslog.level <ALL> ]
+      Current = '0'
+    }
+    Entry [ seaslog.appender <ALL> ]
+      Current = '1'
+    }
+    Entry [ seaslog.remote_host <ALL> ]
+      Current = '127.0.0.1'
+    }
+    Entry [ seaslog.remote_port <ALL> ]
+      Current = '514'
+    }
+  }
+
+  - Constants [16] {
+    Constant [ string SEASLOG_VERSION ] { 1.6.9 }
+    Constant [ string SEASLOG_AUTHOR ] { Chitao.Gao  [ neeke@php.net ] }
+    Constant [ string SEASLOG_ALL ] { all }
+    Constant [ string SEASLOG_DEBUG ] { debug }
+    Constant [ string SEASLOG_INFO ] { info }
+    Constant [ string SEASLOG_NOTICE ] { notice }
+    Constant [ string SEASLOG_WARNING ] { warning }
+    Constant [ string SEASLOG_ERROR ] { error }
+    Constant [ string SEASLOG_CRITICAL ] { critical }
+    Constant [ string SEASLOG_ALERT ] { alert }
+    Constant [ string SEASLOG_EMERGENCY ] { emergency }
+    Constant [ integer SEASLOG_DETAIL_ORDER_ASC ] { 1 }
+    Constant [ integer SEASLOG_DETAIL_ORDER_DESC ] { 2 }
+    Constant [ integer SEASLOG_APPENDER_FILE ] { 1 }
+    Constant [ integer SEASLOG_APPENDER_TCP ] { 2 }
+    Constant [ integer SEASLOG_APPENDER_UDP ] { 3 }
+  }
+
+  - Functions {
+    Function [ <internal:SeasLog> function seaslog_get_version ] {
+    }
+    Function [ <internal:SeasLog> function seaslog_get_author ] {
+    }
+  }
+
+  - Classes [1] {
+    Class [ <internal:SeasLog> class SeasLog ] {
+
+      - Constants [0] {
+      }
+
+      - Static properties [0] {
+      }
+
+      - Static methods [19] {
+        Method [ <internal:SeasLog> static public method setBasePath ] {
+
+          - Parameters [1] {
+            Parameter #0 [ <required> $base_path ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method getBasePath ] {
+        }
+
+        Method [ <internal:SeasLog> static public method setLogger ] {
+
+          - Parameters [1] {
+            Parameter #0 [ <required> $logger ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method getLastLogger ] {
+        }
+
+        Method [ <internal:SeasLog> static public method setDatetimeFormat ] {
+
+          - Parameters [1] {
+            Parameter #0 [ <required> $format ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method getDatetimeFormat ] {
+        }
+
+        Method [ <internal:SeasLog> static public method analyzerCount ] {
+
+          - Parameters [3] {
+            Parameter #0 [ <required> $level ]
+            Parameter #1 [ <optional> $log_path ]
+            Parameter #2 [ <optional> $key_word ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method analyzerDetail ] {
+
+          - Parameters [6] {
+            Parameter #0 [ <required> $level ]
+            Parameter #1 [ <optional> $log_path ]
+            Parameter #2 [ <optional> $key_word ]
+            Parameter #3 [ <optional> $start ]
+            Parameter #4 [ <optional> $limit ]
+            Parameter #5 [ <optional> $order ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method getBuffer ] {
+        }
+
+        Method [ <internal:SeasLog> static public method flushBuffer ] {
+        }
+
+        Method [ <internal:SeasLog> static public method log ] {
+
+          - Parameters [4] {
+            Parameter #0 [ <required> $level ]
+            Parameter #1 [ <optional> $message ]
+            Parameter #2 [ <optional> $content ]
+            Parameter #3 [ <optional> $logger ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method debug ] {
+
+          - Parameters [3] {
+            Parameter #0 [ <required> $message ]
+            Parameter #1 [ <optional> $content ]
+            Parameter #2 [ <optional> $logger ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method info ] {
+
+          - Parameters [3] {
+            Parameter #0 [ <required> $message ]
+            Parameter #1 [ <optional> $content ]
+            Parameter #2 [ <optional> $logger ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method notice ] {
+
+          - Parameters [3] {
+            Parameter #0 [ <required> $message ]
+            Parameter #1 [ <optional> $content ]
+            Parameter #2 [ <optional> $logger ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method warning ] {
+
+          - Parameters [3] {
+            Parameter #0 [ <required> $message ]
+            Parameter #1 [ <optional> $content ]
+            Parameter #2 [ <optional> $logger ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method error ] {
+
+          - Parameters [3] {
+            Parameter #0 [ <required> $message ]
+            Parameter #1 [ <optional> $content ]
+            Parameter #2 [ <optional> $logger ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method critical ] {
+
+          - Parameters [3] {
+            Parameter #0 [ <required> $message ]
+            Parameter #1 [ <optional> $content ]
+            Parameter #2 [ <optional> $logger ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method alert ] {
+
+          - Parameters [3] {
+            Parameter #0 [ <required> $message ]
+            Parameter #1 [ <optional> $content ]
+            Parameter #2 [ <optional> $logger ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method emergency ] {
+
+          - Parameters [3] {
+            Parameter #0 [ <required> $message ]
+            Parameter #1 [ <optional> $content ]
+            Parameter #2 [ <optional> $logger ]
+          }
+        }
+      }
+
+      - Properties [0] {
+      }
+
+      - Methods [2] {
+        Method [ <internal:SeasLog, ctor> public method __construct ] {
+        }
+
+        Method [ <internal:SeasLog, dtor> public method __destruct ] {
+        }
+      }
+    }
+  }
+}
+
+```
+
 
 ### SeasLog Logger的使用
 #### 获取与设置basePath
