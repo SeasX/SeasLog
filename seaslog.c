@@ -151,31 +151,71 @@ zend_module_dep seaslog_deps[] =
 };
 #endif
 
+ZEND_BEGIN_ARG_INFO_EX(seaslog_setBasePath_arginfo, 0, 0, 1)
+ZEND_ARG_INFO(0, base_path)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_setLogger_arginfo, 0, 0, 1)
+ZEND_ARG_INFO(0, logger)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_setDatetimeFormat_arginfo, 0, 0, 1)
+ZEND_ARG_INFO(0, format)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_analyzerCount_arginfo, 0, 0, 1)
+ZEND_ARG_INFO(0, level)
+ZEND_ARG_INFO(0, log_path)
+ZEND_ARG_INFO(0, key_word)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_analyzerDetail_arginfo, 0, 0, 1)
+ZEND_ARG_INFO(0, level)
+ZEND_ARG_INFO(0, log_path)
+ZEND_ARG_INFO(0, key_word)
+ZEND_ARG_INFO(0, start)
+ZEND_ARG_INFO(0, limit)
+ZEND_ARG_INFO(0, order)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_log_arginfo, 0, 0, 1)
+ZEND_ARG_INFO(0, level)
+ZEND_ARG_INFO(0, message)
+ZEND_ARG_INFO(0, content)
+ZEND_ARG_INFO(0, logger)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_log_common_arginfo, 0, 0, 1)
+ZEND_ARG_INFO(0, message)
+ZEND_ARG_INFO(0, content)
+ZEND_ARG_INFO(0, logger)
+ZEND_END_ARG_INFO()
+
 const zend_function_entry seaslog_methods[] =
 {
     PHP_ME(SEASLOG_RES_NAME, __construct,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(SEASLOG_RES_NAME, __destruct,    NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
 
-    PHP_ME(SEASLOG_RES_NAME, setBasePath,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, setBasePath,   seaslog_setBasePath_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getBasePath,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, setLogger,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, setLogger,     seaslog_setLogger_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getLastLogger, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, setDatetimeFormat,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, setDatetimeFormat,     seaslog_setDatetimeFormat_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getDatetimeFormat,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, analyzerCount, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, analyzerDetail,NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, analyzerCount, seaslog_analyzerCount_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, analyzerDetail,seaslog_analyzerDetail_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getBuffer,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, flushBuffer,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
-    PHP_ME(SEASLOG_RES_NAME, log,           NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, debug,         NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, info,          NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, notice,        NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, warning,       NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, error,         NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, critical,      NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, alert,         NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, emergency,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, log,           seaslog_log_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, debug,         seaslog_log_common_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, info,          seaslog_log_common_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, notice,        seaslog_log_common_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, warning,       seaslog_log_common_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, error,         seaslog_log_common_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, critical,      seaslog_log_common_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, alert,         seaslog_log_common_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, emergency,     seaslog_log_common_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
     {
         NULL, NULL, NULL
@@ -387,9 +427,9 @@ void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
     }
 
 #if PHP_VERSION_ID >= 70000
-	default_ce = Z_OBJCE_P(exception);
+    default_ce = Z_OBJCE_P(exception);
 #else
-	default_ce = zend_exception_get_default(TSRMLS_C);
+    default_ce = zend_exception_get_default(TSRMLS_C);
 #endif
 
 #if PHP_VERSION_ID >= 70000
@@ -586,20 +626,20 @@ static void seaslog_init_buffer(TSRMLS_D)
     if (SEASLOG_G(use_buffer))
     {
 
-    SEASLOG_G(buffer_count) = 0;
+        SEASLOG_G(buffer_count) = 0;
 
 #if PHP_VERSION_ID >= 70000
 
-    array_init(&SEASLOG_G(buffer));
+        array_init(&SEASLOG_G(buffer));
 
 #else
 
-    SEASLOG_G(buffer) = NULL;
+        SEASLOG_G(buffer) = NULL;
 
-    MAKE_STD_ZVAL(z_buffer);
-    array_init(z_buffer);
+        MAKE_STD_ZVAL(z_buffer);
+        array_init(z_buffer);
 
-    SEASLOG_G(buffer) = z_buffer;
+        SEASLOG_G(buffer) = z_buffer;
 #endif
     }
 }
@@ -689,13 +729,15 @@ static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
         break;
     case SEASLOG_APPENDER_FILE:
     default:
-        if (access(opt,F_OK) != 0) {
+        if (access(opt,F_OK) != 0)
+        {
             first_create_file = 1;
         }
 
         stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | REPORT_ERRORS, NULL);
 
-        if (first_create_file == 1) {
+        if (first_create_file == 1)
+        {
             file_mode = (mode_t) SEASLOG_FILE_MODE;
             VCWD_CHMOD(opt, file_mode);
         }
@@ -895,7 +937,8 @@ static void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
         }
 #endif
 
-        if (re_init == SEASLOG_BUFFER_RE_INIT_YES) {
+        if (re_init == SEASLOG_BUFFER_RE_INIT_YES)
+        {
             seaslog_clear_buffer(TSRMLS_C);
             seaslog_init_buffer(TSRMLS_C);
         }
@@ -1000,7 +1043,8 @@ static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_
         logger_entry = SEASLOG_G(tmp_logger);
     }
 
-    if (logger_entry_hash == logger_entry->logger_hash) {
+    if (logger_entry_hash == logger_entry->logger_hash)
+    {
         return logger_entry;
     }
 
@@ -2065,7 +2109,8 @@ static int _mk_log_dir(char *dir TSRMLS_DC)
 
             imode = (mode_t) SEASLOG_DIR_MODE;
             ret = VCWD_CHMOD(dir, imode);
-            if (ret == FAILURE) {
+            if (ret == FAILURE)
+            {
                 return FAILURE;
             }
 

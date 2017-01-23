@@ -20,11 +20,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2016-10-17</date>
-    <time>15:00:00</time>
+    <date>2017-01-23</date>
+    <time>18:54:00</time>
     <version>
-        <release>1.6.8</release>
-        <api>1.6.8</api>
+        <release>1.6.9</release>
+        <api>1.6.9</api>
     </version>
     <stability>
         <release>stable</release>
@@ -32,8 +32,8 @@
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - Fixed issue #100 #102 #103 memory leak.
-        - Fixed Dir chmod 0755 and File chmod 0666.
+        - Fixed issue #113 setBastPath.
+        - Fixed PHP --re seaslog result.
     </notes>
     <contents>
         <dir name="/">
@@ -427,6 +427,23 @@
             <notes>
                 - Fixed issue #97 PHP5.* Cached Block.
                 - Fixed issue #98 SeasLog::analyzerDetail(NULL).
+            </notes>
+        </release>
+        <release>
+            <date>2016-10-17</date>
+            <time>15:00:00</time>
+            <version>
+                <release>1.6.8</release>
+                <api>1.6.8</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - Fixed issue #100 #102 #103 memory leak.
+                - Fixed Dir chmod 0755 and File chmod 0666.
             </notes>
         </release>
     </changelog>
