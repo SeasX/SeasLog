@@ -891,6 +891,7 @@ test5[level] = SEASLOG_DEBUG
  - 美丽说(部分项目) www.meilishuo.com
  - 百度Crab平台 crab.baidu.com
  - 爱宠医生(中国最大的互联网宠物医疗平台) www.5ichong.com
+ - 爱奇艺秀场(美女直播平台) x.pps.tv
  - 更多请提交PR
 
 ### 接受捐赠
