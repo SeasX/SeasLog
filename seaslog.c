@@ -2150,3 +2150,4 @@ static int _php_log_ex(char *message, int message_len, char *log_file_path, int 
         return real_php_log_ex(message, message_len, log_file_path TSRMLS_CC);
     }
 }
+
