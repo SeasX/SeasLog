@@ -4,6 +4,16 @@
  * Date: 14-1-27 下午4:47
  */
 
+define('SEASLOG_ALL','all');
+define('SEASLOG_DEBUG','debug');
+define('SEASLOG_INFO','info');
+define('SEASLOG_NOTICE','notice');
+define('SEASLOG_WARNING','warning');
+define('SEASLOG_ERROR','error');
+define('SEASLOG_CRITICAL','critical');
+define('SEASLOG_ALERT','alert');
+define('SEASLOG_EMERGENCY','emergency');
+
 class SeasLog
 {
     public function __construct()
