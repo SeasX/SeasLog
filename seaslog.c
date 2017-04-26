@@ -240,6 +240,9 @@ STD_PHP_INI_ENTRY("seaslog.level", "0", PHP_INI_ALL, OnUpdateLongGEZero, level, 
 STD_PHP_INI_ENTRY("seaslog.appender", "1", PHP_INI_ALL, OnUpdateLongGEZero, appender, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.remote_host", "127.0.0.1", PHP_INI_ALL, OnUpdateString, remote_host, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.remote_port", "514", PHP_INI_ALL, OnUpdateLongGEZero, remote_port, zend_seaslog_globals, seaslog_globals)
+
+STD_PHP_INI_BOOLEAN("seaslog.trim_wrap", "0", PHP_INI_ALL, OnUpdateBool, trim_wrap, zend_seaslog_globals, seaslog_globals)
+
 PHP_INI_END()
 
 static PHP_GINIT_FUNCTION(seaslog)
@@ -1227,7 +1230,7 @@ static char *str_replace(char *ori, char * rep, char * with)
 static int get_detail(char *log_path, char *level, char *key_word, long start, long end, long order, zval *return_value TSRMLS_DC)
 {
     FILE * fp;
-    char buffer[BUFSIZ + 1];
+    char buffer[SEASLOG_BUFFER_MAX_SIZE + 1];
     char *path;
     char *sh;
     char *command;
@@ -1977,6 +1980,20 @@ static int _seaslog_log_content(int argc, char *level, char *message, int messag
     return ret;
 }
 
+static int _message_trim_wrap(char *message,int message_len TSRMLS_DC)
+{
+    int i;
+    for (i=0;i<=message_len;i++)
+    {
+      if(message[i] == '\r' || message[i] == '\n')
+      {
+        message[i] = SEASLOG_TRIM_WRAP;
+      }
+    }
+
+    return SUCCESS;
+}
+
 static int _seaslog_log(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
 {
     logger_entry_t *logger;
@@ -1993,6 +2010,11 @@ static int _seaslog_log(int argc, char *level, char *message, int message_len, c
     else
     {
         logger = SEASLOG_G(last_logger);
+    }
+
+    if (SEASLOG_G(trim_wrap))
+    {
+        _message_trim_wrap(message,message_len TSRMLS_CC);
     }
 
     switch SEASLOG_G(appender)

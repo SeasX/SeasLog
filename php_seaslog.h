@@ -39,7 +39,7 @@ extern zend_module_entry seaslog_module_entry;
 #endif
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.6.9"
+#define SEASLOG_VERSION                     "1.7.0"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_ALL                         "all"
@@ -76,6 +76,10 @@ extern zend_module_entry seaslog_module_entry;
 #define SEASLOG_HASH_VALUE_LOGGER           1
 #define SEASLOG_HASH_VALUE_PATH             2
 #define SEASLOG_HASH_VALUE_ACCESS           3
+
+#define SEASLOG_BUFFER_MAX_SIZE             65535
+
+#define SEASLOG_TRIM_WRAP                   26
 
 #ifndef E_EXCEPTION
 # define E_EXCEPTION (1<<15L)
@@ -171,6 +175,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool use_buffer;
     zend_bool trace_error;
     zend_bool trace_exception;
+    zend_bool trim_wrap;
 
     int buffer_size;
     int level;
