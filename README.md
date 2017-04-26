@@ -109,6 +109,7 @@ seaslog.default_datetime_format = "Y:m:d H:i:s"         ;The DateTime Style.  De
 seaslog.appender = 1                                    ;Switch the Record Log Data Store.     1File 2TCP 3UDP (Switch default 1)
 seaslog.remote_host = 127.0.0.1                         ;If you use  Record TCP or UDP, configure this remote ip.(Default 127.0.0.1)
 seaslog.remote_port = 514                               ;If you use Record TCP or UDP, configure this remote port.(Default 514)
+seaslog.trim_wrap = 0                                   ;Trim the \n and \r in log message. (Default 0)
 ```
 > `seaslog.disting_type = 1` Switch use Logger DisTing by type, it’s meaning SeasLog will create the file deistic info\warn\error and the other type.
 

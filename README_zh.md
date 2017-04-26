@@ -111,6 +111,7 @@ seaslog.default_datetime_format = "Y:m:d H:i:s"         ;日期格式配置 默�
 seaslog.appender = 1                                    ;日志存储介质 1File 2TCP 3UDP (默认为1)
 seaslog.remote_host = 127.0.0.1                         ;接收ip 默认127.0.0.1 (当使用TCP或UDP时必填)
 seaslog.remote_port = 514                               ;接收端口 默认514 (当使用TCP或UDP时必填)
+seaslog.trim_wrap = 0                                   ;过滤日志中的回车和换行符 (默认为0)
 ```
 > `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
 
