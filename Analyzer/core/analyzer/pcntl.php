@@ -43,7 +43,7 @@ class pcntl extends analyzerBase
         //线程数大于配置数，每个配置一个线程
         if ($_analyz_count <= self::$forkCount) {
             self::$forkCount = $_analyz_count;
-            return array_chunk($_analyz, $_analyz_count, TRUE);
+            return array_chunk($_analyz, 1, TRUE);
         }
 
         //平均分配置到线程数，最后一个线程分得最多个
