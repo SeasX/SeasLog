@@ -89,6 +89,7 @@ ZEND_GET_MODULE(seaslog)
 static void seaslog_init_logger(TSRMLS_D);
 static void seaslog_init_default_last_logger(TSRMLS_D);
 static void seaslog_init_buffer(TSRMLS_D);
+static void seaslog_init_request(TSRMLS_D);
 static void seaslog_clear_buffer(TSRMLS_D);
 static void seaslog_shutdown_buffer(int re_init TSRMLS_DC);
 static void seaslog_clear_logger(TSRMLS_D);
@@ -133,6 +134,9 @@ static zend_bool use_buffer = 0;
 static int buffer_size = 0;
 static int level = 0;
 
+// 自定义添加
+static char *request_id = "00001001";
+
 const zend_function_entry seaslog_functions[] =
 {
     PHP_FE(seaslog_get_version, NULL)
@@ -153,6 +157,10 @@ zend_module_dep seaslog_deps[] =
 
 ZEND_BEGIN_ARG_INFO_EX(seaslog_setBasePath_arginfo, 0, 0, 1)
 ZEND_ARG_INFO(0, base_path)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_setRequestID_arginfo, 0, 0, 1)
+ZEND_ARG_INFO(0, request_id)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(seaslog_setLogger_arginfo, 0, 0, 1)
@@ -200,6 +208,10 @@ const zend_function_entry seaslog_methods[] =
     PHP_ME(SEASLOG_RES_NAME, getBasePath,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, setLogger,     seaslog_setLogger_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getLastLogger, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    // ---------自定义---------
+    PHP_ME(SEASLOG_RES_NAME, setRequestID,  seaslog_setRequestID_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getRequestID,  NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    // ---------以上！---------
     PHP_ME(SEASLOG_RES_NAME, setDatetimeFormat,     seaslog_setDatetimeFormat_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getDatetimeFormat,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, analyzerCount, seaslog_analyzerCount_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
@@ -311,7 +323,10 @@ PHP_RINIT_FUNCTION(seaslog)
     seaslog_init_host_name(TSRMLS_C);
     seaslog_init_logger_list(TSRMLS_C);
     seaslog_init_logger(TSRMLS_C);
+    // 自定义添加批次号
+	seaslog_init_request(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
+
 
     return SUCCESS;
 }
@@ -645,6 +660,24 @@ static void seaslog_init_buffer(TSRMLS_D)
         SEASLOG_G(buffer) = z_buffer;
 #endif
     }
+}
+
+// 自定义批次号
+static char *get_request_id(){
+	char *uniqid;
+	struct timeval now;
+
+    timerclear(&now);
+    gettimeofday(&now, NULL);
+
+    spprintf(&uniqid, 0, "%ld%ld", (long)time(NULL), (long)now.tv_usec / 1000);
+	return uniqid;
+}
+
+// 自定义批次号
+static void seaslog_init_request(TSRMLS_D)
+{
+	SEASLOG_G(request_id) = get_request_id();
 }
 
 static void seaslog_clear_buffer(TSRMLS_D)
@@ -1505,6 +1538,37 @@ PHP_METHOD(SEASLOG_RES_NAME, getDatetimeFormat)
     SEASLOG_RETURN_STRINGL(str, len);
 }
 
+// 自定义批次号
+PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
+{
+    zval *_request_id;
+    int argc = ZEND_NUM_ARGS();
+
+    if (zend_parse_parameters(argc TSRMLS_CC, "z", &_request_id) == FAILURE)
+        return;
+
+    if (argc > 0 && (Z_TYPE_P(_request_id) == IS_STRING || Z_STRLEN_P(_request_id) > 0))
+    {
+        if (SEASLOG_G(request_id))
+        {
+            efree(SEASLOG_G(request_id));
+
+            SEASLOG_G(request_id) = estrdup(Z_STRVAL_P(_request_id));
+        }
+
+        RETURN_TRUE;
+    }
+
+    RETURN_FALSE;
+}
+
+// 自定义添加批次号
+PHP_METHOD(SEASLOG_RES_NAME, getRequestID)
+{
+    SEASLOG_RETURN_STRINGL(SEASLOG_G(request_id), strlen(SEASLOG_G(request_id)));
+}
+
+
 PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
 {
     int argc = ZEND_NUM_ARGS();
@@ -2050,7 +2114,7 @@ static int appender_handle_file(char *message, int message_len, char *level, log
         log_file_path_len = spprintf(&log_file_path, 0, "%s/%s.log", logger->logger_path,real_date);
     }
 
-    log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s \n", level, getpid(), current_time, real_time, message);
+    log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s | %s \n", level, getpid(), SEASLOG_G(request_id), current_time, real_time, message);
 
     if (_php_log_ex(log_info, log_len, log_file_path, log_file_path_len + 1, ce TSRMLS_CC) == FAILURE)
     {
@@ -2076,7 +2140,7 @@ static int appender_handle_tcp_udp(char *message, int message_len, char *level, 
     current_time = mic_time();
     real_time = mk_real_time(TSRMLS_C);
 
-    log_len = spprintf(&log_info, 0, "%s | %s | %s | %d | %s | %s | %s \n", SEASLOG_G(host_name), logger->logger, level, getpid(), current_time, real_time, message);
+    log_len = spprintf(&log_info, 0, "%s | %s | %s | %d | %s | %s | %s | %s \n", SEASLOG_G(host_name), logger->logger, level, getpid(), SEASLOG_G(request_id), current_time, real_time, message);
 
     if (_php_log_ex(log_info, log_len, logger->logger, logger->logger_len, ce TSRMLS_CC) == FAILURE)
     {
