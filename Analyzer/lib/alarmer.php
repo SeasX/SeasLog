@@ -72,12 +72,19 @@ class alarmer
             }
         }
 
-        $sendResult = $mail->Send();
+        try {
+            $sendResult = $mail->Send();
+            if ($sendResult) {
+                \SeasLog::info('报警邮件发送成功', array(), 'SeasLogAnalyzer');
+            }
 
-        if (!$sendResult) {
-            Seaslog::error('报警邮件发送失败。{errorInfo}', array('{errirInfo}' => $mail->ErrorInfo), 'alarmer');
+            return $sendResult;
+        } catch (mailer\phpmailerException $e) {
+            \Seaslog::error('报警邮件发送失败。{errorInfo}', array('{errorInfo}' => $e->getMessage()), 'SeasLogAnalyzer');
+
+            return FALSE;
         }
 
-        return $sendResult;
+        return TRUE;
     }
 }

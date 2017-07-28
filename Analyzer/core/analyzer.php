@@ -13,7 +13,7 @@ use core\analyzer as coreRun;
 class analyzer
 {
     //当前版本
-    const SEASLOG_ANALYZER_VERSION = '1.0.0';
+    const SEASLOG_ANALYZER_VERSION = '1.1.0';
 
     static public function run()
     {

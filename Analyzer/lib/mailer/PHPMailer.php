@@ -564,11 +564,7 @@ class PHPMailer
 
         } catch (phpmailerException $e) {
             $this->SetError($e->getMessage());
-            if ($this->exceptions) {
-                throw $e;
-            }
-            echo $e->getMessage() . "\n";
-            return FALSE;
+            throw $e;
         }
     }
 
@@ -1479,9 +1475,10 @@ class PHPMailer
      * Returns an empty string on failure.
      * @param string $path The full path to the file
      * @param string $encoding The encoding to use; one of 'base64', '7bit', '8bit', 'binary', 'quoted-printable'
+     * @return string
+     * @throws phpmailerException
      * @see EncodeFile()
      * @access private
-     * @return string
      */
     private function EncodeFile($path, $encoding = 'base64')
     {

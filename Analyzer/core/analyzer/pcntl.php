@@ -81,6 +81,8 @@ class pcntl extends analyzerBase
                         self::analyzerRun($rName, $config);
                     }
                 }
+
+                \SeasLog::info('Children Process Done.', array(), 'SeasLogAnalyzer');
                 exit(0);
             }
 
@@ -89,6 +91,8 @@ class pcntl extends analyzerBase
                 echo "wait $i -> " . time() . "\n";
             }
         }
+
+        \SeasLog::info('Master Process Done. And Children Process ids => {MyPids}', array('{MyPids}' => json_encode($pids)), 'SeasLogAnalyzer');
     }
 }
 
