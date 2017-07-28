@@ -35,8 +35,8 @@ class pcntl extends analyzerBase
         $_analyz_count = count($_analyz);
 
         //只有一个线程时，作一个批次
-        if (self::$forkCount < 2) {
-            self::$forkCount = 1;
+        if (self::$forkCount <= config::PCNTL_FORK_COUNT_MIN) {
+            self::$forkCount = config::PCNTL_FORK_COUNT_MIN;
             return array($_analyz);
         }
 

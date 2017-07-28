@@ -1381,13 +1381,7 @@ class PHPMailer
 
         } catch (phpmailerException $e) {
             $this->SetError($e->getMessage());
-            if ($this->exceptions) {
-                throw $e;
-            }
-            echo $e->getMessage() . "\n";
-            if ($e->getCode() == self::STOP_CRITICAL) {
-                return FALSE;
-            }
+            throw $e;
         }
         return TRUE;
     }

@@ -8,6 +8,9 @@ namespace constant;
 
 class config
 {
+    //最小进程数
+    const PCNTL_FORK_COUNT_MIN = 1;
+
     static private $config = array();
 
     /**
