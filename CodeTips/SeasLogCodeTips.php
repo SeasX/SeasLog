@@ -13,6 +13,8 @@ define('SEASLOG_ERROR','error');
 define('SEASLOG_CRITICAL','critical');
 define('SEASLOG_ALERT','alert');
 define('SEASLOG_EMERGENCY','emergency');
+define('SEASLOG_DETAIL_ORDER_ASC',1);
+define('SEASLOG_DETAIL_ORDER_DESC',2);
 
 class SeasLog
 {
@@ -113,7 +115,7 @@ class SeasLog
      *
      * @return array
      */
-    static public function analyzerDetail($level = SEASLOG_INFO, $log_path = '*', $key_word = NULL, $start = 1, $limit = 20, $order = SEASLOG_DETIAL_ORDER_ASC)
+    static public function analyzerDetail($level = SEASLOG_INFO, $log_path = '*', $key_word = NULL, $start = 1, $limit = 20, $order = SEASLOG_DETAIL_ORDER_ASC)
     {
         return array();
     }
