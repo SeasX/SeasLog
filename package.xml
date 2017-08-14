@@ -46,6 +46,17 @@
             <file role="src" name="EXPERIMENTAL" />
             <file role="src" name="php_seaslog.h" />
             <file role="src" name="seaslog.c" />
+            <dir name="src">
+                <file role="src" name="Common.c" />
+                <file role="src" name="Analyzer.c" />
+                <file role="src" name="Appender.c" />
+                <file role="src" name="Buffer.c" />
+                <file role="src" name="Datetime.c" />
+                <file role="src" name="ErrorHook.c" />
+                <file role="src" name="ExceptionHook.c" />
+                <file role="src" name="Logger.c" />
+                <file role="src" name="Request.c" />
+            </dir>
             <dir name="CodeTips">
                 <file role="src" name="SeasLogCodeTips.php"/>
             </dir>
