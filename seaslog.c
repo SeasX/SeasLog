@@ -89,9 +89,10 @@ ZEND_GET_MODULE(seaslog)
 static void seaslog_init_logger(TSRMLS_D);
 static void seaslog_init_default_last_logger(TSRMLS_D);
 static void seaslog_init_buffer(TSRMLS_D);
-static void seaslog_init_request(TSRMLS_D);
 static void seaslog_clear_buffer(TSRMLS_D);
 static void seaslog_shutdown_buffer(int re_init TSRMLS_DC);
+static void seaslog_init_request_id(TSRMLS_D);
+static void seaslog_clear_request_id(TSRMLS_D);
 static void seaslog_clear_logger(TSRMLS_D);
 static void seaslog_init_logger_list(TSRMLS_D);
 static void seaslog_clear_logger_list(TSRMLS_D);
@@ -208,10 +209,10 @@ const zend_function_entry seaslog_methods[] =
     PHP_ME(SEASLOG_RES_NAME, getBasePath,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, setLogger,     seaslog_setLogger_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getLastLogger, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    // ---------自定义---------
+
     PHP_ME(SEASLOG_RES_NAME, setRequestID,  seaslog_setRequestID_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getRequestID,  NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    // ---------以上！---------
+
     PHP_ME(SEASLOG_RES_NAME, setDatetimeFormat,     seaslog_setDatetimeFormat_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getDatetimeFormat,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, analyzerCount, seaslog_analyzerCount_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
@@ -323,11 +324,8 @@ PHP_RINIT_FUNCTION(seaslog)
     seaslog_init_host_name(TSRMLS_C);
     seaslog_init_logger_list(TSRMLS_C);
     seaslog_init_logger(TSRMLS_C);
-    // 自定义添加批次号
-	seaslog_init_request(TSRMLS_C);
+	seaslog_init_request_id(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
-
-
     return SUCCESS;
 }
 
@@ -337,6 +335,7 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
     seaslog_clear_buffer(TSRMLS_C);
     seaslog_clear_logger(TSRMLS_C);
     seaslog_clear_logger_list(TSRMLS_C);
+	seaslog_clear_request_id(TSRMLS_C);
     return SUCCESS;
 }
 
@@ -662,22 +661,28 @@ static void seaslog_init_buffer(TSRMLS_D)
     }
 }
 
-// 自定义批次号
-static char *get_request_id(){
+static char *get_uniqid(){
 	char *uniqid;
-	struct timeval now;
+	struct timeval tv;
 
-    timerclear(&now);
-    gettimeofday(&now, NULL);
+    timerclear(&tv);
+    gettimeofday(&tv, NULL);
 
-    spprintf(&uniqid, 0, "%ld%ld", (long)time(NULL), (long)now.tv_usec / 1000);
+    spprintf(&uniqid, 0, "%08x%05x", (int)tv.tv_sec, (int)tv.tv_usec % 0x100000);
 	return uniqid;
 }
 
-// 自定义批次号
-static void seaslog_init_request(TSRMLS_D)
+static void seaslog_init_request_id(TSRMLS_D)
 {
-	SEASLOG_G(request_id) = get_request_id();
+	SEASLOG_G(request_id) = get_uniqid();
+}
+
+static void seaslog_clear_request_id(TSRMLS_D)
+{
+    if (SEASLOG_G(request_id))
+    {
+        efree(SEASLOG_G(request_id));
+    }
 }
 
 static void seaslog_clear_buffer(TSRMLS_D)
@@ -1452,7 +1457,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
     if (zend_parse_parameters(argc TSRMLS_CC, "z", &_base_path) == FAILURE)
         return;
 
-    if (argc > 0 && (Z_TYPE_P(_base_path) == IS_STRING || Z_STRLEN_P(_base_path) > 0))
+    if (argc > 0 && (Z_TYPE_P(_base_path) == IS_STRING && Z_STRLEN_P(_base_path) > 0))
     {
         if (SEASLOG_G(base_path))
         {
@@ -1482,7 +1487,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
     if (zend_parse_parameters(argc TSRMLS_CC, "z", &_module) == FAILURE)
         return;
 
-    if (argc > 0 && (Z_TYPE_P(_module) == IS_STRING || Z_STRLEN_P(_module) > 0))
+    if (argc > 0 && (Z_TYPE_P(_module) == IS_STRING && Z_STRLEN_P(_module) > 0))
     {
         if (strncmp(SEASLOG_G(last_logger)->logger,Z_STRVAL_P(_module),Z_STRLEN_P(_module)))
         {
@@ -1547,13 +1552,23 @@ PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
     if (zend_parse_parameters(argc TSRMLS_CC, "z", &_request_id) == FAILURE)
         return;
 
-    if (argc > 0 && (Z_TYPE_P(_request_id) == IS_STRING || Z_STRLEN_P(_request_id) > 0))
+    if (argc > 0 && Z_STRLEN_P(_request_id) > 0)
     {
         if (SEASLOG_G(request_id))
         {
             efree(SEASLOG_G(request_id));
 
-            SEASLOG_G(request_id) = estrdup(Z_STRVAL_P(_request_id));
+            switch (Z_TYPE_P(_request_id))
+            {
+                case IS_STRING:
+                    SEASLOG_G(request_id) = estrdup(Z_STRVAL_P(_request_id));
+                    break;
+                case IS_LONG:
+                    spprintf(&SEASLOG_G(request_id), 0, "%ld", Z_LVAL_P(_request_id));
+                    break;
+                default:
+                    RETURN_FALSE;
+            }
         }
 
         RETURN_TRUE;
@@ -1562,7 +1577,6 @@ PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
     RETURN_FALSE;
 }
 
-// 自定义添加批次号
 PHP_METHOD(SEASLOG_RES_NAME, getRequestID)
 {
     SEASLOG_RETURN_STRINGL(SEASLOG_G(request_id), strlen(SEASLOG_G(request_id)));
