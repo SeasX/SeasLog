@@ -51,6 +51,22 @@ class SeasLog
     }
 
     /**
+     * 设置本次请求标识
+     * @param string
+     * @return bool
+     */
+    static public function setRequestID($request_id){
+        return TRUE;
+    }
+    /**
+     * 获取本次请求标识
+     * @return string
+     */
+    static public function getRequestID(){
+        return uniqid();
+    }
+
+    /**
      * 设置模块目录
      * @param $module
      *

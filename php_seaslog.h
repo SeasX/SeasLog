@@ -99,6 +99,8 @@ PHP_METHOD(SEASLOG_RES_NAME, __construct);
 PHP_METHOD(SEASLOG_RES_NAME, __destruct);
 PHP_METHOD(SEASLOG_RES_NAME, setBasePath);
 PHP_METHOD(SEASLOG_RES_NAME, getBasePath);
+PHP_METHOD(SEASLOG_RES_NAME, setRequestID);
+PHP_METHOD(SEASLOG_RES_NAME, getRequestID);
 PHP_METHOD(SEASLOG_RES_NAME, setLogger);
 PHP_METHOD(SEASLOG_RES_NAME, getLastLogger);
 PHP_METHOD(SEASLOG_RES_NAME, setDatetimeFormat);
@@ -164,6 +166,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     int  current_datetime_format_len;
     char *base_path;
     char *host_name;
+	char *request_id;
 
     logger_entry_t *tmp_logger;
     logger_entry_t *last_logger;
@@ -184,6 +187,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     int appender;
     char *remote_host;
     int remote_port;
+
 
 #if PHP_VERSION_ID >= 70000
     zval buffer;
