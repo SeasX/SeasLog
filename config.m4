@@ -25,7 +25,7 @@ if test "$PHP_SEASLOG" != "no"; then
 
     PHP_NEW_EXTENSION(seaslog, seaslog.c, $ext_shared)
 
-    PHP_ADD_INCLUDE([$ext_srcdir])
-    PHP_ADD_INCLUDE([$ext_srcdir/include])
+    dnl PHP_ADD_INCLUDE([$ext_srcdir])
+    dnl PHP_ADD_INCLUDE([$ext_srcdir/include])
 
 fi

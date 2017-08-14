@@ -14,7 +14,7 @@
 +----------------------------------------------------------------------+
 */
 
-#include "SeasLog.h"
+#include "include/SeasLog.h"
 #include "php_seaslog.h"
 
 ZEND_DECLARE_MODULE_GLOBALS(seaslog);

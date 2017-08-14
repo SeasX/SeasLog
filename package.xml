@@ -46,6 +46,10 @@
             <file role="src" name="EXPERIMENTAL" />
             <file role="src" name="php_seaslog.h" />
             <file role="src" name="seaslog.c" />
+            <dir name="include">
+                <file role="src" name="SeasLog.h" />
+                <file role="src" name="php7_wrapper.h" />
+            </dir>
             <dir name="src">
                 <file role="src" name="Common.c" />
                 <file role="src" name="Analyzer.c" />

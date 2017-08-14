@@ -19,7 +19,7 @@
 #ifndef _PHP_SEASLOG_H_
 #define _PHP_SEASLOG_H_
 
-#include "SeasLog.h"
+#include "include/SeasLog.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
