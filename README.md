@@ -186,6 +186,22 @@ class SeasLog
     {
         return 'the base_path';
     }
+    
+    /**
+     * Set The requestID
+     * @param string
+     * @return bool
+     */
+    static public function setRequestID($request_id){
+        return TRUE;
+    }
+    /**
+     * Get The requestID
+     * @return string
+     */
+    static public function getRequestID(){
+        return uniqid();
+    }
 
     /**
      * Set The logger
