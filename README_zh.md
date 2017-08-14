@@ -71,6 +71,7 @@ php内置error_log、syslog函数功能强大且性能极好，但由于各种�
 * 自动记录异常信息
 * 连接TCP端口发送
 * 连接UDP端口发送
+* 支持RequestId区分请求
 
 ### 目标是怎样的
 * 便捷、规范的log记录
@@ -514,6 +515,16 @@ Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
         Method [ <internal:SeasLog> static public method getLastLogger ] {
         }
 
+        Method [ <internal:SeasLog> static public method setRequestID ] {
+
+          - Parameters [1] {
+            Parameter #0 [ <required> $request_id ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method getRequestID ] {
+        }
+
         Method [ <internal:SeasLog> static public method setDatetimeFormat ] {
 
           - Parameters [1] {
@@ -734,31 +745,31 @@ SeasLog::error('test error 3');
 如果已经在前文使用过SeasLog::setLogger()函数，第3个参数的log只在此处临时使用，不影响下文。
 */
 ```
-> log格式统一为： `{type} | {pid} | {timeStamp} |{dateTime} | {logInfo}`
+> log格式统一为： `{type} | {pid} | {uniqid} | {timeStamp} |{dateTime} | {logInfo}`
 ```sh
-error | 23625 | 1406422432.786 | 2014:07:27 08:53:52 | this is a error test by log
-debug | 23625 | 1406422432.786 | 2014:07:27 08:53:52 | this is a neeke debug
-info | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | this is a info log
-notice | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | this is a notice log
-warning | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | your github.com was down,please rboot it ASAP!
-error | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | a error log
-critical | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | some thing was critical
-emergency | 23625 | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house next door was completely burnt out! it is a joke
+error | 23625 | 599159975a9ff | 1406422432.786 | 2014:07:27 08:53:52 | this is a error test by log
+debug | 23625 | 599159975a9ff | 1406422432.786 | 2014:07:27 08:53:52 | this is a neeke debug
+info | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | this is a info log
+notice | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | this is a notice log
+warning | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | your github.com was down,please rboot it ASAP!
+error | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | a error log
+critical | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | some thing was critical
+emergency | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house next door was completely burnt out! it is a joke
 ```
 
 #### 当`seaslog.appender`配置为 `2（TCP）` 或 `3（UDP）` 时，日志将推送至remote_host:remote_port的TCP或UDP端口
 > 此时log格式统一为 `{hostName} | {loggerName} | {type} | {pid} | {timeStamp} |{dateTime} | {logInfo}`
 
 ```sh
-vagrant-ubuntu-trusty | test/logger | error | 21423 | 1466787583.321 | 2016:06:25 00:59:43 | this is a error test by ::log
-vagrant-ubuntu-trusty | test/logger | debug | 21423 | 1466787583.322 | 2016:06:25 00:59:43 | this is a neeke debug
-vagrant-ubuntu-trusty | test/logger | info | 21423 | 1466787583.323 | 2016:06:25 00:59:43 | this is a info log
-vagrant-ubuntu-trusty | test/logger | notice | 21423 | 1466787583.324 | 2016:06:25 00:59:43 | this is a notice log
-vagrant-ubuntu-trusty | test/logger | warning | 21423 | 1466787583.325 | 2016:06:25 00:59:43 | your github.com was down,please rboot it ASAP!
-vagrant-ubuntu-trusty | test/logger | error | 21423 | 1466787583.326 | 2016:06:25 00:59:43 | a error log
-vagrant-ubuntu-trusty | test/logger | critical | 21423 | 1466787583.327 | 2016:06:25 00:59:43 | some thing was critical
-vagrant-ubuntu-trusty | test/logger | alert | 21423 | 1466787583.328 | 2016:06:25 00:59:43 | yes this is a alertMSG
-vagrant-ubuntu-trusty | test/logger | emergency | 21423 | 1466787583.329 | 2016:06:25 00:59:43 | Just now, the house next door was completely burnt out! it`s a joke
+vagrant-ubuntu-trusty | test/logger | error | 21423 | 599157af4e937 | 1466787583.321 | 2016:06:25 00:59:43 | this is a error test by ::log
+vagrant-ubuntu-trusty | test/logger | debug | 21423 | 599157af4e937 | 1466787583.322 | 2016:06:25 00:59:43 | this is a neeke debug
+vagrant-ubuntu-trusty | test/logger | info | 21423 | 599157af4e937 | 1466787583.323 | 2016:06:25 00:59:43 | this is a info log
+vagrant-ubuntu-trusty | test/logger | notice | 21423 | 599157af4e937 | 1466787583.324 | 2016:06:25 00:59:43 | this is a notice log
+vagrant-ubuntu-trusty | test/logger | warning | 21423 | 599157af4e937 | 1466787583.325 | 2016:06:25 00:59:43 | your github.com was down,please rboot it ASAP!
+vagrant-ubuntu-trusty | test/logger | error | 21423 | 599157af4e937 | 1466787583.326 | 2016:06:25 00:59:43 | a error log
+vagrant-ubuntu-trusty | test/logger | critical | 21423 | 599157af4e937 | 1466787583.327 | 2016:06:25 00:59:43 | some thing was critical
+vagrant-ubuntu-trusty | test/logger | alert | 21423 | 599157af4e937 | 1466787583.328 | 2016:06:25 00:59:43 | yes this is a alertMSG
+vagrant-ubuntu-trusty | test/logger | emergency | 21423 | 599157af4e937 | 1466787583.329 | 2016:06:25 00:59:43 | Just now, the house next door was completely burnt out! it`s a joke
 ```
 
 ### SeasLog Analyzer的使用
@@ -810,26 +821,26 @@ SeasLog::analyzerDetail(SEASLOG_ERROR) == SeasLog::analyzerDetail(SEASLOG_ERROR,
 取当前模块下所有level为 SEASLOG_ERROR 的信息列表:
 array(6) {
  [0] =>
-  string(66) "error | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
+  string(66) "error | 8568 | 599157af4e937 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
   [1] =>
-  string(66) "error | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
+  string(66) "error | 8594 | 5991576584446 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
   [2] =>
-  string(66) "error | 8620 | 1393172044.862 | 2014:02:24 00:14:04 | test error 3 "
+  string(66) "error | 8620 | 1502697015147 | 1393172044.862 | 2014:02:24 00:14:04 | test error 3 "
   [3] =>
-  string(66) "error | 8646 | 1393172045.989 | 2014:02:24 00:14:05 | test error 3 "
+  string(66) "error | 8646 | 599159975a9ff | 1393172045.989 | 2014:02:24 00:14:05 | test error 3 "
   [4] =>
-  string(66) "error | 8672 | 1393172047.882 | 2014:02:24 00:14:07 | test error 3 "
+  string(66) "error | 8672 | 599159986ec28 | 1393172047.882 | 2014:02:24 00:14:07 | test error 3 "
   [5] =>
-  string(66) "error | 8698 | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "
+  string(66) "error | 8698 | 5991599981cec | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "
 }
 
 SeasLog::analyzerDetail(SEASLOG_ERROR,date('Ymd',time()));
 只取得当前模块下，当前一天内,level为SEASLOG_ERROR 的信息列表:
 array(2) {
   [0] =>
-  string(66) "error | 8568 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
+  string(66) "error | 8568 | 599157af4e937 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
   [1] =>
-  string(66) "error | 8594 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
+  string(66) "error | 8594 | 5991576584446 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
 }
 
 同理，取当月
