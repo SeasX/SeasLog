@@ -14,7 +14,6 @@
 +----------------------------------------------------------------------+
 */
 
-#include "include/SeasLog.h"
 #include "php_seaslog.h"
 
 ZEND_DECLARE_MODULE_GLOBALS(seaslog);
@@ -27,6 +26,7 @@ ZEND_GET_MODULE(seaslog)
 
 #include "src/Common.c"
 #include "src/Analyzer.c"
+#include "src/StreamWrapper.c"
 #include "src/Appender.c"
 #include "src/Buffer.c"
 #include "src/Datetime.c"
@@ -226,6 +226,7 @@ PHP_RINIT_FUNCTION(seaslog)
     seaslog_init_logger(TSRMLS_C);
 	seaslog_init_request_id(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
+    seaslog_init_stream_list(TSRMLS_C);
     return SUCCESS;
 }
 
@@ -237,6 +238,7 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
     seaslog_clear_logger_list(TSRMLS_C);
 	seaslog_clear_request_id(TSRMLS_C);
 	seaslog_clear_host_name(TSRMLS_C);
+	seaslog_clear_stream_list(TSRMLS_C);
     return SUCCESS;
 }
 

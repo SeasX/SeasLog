@@ -19,11 +19,11 @@
 #ifndef _PHP_SEASLOG_H_
 #define _PHP_SEASLOG_H_
 
-#include "include/SeasLog.h"
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
+#include "include/SeasLog.h"
 
 #ifdef PHP_WIN32
 #include "win32/time.h"
@@ -123,6 +123,8 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *remote_host;
     int remote_port;
 
+//    appender_stream_t *stream_list;
+    zval *stream_list;
 
 #if PHP_VERSION_ID >= 70000
     zval buffer;

@@ -14,57 +14,11 @@
 +----------------------------------------------------------------------+
 */
 
-static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
-{
-    php_stream *stream = NULL;
-    char *res = NULL;
-    int first_create_file = 0;
-    mode_t file_mode;
-
-#if PHP_VERSION_ID >= 70000
-    zend_long reslen;
-#else
-    long reslen;
-#endif
-
-    switch SEASLOG_G(appender)
-    {
-    case SEASLOG_APPENDER_TCP:
-        reslen = spprintf(&res, 0, "tcp://%s:%d", SEASLOG_G(remote_host), SEASLOG_G(remote_port));
-        stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, 0, NULL, NULL, NULL);
-        efree(res);
-        break;
-
-    case SEASLOG_APPENDER_UDP:
-        reslen = spprintf(&res, 0, "udp://%s:%d", SEASLOG_G(remote_host), SEASLOG_G(remote_port));
-        stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, 0, NULL, NULL, NULL);
-
-        efree(res);
-        break;
-    case SEASLOG_APPENDER_FILE:
-    default:
-        if (access(opt,F_OK) != 0)
-        {
-            first_create_file = 1;
-        }
-
-        stream = php_stream_open_wrapper(opt, "a", IGNORE_URL_WIN | REPORT_ERRORS, NULL);
-
-        if (first_create_file == 1)
-        {
-            file_mode = (mode_t) SEASLOG_FILE_MODE;
-            VCWD_CHMOD(opt, file_mode);
-        }
-    }
-
-    return stream;
-}
-
-static int seaslog_real_log_ex(char *message, int message_len, char *opt TSRMLS_DC)
+static int seaslog_real_log_ex(char *message, int message_len, char *opt, int opt_len TSRMLS_DC)
 {
     php_stream *stream = NULL;
 
-    stream = seaslog_stream_open_wrapper(opt TSRMLS_CC);
+    stream = process_stream(opt,opt_len TSRMLS_CC);
 
     if (!stream)
     {
@@ -72,8 +26,6 @@ static int seaslog_real_log_ex(char *message, int message_len, char *opt TSRMLS_
     }
 
     php_stream_write(stream, message, message_len);
-    php_stream_close(stream);
-    php_stream_free(stream, PHP_STREAM_FREE_RELEASE_STREAM);
 
     return SUCCESS;
 }
@@ -266,6 +218,6 @@ static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_
     }
     else
     {
-        return seaslog_real_log_ex(message, message_len, log_file_path TSRMLS_CC);
+        return seaslog_real_log_ex(message, message_len, log_file_path, log_file_path_len TSRMLS_CC);
     }
 }

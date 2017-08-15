@@ -19,6 +19,8 @@
 
 #include "php.h"
 #include "php_ini.h"
+#include "main/php_main.h"
+#include "php_streams.h"
 #include "zend_extensions.h"
 #include "zend_exceptions.h"
 #include "ext/standard/info.h"
@@ -122,7 +124,7 @@ typedef struct _last_min_entry_t
 
 //Common Toolkit
 static char *str_replace(char *ori, char * rep, char * with);
-static char *strreplace(char *src, const char *oldstr, const char *newstr, size_t len);
+static char *str_replace_php7(char *src, const char *oldstr, const char *newstr, size_t len);
 static char *delN(char *a);
 static char *get_uniqid();
 static int message_trim_wrap(char *message,int message_len TSRMLS_DC);
@@ -180,8 +182,7 @@ static void seaslog_init_request_id(TSRMLS_D);
 static void seaslog_clear_request_id(TSRMLS_D);
 
 //Appender
-static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC);
-static int seaslog_real_log_ex(char *message, int message_len, char *opt TSRMLS_DC);
+static int seaslog_real_log_ex(char *message, int message_len, char *opt, int opt_len TSRMLS_DC);
 static int seaslog_log_content(int argc, char *level, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
 static int seaslog_log_ex(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
 static int appender_handle_file(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
@@ -190,6 +191,12 @@ static int check_log_level(char *level TSRMLS_DC);
 static int make_log_dir(char *dir TSRMLS_DC);
 static int check_log_dir(char *dir TSRMLS_DC);
 static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
+
+//StreamWrapper
+static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC);
+static int seaslog_init_stream_list(TSRMLS_D);
+static int seaslog_clear_stream_list(TSRMLS_D);
+static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC);
 
 //Analyzer
 static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC);
