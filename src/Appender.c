@@ -147,7 +147,7 @@ static int appender_handle_file(char *message, int message_len, char *level, log
         log_file_path_len = spprintf(&log_file_path, 0, "%s/%s.log", logger->logger_path,real_date);
     }
 
-    log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s | %s \n", level, getpid(), SEASLOG_G(request_id), current_time, real_time, message);
+    log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s | %s \n", level, SEASLOG_G(process_id), SEASLOG_G(request_id), current_time, real_time, message);
 
     if (seaslog_real_buffer_log_ex(log_info, log_len, log_file_path, log_file_path_len + 1, ce TSRMLS_CC) == FAILURE)
     {
@@ -173,7 +173,7 @@ static int appender_handle_tcp_udp(char *message, int message_len, char *level, 
     current_time = mic_time();
     real_time = make_real_time(TSRMLS_C);
 
-    log_len = spprintf(&log_info, 0, "%s | %s | %s | %d | %s | %s | %s | %s \n", SEASLOG_G(host_name), logger->logger, level, getpid(), SEASLOG_G(request_id), current_time, real_time, message);
+    log_len = spprintf(&log_info, 0, "%s | %s | %s | %d | %s | %s | %s | %s \n", SEASLOG_G(host_name), logger->logger, level, SEASLOG_G(process_id), SEASLOG_G(request_id), current_time, real_time, message);
 
     if (seaslog_real_buffer_log_ex(log_info, log_len, logger->logger, logger->logger_len, ce TSRMLS_CC) == FAILURE)
     {

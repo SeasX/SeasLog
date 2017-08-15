@@ -39,6 +39,11 @@ static void seaslog_clear_host_name(TSRMLS_D)
     }
 }
 
+static void seaslog_init_pid(TSRMLS_D)
+{
+    SEASLOG_G(process_id) = getpid();
+}
+
 static void seaslog_init_request_id(TSRMLS_D)
 {
     SEASLOG_G(request_id) = get_uniqid();

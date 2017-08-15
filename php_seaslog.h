@@ -101,6 +101,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *base_path;
     char *host_name;
 	char *request_id;
+    int  process_id;
 
     logger_entry_t *tmp_logger;
     logger_entry_t *last_logger;

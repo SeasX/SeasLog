@@ -220,6 +220,7 @@ PHP_MSHUTDOWN_FUNCTION(seaslog)
 
 PHP_RINIT_FUNCTION(seaslog)
 {
+    seaslog_init_pid(TSRMLS_C);
     seaslog_init_host_name(TSRMLS_C);
     seaslog_init_logger_list(TSRMLS_C);
     seaslog_init_logger(TSRMLS_C);
@@ -235,6 +236,7 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
     seaslog_clear_logger(TSRMLS_C);
     seaslog_clear_logger_list(TSRMLS_C);
 	seaslog_clear_request_id(TSRMLS_C);
+	seaslog_clear_host_name(TSRMLS_C);
     return SUCCESS;
 }
 

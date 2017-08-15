@@ -175,6 +175,7 @@ static void recoveryExceptionHooks(TSRMLS_D);
 //Request
 static void seaslog_init_host_name(TSRMLS_D);
 static void seaslog_clear_host_name(TSRMLS_D);
+static void seaslog_init_pid(TSRMLS_D);
 static void seaslog_init_request_id(TSRMLS_D);
 static void seaslog_clear_request_id(TSRMLS_D);
 
