@@ -433,6 +433,8 @@ PHP_METHOD(SEASLOG_RES_NAME, getLastLogger)
 PHP_METHOD(SEASLOG_RES_NAME, setDatetimeFormat)
 {
     zval *_format;
+    int now;
+
     int argc = ZEND_NUM_ARGS();
 
     if (zend_parse_parameters(argc TSRMLS_CC, "z", &_format) == FAILURE)
@@ -446,6 +448,10 @@ PHP_METHOD(SEASLOG_RES_NAME, setDatetimeFormat)
         }
 
         SEASLOG_G(current_datetime_format) = estrdup(Z_STRVAL_P(_format));
+
+        now = (long)time(NULL);
+        seaslog_process_last_sec(now TSRMLS_CC);
+
 #if PHP_VERSION_ID >= 70000
         zval_ptr_dtor(_format);
 #else
