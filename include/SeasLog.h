@@ -189,7 +189,6 @@ static int appender_handle_file(char *message, int message_len, char *level, log
 static int appender_handle_tcp_udp(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
 static int check_log_level(char *level TSRMLS_DC);
 static int make_log_dir(char *dir TSRMLS_DC);
-static int check_log_dir(char *dir TSRMLS_DC);
 static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
 
 //StreamWrapper

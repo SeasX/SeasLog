@@ -159,54 +159,20 @@ static int check_log_level(char *level TSRMLS_DC)
 
 static int make_log_dir(char *dir TSRMLS_DC)
 {
+    mode_t imode;
+    int ret;
 
     if (SEASLOG_G(appender) == SEASLOG_APPENDER_FILE)
     {
-        int _ck_dir = check_log_dir(dir TSRMLS_CC);
-
-        if (_ck_dir == FAILURE)
-        {
-            zval *zcontext = NULL;
-            php_stream_context *context;
-            mode_t imode;
-            int ret;
-
-            context = php_stream_context_from_zval(zcontext, 0);
-
-            if (!php_stream_mkdir(dir, SEASLOG_DIR_MODE, PHP_STREAM_MKDIR_RECURSIVE | REPORT_ERRORS, context))
-            {
-                return FAILURE;
-            }
-
-            imode = (mode_t) SEASLOG_DIR_MODE;
-            ret = VCWD_CHMOD(dir, imode);
-            if (ret == FAILURE)
-            {
-                return FAILURE;
-            }
-
-            return SUCCESS;
+        if (VCWD_ACCESS(dir, F_OK) != 0) {
+            VCWD_MKDIR(dir, SEASLOG_DIR_MODE);
         }
-        else
-        {
-            return SUCCESS;
-        }
+        return SUCCESS;
     }
     else
     {
         return SUCCESS;
     }
-
-}
-
-static int check_log_dir(char *dir TSRMLS_DC)
-{
-    if (!access(dir, 0))
-    {
-        return SUCCESS;
-    }
-
-    return FAILURE;
 }
 
 static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC)
