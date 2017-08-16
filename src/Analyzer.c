@@ -108,7 +108,7 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 #else
     if (order == SEASLOG_DETAIL_ORDER_DESC)
     {
-        spprintf(&command, 0, "%s `ls -t %s`", "tac", path);
+        spprintf(&command, 0, "%s `ls -t %s 2>/dev/null;if [ $? -ne 0 ] ;then echo 'NOLOGGER';fi`", "tac", path);
     }
     else
     {
