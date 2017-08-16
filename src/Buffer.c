@@ -39,7 +39,7 @@ static void seaslog_init_buffer(TSRMLS_D)
     }
 }
 
-static int real_php_log_buffer(zval *msg_buffer, char *opt TSRMLS_DC)
+static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_DC)
 {
     php_stream *stream = NULL;
     HashTable *ht;
@@ -52,7 +52,7 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt TSRMLS_DC)
     zval **log;
 #endif
 
-    stream = seaslog_stream_open_wrapper(opt TSRMLS_CC);
+    stream = process_stream(opt,opt_len TSRMLS_CC);
 
     if (!stream)
     {
@@ -82,8 +82,8 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt TSRMLS_DC)
     }
 #endif
 
-    php_stream_close(stream);
-    php_stream_free(stream, PHP_STREAM_FREE_RELEASE_STREAM);
+//    php_stream_close(stream);
+//    php_stream_free(stream, PHP_STREAM_FREE_RELEASE_STREAM);
 
     return SUCCESS;
 }
@@ -192,7 +192,7 @@ static void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
         ht = Z_ARRVAL(SEASLOG_G(buffer));
         ZEND_HASH_FOREACH_KEY_VAL(ht, num_key, str_key, entry)
         {
-            real_php_log_buffer(entry, ZSTR_VAL(str_key) TSRMLS_CC);
+            real_php_log_buffer(entry, ZSTR_VAL(str_key), ZSTR_LEN(str_key) TSRMLS_CC);
         }
         ZEND_HASH_FOREACH_END();
 
@@ -207,7 +207,7 @@ static void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
 
             zend_hash_get_current_key(ht, &key, &idx, 0);
             convert_to_array_ex(ppzval);
-            real_php_log_buffer(*ppzval, key TSRMLS_CC);
+            real_php_log_buffer(*ppzval, key, strlen(key) TSRMLS_CC);
             zend_hash_move_forward(ht);
         }
 #endif

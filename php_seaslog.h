@@ -123,15 +123,14 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *remote_host;
     int remote_port;
 
-//    appender_stream_t *stream_list;
-    zval *stream_list;
-
 #if PHP_VERSION_ID >= 70000
     zval buffer;
     zval logger_list;
+    zval stream_list;
 #else
     zval *buffer;
     zval *logger_list;
+    zval *stream_list;
 #endif
 
 ZEND_END_MODULE_GLOBALS(seaslog)

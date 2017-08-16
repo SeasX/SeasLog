@@ -93,7 +93,7 @@ static int seaslog_clear_stream_list(TSRMLS_D)
 #if PHP_VERSION_ID >= 70000
     if (Z_TYPE(SEASLOG_G(stream_list)) == IS_ARRAY)
     {
-        ht = HASH_OF(SEASLOG_G(stream_list));
+        ht = Z_ARRVAL(SEASLOG_G(stream_list));
         ZEND_HASH_FOREACH_KEY_VAL(ht, num_key, str_key, stream_zval_get_php7)
         {
             php_stream_from_zval_no_verify(stream,stream_zval_get_php7);
@@ -137,6 +137,11 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     zval *stream_zval;
     zval **stream_zval_get;
     HashTable *ht_list;
+#if PHP_VERSION_ID >= 70000
+    zval stream_zval_to;
+#else
+    zval *stream_zval_to;
+#endif
 
     switch SEASLOG_G(appender)
     {
@@ -156,8 +161,6 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
 
     if ((stream_zval = zend_hash_index_find(ht_list, stream_entry_hash)) != NULL)
     {
-//        php_printf("get the stream again php 7\n");
-
         php_stream_from_zval_no_verify(stream,stream_zval);
 
         return stream;
@@ -166,8 +169,6 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
 
     if (zend_hash_index_find(ht_list, stream_entry_hash, (void **)&stream_zval_get) == SUCCESS)
     {
-//        php_printf("get the stream again php 5\n");
-
         php_stream_from_zval_no_verify(stream,stream_zval_get);
 
         return stream;
@@ -175,12 +176,15 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     }
     else
     {
-//        php_printf("create the stream \n");
         stream = seaslog_stream_open_wrapper(opt TSRMLS_CC);
-        MAKE_STD_ZVAL(stream_zval);
-        php_stream_to_zval(stream, stream_zval);
 
-        SEASLOG_ADD_INDEX_ZVAL(SEASLOG_G(stream_list),stream_entry_hash,stream_zval);
+#if PHP_VERSION_ID >= 70000
+        php_stream_to_zval(stream, &stream_zval_to);
+#else
+        MAKE_STD_ZVAL(stream_zval_to);
+        php_stream_to_zval(stream, stream_zval_to);
+#endif
+        SEASLOG_ADD_INDEX_ZVAL(SEASLOG_G(stream_list),stream_entry_hash,stream_zval_to);
         return stream;
     }
 

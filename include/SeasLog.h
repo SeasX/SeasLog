@@ -155,7 +155,7 @@ static char *mic_time();
 
 //Buffer
 static void seaslog_init_buffer(TSRMLS_D);
-static int real_php_log_buffer(zval *msg_buffer, char *opt TSRMLS_DC);
+static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_DC);
 static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce TSRMLS_DC);
 static void seaslog_shutdown_buffer(int re_init TSRMLS_DC);
 static void seaslog_clear_buffer(TSRMLS_D);
