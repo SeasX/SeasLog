@@ -920,7 +920,7 @@ test5[level] = SEASLOG_DEBUG
  - 百度Crab平台 crab.baidu.com
  - 爱宠医生(中国最大的互联网宠物医疗平台) www.5ichong.com
  - 爱奇艺秀场(美女直播平台) x.pps.tv
- - 更多请提交PR
+ - 更多..
 
 ### 接受捐赠
 ![支付宝捐赠](https://raw.githubusercontent.com/Neeke/SeasLog/master/tests/neeke_alipay.jpg)
