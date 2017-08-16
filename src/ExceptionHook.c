@@ -56,7 +56,7 @@ void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
     code = zend_read_property(default_ce, exception, "code", sizeof("code")-1, 0 TSRMLS_CC);
 #endif
 
-    process_event(SEASLOG_EVENT_EXCEPTION, Z_LVAL_P(code), Z_STRVAL_P(file), Z_LVAL_P(line), Z_STRVAL_P(message) TSRMLS_CC);
+    process_event_exception(Z_LVAL_P(code), Z_STRVAL_P(file), Z_LVAL_P(line), Z_STRVAL_P(message) TSRMLS_CC);
 
     if (old_throw_exception_hook)
     {
