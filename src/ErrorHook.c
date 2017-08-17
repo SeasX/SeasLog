@@ -21,7 +21,7 @@ static void process_event_error(int type, char * error_filename, uint error_line
 
     event_str_len = spprintf(&event_str, 0, "Error - type:%d - file:%s - line:%d - msg:%s", type, error_filename, error_lineno, msg);
 
-    seaslog_log_ex(1, SEASLOG_CRITICAL, event_str, event_str_len, NULL, 0, seaslog_ce TSRMLS_CC);
+    seaslog_log_ex(1, SEASLOG_CRITICAL, SEASLOG_CRITICAL_INT, event_str, event_str_len, NULL, 0, seaslog_ce TSRMLS_CC);
     efree(event_str);
 }
 

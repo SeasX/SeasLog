@@ -51,6 +51,16 @@
 #define SEASLOG_ALERT                       "alert"
 #define SEASLOG_EMERGENCY                   "emergency"
 
+#define SEASLOG_ALL_INT                     0
+#define SEASLOG_DEBUG_INT                   1
+#define SEASLOG_INFO_INT                    2
+#define SEASLOG_NOTICE_INT                  3
+#define SEASLOG_WARNING_INT                 4
+#define SEASLOG_ERROR_INT                   5
+#define SEASLOG_CRITICAL_INT                6
+#define SEASLOG_ALERT_INT                   7
+#define SEASLOG_EMERGENCY_INT               8
+
 #define SEASLOG_APPENDER_FILE               1
 #define SEASLOG_APPENDER_TCP                2
 #define SEASLOG_APPENDER_UDP                3
@@ -123,6 +133,7 @@ typedef struct _last_min_entry_t
 
 
 //Common Toolkit
+static int seaslog_get_level_int(char *level);
 static char *str_replace(char *ori, char * rep, char * with);
 static char *str_replace_php7(char *src, const char *oldstr, const char *newstr, size_t len);
 static char *delN(char *a);
@@ -183,11 +194,11 @@ static void seaslog_clear_request_id(TSRMLS_D);
 
 //Appender
 static int seaslog_real_log_ex(char *message, int message_len, char *opt, int opt_len TSRMLS_DC);
-static int seaslog_log_content(int argc, char *level, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
-static int seaslog_log_ex(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
+static int seaslog_log_content(int argc, char *level, int level_int, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
+static int seaslog_log_ex(int argc, char *level, int level_int, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
 static int appender_handle_file(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
 static int appender_handle_tcp_udp(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
-static int check_log_level(char *level TSRMLS_DC);
+static int check_log_level(int level TSRMLS_DC);
 static int make_log_dir(char *dir TSRMLS_DC);
 static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
 

@@ -30,24 +30,23 @@ static int seaslog_real_log_ex(char *message, int message_len, char *opt, int op
     return SUCCESS;
 }
 
-static int seaslog_log_content(int argc, char *level, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
+static int seaslog_log_content(int argc, char *level, int level_int, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
 {
     int ret;
     char *result = php_strtr_array(message, message_len, content);
 
-    ret = seaslog_log_ex(argc, level, result, strlen(result), module, module_len, ce TSRMLS_CC);
+    ret = seaslog_log_ex(argc, level, level_int, result, strlen(result), module, module_len, ce TSRMLS_CC);
 
-    // result is on heap, we need free it.
     efree(result);
 
     return ret;
 }
 
-static int seaslog_log_ex(int argc, char *level, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
+static int seaslog_log_ex(int argc, char *level, int level_int, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
 {
     logger_entry_t *logger;
 
-    if (check_log_level(level TSRMLS_CC) == FAILURE)
+    if (check_log_level(level_int TSRMLS_CC) == FAILURE)
     {
         return FAILURE;
     }
@@ -140,19 +139,49 @@ static int appender_handle_tcp_udp(char *message, int message_len, char *level, 
     return SUCCESS;
 }
 
-static int check_log_level(char *level TSRMLS_DC)
+static int check_log_level(int level TSRMLS_DC)
 {
     if (SEASLOG_G(level) < 1) return SUCCESS;
     if (SEASLOG_G(level) > 8) return FAILURE;
 
-    if (strcmp(level, SEASLOG_DEBUG)      == 0 && SEASLOG_G(level) <= 1) return SUCCESS;
-    if (strcmp(level, SEASLOG_INFO)       == 0 && SEASLOG_G(level) <= 2) return SUCCESS;
-    if (strcmp(level, SEASLOG_NOTICE)     == 0 && SEASLOG_G(level) <= 3) return SUCCESS;
-    if (strcmp(level, SEASLOG_WARNING)    == 0 && SEASLOG_G(level) <= 4) return SUCCESS;
-    if (strcmp(level, SEASLOG_ERROR)      == 0 && SEASLOG_G(level) <= 5) return SUCCESS;
-    if (strcmp(level, SEASLOG_CRITICAL)   == 0 && SEASLOG_G(level) <= 6) return SUCCESS;
-    if (strcmp(level, SEASLOG_ALERT)      == 0 && SEASLOG_G(level) <= 7) return SUCCESS;
-    if (strcmp(level, SEASLOG_EMERGENCY)  == 0 && SEASLOG_G(level) <= 8) return SUCCESS;
+    switch (level)
+    {
+        case SEASLOG_DEBUG_INT:
+            if (SEASLOG_G(level) <= SEASLOG_DEBUG_INT) return SUCCESS;
+            break;
+        case SEASLOG_INFO_INT:
+            if (SEASLOG_G(level) <= SEASLOG_INFO_INT) return SUCCESS;
+            break;
+        case SEASLOG_NOTICE_INT:
+            if (SEASLOG_G(level) <= SEASLOG_NOTICE_INT) return SUCCESS;
+            break;
+        case SEASLOG_WARNING_INT:
+            if (SEASLOG_G(level) <= SEASLOG_WARNING_INT) return SUCCESS;
+            break;
+        case SEASLOG_ERROR_INT:
+            if (SEASLOG_G(level) <= SEASLOG_ERROR_INT) return SUCCESS;
+            break;
+        case SEASLOG_CRITICAL_INT:
+            if (SEASLOG_G(level) <= SEASLOG_CRITICAL_INT) return SUCCESS;
+            break;
+        case SEASLOG_ALERT_INT:
+            if (SEASLOG_G(level) <= SEASLOG_ALERT_INT) return SUCCESS;
+            break;
+        case SEASLOG_EMERGENCY_INT:
+            if (SEASLOG_G(level) <= SEASLOG_EMERGENCY_INT) return SUCCESS;
+            break;
+        default:
+            return FAILURE;
+    }
+//
+//    if (strcmp(level, SEASLOG_DEBUG)      == 0 && SEASLOG_G(level) <= 1) return SUCCESS;
+//    if (strcmp(level, SEASLOG_INFO)       == 0 && SEASLOG_G(level) <= 2) return SUCCESS;
+//    if (strcmp(level, SEASLOG_NOTICE)     == 0 && SEASLOG_G(level) <= 3) return SUCCESS;
+//    if (strcmp(level, SEASLOG_WARNING)    == 0 && SEASLOG_G(level) <= 4) return SUCCESS;
+//    if (strcmp(level, SEASLOG_ERROR)      == 0 && SEASLOG_G(level) <= 5) return SUCCESS;
+//    if (strcmp(level, SEASLOG_CRITICAL)   == 0 && SEASLOG_G(level) <= 6) return SUCCESS;
+//    if (strcmp(level, SEASLOG_ALERT)      == 0 && SEASLOG_G(level) <= 7) return SUCCESS;
+//    if (strcmp(level, SEASLOG_EMERGENCY)  == 0 && SEASLOG_G(level) <= 8) return SUCCESS;
 
     return FAILURE;
 }

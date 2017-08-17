@@ -14,6 +14,36 @@
 +----------------------------------------------------------------------+
 */
 
+static int seaslog_get_level_int(char *level)
+{
+    if (strcmp(level, SEASLOG_DEBUG) == 0) {
+        return SEASLOG_DEBUG_INT;
+
+    } else if (strcmp(level, SEASLOG_INFO) == 0) {
+        return SEASLOG_INFO_INT;
+
+    } else if (strcmp(level, SEASLOG_NOTICE) == 0) {
+        return SEASLOG_NOTICE_INT;
+
+    } else if (strcmp(level, SEASLOG_WARNING) == 0) {
+        return SEASLOG_WARNING_INT;
+
+    } else if (strcmp(level, SEASLOG_ERROR) == 0) {
+        return SEASLOG_ERROR_INT;
+
+    } else if (strcmp(level, SEASLOG_CRITICAL) == 0) {
+        return SEASLOG_CRITICAL_INT;
+
+    } else if (strcmp(level, SEASLOG_ALERT) == 0) {
+        return SEASLOG_ALERT_INT;
+
+    } else if (strcmp(level, SEASLOG_EMERGENCY) == 0) {
+        return SEASLOG_EMERGENCY_INT;
+    }
+
+    return SEASLOG_DEBUG_INT;
+}
+
 static char *str_replace(char *ori, char * rep, char * with)
 {
     char *result;
