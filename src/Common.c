@@ -310,3 +310,14 @@ static char *get_uniqid()
     spprintf(&uniqid, 0, "%08x%05x", (int)tv.tv_sec, (int)tv.tv_usec % 0x100000);
     return uniqid;
 }
+
+static void initRStart(TSRMLS_D)
+{
+    SEASLOG_G(initRComplete) = SEASLOG_INITR_COMPLETE_NO;
+    SEASLOG_G(error_loop) = 0;
+}
+
+static void initREnd(TSRMLS_D)
+{
+    SEASLOG_G(initRComplete) = SEASLOG_INITR_COMPLETE_YES;
+}

@@ -87,3 +87,43 @@ static void recoveryExceptionHooks(TSRMLS_D)
         }
     }
 }
+
+static void seaslog_throw_exception(int type TSRMLS_DC, const char *format, ...)
+{
+    va_list args;
+    char *message = NULL;
+
+    if (SEASLOG_G(ignore_warning) && !SEASLOG_G(throw_exception))
+    {
+        return;
+    }
+
+    va_start(args, format);
+    vspprintf(&message, 0, format, args);
+
+    if (!SEASLOG_G(ignore_warning))
+    {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "[SeasLog] %s", message);
+    }
+
+    if (SEASLOG_G(throw_exception)
+        && (SEASLOG_G(initRComplete) == SEASLOG_INITR_COMPLETE_YES)
+        && (SEASLOG_G(error_loop) <= 1))
+    {
+
+        if (type == SEASLOG_EXCEPTION_LOGGER_ERROR)
+        {
+            SEASLOG_G(error_loop)++;
+        }
+
+#if PHP_VERSION_ID >= 70000
+        zend_throw_exception_ex(NULL, type, "%s", message);
+#else
+        zend_throw_exception_ex(NULL, type TSRMLS_CC, "%s", message);
+#endif
+
+    }
+
+	efree(message);
+	va_end(args);
+}

@@ -71,11 +71,14 @@
 #define SEASLOG_EVENT_ERROR                 1
 #define SEASLOG_EVENT_EXCEPTION             2
 
-#define SEASLOG_DIR_MODE                    0755
-#define SEASLOG_FILE_MODE                   0666
+#define SEASLOG_DIR_MODE                    (mode_t)0777
+#define SEASLOG_FILE_MODE                   (mode_t)0666
 
 #define SEASLOG_BUFFER_RE_INIT_YES          1
 #define SEASLOG_BUFFER_RE_INIT_NO           2
+
+#define SEASLOG_INITR_COMPLETE_YES          1
+#define SEASLOG_INITR_COMPLETE_NO           2
 
 #define SEASLOG_PROCESS_LOGGER_LAST         1
 #define SEASLOG_PROCESS_LOGGER_TMP          2
@@ -90,6 +93,8 @@
 
 #define SEASLOG_TRIM_WRAP                   26
 
+#define SEASLOG_EXCEPTION_LOGGER_ERROR      4403
+#define SEASLOG_EXCEPTION_CONTENT_ERROR     4406
 
 
 #if PHP_VERSION_ID >= 70000
@@ -139,6 +144,8 @@ static char *str_replace_php7(char *src, const char *oldstr, const char *newstr,
 static char *delN(char *a);
 static char *get_uniqid();
 static int message_trim_wrap(char *message,int message_len TSRMLS_DC);
+static void initRStart(TSRMLS_D);
+static void initREnd(TSRMLS_D);
 
 #if PHP_VERSION_ID >= 70000
 static char *php_strtr_array(char *str, int slen, HashTable *pats);
@@ -184,6 +191,7 @@ void seaslog_throw_exception_hook(zval *exception TSRMLS_DC);
 static void process_event_exception(int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC);
 static void initExceptionHooks(TSRMLS_D);
 static void recoveryExceptionHooks(TSRMLS_D);
+static void seaslog_throw_exception(int type TSRMLS_DC, const char *format, ...);
 
 //Request
 static void seaslog_init_host_name(TSRMLS_D);
@@ -207,6 +215,9 @@ static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC);
 static int seaslog_init_stream_list(TSRMLS_D);
 static int seaslog_clear_stream_list(TSRMLS_D);
 static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC);
+
+//StreamWrapperFile
+
 
 //Analyzer
 static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC);

@@ -4,6 +4,8 @@
  * Date: 14-1-27 下午4:41
  */
 
+//error_reporting(1);
+
 SeasLog::getBasePath();
 
 SeasLog::setBasePath('/log/test/base/path');

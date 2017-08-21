@@ -114,10 +114,14 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool trace_error;
     zend_bool trace_exception;
     zend_bool trim_wrap;
+    zend_bool throw_exception;
+    zend_bool ignore_warning;
 
     int buffer_size;
     int level;
     int buffer_count;
+    int initRComplete;
+    int error_loop;
 
     int appender;
     char *remote_host;

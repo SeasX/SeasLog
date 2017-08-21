@@ -107,10 +107,8 @@ static int appender_handle_file(char *message, int message_len, char *level, log
         return FAILURE;
     }
 
-    efree(real_date);
     efree(log_file_path);
     efree(log_info);
-    efree(real_time);
     efree(current_time);
 
     return SUCCESS;
@@ -133,7 +131,6 @@ static int appender_handle_tcp_udp(char *message, int message_len, char *level, 
     }
 
     efree(log_info);
-    efree(real_time);
     efree(current_time);
 
     return SUCCESS;
@@ -173,35 +170,8 @@ static int check_log_level(int level TSRMLS_DC)
         default:
             return FAILURE;
     }
-//
-//    if (strcmp(level, SEASLOG_DEBUG)      == 0 && SEASLOG_G(level) <= 1) return SUCCESS;
-//    if (strcmp(level, SEASLOG_INFO)       == 0 && SEASLOG_G(level) <= 2) return SUCCESS;
-//    if (strcmp(level, SEASLOG_NOTICE)     == 0 && SEASLOG_G(level) <= 3) return SUCCESS;
-//    if (strcmp(level, SEASLOG_WARNING)    == 0 && SEASLOG_G(level) <= 4) return SUCCESS;
-//    if (strcmp(level, SEASLOG_ERROR)      == 0 && SEASLOG_G(level) <= 5) return SUCCESS;
-//    if (strcmp(level, SEASLOG_CRITICAL)   == 0 && SEASLOG_G(level) <= 6) return SUCCESS;
-//    if (strcmp(level, SEASLOG_ALERT)      == 0 && SEASLOG_G(level) <= 7) return SUCCESS;
-//    if (strcmp(level, SEASLOG_EMERGENCY)  == 0 && SEASLOG_G(level) <= 8) return SUCCESS;
 
     return FAILURE;
-}
-
-static int make_log_dir(char *dir TSRMLS_DC)
-{
-    mode_t imode;
-    int ret;
-
-    if (SEASLOG_G(appender) == SEASLOG_APPENDER_FILE)
-    {
-        if (VCWD_ACCESS(dir, F_OK) != 0) {
-            VCWD_MKDIR(dir, SEASLOG_DIR_MODE);
-        }
-        return SUCCESS;
-    }
-    else
-    {
-        return SUCCESS;
-    }
 }
 
 static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC)
@@ -214,5 +184,109 @@ static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_
     else
     {
         return seaslog_real_log_ex(message, message_len, log_file_path, log_file_path_len TSRMLS_CC);
+    }
+}
+
+static int make_log_dir(char *dir TSRMLS_DC)
+{
+	int ret;
+
+    if (SEASLOG_G(appender) == SEASLOG_APPENDER_FILE)
+    {
+        if (strncasecmp(dir, "file://", sizeof("file://") - 1) == 0) {
+            dir += sizeof("file://") - 1;
+        }
+
+        if (VCWD_ACCESS(dir, F_OK) == 0) {
+            return SUCCESS;
+        }
+
+        /* we look for directory separator from the end of string, thus hopefuly reducing our work load */
+        char *p;
+        char *e;
+        SEASLOG_INIT_STAT(sb);
+
+        int dir_len = (int)strlen(dir);
+        int offset = 0;
+        char buf[MAXPATHLEN];
+
+        if (!expand_filepath_with_mode(dir, buf, NULL, 0, CWD_EXPAND TSRMLS_CC)) {
+            seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "%s %s", dir, "Invalid path");
+            return FAILURE;
+        }
+
+        e = buf +  strlen(buf);
+
+        if ((p = memchr(buf, DEFAULT_SLASH, dir_len))) {
+            offset = p - buf + 1;
+        }
+
+        if (p && dir_len == 1) {
+            /* buf == "DEFAULT_SLASH" */
+        }
+        else
+        {
+            /* find a top level directory we need to create */
+            while ( (p = strrchr(buf + offset, DEFAULT_SLASH)) || (offset != 1 && (p = strrchr(buf, DEFAULT_SLASH))) ) {
+                int n = 0;
+
+                *p = '\0';
+                while (p > buf && *(p-1) == DEFAULT_SLASH) {
+                    ++n;
+                    --p;
+                    *p = '\0';
+                }
+                if (VCWD_STAT(buf, &sb) == 0) {
+                    while (1) {
+                        *p = DEFAULT_SLASH;
+                        if (!n) break;
+                        --n;
+                        ++p;
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (p == buf) {
+            ret = php_mkdir_ex(dir, SEASLOG_DIR_MODE, PHP_STREAM_MKDIR_RECURSIVE TSRMLS_CC);
+            if (ret < 0)
+            {
+                seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "%s %s", dir, strerror(errno));
+            }
+        }
+        else
+        {
+             if (!(ret = php_mkdir_ex(buf, SEASLOG_DIR_MODE, PHP_STREAM_MKDIR_RECURSIVE TSRMLS_CC))) {
+                if (!p) {
+                    p = buf;
+                }
+
+                while (++p != e) {
+                    if (*p == '\0') {
+                        *p = DEFAULT_SLASH;
+                        if ((*(p+1) != '\0') &&
+                            (ret = VCWD_MKDIR(buf, SEASLOG_DIR_MODE)) < 0) {
+                            seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "%s %s", buf, strerror(errno));
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                 seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "%s %s", buf, strerror(errno));
+            }
+        }
+
+        if (ret < 0) {
+            return FAILURE;
+        }
+
+        return SUCCESS;
+    }
+    else
+    {
+        return SUCCESS;
     }
 }

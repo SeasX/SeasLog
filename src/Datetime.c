@@ -64,9 +64,7 @@ static char *make_real_date(TSRMLS_D)
         seaslog_process_last_min(now TSRMLS_CC);
     }
 
-    _date = estrdup(SEASLOG_G(last_min)->real_time);
-
-    return _date;
+    return SEASLOG_G(last_min)->real_time;
 }
 
 static char *make_real_time(TSRMLS_D)
@@ -82,9 +80,7 @@ static char *make_real_time(TSRMLS_D)
         seaslog_process_last_sec(now TSRMLS_CC);
     }
 
-    real_time = estrdup(SEASLOG_G(last_sec)->real_time);
-
-    return real_time;
+    return SEASLOG_G(last_sec)->real_time;
 }
 
 static char *mic_time()

@@ -153,6 +153,11 @@ STD_PHP_INI_ENTRY("seaslog.remote_port", "514", PHP_INI_ALL, OnUpdateLongGEZero,
 
 STD_PHP_INI_BOOLEAN("seaslog.trim_wrap", "0", PHP_INI_ALL, OnUpdateBool, trim_wrap, zend_seaslog_globals, seaslog_globals)
 
+STD_PHP_INI_BOOLEAN("seaslog.throw_exception", "1", PHP_INI_ALL, OnUpdateBool, throw_exception, zend_seaslog_globals, seaslog_globals)
+
+STD_PHP_INI_BOOLEAN("seaslog.ignore_warning", "1", PHP_INI_ALL, OnUpdateBool, ignore_warning, zend_seaslog_globals, seaslog_globals)
+
+
 PHP_INI_END()
 
 static PHP_GINIT_FUNCTION(seaslog)
@@ -220,6 +225,7 @@ PHP_MSHUTDOWN_FUNCTION(seaslog)
 
 PHP_RINIT_FUNCTION(seaslog)
 {
+    initRStart(TSRMLS_C);
     seaslog_init_pid(TSRMLS_C);
     seaslog_init_host_name(TSRMLS_C);
     seaslog_init_logger_list(TSRMLS_C);
@@ -227,6 +233,7 @@ PHP_RINIT_FUNCTION(seaslog)
 	seaslog_init_request_id(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
     seaslog_init_stream_list(TSRMLS_C);
+    initREnd(TSRMLS_C);
     return SUCCESS;
 }
 

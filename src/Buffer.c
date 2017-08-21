@@ -54,7 +54,7 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_D
 
     stream = process_stream(opt,opt_len TSRMLS_CC);
 
-    if (!stream)
+    if (stream == NULL)
     {
         return FAILURE;
     }
