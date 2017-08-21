@@ -111,6 +111,8 @@ seaslog.appender = 1                                    ;Switch the Record Log D
 seaslog.remote_host = 127.0.0.1                         ;If you use  Record TCP or UDP, configure this remote ip.(Default 127.0.0.1)
 seaslog.remote_port = 514                               ;If you use Record TCP or UDP, configure this remote port.(Default 514)
 seaslog.trim_wrap = 0                                   ;Trim the \n and \r in log message. (Default 0)
+seaslog.throw_exception = 1                             ;Switch throw SeasLog exception  1-On(Default) 0-Off
+seaslog.ignore_warning = 1                              ;Switch ignore SeasLog warning  1-On(Default) 0-Off
 ```
 > `seaslog.disting_type = 1` Switch use Logger DisTing by type, it’s meaning SeasLog will create the file deistic info\warn\error and the other type.
 
@@ -121,6 +123,10 @@ seaslog.trim_wrap = 0                                   ;Trim the \n and \r in l
 > `seaslog.buffer_size = 100` Configure the buffer_size with 100.  The buffer_size default 0, it’s meaning don’t use buffer. If buffer_size > 0,   SeasLog will rewritten down into the Data Store when the prerecorded log in memory count >= this buffer_size,and then refresh the memory poll.
 
 > `seaslog.level = 3` Default logger level. The Default value was 0, it’s meaning all of the level. SeasLog will record the log which level after DEBUG when level setting in 1, and so on. Yes, SeasLog won’t record anything when level setting in 8.
+
+> `seaslog.throw_exception = 1` Open an exception that throws the SeasLog to throw itself. When the directory authority or the receive server port is blocked, throw an exception; do not throw an exception when closed.
+
+> `seaslog.ignore_warning = 1` Open a warning to ignore SeasLog itself. When directory permissions or receive server ports are blocked, they are ignored; when closed, a warning is thrown.
 
 ## Use age
 

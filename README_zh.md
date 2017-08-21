@@ -113,6 +113,8 @@ seaslog.appender = 1                                    ;日志存储介质 1Fil
 seaslog.remote_host = 127.0.0.1                         ;接收ip 默认127.0.0.1 (当使用TCP或UDP时必填)
 seaslog.remote_port = 514                               ;接收端口 默认514 (当使用TCP或UDP时必填)
 seaslog.trim_wrap = 0                                   ;过滤日志中的回车和换行符 (默认为0)
+seaslog.throw_exception = 1                             ;是否开启抛出SeasLog自身异常  1开启(默认) 0否
+seaslog.ignore_warning = 1                              ;是否开启忽略SeasLog自身warning  1开启(默认) 0否
 ```
 > `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
 
@@ -123,6 +125,10 @@ seaslog.trim_wrap = 0                                   ;过滤日志中的回�
 > `seaslog.buffer_size = 100` 设置缓冲数量为100. 默认为0,即无缓冲数量限制.当buffer_size大于0时,缓冲量达到该值则写一次文件.
 
 > `seaslog.level = 3` 记录的日志级别.默认为0,即所有日志均记录。当level为1时,关注debug以上级别(包括debug)，以此类推。level大于8时，所有日志均不记录。
+
+> `seaslog.throw_exception = 1` 开启抛出SeasLog抛出自身的异常。当出现目录权限或接收服务器端口不通等情况时，抛出异常；关闭时不抛出异常。
+
+> `seaslog.ignore_warning = 1` 开启忽略SeasLog自身的警告。当出现目录权限或接收服务器端口不通等情况时，将进行忽略；关闭时，将抛出警告。
 ## 使用
 
 ### 常量与函数
