@@ -44,67 +44,32 @@ static int seaslog_get_level_int(char *level)
     return SEASLOG_DEBUG_INT;
 }
 
-static char *str_replace(char *ori, char * rep, char * with)
-{
-    char *result;
-    char *ins;
-    char *tmp;
-    int len_rep;
-    int len_with;
-    int len_front;
-    int count;
-
-    if (!ori)
-        return NULL;
-    if (!rep)
-        rep = "";
-    len_rep = strlen(rep);
-    if (!with)
-        with = "";
-    len_with = strlen(with);
-
-    ins = ori;
-    for (count = 0; (tmp = strstr(ins, rep)) != NULL ; ++count)
-    {
-        ins = tmp + len_rep;
-    }
-
-    tmp = result = emalloc(strlen(ori) + (len_with - len_rep) * count + 1);
-
-    if (!result)
-        return NULL;
-
-    while (count--)
-    {
-        ins = strstr(ori, rep);
-        len_front = ins - ori;
-        tmp = strncpy(tmp, ori, len_front) + len_front;
-        tmp = strcpy(tmp, with) + len_with;
-        ori += len_front + len_rep;
-    }
-    strcpy(tmp, ori);
-    return result;
-}
-
-static char *str_replace_php7(char *src, const char *oldstr, const char *newstr, size_t len)
+static char *str_replace(char *src, const char *from, const char *to)
 {
     char *needle;
     char *tmp;
+    size_t len;
+    size_t len_from;
+    size_t len_to;
 
-    if(strcmp(oldstr, newstr)==0)
+    if(strcmp(from, to) == 0)
     {
         return src;
     }
 
-    while((needle = strstr(src, oldstr)) && (needle - src <= len))
+    len = strlen(src);
+    len_from = strlen(from);
+    len_to = strlen(to);
+
+    while((needle = strstr(src, from)) && (needle - src <= len))
     {
-        tmp = (char*)emalloc(strlen(src) + (strlen(newstr) - strlen(oldstr)) + 1);
+        tmp = (char*)emalloc(len + (len_to - len_from) + 1);
 
-        strncpy(tmp, src, needle-src);
+        strncpy(tmp, src, needle - src);
 
-        tmp[needle-src]='\0';
-        strcat(tmp, newstr);
-        strcat(tmp, needle+strlen(oldstr));
+        tmp[needle - src]='\0';
+        strcat(tmp, to);
+        strcat(tmp, needle + len_from);
 
         efree(src);
         src = tmp;
@@ -134,7 +99,7 @@ static char *php_strtr_array(char *str, int slen, HashTable *pats)
 
             if (strstr(str,ZSTR_VAL(str_key)))
             {
-                tmp = str_replace_php7(tmp, ZSTR_VAL(str_key), ZSTR_VAL(s), strlen(str));
+                tmp = str_replace(tmp, ZSTR_VAL(str_key), ZSTR_VAL(s));
             }
 
             zend_string_release(s);

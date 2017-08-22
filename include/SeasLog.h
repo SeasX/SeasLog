@@ -139,8 +139,7 @@ typedef struct _last_min_entry_t
 
 //Common Toolkit
 static int seaslog_get_level_int(char *level);
-static char *str_replace(char *ori, char * rep, char * with);
-static char *str_replace_php7(char *src, const char *oldstr, const char *newstr, size_t len);
+static char *str_replace(char *src, const char *from, const char *to);
 static char *delN(char *a);
 static char *get_uniqid();
 static int message_trim_wrap(char *message,int message_len TSRMLS_DC);
