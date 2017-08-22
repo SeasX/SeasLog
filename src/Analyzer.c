@@ -58,7 +58,7 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
     fp = VCWD_POPEN(sh, "r");
     if (! fp)
     {
-        php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to fork [%s]", sh);
+        seaslog_throw_exception(SEASLOG_EXCEPTION_CONTENT_ERROR TSRMLS_CC, "Unable to fork [%s]", sh);
         return -1;
     }
     else
@@ -137,7 +137,7 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 
     if (!fp)
     {
-        php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to fork [%s]", sh);
+        seaslog_throw_exception(SEASLOG_EXCEPTION_CONTENT_ERROR TSRMLS_CC, "Unable to fork [%s]", sh);
 
         efree(buffer);
         return -1;

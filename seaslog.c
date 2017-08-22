@@ -650,7 +650,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 
 #endif
 
-    get_detail(log_path, level, key_word, start, start + limit, order, return_value TSRMLS_CC);
+    get_detail(log_path, level, key_word, start, start + limit - 1, order, return_value TSRMLS_CC);
 }
 
 PHP_METHOD(SEASLOG_RES_NAME, getBuffer)
