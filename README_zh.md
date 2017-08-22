@@ -99,7 +99,7 @@ $ pecl install seaslog
 ```conf
 ; configuration for php SeasLog module
 extension = seaslog.so
-seaslog.default_basepath = /log/seaslog-test            ;默认log根目录
+seaslog.default_basepath = /var/log/www                 ;默认log根目录
 seaslog.default_logger = default                        ;默认logger目录
 seaslog.disting_type = 1                                ;是否以type分文件 1是 0否(默认)
 seaslog.disting_by_hour = 1                             ;是否每小时划分一个文件 1是 0否(默认)

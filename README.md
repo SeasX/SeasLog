@@ -97,7 +97,7 @@ Go to PECL/SeasLog and find .dll to install. [PECL/SeasLog Windows Dll](http://p
 ```conf
 ; configuration for php SeasLog module
 extension = seaslog.so
-seaslog.default_basepath = /log/seaslog-test            ;Default Log Base Path
+seaslog.default_basepath = /var/log/www                 ;Default Log Base Path
 seaslog.default_logger = default                        ;Default Logger Path
 seaslog.disting_type = 1                                ;Switch use the logger with type 1-Y 0-N(Default)
 seaslog.disting_by_hour = 1                             ;Switch use the logger with hour 1-Y 0-N(Default)
