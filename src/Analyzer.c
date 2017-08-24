@@ -146,10 +146,10 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     {
         while ((fgets(buffer, sizeof(buffer), fp)) != NULL)
         {
-            if (strstr(buffer, SEASLOG_G(base_path)) == NULL)
-            {
+//            if (strstr(buffer, SEASLOG_G(base_path)) == NULL)
+//            {
                 SEASLOG_ADD_NEXT_INDEX_STRING(return_value, delN(buffer));
-            }
+//            }
         }
 
         pclose(fp);
