@@ -531,6 +531,11 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
     if (zend_parse_parameters(argc TSRMLS_CC, "|sss", &level, &level_len, &log_path, &log_path_len, &key_word, &key_word_len) == FAILURE)
         return;
 
+    if (level_len < 1 || (level && !strcmp(level, SEASLOG_ALL)))
+    {
+        level = "\\S";
+    }
+
     if (argc == 0 || (argc == 1 && level && !strcmp(level, SEASLOG_ALL)))
     {
         long count_debug, count_info, count_notice, count_warn, count_erro, count_critical, count_alert, count_emergency;
@@ -645,7 +650,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 
     if (level_len < 1 || (level && !strcmp(level, SEASLOG_ALL)))
     {
-        level = "|";
+        level = "\\S";
     }
 
 #endif
