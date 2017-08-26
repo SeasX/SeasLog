@@ -60,6 +60,8 @@
                 <file role="src" name="ExceptionHook.c" />
                 <file role="src" name="Logger.c" />
                 <file role="src" name="Request.c" />
+                <file role="src" name="StreamWrapper.c" />
+                <file role="src" name="TemplateFormatter.c" />
             </dir>
             <dir name="CodeTips">
                 <file role="src" name="SeasLogCodeTips.php"/>
