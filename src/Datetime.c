@@ -16,6 +16,12 @@
 
 static void seaslog_process_last_sec(int now TSRMLS_DC)
 {
+    if (SEASLOG_G(last_sec))
+    {
+        efree(SEASLOG_G(last_sec)->real_time);
+        efree(SEASLOG_G(last_sec));
+    }
+
     last_sec_entry_t *last_sec = ecalloc(sizeof(last_sec_entry_t), 1);
     last_sec->sec = now;
     last_sec->real_time = seaslog_format_date(SEASLOG_G(current_datetime_format), SEASLOG_G(current_datetime_format_len), now TSRMLS_CC);
@@ -83,15 +89,22 @@ static char *make_real_time(TSRMLS_D)
     return SEASLOG_G(last_sec)->real_time;
 }
 
-static char *mic_time()
+static int mic_time(smart_str *buf)
 {
     struct timeval now;
-    char *tstr;
 
     timerclear(&now);
     gettimeofday(&now, NULL);
 
-    spprintf(&tstr, 0, "%ld.%ld", (long)time(NULL), (long)now.tv_usec / 1000);
+    smart_str_append_long(buf,(long)time(NULL));
+    smart_str_appendc(buf,'.');
+    smart_str_append_long(buf,(long)now.tv_usec / 1000);
 
-    return tstr;
+    return;
+}
+
+static char *make_time_RFC3339(TSRMLS_D)
+{
+    int now = (long)time(NULL);
+    return seaslog_format_date("Y-m-d\\TH:i:sP", 14, now TSRMLS_CC);
 }

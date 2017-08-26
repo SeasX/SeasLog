@@ -82,11 +82,8 @@ static int seaslog_log_ex(int argc, char *level, int level_int, char *message, i
 static int appender_handle_file(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC)
 {
 
-    char *log_file_path, *log_info, *current_time, *real_date, *real_time;
+    char *log_file_path, *log_info, *real_date;
     int log_len, log_file_path_len;
-
-    current_time = mic_time();
-    real_time = make_real_time(TSRMLS_C);
 
     real_date = make_real_date(TSRMLS_C);
     if (SEASLOG_G(disting_type))
@@ -98,7 +95,7 @@ static int appender_handle_file(char *message, int message_len, char *level, log
         log_file_path_len = spprintf(&log_file_path, 0, "%s/%s.log", logger->logger_path,real_date);
     }
 
-    log_len = spprintf(&log_info, 0, "%s | %d | %s | %s | %s | %s \n", level, SEASLOG_G(process_id), SEASLOG_G(request_id), current_time, real_time, message);
+    log_len = seaslog_spprintf(&log_info TSRMLS_CC, SEASLOG_GENERATE_LOG_INFO, 0, level, message);
 
     if (seaslog_real_buffer_log_ex(log_info, log_len, log_file_path, log_file_path_len + 1, ce TSRMLS_CC) == FAILURE)
     {
@@ -109,20 +106,25 @@ static int appender_handle_file(char *message, int message_len, char *level, log
 
     efree(log_file_path);
     efree(log_info);
-    efree(current_time);
 
     return SUCCESS;
 }
 
 static int appender_handle_tcp_udp(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC)
 {
-    char *log_info, *current_time, *real_time;
-    int log_len;
+    char *log_info, *log_content, *time_RFC3339;
+    int log_len, log_content_len;
 
-    current_time = mic_time();
-    real_time = make_real_time(TSRMLS_C);
+    time_RFC3339 = make_time_RFC3339(TSRMLS_C);
 
-    log_len = spprintf(&log_info, 0, "%s | %s | %s | %d | %s | %s | %s | %s \n", SEASLOG_G(host_name), logger->logger, level, SEASLOG_G(process_id), SEASLOG_G(request_id), current_time, real_time, message);
+    int PRI = SEASLOG_SYSLOG_FACILITY + seaslog_get_level_int(level);
+
+    log_content_len = seaslog_spprintf(&log_content TSRMLS_CC, SEASLOG_GENERATE_SYSLOG_INFO, 0, level, message);
+
+    log_len = spprintf(&log_info, 0, "<%d>1 %s %s %s[%s]: %s", PRI, time_RFC3339, SEASLOG_G(host_name), logger->logger, SEASLOG_G(process_id), log_content);
+
+    efree(time_RFC3339);
+    efree(log_content);
 
     if (seaslog_real_buffer_log_ex(log_info, log_len, logger->logger, logger->logger_len, ce TSRMLS_CC) == FAILURE)
     {
@@ -131,41 +133,39 @@ static int appender_handle_tcp_udp(char *message, int message_len, char *level, 
     }
 
     efree(log_info);
-    efree(current_time);
-
     return SUCCESS;
 }
 
 static int check_log_level(int level TSRMLS_DC)
 {
-    if (SEASLOG_G(level) < 1) return SUCCESS;
-    if (SEASLOG_G(level) > 8) return FAILURE;
+    if (SEASLOG_G(level) >= SEASLOG_DEBUG_INT) return SUCCESS;
+    if (SEASLOG_G(level) < SEASLOG_EMERGENCY_INT) return FAILURE;
 
     switch (level)
     {
         case SEASLOG_DEBUG_INT:
-            if (SEASLOG_G(level) <= SEASLOG_DEBUG_INT) return SUCCESS;
+            if (SEASLOG_G(level) >= SEASLOG_DEBUG_INT) return SUCCESS;
             break;
         case SEASLOG_INFO_INT:
-            if (SEASLOG_G(level) <= SEASLOG_INFO_INT) return SUCCESS;
+            if (SEASLOG_G(level) >= SEASLOG_INFO_INT) return SUCCESS;
             break;
         case SEASLOG_NOTICE_INT:
-            if (SEASLOG_G(level) <= SEASLOG_NOTICE_INT) return SUCCESS;
+            if (SEASLOG_G(level) >= SEASLOG_NOTICE_INT) return SUCCESS;
             break;
         case SEASLOG_WARNING_INT:
-            if (SEASLOG_G(level) <= SEASLOG_WARNING_INT) return SUCCESS;
+            if (SEASLOG_G(level) >= SEASLOG_WARNING_INT) return SUCCESS;
             break;
         case SEASLOG_ERROR_INT:
-            if (SEASLOG_G(level) <= SEASLOG_ERROR_INT) return SUCCESS;
+            if (SEASLOG_G(level) >= SEASLOG_ERROR_INT) return SUCCESS;
             break;
         case SEASLOG_CRITICAL_INT:
-            if (SEASLOG_G(level) <= SEASLOG_CRITICAL_INT) return SUCCESS;
+            if (SEASLOG_G(level) >= SEASLOG_CRITICAL_INT) return SUCCESS;
             break;
         case SEASLOG_ALERT_INT:
-            if (SEASLOG_G(level) <= SEASLOG_ALERT_INT) return SUCCESS;
+            if (SEASLOG_G(level) >= SEASLOG_ALERT_INT) return SUCCESS;
             break;
         case SEASLOG_EMERGENCY_INT:
-            if (SEASLOG_G(level) <= SEASLOG_EMERGENCY_INT) return SUCCESS;
+            if (SEASLOG_G(level) >= SEASLOG_EMERGENCY_INT) return SUCCESS;
             break;
         default:
             return FAILURE;

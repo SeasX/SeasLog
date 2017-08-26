@@ -38,28 +38,30 @@
 #include <stdlib.h>
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.7.2 dev"
+#define SEASLOG_VERSION                     "1.7.3 dev"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
-#define SEASLOG_ALL                         "all"
-#define SEASLOG_DEBUG                       "debug"
-#define SEASLOG_INFO                        "info"
-#define SEASLOG_NOTICE                      "notice"
-#define SEASLOG_WARNING                     "warning"
-#define SEASLOG_ERROR                       "error"
-#define SEASLOG_CRITICAL                    "critical"
-#define SEASLOG_ALERT                       "alert"
-#define SEASLOG_EMERGENCY                   "emergency"
+#define SEASLOG_ALL                         "ALL"
+#define SEASLOG_DEBUG                       "DEBUG"
+#define SEASLOG_INFO                        "INFO"
+#define SEASLOG_NOTICE                      "NOTICE"
+#define SEASLOG_WARNING                     "WARNING"
+#define SEASLOG_ERROR                       "ERROR"
+#define SEASLOG_CRITICAL                    "CRITICAL"
+#define SEASLOG_ALERT                       "ALERT"
+#define SEASLOG_EMERGENCY                   "EMERGENCY"
 
-#define SEASLOG_ALL_INT                     0
-#define SEASLOG_DEBUG_INT                   1
-#define SEASLOG_INFO_INT                    2
-#define SEASLOG_NOTICE_INT                  3
+#define SEASLOG_ALL_INT                     8
+#define SEASLOG_DEBUG_INT                   7
+#define SEASLOG_INFO_INT                    6
+#define SEASLOG_NOTICE_INT                  5
 #define SEASLOG_WARNING_INT                 4
-#define SEASLOG_ERROR_INT                   5
-#define SEASLOG_CRITICAL_INT                6
-#define SEASLOG_ALERT_INT                   7
-#define SEASLOG_EMERGENCY_INT               8
+#define SEASLOG_ERROR_INT                   3
+#define SEASLOG_CRITICAL_INT                2
+#define SEASLOG_ALERT_INT                   1
+#define SEASLOG_EMERGENCY_INT               0
+
+#define SEASLOG_SYSLOG_FACILITY             8 //LOG_USER
 
 #define SEASLOG_APPENDER_FILE               1
 #define SEASLOG_APPENDER_TCP                2
@@ -96,13 +98,21 @@
 #define SEASLOG_EXCEPTION_LOGGER_ERROR      4403
 #define SEASLOG_EXCEPTION_CONTENT_ERROR     4406
 
+#define SEASLOG_GET_HOST_NULL               "NoHost"
+
+#define SEASLOG_LOG_LINE_FEED_STR           "\n"
+#define SEASLOG_LOG_LINE_FEED_LEN           sizeof(SEASLOG_LOG_LINE_FEED_STR)
+
+#define SEASLOG_GENERATE_CURRENT_TEMPLATE   1
+#define SEASLOG_GENERATE_LOG_INFO           2
+#define SEASLOG_GENERATE_SYSLOG_INFO        3
 
 #if PHP_VERSION_ID >= 70000
 
 #define EX_ARRAY_DESTROY(arr) \
 	do { \
 		zval_ptr_dtor(arr); \
-		ZVAL_UNDEF(arr); \
+		ZVAL_NULL(arr); \
 	} while(0)
 
 #else
@@ -167,7 +177,8 @@ static void seaslog_process_last_min(int now TSRMLS_DC);
 static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_DC);
 static char *make_real_date(TSRMLS_D);
 static char *make_real_time(TSRMLS_D);
-static char *mic_time();
+static int mic_time(smart_str *buf);
+static char *make_time_RFC3339(TSRMLS_D);
 
 
 //Buffer
@@ -196,6 +207,7 @@ static void seaslog_throw_exception(int type TSRMLS_DC, const char *format, ...)
 static void seaslog_init_host_name(TSRMLS_D);
 static void seaslog_clear_host_name(TSRMLS_D);
 static void seaslog_init_pid(TSRMLS_D);
+static void seaslog_clear_pid(TSRMLS_D);
 static void seaslog_init_request_id(TSRMLS_D);
 static void seaslog_clear_request_id(TSRMLS_D);
 
@@ -209,13 +221,17 @@ static int check_log_level(int level TSRMLS_DC);
 static int make_log_dir(char *dir TSRMLS_DC);
 static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
 
+//TemplateFormatter
+static void seaslog_init_template(TSRMLS_D);
+static void seaslog_clear_template(TSRMLS_D);
+static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, size_t max_len, ...);
+static int seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, va_list ap);
+
 //StreamWrapper
 static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC);
 static int seaslog_init_stream_list(TSRMLS_D);
 static int seaslog_clear_stream_list(TSRMLS_D);
 static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC);
-
-//StreamWrapperFile
 
 
 //Analyzer

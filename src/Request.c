@@ -16,18 +16,16 @@
 
 static void seaslog_init_host_name(TSRMLS_D)
 {
-    if (SEASLOG_G(appender) == SEASLOG_APPENDER_TCP || SEASLOG_G(appender) == SEASLOG_APPENDER_UDP)
-    {
-        char buf[255];
+    char buf[255];
 
-        if (gethostname(buf, sizeof(buf) - 1))
-        {
-            SEASLOG_G(host_name) = "";
-        }
-        else
-        {
-            spprintf(&SEASLOG_G(host_name), 0, "%s", buf);
-        }
+    if (gethostname(buf, sizeof(buf) - 1))
+    {
+        SEASLOG_G(host_name) = estrdup(SEASLOG_GET_HOST_NULL);
+        SEASLOG_G(host_name_len) = strlen(SEASLOG_GET_HOST_NULL);
+    }
+    else
+    {
+        SEASLOG_G(host_name_len) = spprintf(&SEASLOG_G(host_name), 0, "%s", buf);
     }
 }
 
@@ -41,12 +39,21 @@ static void seaslog_clear_host_name(TSRMLS_D)
 
 static void seaslog_init_pid(TSRMLS_D)
 {
-    SEASLOG_G(process_id) = getpid();
+    SEASLOG_G(process_id_len) = spprintf(&SEASLOG_G(process_id),0, "%d", getpid());
+}
+
+static void seaslog_clear_pid(TSRMLS_D)
+{
+   if (SEASLOG_G(process_id))
+   {
+       efree(SEASLOG_G(process_id));
+   }
 }
 
 static void seaslog_init_request_id(TSRMLS_D)
 {
-    SEASLOG_G(request_id) = get_uniqid();
+      SEASLOG_G(request_id) = get_uniqid();
+      SEASLOG_G(request_id_len) = strlen(SEASLOG_G(request_id));
 }
 
 static void seaslog_clear_request_id(TSRMLS_D)

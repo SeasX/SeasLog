@@ -4,17 +4,17 @@
  * Date: 14-1-27 下午4:47
  */
 
-define('SEASLOG_ALL','all');
-define('SEASLOG_DEBUG','debug');
-define('SEASLOG_INFO','info');
-define('SEASLOG_NOTICE','notice');
-define('SEASLOG_WARNING','warning');
-define('SEASLOG_ERROR','error');
-define('SEASLOG_CRITICAL','critical');
-define('SEASLOG_ALERT','alert');
-define('SEASLOG_EMERGENCY','emergency');
-define('SEASLOG_DETAIL_ORDER_ASC',1);
-define('SEASLOG_DETAIL_ORDER_DESC',2);
+define('SEASLOG_ALL', 'ALL');
+define('SEASLOG_DEBUG', 'DEBUG');
+define('SEASLOG_INFO', 'INFO');
+define('SEASLOG_NOTICE', 'NOTICE');
+define('SEASLOG_WARNING', 'WARNING');
+define('SEASLOG_ERROR', 'ERROR');
+define('SEASLOG_CRITICAL', 'CRITICAL');
+define('SEASLOG_ALERT', 'ALERT');
+define('SEASLOG_EMERGENCY', 'EMERGENCY');
+define('SEASLOG_DETAIL_ORDER_ASC', 1);
+define('SEASLOG_DETAIL_ORDER_DESC', 2);
 
 class SeasLog
 {
@@ -55,14 +55,17 @@ class SeasLog
      * @param string
      * @return bool
      */
-    static public function setRequestID($request_id){
+    static public function setRequestID($request_id)
+    {
         return TRUE;
     }
+
     /**
      * 获取本次请求标识
      * @return string
      */
-    static public function getRequestID(){
+    static public function getRequestID()
+    {
         return uniqid();
     }
 
@@ -110,7 +113,7 @@ class SeasLog
      * 统计所有类型（或单个类型）行数
      * @param string $level
      * @param string $log_path
-     * @param null   $key_word
+     * @param null $key_word
      *
      * @return array | long
      */
@@ -124,9 +127,9 @@ class SeasLog
      *
      * @param        $level
      * @param string $log_path
-     * @param null   $key_word
-     * @param int    $start
-     * @param int    $limit
+     * @param null $key_word
+     * @param int $start
+     * @param int $limit
      * @param        $order
      *
      * @return array
@@ -160,7 +163,7 @@ class SeasLog
      * 记录debug日志
      *
      * @param        $message
-     * @param array  $content
+     * @param array $content
      * @param string $module
      */
     static public function debug($message, array $content = array(), $module = '')
@@ -172,7 +175,7 @@ class SeasLog
      * 记录info日志
      *
      * @param        $message
-     * @param array  $content
+     * @param array $content
      * @param string $module
      */
     static public function info($message, array $content = array(), $module = '')
@@ -184,7 +187,7 @@ class SeasLog
      * 记录notice日志
      *
      * @param        $message
-     * @param array  $content
+     * @param array $content
      * @param string $module
      */
     static public function notice($message, array $content = array(), $module = '')
@@ -196,7 +199,7 @@ class SeasLog
      * 记录warning日志
      *
      * @param        $message
-     * @param array  $content
+     * @param array $content
      * @param string $module
      */
     static public function warning($message, array $content = array(), $module = '')
@@ -208,7 +211,7 @@ class SeasLog
      * 记录error日志
      *
      * @param        $message
-     * @param array  $content
+     * @param array $content
      * @param string $module
      */
     static public function error($message, array $content = array(), $module = '')
@@ -220,7 +223,7 @@ class SeasLog
      * 记录critical日志
      *
      * @param        $message
-     * @param array  $content
+     * @param array $content
      * @param string $module
      */
     static public function critical($message, array $content = array(), $module = '')
@@ -232,7 +235,7 @@ class SeasLog
      * 记录alert日志
      *
      * @param        $message
-     * @param array  $content
+     * @param array $content
      * @param string $module
      */
     static public function alert($message, array $content = array(), $module = '')
@@ -244,7 +247,7 @@ class SeasLog
      * 记录emergency日志
      *
      * @param        $message
-     * @param array  $content
+     * @param array $content
      * @param string $module
      */
     static public function emergency($message, array $content = array(), $module = '')
@@ -256,7 +259,7 @@ class SeasLog
      * 通用日志方法
      * @param        $level
      * @param        $message
-     * @param array  $content
+     * @param array $content
      * @param string $module
      */
     static public function log($level, $message, array $content = array(), $module = '')

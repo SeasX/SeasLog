@@ -27,6 +27,7 @@ ZEND_GET_MODULE(seaslog)
 #include "src/Common.c"
 #include "src/Analyzer.c"
 #include "src/StreamWrapper.c"
+#include "src/TemplateFormatter.c"
 #include "src/Appender.c"
 #include "src/Buffer.c"
 #include "src/Datetime.c"
@@ -136,6 +137,8 @@ PHP_INI_BEGIN()
 STD_PHP_INI_ENTRY("seaslog.default_basepath", "/var/log/www", PHP_INI_ALL, OnUpdateString, default_basepath, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_logger", "default", PHP_INI_ALL, OnUpdateString, default_logger, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_datetime_format", "Y:m:d H:i:s", PHP_INI_ALL, OnUpdateString, default_datetime_format, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.default_template", "%L | %P | %Q | %t | %T | %M", PHP_INI_ALL, OnUpdateString, default_template, zend_seaslog_globals, seaslog_globals)
+
 
 STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour", "0", PHP_INI_ALL, OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
@@ -144,7 +147,7 @@ STD_PHP_INI_BOOLEAN("seaslog.trace_error", "1", PHP_INI_ALL, OnUpdateBool, trace
 STD_PHP_INI_BOOLEAN("seaslog.trace_exception", "0", PHP_INI_ALL, OnUpdateBool, trace_exception, zend_seaslog_globals, seaslog_globals)
 
 STD_PHP_INI_ENTRY("seaslog.buffer_size", "0", PHP_INI_ALL, OnUpdateLongGEZero, buffer_size, zend_seaslog_globals, seaslog_globals)
-STD_PHP_INI_ENTRY("seaslog.level", "0", PHP_INI_ALL, OnUpdateLongGEZero, level, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.level", "8", PHP_INI_ALL, OnUpdateLongGEZero, level, zend_seaslog_globals, seaslog_globals)
 
 
 STD_PHP_INI_ENTRY("seaslog.appender", "1", PHP_INI_ALL, OnUpdateLongGEZero, appender, zend_seaslog_globals, seaslog_globals)
@@ -228,9 +231,10 @@ PHP_RINIT_FUNCTION(seaslog)
     initRStart(TSRMLS_C);
     seaslog_init_pid(TSRMLS_C);
     seaslog_init_host_name(TSRMLS_C);
+	seaslog_init_request_id(TSRMLS_C);
+	seaslog_init_template(TSRMLS_C);
     seaslog_init_logger_list(TSRMLS_C);
     seaslog_init_logger(TSRMLS_C);
-	seaslog_init_request_id(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
     seaslog_init_stream_list(TSRMLS_C);
     initREnd(TSRMLS_C);
@@ -244,7 +248,9 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
     seaslog_clear_logger(TSRMLS_C);
     seaslog_clear_logger_list(TSRMLS_C);
 	seaslog_clear_request_id(TSRMLS_C);
+	seaslog_clear_pid(TSRMLS_C);
 	seaslog_clear_host_name(TSRMLS_C);
+	seaslog_clear_template(TSRMLS_C);
 	seaslog_clear_stream_list(TSRMLS_C);
     return SUCCESS;
 }

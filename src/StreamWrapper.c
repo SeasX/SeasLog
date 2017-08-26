@@ -88,7 +88,6 @@ static int seaslog_init_stream_list(TSRMLS_D)
 #if PHP_VERSION_ID >= 70000
     array_init(&SEASLOG_G(stream_list));
 #else
-    SEASLOG_G(stream_list) = NULL;
 
     MAKE_STD_ZVAL(z_stream_list);
     array_init(z_stream_list);
@@ -121,7 +120,6 @@ static int seaslog_clear_stream_list(TSRMLS_D)
             if (stream)
             {
                 php_stream_close(stream);
-                php_stream_free(stream, PHP_STREAM_FREE_RELEASE_STREAM);
             }
         }
         ZEND_HASH_FOREACH_END();
@@ -140,7 +138,6 @@ static int seaslog_clear_stream_list(TSRMLS_D)
             if (stream)
             {
                 php_stream_close(stream);
-                php_stream_free(stream, PHP_STREAM_FREE_RELEASE_STREAM);
             }
             zend_hash_move_forward(ht);
         }

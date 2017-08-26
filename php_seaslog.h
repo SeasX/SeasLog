@@ -99,9 +99,18 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *current_datetime_format;
     int  current_datetime_format_len;
     char *base_path;
+
     char *host_name;
+    int  host_name_len;
+
 	char *request_id;
-    int  process_id;
+	int  request_id_len;
+
+	char *process_id;
+    int  process_id_len;
+
+    char *default_template;
+    char *current_template;
 
     logger_entry_t *tmp_logger;
     logger_entry_t *last_logger;

@@ -105,7 +105,7 @@ seaslog.disting_type = 1                                ;是否以type分文件 
 seaslog.disting_by_hour = 1                             ;是否每小时划分一个文件 1是 0否(默认)
 seaslog.use_buffer = 1                                  ;是否启用buffer 1是 0否(默认)
 seaslog.buffer_size = 100                               ;buffer中缓冲数量 默认0(不使用buffer_size)
-seaslog.level = 0                                       ;记录日志级别 默认0(所有日志)
+seaslog.level = 8                                       ;记录日志级别 默认8(所有日志)
 seaslog.trace_error = 1                                 ;自动记录错误 默认1(开启)
 seaslog.trace_exception = 0                             ;自动记录异常信息 默认0(关闭)
 seaslog.default_datetime_format = "Y:m:d H:i:s"         ;日期格式配置 默认"Y:m:d H:i:s"
@@ -124,7 +124,23 @@ seaslog.ignore_warning = 1                              ;是否开启忽略SeasL
 
 > `seaslog.buffer_size = 100` 设置缓冲数量为100. 默认为0,即无缓冲数量限制.当buffer_size大于0时,缓冲量达到该值则写一次文件.
 
-> `seaslog.level = 3` 记录的日志级别.默认为0,即所有日志均记录。当level为1时,关注debug以上级别(包括debug)，以此类推。level大于8时，所有日志均不记录。
+> `seaslog.level = 8` 记录的日志级别.默认为8,即所有日志均记录。
+
+> `seaslog.level = 0` 记录EMERGENCY。
+
+> `seaslog.level = 1` 记录EMERGENCY、ALERT。
+
+> `seaslog.level = 2` 记录EMERGENCY、ALERT、CRITICAL。
+
+> `seaslog.level = 3` 记录EMERGENCY、ALERT、CRITICAL、ERROR。
+
+> `seaslog.level = 4` 记录EMERGENCY、ALERT、CRITICAL、ERROR、WARNING。
+
+> `seaslog.level = 5` 记录EMERGENCY、ALERT、CRITICAL、ERROR、WARNING、NOTICE。
+
+> `seaslog.level = 6` 记录EMERGENCY、ALERT、CRITICAL、ERROR、WARNING、NOTICE、INFO。
+
+> `seaslog.level = 7` 记录EMERGENCY、ALERT、CRITICAL、ERROR、WARNING、NOTICE、INFO、DEBUG。
 
 > `seaslog.throw_exception = 1` 开启抛出SeasLog抛出自身的异常。当出现目录权限或接收服务器端口不通等情况时，抛出异常；关闭时不抛出异常。
 
@@ -134,14 +150,14 @@ seaslog.ignore_warning = 1                              ;是否开启忽略SeasL
 ### 常量与函数
 #### 常量列表
 `SeasLog 共将日志分成8个级别`
-* SEASLOG_DEBUG                       "debug"
-* SEASLOG_INFO                        "info"
-* SEASLOG_NOTICE                      "notice"
-* SEASLOG_WARNING                     "warning"
-* SEASLOG_ERROR                       "error"
-* SEASLOG_CRITICAL                    "critical"
-* SEASLOG_ALERT                       "alert"
-* SEASLOG_EMERGENCY                   "emergency"
+* SEASLOG_DEBUG                       "DEBUG"
+* SEASLOG_INFO                        "INFO"
+* SEASLOG_NOTICE                      "NOTICE"
+* SEASLOG_WARNING                     "WARNING"
+* SEASLOG_ERROR                       "ERROR"
+* SEASLOG_CRITICAL                    "CRITICAL"
+* SEASLOG_ALERT                       "ALERT"
+* SEASLOG_EMERGENCY                   "EMERGENCY"
 ```php
 var_dump(SEASLOG_DEBUG,SEASLOG_INFO,SEASLOG_NOTICE);
 /*
@@ -159,6 +175,17 @@ string('notice') notice级别
  * @author neeke@php.net
  * Date: 14-1-27 下午4:47
  */
+define('SEASLOG_ALL', 'ALL');
+define('SEASLOG_DEBUG', 'DEBUG');
+define('SEASLOG_INFO', 'INFO');
+define('SEASLOG_NOTICE', 'NOTICE');
+define('SEASLOG_WARNING', 'WARNING');
+define('SEASLOG_ERROR', 'ERROR');
+define('SEASLOG_CRITICAL', 'CRITICAL');
+define('SEASLOG_ALERT', 'ALERT');
+define('SEASLOG_EMERGENCY', 'EMERGENCY');
+define('SEASLOG_DETAIL_ORDER_ASC', 1);
+define('SEASLOG_DETAIL_ORDER_DESC', 2);
 
 class SeasLog
 {

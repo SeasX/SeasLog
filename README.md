@@ -103,7 +103,7 @@ seaslog.disting_type = 1                                ;Switch use the logger w
 seaslog.disting_by_hour = 1                             ;Switch use the logger with hour 1-Y 0-N(Default)
 seaslog.use_buffer = 1                                  ;Switch use the log buffer with memory 1-Y 0-N(Default)
 seaslog.buffer_size = 100                               ;The buffer size
-seaslog.level = 0                                       ;Record logger level   Default 0 (All of them)
+seaslog.level = 8                                       ;Record logger level   Default 8 (All of them)
 seaslog.trace_error = 1                                 ;Automatic Record final error with default logger. 1-Y(Default) 0-N
 seaslog.trace_exception = 0                             ;Automatic Record exception with default logger. 1-Y 0-N(Default)
 seaslog.default_datetime_format = "Y:m:d H:i:s"         ;The DateTime Style.  Default “Y:m:d H:i:s"
@@ -122,7 +122,23 @@ seaslog.ignore_warning = 1                              ;Switch ignore SeasLog w
 
 > `seaslog.buffer_size = 100` Configure the buffer_size with 100.  The buffer_size default 0, it’s meaning don’t use buffer. If buffer_size > 0,   SeasLog will rewritten down into the Data Store when the prerecorded log in memory count >= this buffer_size,and then refresh the memory poll.
 
-> `seaslog.level = 3` Default logger level. The Default value was 0, it’s meaning all of the level. SeasLog will record the log which level after DEBUG when level setting in 1, and so on. Yes, SeasLog won’t record anything when level setting in 8.
+> `seaslog.level = 8` Default logger level.The Default value was 8, it’s meaning SeasLog will record all of the level.
+
+> `seaslog.level = 0` SeasLog will record which level EMERGENCY.
+
+> `seaslog.level = 1` SeasLog will record which level EMERGENCY,ALERT.
+
+> `seaslog.level = 2` SeasLog will record which level EMERGENCY,ALERT,CRITICAL.
+
+> `seaslog.level = 3` SeasLog will record which level EMERGENCY,ALERT,CRITICAL,ERROR.
+
+> `seaslog.level = 4` SeasLog will record which level EMERGENCY,ALERT,CRITICAL,ERROR,WARNING.
+
+> `seaslog.level = 5` SeasLog will record which level EMERGENCY,ALERT,CRITICAL,ERROR,WARNING,NOTICE.
+
+> `seaslog.level = 6` SeasLog will record which level EMERGENCY,ALERT,CRITICAL,ERROR,WARNING,NOTICE,INFO.
+
+> `seaslog.level = 7` SeasLog will record which level EMERGENCY,ALERT,CRITICAL,ERROR,WARNING,NOTICE,INFO,DEBUG.
 
 > `seaslog.throw_exception = 1` Open an exception that throws the SeasLog to throw itself. When the directory authority or the receive server port is blocked, throw an exception; do not throw an exception when closed.
 
@@ -133,14 +149,14 @@ seaslog.ignore_warning = 1                              ;Switch ignore SeasLog w
 ### Constants and functions
 #### Constant list
 `SeasLog exposes log level by eight levels.`
-* SEASLOG_DEBUG                       "debug"
-* SEASLOG_INFO                        "info"
-* SEASLOG_NOTICE                      "notice"
-* SEASLOG_WARNING                     "warning"
-* SEASLOG_ERROR                       "error"
-* SEASLOG_CRITICAL                    "critical"
-* SEASLOG_ALERT                       "alert"
-* SEASLOG_EMERGENCY                   "emergency"
+* SEASLOG_DEBUG                       "DEBUG"
+* SEASLOG_INFO                        "INFO"
+* SEASLOG_NOTICE                      "NOTICE"
+* SEASLOG_WARNING                     "WARNING"
+* SEASLOG_ERROR                       "ERROR"
+* SEASLOG_CRITICAL                    "CRITICAL"
+* SEASLOG_ALERT                       "ALERT"
+* SEASLOG_EMERGENCY                   "EMERGENCY"
 ```php
 var_dump(SEASLOG_DEBUG,SEASLOG_INFO,SEASLOG_NOTICE);
 /*
@@ -159,6 +175,17 @@ Believe that from the following pseudo code comments, you can quickly get functi
  * @author neeke@php.net
  * Date: 14-1-27 16:47
  */
+define('SEASLOG_ALL', 'ALL');
+define('SEASLOG_DEBUG', 'DEBUG');
+define('SEASLOG_INFO', 'INFO');
+define('SEASLOG_NOTICE', 'NOTICE');
+define('SEASLOG_WARNING', 'WARNING');
+define('SEASLOG_ERROR', 'ERROR');
+define('SEASLOG_CRITICAL', 'CRITICAL');
+define('SEASLOG_ALERT', 'ALERT');
+define('SEASLOG_EMERGENCY', 'EMERGENCY');
+define('SEASLOG_DETAIL_ORDER_ASC', 1);
+define('SEASLOG_DETAIL_ORDER_DESC', 2);
 
 class SeasLog
 {
@@ -708,7 +735,7 @@ string(15) "testModule/app1"
 
 #### Fast write log
 We have been set the basePath and logger, and then the logger path has be all ready,
-> log记录目录 = basePath / logger / {fileName}.log
+> logSeasLog will record which level 目录 = basePath / logger / {fileName}.log
 Log filename, begin with `YearMonthDay`.It will be `{fileName}` = `20140218`,because today is 02-18-2014.
 
 Would you remember that `seaslog.disting_type` in `php.ini`?
