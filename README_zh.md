@@ -18,6 +18,9 @@ An effective,fast,stable log extension for PHP
 - **[安装](#安装)**
     - **[编译安装 SeasLog](#编译安装-seaslog)**
     - **[seaslog.ini的配置](#seaslogini的配置)**
+    - **[自定义日志模板](#自定义日志模板)**
+        - [日志模板说明](#日志模板说明)
+        - [预设变量表](#预设变量表)
 - **[使用](#使用)**
     - **[常量与函数](#常量与函数)**
         - [常量列表](#常量列表)
@@ -69,9 +72,10 @@ php内置error_log、syslog函数功能强大且性能极好，但由于各种�
 * 遵循 [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) 日志接口规范
 * 自动记录错误信息
 * 自动记录异常信息
-* 连接TCP端口发送
-* 连接UDP端口发送
+* 连接TCP端口，以RFC5424格式发送日志
+* 连接UDP端口，以RFC5424格式发送日志
 * 支持RequestId区分请求
+* 支持日志模板自定义
 
 ### 目标是怎样的
 * 便捷、规范的log记录
@@ -97,24 +101,62 @@ $ pecl install seaslog
 
 ### seaslog.ini的配置
 ```conf
-; configuration for php SeasLog module
+[SeasLog]
+;configuration for php SeasLog module
 extension = seaslog.so
-seaslog.default_basepath = /var/log/www                 ;默认log根目录
-seaslog.default_logger = default                        ;默认logger目录
-seaslog.disting_type = 1                                ;是否以type分文件 1是 0否(默认)
-seaslog.disting_by_hour = 1                             ;是否每小时划分一个文件 1是 0否(默认)
-seaslog.use_buffer = 1                                  ;是否启用buffer 1是 0否(默认)
-seaslog.buffer_size = 100                               ;buffer中缓冲数量 默认0(不使用buffer_size)
-seaslog.level = 8                                       ;记录日志级别 默认8(所有日志)
-seaslog.trace_error = 1                                 ;自动记录错误 默认1(开启)
-seaslog.trace_exception = 0                             ;自动记录异常信息 默认0(关闭)
-seaslog.default_datetime_format = "Y:m:d H:i:s"         ;日期格式配置 默认"Y:m:d H:i:s"
-seaslog.appender = 1                                    ;日志存储介质 1File 2TCP 3UDP (默认为1)
-seaslog.remote_host = 127.0.0.1                         ;接收ip 默认127.0.0.1 (当使用TCP或UDP时必填)
-seaslog.remote_port = 514                               ;接收端口 默认514 (当使用TCP或UDP时必填)
-seaslog.trim_wrap = 0                                   ;过滤日志中的回车和换行符 (默认为0)
-seaslog.throw_exception = 1                             ;是否开启抛出SeasLog自身异常  1开启(默认) 0否
-seaslog.ignore_warning = 1                              ;是否开启忽略SeasLog自身warning  1开启(默认) 0否
+
+;默认log根目录
+seaslog.default_basepath = "/var/log/www"
+
+;默认logger目录
+seaslog.default_logger = "default"
+
+;日期格式配置 默认"Y:m:d H:i:s"
+seaslog.default_datetime_format = "Y:m:d H:i:s"
+
+;日志格式模板 默认"%L | %P | %Q | %t | %T | %M"
+seaslog.default_template = "%L | %P | %Q | %t | %T | %M"
+
+;是否以type分文件 1是 0否(默认)
+seaslog.disting_type = 1
+
+;是否每小时划分一个文件 1是 0否(默认)
+seaslog.disting_by_hour = 0
+
+;是否启用buffer 1是 0否(默认)
+seaslog.use_buffer = 0
+
+;buffer中缓冲数量 默认0(不使用buffer_size)
+seaslog.buffer_size = 100
+
+;记录日志级别，数字越大，根据级别记的日志越多。
+;0-EMERGENCY 1-ALERT 2-CRITICAL 3-ERROR 4-WARNING 5-NOTICE 6-INFO 7-DEBUG 8-ALL
+;默认8(所有日志)
+seaslog.level = 8
+
+;自动记录错误 默认1(开启)
+seaslog.trace_error = 1
+
+;自动记录异常信息 默认0(关闭)
+seaslog.trace_exception = 0
+
+;日志存储介质 1File 2TCP 3UDP (默认为1)
+seaslog.appender = 1
+
+;接收ip 默认127.0.0.1 (当使用TCP或UDP时必填)
+seaslog.remote_host = "127.0.0.1"
+
+;接收端口 默认514 (当使用TCP或UDP时必填)
+seaslog.remote_port = 514
+
+;过滤日志中的回车和换行符 (默认为0)
+seaslog.trim_wrap = 0
+
+;是否开启抛出SeasLog自身异常  1开启(默认) 0否
+seaslog.throw_exception = 1
+
+;是否开启忽略SeasLog自身warning  1开启(默认) 0否
+seaslog.ignore_warning = 1
 ```
 > `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
 
@@ -142,9 +184,37 @@ seaslog.ignore_warning = 1                              ;是否开启忽略SeasL
 
 > `seaslog.level = 7` 记录EMERGENCY、ALERT、CRITICAL、ERROR、WARNING、NOTICE、INFO、DEBUG。
 
-> `seaslog.throw_exception = 1` 开启抛出SeasLog抛出自身的异常。当出现目录权限或接收服务器端口不通等情况时，抛出异常；关闭时不抛出异常。
+> `seaslog.throw_exception = 1` 开启抛出SeasLog抛出自身的异常。当出现录权限或接收服务器端口不通等情况时，抛出异常；关闭时不抛出异常。
 
 > `seaslog.ignore_warning = 1` 开启忽略SeasLog自身的警告。当出现目录权限或接收服务器端口不通等情况时，将进行忽略；关闭时，将抛出警告。
+
+### 自定义日志模板
+很多朋友在使用过程中提到自定义日志模板的需求，于是`SeasLog`自1.7.2版本开始，拥有了这个能力，允许用户自定义日志的模板，
+同时在模板中可以使用`SeasLog`预置的诸多预设变量，参照[预设变量表](#预设变量表)。
+
+#### 日志模板说明
+* 模板默认为：`seaslog.default_template = "%L | %P | %Q | %t | %T | %M"`
+* 意味着，默认的格式为`{level} | {pid} | {uniqid} | {timeStamp} |{dateTime} | {logInfo}`
+* 如果自定义的格式为：`seaslog.default_template = "[%T]:%L %P %Q %t %M" `
+* 那么，日志格式将被自定义为：`[{dateTime}]:{level} {pid} {uniqid} {timeStamp} {logInfo}`
+> 注意：`%L` 必须在`%M`之前，即：日志级别，必须在日志内容之前。
+
+#### 预设变量表
+`SeasLog`提供了下列预设变量，可以直接使用在日志模板中，将在日志最终生成时替换成对应值。
+* `%L` - Level 日志级别
+* `%M` - Message 日志信息
+* `%T` - DateTime 如`2017:08:16 19:15:02`，受`seaslog.default_datetime_format`影响
+* `%t` - Timestamp 如`1502882102.862`，精确到毫秒数
+* `%Q` - RequestId 区分单次请求，如没有调用`SeasLog::setRequestId($string)`方法，则在初始化请求时，采用内置的`static char *get_uniqid()`方法生成的惟一值。
+* `%H` - HostName 主机名
+* `%P` - ProcessId 进程ID
+* `%D` - `TODO` Domain & Port 域名+端口号，如`www.cloudwise.com:80`
+* `%R` - `TODO` Request URI 请求URI，如`/app/user/signin`
+* `%m` - `TODO` Request Method 请求类型
+* `%I` - `TODO` Client IP 来源客户端IP
+* `%F` - `TODO` FileName 文件名
+* `%l` - `TODO` Code Line 行号
+
 ## 使用
 
 ### 常量与函数
@@ -778,31 +848,31 @@ SeasLog::error('test error 3');
 如果已经在前文使用过SeasLog::setLogger()函数，第3个参数的log只在此处临时使用，不影响下文。
 */
 ```
-> log格式统一为： `{type} | {pid} | {uniqid} | {timeStamp} |{dateTime} | {logInfo}`
+> log格式受`seaslog.default_template`影响。
+> seaslog.default_template默认模板为 seaslog.default_template = "%L | %P | %Q | %t | %T | %M"
+> 那么在默认情况下，日志格式为： `{level} | {pid} | {uniqid} | {timeStamp} |{dateTime} | {logInfo}`
+> 关于自定义模板，及SeasLog中的预置值，可参阅 [自定义日志模板](#自定义日志模板)
 ```sh
-error | 23625 | 599159975a9ff | 1406422432.786 | 2014:07:27 08:53:52 | this is a error test by log
-debug | 23625 | 599159975a9ff | 1406422432.786 | 2014:07:27 08:53:52 | this is a neeke debug
-info | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | this is a info log
-notice | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | this is a notice log
-warning | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | your github.com was down,please rboot it ASAP!
-error | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | a error log
-critical | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | some thing was critical
-emergency | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house next door was completely burnt out! it is a joke
+ERROR | 23625 | 599159975a9ff | 1406422432.786 | 2014:07:27 08:53:52 | this is a error test by log
+DEBUG | 23625 | 599159975a9ff | 1406422432.786 | 2014:07:27 08:53:52 | this is a neeke debug
+INFO | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | this is a info log
+NOTICE | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | this is a notice log
+WARNING | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | your github.com was down,please rboot it ASAP!
+ERROR | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | a error log
+CRITICAL | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | some thing was critical
+EMERGENCY | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house next door was completely burnt out! it is a joke
 ```
 
 #### 当`seaslog.appender`配置为 `2（TCP）` 或 `3（UDP）` 时，日志将推送至remote_host:remote_port的TCP或UDP端口
-> 此时log格式统一为 `{hostName} | {loggerName} | {type} | {pid} | {timeStamp} |{dateTime} | {logInfo}`
+> SeasLog发送至远端时，遵循规范[RFC5424](http://www.faqs.org/rfcs/rfc5424.html)
+> log格式统一为：`<PRI>1 {timeStampWithRFC3339} {HostName} {loggerName}[{pid}]: {logInfo}`
+> 上述`{logInfo}` 受配置  `seaslog.default_template`影响。
 
 ```sh
-vagrant-ubuntu-trusty | test/logger | error | 21423 | 599157af4e937 | 1466787583.321 | 2016:06:25 00:59:43 | this is a error test by ::log
-vagrant-ubuntu-trusty | test/logger | debug | 21423 | 599157af4e937 | 1466787583.322 | 2016:06:25 00:59:43 | this is a neeke debug
-vagrant-ubuntu-trusty | test/logger | info | 21423 | 599157af4e937 | 1466787583.323 | 2016:06:25 00:59:43 | this is a info log
-vagrant-ubuntu-trusty | test/logger | notice | 21423 | 599157af4e937 | 1466787583.324 | 2016:06:25 00:59:43 | this is a notice log
-vagrant-ubuntu-trusty | test/logger | warning | 21423 | 599157af4e937 | 1466787583.325 | 2016:06:25 00:59:43 | your github.com was down,please rboot it ASAP!
-vagrant-ubuntu-trusty | test/logger | error | 21423 | 599157af4e937 | 1466787583.326 | 2016:06:25 00:59:43 | a error log
-vagrant-ubuntu-trusty | test/logger | critical | 21423 | 599157af4e937 | 1466787583.327 | 2016:06:25 00:59:43 | some thing was critical
-vagrant-ubuntu-trusty | test/logger | alert | 21423 | 599157af4e937 | 1466787583.328 | 2016:06:25 00:59:43 | yes this is a alertMSG
-vagrant-ubuntu-trusty | test/logger | emergency | 21423 | 599157af4e937 | 1466787583.329 | 2016:06:25 00:59:43 | Just now, the house next door was completely burnt out! it`s a joke
+发送出去的格式如：
+<15>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: DEBUG | 21423 | 599157af4e937 | 1466787583.322 | 2016:06:25 00:59:43 | this is a neeke debug
+<14>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: INFO | 21423 | 599157af4e937 | 1466787583.323 | 2016:06:25 00:59:43 | this is a info log
+<13>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: NOTICE | 21423 | 599157af4e937 | 1466787583.324 | 2016:06:25 00:59:43 | this is a notice log
 ```
 
 ### SeasLog Analyzer的使用

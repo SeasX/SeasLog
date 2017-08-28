@@ -99,9 +99,8 @@ static int seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_ty
                             case NUL:
                                 continue;
                             case 'D': //TODO Domain:Port
-                            case 'R': //TODO Uri
-                            case 'r': //TODO Url
-                            case 'm': //TODO Method
+                            case 'R': //TODO Request Uri
+                            case 'm': //TODO Request Method
                             case 'I': //TODO Client IP
                             case 'F': //TODO Filename
                             case 'C': //TODO Class::Action

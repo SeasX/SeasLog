@@ -16,6 +16,9 @@ An effective,fast,stable log extension for PHP
 - **[Install](#install)**
     - **[Make Install SeasLog](#make-Install-SeasLog)**
     - **[seaslog.ini](#seaslog.ini)**
+    - **[Custom log template](#custom-log-template)**
+        - [Log template overview](#log-template-overview)
+        - [Default variable table](#default-variable-table)
 - **[Use age](#use-age)**
     - **[Constants and functions](#constants-and-functions)**
         - [Constant list](#constant-list)
@@ -67,9 +70,10 @@ So is there a log of libraries meet the following requirements：
 * Follow the [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) log interface specification
 * Automatically record error information
 * Automatically record abnormal information
-* Support Connect the TCP port
-* Support Connect the UDP port
+* Support Connect the TCP port, send with RFC5424
+* Support Connect the UDP port, send with RFC5424
 * Support RequestId differentiated requests
+* Support for log template customizations
 
 ### What is the target
 * Convenient, standarded log records
@@ -95,24 +99,74 @@ Go to PECL/SeasLog and find .dll to install. [PECL/SeasLog Windows Dll](http://p
 
 ### seaslog.ini
 ```conf
-; configuration for php SeasLog module
+[SeasLog]
+;configuration for php SeasLog module
 extension = seaslog.so
-seaslog.default_basepath = /var/log/www                 ;Default Log Base Path
-seaslog.default_logger = default                        ;Default Logger Path
-seaslog.disting_type = 1                                ;Switch use the logger with type 1-Y 0-N(Default)
-seaslog.disting_by_hour = 1                             ;Switch use the logger with hour 1-Y 0-N(Default)
-seaslog.use_buffer = 1                                  ;Switch use the log buffer with memory 1-Y 0-N(Default)
-seaslog.buffer_size = 100                               ;The buffer size
-seaslog.level = 8                                       ;Record logger level   Default 8 (All of them)
-seaslog.trace_error = 1                                 ;Automatic Record final error with default logger. 1-Y(Default) 0-N
-seaslog.trace_exception = 0                             ;Automatic Record exception with default logger. 1-Y 0-N(Default)
-seaslog.default_datetime_format = "Y:m:d H:i:s"         ;The DateTime Style.  Default “Y:m:d H:i:s"
-seaslog.appender = 1                                    ;Switch the Record Log Data Store.     1File 2TCP 3UDP (Switch default 1)
-seaslog.remote_host = 127.0.0.1                         ;If you use  Record TCP or UDP, configure this remote ip.(Default 127.0.0.1)
-seaslog.remote_port = 514                               ;If you use Record TCP or UDP, configure this remote port.(Default 514)
-seaslog.trim_wrap = 0                                   ;Trim the \n and \r in log message. (Default 0)
-seaslog.throw_exception = 1                             ;Switch throw SeasLog exception  1-On(Default) 0-Off
-seaslog.ignore_warning = 1                              ;Switch ignore SeasLog warning  1-On(Default) 0-Off
+
+;Default Log Base Path
+seaslog.default_basepath = "/var/log/www"
+
+;Default Logger Path
+seaslog.default_logger = "default"
+
+;The DateTime Style.  Default "Y:m:d H:i:s"
+seaslog.default_datetime_format = "Y:m:d H:i:s"
+
+;Default Log template. 
+;Default "%L | %P | %Q | %t | %T | %M"
+seaslog.default_template = "%L | %P | %Q | %t | %T | %M"
+
+;Switch use the logger with type.
+;1-Y 0-N(Default)
+seaslog.disting_type = 0
+
+;Switch use the logger with hour.
+;1-Y 0-N(Default)
+seaslog.disting_by_hour = 0
+
+;Switch use the log buffer with memory.
+;1-Y 0-N(Default)
+seaslog.use_buffer = 0
+
+;The buffer size
+seaslog.buffer_size = 100
+
+;Record logger level. 
+;0-EMERGENCY 1-ALERT 2-CRITICAL 3-ERROR 4-WARNING 5-NOTICE 6-INFO 7-DEBUG 8-ALL
+;Default 8 (All of them).
+seaslog.level = 8
+
+;Automatic Record final error with default logger. 
+;1-Y(Default) 0-N
+seaslog.trace_error = 1
+
+;Automatic Record exception with default logger. 
+;1-Y 0-N(Default)
+seaslog.trace_exception = 0
+
+;Switch the Record Log Data Store.     
+;1File 2TCP 3UDP (Switch default 1)
+seaslog.appender = 1
+
+;If you use  Record TCP or UDP, configure this remote ip.
+;Default "127.0.0.1"
+seaslog.remote_host = "127.0.0.1"
+
+;If you use Record TCP or UDP, configure this remote port.
+;Default 514
+seaslog.remote_port = 514
+
+;Trim the \n and \r in log message.
+;1-On 0-Off(Default)
+seaslog.trim_wrap = 0
+
+;Switch throw SeasLog exception.
+;1-On(Default) 0-Off
+seaslog.throw_exception = 1
+
+;Switch ignore SeasLog warning.
+;1-On(Default) 0-Off
+seaslog.ignore_warning = 1
 ```
 > `seaslog.disting_type = 1` Switch use Logger DisTing by type, it’s meaning SeasLog will create the file deistic info\warn\error and the other type.
 
@@ -143,6 +197,36 @@ seaslog.ignore_warning = 1                              ;Switch ignore SeasLog w
 > `seaslog.throw_exception = 1` Open an exception that throws the SeasLog to throw itself. When the directory authority or the receive server port is blocked, throw an exception; do not throw an exception when closed.
 
 > `seaslog.ignore_warning = 1` Open a warning to ignore SeasLog itself. When directory permissions or receive server ports are blocked, they are ignored; when closed, a warning is thrown.
+
+### Custom log template
+Many friends mentioned the need for custom log templates during their use, 
+so `SeasLog` began with the 1.7.2 version and has the ability to allow users to customize the template for the log.
+
+At the same time, many preset variables that are preset by `SeasLog` can be used in the template,please reference[Default variable table](#default-variable-table)。
+
+#### Log template overview
+* Default log template is:`seaslog.default_template = "%L | %P | %Q | %t | %T | %M"`,
+* that's mean,default log style is:`{level} | {pid} | {uniqid} | {timeStamp} |{dateTime} | {logInfo}`
+
+* If you custom log template, such as:`seaslog.default_template = "[%T]:%L %P %Q %t %M" `
+* that's will mean,log style was custom as:`[{dateTime}]:{level} {pid} {uniqid} {timeStamp} {logInfo}`
+> Tips：The `%L` must before than the`%M`,that is：the log level must before than the log message。
+
+#### Default variable table
+`SeasLog`The following default variables are provided, which can be used directly in the log template and replaced as a corresponding value when the log is eventually generated.
+* `%L` - Level.
+* `%M` - Message.
+* `%T` - DateTime. Such as`2017:08:16 19:15:02`,affected by `seaslog.default_datetime_format`.
+* `%t` - Timestamp. Such as`1502882102.862`,accurate to milliseconds.
+* `%Q` - RequestId. To distinguish a single request, such as not invoking the `SeasLog::setRequestId($string)` function，the unique value generated by the built-in `static char *get_uniqid ()` function is used when the request is initialized.。
+* `%H` - HostName.
+* `%P` - ProcessId.
+* `%D` - `TODO` Domain & Port. Such as`www.cloudwise.com:80`.
+* `%R` - `TODO` Request URI. Such as`/app/user/signin`.
+* `%m` - `TODO` Request Method.
+* `%I` - `TODO` Client IP.
+* `%F` - `TODO` FileName.
+* `%l` - `TODO` Code Line.
 
 ## Use age
 
@@ -778,31 +862,32 @@ SeasLog::error('test error 3');
 The `logger` cased by the third param would be used right this right now, like a temp logger, when the function SeasLog::setLogger() called in pre content.
 */
 ```
-> log record style is： `{type} | {pid} | {timeStamp} |{dateTime} | {logInfo}`
+
+> Log style affected by`seaslog.default_template`.
+> As the default, `seaslog.default_template = "%L | %P | %Q | %t | %T | %M"`
+> that's mean,as the default,log record style is： `{level} | {pid} | {uniqid} | {timeStamp} |{dateTime} | {logInfo}`.
+> About custom log template,and how to use default variable table,see [Custom log template](#custom-log-template)
 ```sh
-error | 23625 | 599159975a9ff | 1406422432.786 | 2014:07:27 08:53:52 | this is a error test by log
-debug | 23625 | 599159975a9ff | 1406422432.786 | 2014:07:27 08:53:52 | this is a neeke debug
-info | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | this is a info log
-notice | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | this is a notice log
-warning | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | your github.com was down,please rboot it ASAP!
-error | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | a error log
-critical | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | some thing was critical
-emergency | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house next door was completely burnt out! it is a joke
+ERROR | 23625 | 599159975a9ff | 1406422432.786 | 2014:07:27 08:53:52 | this is a error test by log
+DEBUG | 23625 | 599159975a9ff | 1406422432.786 | 2014:07:27 08:53:52 | this is a neeke debug
+INFO | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | this is a info log
+NOTICE | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | this is a notice log
+WARNING | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | your github.com was down,please rboot it ASAP!
+ERROR | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | a error log
+CRITICAL | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | some thing was critical
+EMERGENCY | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house next door was completely burnt out! it is a joke
 ```
 
 #### SeasLog will send log to  tcp://remote_host:remote_port or udp://remote_host:remote_port server, when `seaslog.appender` configured to `2 (TCP)` or `3 (UDP)`.
-> and now log record style is: `{hostName} | {loggerName} | {type} | {pid} | {timeStamp} |{dateTime} | {logInfo}`
+> When `SeasLog` send log to TCP/UDP，style follow [RFC5424](http://www.faqs.org/rfcs/rfc5424.html)
+> log style is formatted by SeasLog with send header:`<PRI>1 {timeStampWithRFC3339} {HostName} {loggerName}[{pid}]: {logInfo}`
+> The `{logInfo}` affected by  `seaslog.default_template`。
 
 ```sh
-vagrant-ubuntu-trusty | test/logger | error | 21423 | 599157af4e937 | 1466787583.321 | 2016:06:25 00:59:43 | this is a error test by ::log
-vagrant-ubuntu-trusty | test/logger | debug | 21423 | 599157af4e937 | 1466787583.322 | 2016:06:25 00:59:43 | this is a neeke debug
-vagrant-ubuntu-trusty | test/logger | info | 21423 | 599157af4e937 | 1466787583.323 | 2016:06:25 00:59:43 | this is a info log
-vagrant-ubuntu-trusty | test/logger | notice | 21423 | 599157af4e937 | 1466787583.324 | 2016:06:25 00:59:43 | this is a notice log
-vagrant-ubuntu-trusty | test/logger | warning | 21423 | 599157af4e937 | 1466787583.325 | 2016:06:25 00:59:43 | your github.com was down,please rboot it ASAP!
-vagrant-ubuntu-trusty | test/logger | error | 21423 | 599157af4e937 | 1466787583.326 | 2016:06:25 00:59:43 | a error log
-vagrant-ubuntu-trusty | test/logger | critical | 21423 | 599157af4e937 | 1466787583.327 | 2016:06:25 00:59:43 | some thing was critical
-vagrant-ubuntu-trusty | test/logger | alert | 21423 | 599157af4e937 | 1466787583.328 | 2016:06:25 00:59:43 | yes this is a alertMSG
-vagrant-ubuntu-trusty | test/logger | emergency | 21423 | 599157af4e937 | 1466787583.329 | 2016:06:25 00:59:43 | Just now, the house next door was completely burnt out! it`s a joke
+The log style finally formatted such as:
+<15>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: DEBUG | 21423 | 599157af4e937 | 1466787583.322 | 2016:06:25 00:59:43 | this is a neeke debug
+<14>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: INFO | 21423 | 599157af4e937 | 1466787583.323 | 2016:06:25 00:59:43 | this is a info log
+<13>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: NOTICE | 21423 | 599157af4e937 | 1466787583.324 | 2016:06:25 00:59:43 | this is a notice log
 ```
 
 ### The useage of SeasLog Analyzer

@@ -13,6 +13,9 @@
         - With PSR-3 Logger interface
         - Error and exception automatic logging
         - Support appender with File,TCP,UDP
+        - Send to Rsyslog(TCP/UDP) with RFC5424
+        - Support RequestId differentiated requests
+        - Support for log template customizations
     </description>
     <lead>
         <name>Chitao Gao</name>
