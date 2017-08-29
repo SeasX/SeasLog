@@ -38,7 +38,7 @@
 #include <stdlib.h>
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.7.3 dev"
+#define SEASLOG_VERSION                     "1.7.4 dev"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
 
 #define SEASLOG_ALL                         "ALL"
@@ -75,6 +75,9 @@
 
 #define SEASLOG_DIR_MODE                    (mode_t)0777
 #define SEASLOG_FILE_MODE                   (mode_t)0666
+
+#define SEASLOG_INIT_FIRST_YES              1
+#define SEASLOG_INIT_FIRST_NO               2
 
 #define SEASLOG_BUFFER_RE_INIT_YES          1
 #define SEASLOG_BUFFER_RE_INIT_NO           2
@@ -164,6 +167,8 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash);
 
 
 //Logger
+static void seaslog_init_last_time(TSRMLS_D);
+static void seaslog_clear_last_time(TSRMLS_D);
 static void seaslog_init_logger(TSRMLS_D);
 static void seaslog_init_default_last_logger(TSRMLS_D);
 static void seaslog_clear_logger(TSRMLS_D);
@@ -172,8 +177,8 @@ static void seaslog_clear_logger_list(TSRMLS_D);
 static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSRMLS_DC);
 
 //Datetime
-static void seaslog_process_last_sec(int now TSRMLS_DC);
-static void seaslog_process_last_min(int now TSRMLS_DC);
+static void seaslog_process_last_sec(int now, int if_first TSRMLS_DC);
+static void seaslog_process_last_min(int now, int if_first TSRMLS_DC);
 static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_DC);
 static char *make_real_date(TSRMLS_D);
 static char *make_real_time(TSRMLS_D);

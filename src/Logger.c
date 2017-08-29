@@ -14,20 +14,38 @@
 +----------------------------------------------------------------------+
 */
 
-static void seaslog_init_logger(TSRMLS_D)
+static void seaslog_init_last_time(TSRMLS_D)
 {
     int now;
 
+    now = (int)time(NULL);
+    seaslog_process_last_sec(now, SEASLOG_INIT_FIRST_YES TSRMLS_CC);
+    seaslog_process_last_min(now, SEASLOG_INIT_FIRST_YES TSRMLS_CC);
+}
+
+static void seaslog_clear_last_time(TSRMLS_D)
+{
+    if (SEASLOG_G(last_sec))
+    {
+        efree(SEASLOG_G(last_sec)->real_time);
+        efree(SEASLOG_G(last_sec));
+    }
+
+    if (SEASLOG_G(last_min))
+    {
+        efree(SEASLOG_G(last_min)->real_time);
+        efree(SEASLOG_G(last_min));
+    }
+}
+
+static void seaslog_init_logger(TSRMLS_D)
+{
     SEASLOG_G(base_path)                    = estrdup(SEASLOG_G(default_basepath));
     SEASLOG_G(current_datetime_format)      = estrdup(SEASLOG_G(default_datetime_format));
     SEASLOG_G(current_datetime_format_len)  = strlen(SEASLOG_G(current_datetime_format));
 
     SEASLOG_G(last_logger) = ecalloc(1,sizeof(logger_entry_t));
     SEASLOG_G(tmp_logger) = ecalloc(1,sizeof(logger_entry_t));
-
-    now = (int)time(NULL);
-    seaslog_process_last_sec(now TSRMLS_CC);
-    seaslog_process_last_min(now TSRMLS_CC);
 
     seaslog_init_default_last_logger(TSRMLS_C);
 }
@@ -102,18 +120,6 @@ static void seaslog_clear_logger(TSRMLS_D)
     if (SEASLOG_G(current_datetime_format))
     {
         efree(SEASLOG_G(current_datetime_format));
-    }
-
-    if (SEASLOG_G(last_sec))
-    {
-        efree(SEASLOG_G(last_sec)->real_time);
-        efree(SEASLOG_G(last_sec));
-    }
-
-    if (SEASLOG_G(last_min))
-    {
-        efree(SEASLOG_G(last_min)->real_time);
-        efree(SEASLOG_G(last_min));
     }
 }
 

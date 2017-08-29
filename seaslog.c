@@ -232,6 +232,7 @@ PHP_RINIT_FUNCTION(seaslog)
     seaslog_init_pid(TSRMLS_C);
     seaslog_init_host_name(TSRMLS_C);
 	seaslog_init_request_id(TSRMLS_C);
+	seaslog_init_last_time(TSRMLS_C);
 	seaslog_init_template(TSRMLS_C);
     seaslog_init_logger_list(TSRMLS_C);
     seaslog_init_logger(TSRMLS_C);
@@ -247,6 +248,7 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
     seaslog_clear_buffer(TSRMLS_C);
     seaslog_clear_logger(TSRMLS_C);
     seaslog_clear_logger_list(TSRMLS_C);
+    seaslog_clear_last_time(TSRMLS_C);
 	seaslog_clear_request_id(TSRMLS_C);
 	seaslog_clear_pid(TSRMLS_C);
 	seaslog_clear_host_name(TSRMLS_C);
@@ -463,7 +465,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setDatetimeFormat)
         SEASLOG_G(current_datetime_format) = estrdup(Z_STRVAL_P(_format));
 
         now = (long)time(NULL);
-        seaslog_process_last_sec(now TSRMLS_CC);
+        seaslog_process_last_sec(now, SEASLOG_INIT_FIRST_NO TSRMLS_CC);
 
 #if PHP_VERSION_ID >= 70000
         zval_ptr_dtor(_format);

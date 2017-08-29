@@ -14,23 +14,24 @@
 +----------------------------------------------------------------------+
 */
 
-static void seaslog_process_last_sec(int now TSRMLS_DC)
+static void seaslog_process_last_sec(int now, int if_first TSRMLS_DC)
 {
-    if (SEASLOG_G(last_sec))
+    if (SEASLOG_INIT_FIRST_YES == if_first)
     {
-        efree(SEASLOG_G(last_sec)->real_time);
-        efree(SEASLOG_G(last_sec));
+        SEASLOG_G(last_sec) = ecalloc(sizeof(last_sec_entry_t), 1);
     }
 
-    last_sec_entry_t *last_sec = ecalloc(sizeof(last_sec_entry_t), 1);
-    last_sec->sec = now;
-    last_sec->real_time = seaslog_format_date(SEASLOG_G(current_datetime_format), SEASLOG_G(current_datetime_format_len), now TSRMLS_CC);
-    SEASLOG_G(last_sec) = last_sec;
+    SEASLOG_G(last_sec)->sec = now;
+    SEASLOG_G(last_sec)->real_time = seaslog_format_date(SEASLOG_G(current_datetime_format), SEASLOG_G(current_datetime_format_len), now TSRMLS_CC);
 }
 
-static void seaslog_process_last_min(int now TSRMLS_DC)
+static void seaslog_process_last_min(int now, int if_first TSRMLS_DC)
 {
-    SEASLOG_G(last_min) = ecalloc(sizeof(last_min_entry_t), 1);
+    if (SEASLOG_INIT_FIRST_YES == if_first)
+    {
+        SEASLOG_G(last_min) = ecalloc(sizeof(last_min_entry_t), 1);
+    }
+
     SEASLOG_G(last_min)->sec = now;
 
     if (SEASLOG_G(disting_by_hour))
@@ -67,7 +68,7 @@ static char *make_real_date(TSRMLS_D)
         efree(SEASLOG_G(last_min)->real_time);
         efree(SEASLOG_G(last_min));
 
-        seaslog_process_last_min(now TSRMLS_CC);
+        seaslog_process_last_min(now, SEASLOG_INIT_FIRST_NO TSRMLS_CC);
     }
 
     return SEASLOG_G(last_min)->real_time;
@@ -83,7 +84,7 @@ static char *make_real_time(TSRMLS_D)
         efree(SEASLOG_G(last_sec)->real_time);
         efree(SEASLOG_G(last_sec));
 
-        seaslog_process_last_sec(now TSRMLS_CC);
+        seaslog_process_last_sec(now, SEASLOG_INIT_FIRST_NO TSRMLS_CC);
     }
 
     return SEASLOG_G(last_sec)->real_time;
