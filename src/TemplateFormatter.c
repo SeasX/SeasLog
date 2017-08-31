@@ -181,5 +181,5 @@ skip_output:
         smart_str_free(&tmp_time);
     }
 
-	return;
+	return 0;
 }

@@ -101,7 +101,7 @@ static int mic_time(smart_str *buf)
     smart_str_appendc(buf,'.');
     smart_str_append_long(buf,(long)now.tv_usec / 1000);
 
-    return;
+    return 0;
 }
 
 static char *make_time_RFC3339(TSRMLS_D)
