@@ -90,7 +90,7 @@ static char *make_real_time(TSRMLS_D)
     return SEASLOG_G(last_sec)->real_time;
 }
 
-static int mic_time(smart_str *buf)
+static void mic_time(smart_str *buf)
 {
     struct timeval now;
 
@@ -100,8 +100,6 @@ static int mic_time(smart_str *buf)
     smart_str_append_long(buf,(long)time(NULL));
     smart_str_appendc(buf,'.');
     smart_str_append_long(buf,(long)now.tv_usec / 1000);
-
-    return 0;
 }
 
 static char *make_time_RFC3339(TSRMLS_D)

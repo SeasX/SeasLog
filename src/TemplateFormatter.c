@@ -70,7 +70,7 @@ static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, size_t max
     return len;
 }
 
-static int seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, va_list ap)
+static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, va_list ap)
 {
 	char *s = NULL;
 	int s_len;
@@ -180,6 +180,4 @@ skip_output:
     {
         smart_str_free(&tmp_time);
     }
-
-	return 0;
 }

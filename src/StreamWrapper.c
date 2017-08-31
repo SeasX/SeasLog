@@ -81,7 +81,7 @@ static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
     return stream;
 }
 
-static int seaslog_init_stream_list(TSRMLS_D)
+static void seaslog_init_stream_list(TSRMLS_D)
 {
     zval *z_stream_list;
 
@@ -97,7 +97,7 @@ static int seaslog_init_stream_list(TSRMLS_D)
 
 }
 
-static int seaslog_clear_stream_list(TSRMLS_D)
+static void seaslog_clear_stream_list(TSRMLS_D)
 {
     php_stream *stream = NULL;
     HashTable *ht;
