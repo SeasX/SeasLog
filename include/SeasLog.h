@@ -17,6 +17,7 @@
 #ifndef _SEASLOG_H_
 #define _SEASLOG_H_
 
+#include <zlib.h>
 #include "php.h"
 #include "php_ini.h"
 #include "main/php_main.h"
@@ -231,6 +232,9 @@ static void seaslog_init_template(TSRMLS_D);
 static void seaslog_clear_template(TSRMLS_D);
 static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, size_t max_len, ...);
 static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, va_list ap);
+
+//Gziper
+//static int gzcompress(Bytef *data, uLong ndata, Bytef *zdata, uLong *nzdata);
 
 //StreamWrapper
 static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC);

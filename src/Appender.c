@@ -126,10 +126,20 @@ static int appender_handle_tcp_udp(char *message, int message_len, char *level, 
     efree(time_RFC3339);
     efree(log_content);
 
-    if (seaslog_real_buffer_log_ex(log_info, log_len, logger->logger, logger->logger_len, ce TSRMLS_CC) == FAILURE)
+    uLong ndata = log_len;
+    Bytef zdata[BUF_SIZE];
+    uLong nzdata = BUF_SIZE;
+    Bytef odata[BUF_SIZE];
+    uLong nodata = BUF_SIZE;
+
+    memset(zdata, 0, BUF_SIZE);
+    if(gzcompress((Bytef *)log_info, ndata, zdata, &nzdata) == 0)
     {
-        efree(log_info);
-        return FAILURE;
+        if (seaslog_real_buffer_log_ex(zdata, nzdata, logger->logger, logger->logger_len, ce TSRMLS_CC) == FAILURE)
+        {
+            efree(log_info);
+            return FAILURE;
+        }
     }
 
     efree(log_info);

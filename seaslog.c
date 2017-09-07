@@ -25,6 +25,7 @@ ZEND_GET_MODULE(seaslog)
 #endif
 
 #include "src/Common.c"
+#include "src/Gziper.c"
 #include "src/Analyzer.c"
 #include "src/StreamWrapper.c"
 #include "src/TemplateFormatter.c"
