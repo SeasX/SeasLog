@@ -38,8 +38,9 @@
 #include <stdlib.h>
 
 #define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_VERSION                     "1.7.4 dev"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
+#define SEASLOG_VERSION                     "1.7.4 dev"
+#define SEASLOG_VERSION_ID                  10704
 
 #define SEASLOG_ALL                         "ALL"
 #define SEASLOG_DEBUG                       "DEBUG"
