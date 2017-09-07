@@ -43,7 +43,7 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s | find /c \"%s\" ", level, path, key_word);
 #else
-        spprintf(&sh, 0, "cat %s 2>/dev/null| grep '%s' | grep '%s' -c", path, level, key_word);
+        spprintf(&sh, 0, "cat %s 2>/dev/null| grep -e '^%s' | grep '%s' -c", path, level, key_word);
 #endif
     }
     else
@@ -51,7 +51,7 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s | find /c /v \"\" ", level, path);
 #else
-        spprintf(&sh, 0, "cat %s 2>/dev/null| grep '%s' -c", path, level);
+        spprintf(&sh, 0, "cat %s 2>/dev/null| grep -e '^%s' -c", path, level);
 #endif
     }
 
@@ -121,7 +121,7 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s | findstr \"%s\" ", level, path, key_word);
 #else
-        spprintf(&sh, 0, "%s 2>/dev/null| grep '%s' | grep '%s' | sed -n '%ld,%ld'p", command, level, key_word, start, end);
+        spprintf(&sh, 0, "%s 2>/dev/null| grep -e '^%s' | grep '%s' | sed -n '%ld,%ld'p", command, level, key_word, start, end);
 #endif
     }
     else
@@ -129,7 +129,7 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 #ifdef WINDOWS
         spprintf(&sh, 0, "findstr \"%s\" %s", level, path);
 #else
-        spprintf(&sh, 0, "%s 2>/dev/null| grep '%s' | sed -n '%ld,%ld'p", command, level, start, end);
+        spprintf(&sh, 0, "%s 2>/dev/null| grep -e '^%s' | sed -n '%ld,%ld'p", command, level, start, end);
 #endif
     }
 
@@ -146,10 +146,10 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     {
         while ((fgets(buffer, sizeof(buffer), fp)) != NULL)
         {
-            if (strstr(buffer, SEASLOG_G(base_path)) == NULL)
-            {
+//            if (strstr(buffer, SEASLOG_G(base_path)) == NULL)
+//            {
                 SEASLOG_ADD_NEXT_INDEX_STRING(return_value, delN(buffer));
-            }
+//            }
         }
 
         pclose(fp);

@@ -25,4 +25,6 @@
 *.dSYM
 a.out
 tags
+.idea
+
 
