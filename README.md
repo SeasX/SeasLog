@@ -134,6 +134,11 @@ seaslog.buffer_size = 100
 ;Record logger level. 
 ;0-EMERGENCY 1-ALERT 2-CRITICAL 3-ERROR 4-WARNING 5-NOTICE 6-INFO 7-DEBUG 8-ALL
 ;Default 8 (All of them).
+;
+;   Tips: The configuration item has changed since the 1.7.0 version.
+;   Before the 1.7.0 version, the smaller the value, the more logs are taken according to the level: 
+;   0-all 1-debug 2-info 3-notice 4-warning 5-error 6-critical 7-alert 8-emergency
+;   Before the 1.7.0 version, Default 0 (All of them).
 seaslog.level = 8
 
 ;Automatic Record final error with default logger. 

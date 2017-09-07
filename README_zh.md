@@ -132,6 +132,11 @@ seaslog.buffer_size = 100
 ;记录日志级别，数字越大，根据级别记的日志越多。
 ;0-EMERGENCY 1-ALERT 2-CRITICAL 3-ERROR 4-WARNING 5-NOTICE 6-INFO 7-DEBUG 8-ALL
 ;默认8(所有日志)
+;
+;   注意, 该配置项自1.7.0版本开始有变动。
+;   在1.7.0版本之前, 该值数字越小，根据级别记的日志越多: 
+;   0-all 1-debug 2-info 3-notice 4-warning 5-error 6-critical 7-alert 8-emergency
+;   1.7.0 之前的版本，该值默认为0(所有日志);
 seaslog.level = 8
 
 ;自动记录错误 默认1(开启)
