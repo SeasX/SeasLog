@@ -206,19 +206,19 @@ seaslog.ignore_warning = 1
 
 #### 预设变量表
 `SeasLog`提供了下列预设变量，可以直接使用在日志模板中，将在日志最终生成时替换成对应值。
-* `%L` - Level 日志级别
-* `%M` - Message 日志信息
-* `%T` - DateTime 如`2017:08:16 19:15:02`，受`seaslog.default_datetime_format`影响
-* `%t` - Timestamp 如`1502882102.862`，精确到毫秒数
+* `%L` - Level 日志级别。
+* `%M` - Message 日志信息。
+* `%T` - DateTime 如`2017:08:16 19:15:02`，受`seaslog.default_datetime_format`影响。
+* `%t` - Timestamp 如`1502882102.862`，精确到毫秒数。
 * `%Q` - RequestId 区分单次请求，如没有调用`SeasLog::setRequestId($string)`方法，则在初始化请求时，采用内置的`static char *get_uniqid()`方法生成的惟一值。
-* `%H` - HostName 主机名
-* `%P` - ProcessId 进程ID
-* `%D` - `TODO` Domain & Port 域名+端口号，如`www.cloudwise.com:80`
-* `%R` - `TODO` Request URI 请求URI，如`/app/user/signin`
-* `%m` - `TODO` Request Method 请求类型
-* `%I` - `TODO` Client IP 来源客户端IP
-* `%F` - `TODO` FileName 文件名
-* `%l` - `TODO` Code Line 行号
+* `%H` - HostName 主机名。
+* `%P` - ProcessId 进程ID。
+* `%D` - Domain:Port 域名:口号，如`www.cloudwise.com:8080`; Cli模式下为`cli`。
+* `%R` - Request URI 请求URI，如`/app/user/signin`; Cli模式下为入口文件，如`CliIndex.php`。
+* `%m` - Request Method 请求类型，如`GET`; Cli模式下为执行命令，如`/bin/bash`。
+* `%I` - Client IP 来源客户端IP; Cli模式下为`local`。取值优先级为：HTTP_X_REAL_IP > HTTP_X_FORWARDED_FOR > REMOTE_ADDR
+* `%F` - FileName:LineNo 文件名:行号，如`UserService.php:118`。
+* `%C` - `TODO` Class::Action 类名::方法名，如`UserService::getUserInfo`。
 
 ## 使用
 
