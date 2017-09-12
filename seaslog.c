@@ -231,9 +231,11 @@ PHP_RINIT_FUNCTION(seaslog)
     initRStart(TSRMLS_C);
     seaslog_init_pid(TSRMLS_C);
     seaslog_init_host_name(TSRMLS_C);
-	seaslog_init_request_id(TSRMLS_C);
-	seaslog_init_last_time(TSRMLS_C);
-	seaslog_init_template(TSRMLS_C);
+    seaslog_init_request_id(TSRMLS_C);
+    seaslog_init_auto_globals(TSRMLS_C);
+    seaslog_init_request_variable(TSRMLS_C);
+    seaslog_init_last_time(TSRMLS_C);
+    seaslog_init_template(TSRMLS_C);
     seaslog_init_logger_list(TSRMLS_C);
     seaslog_init_logger(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
@@ -249,11 +251,12 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
     seaslog_clear_logger(TSRMLS_C);
     seaslog_clear_logger_list(TSRMLS_C);
     seaslog_clear_last_time(TSRMLS_C);
-	seaslog_clear_request_id(TSRMLS_C);
-	seaslog_clear_pid(TSRMLS_C);
-	seaslog_clear_host_name(TSRMLS_C);
-	seaslog_clear_template(TSRMLS_C);
-	seaslog_clear_stream_list(TSRMLS_C);
+    seaslog_clear_request_id(TSRMLS_C);
+    seaslog_clear_pid(TSRMLS_C);
+    seaslog_clear_host_name(TSRMLS_C);
+    seaslog_clear_template(TSRMLS_C);
+    seaslog_clear_request_variable(TSRMLS_C);
+    seaslog_clear_stream_list(TSRMLS_C);
     return SUCCESS;
 }
 
@@ -505,14 +508,14 @@ PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
 
             switch (Z_TYPE_P(_request_id))
             {
-                case IS_STRING:
-                    SEASLOG_G(request_id) = estrdup(Z_STRVAL_P(_request_id));
-                    break;
-                case IS_LONG:
-                    spprintf(&SEASLOG_G(request_id), 0, "%ld", Z_LVAL_P(_request_id));
-                    break;
-                default:
-                    RETURN_FALSE;
+            case IS_STRING:
+                SEASLOG_G(request_id) = estrdup(Z_STRVAL_P(_request_id));
+                break;
+            case IS_LONG:
+                spprintf(&SEASLOG_G(request_id), 0, "%ld", Z_LVAL_P(_request_id));
+                break;
+            default:
+                RETURN_FALSE;
             }
         }
 

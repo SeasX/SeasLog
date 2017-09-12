@@ -44,20 +44,24 @@ static void seaslog_clear_template(TSRMLS_D)
 
 static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, size_t max_len, ...)
 {
-	int len;
-	va_list ap;
+    int len;
+    va_list ap;
 
     smart_str xbuf = {0};
 
-	va_start(ap, max_len);
-	if (generate_type == SEASLOG_GENERATE_CURRENT_TEMPLATE) {
+    va_start(ap, max_len);
+    if (generate_type == SEASLOG_GENERATE_CURRENT_TEMPLATE)
+    {
         seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(default_template), ap);
-	} else {
+    }
+    else
+    {
         seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(current_template), ap);
-	}
-	va_end(ap);
+    }
+    va_end(ap);
 
-    if (max_len && SEASLOG_SMART_STR_L(xbuf) > max_len) {
+    if (max_len && SEASLOG_SMART_STR_L(xbuf) > max_len)
+    {
         SEASLOG_SMART_STR_L(xbuf) = max_len;
     }
     smart_str_0(&xbuf);
@@ -72,112 +76,139 @@ static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, size_t max
 
 static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, va_list ap)
 {
-	char *s = NULL;
-	int s_len;
+    char *s = NULL;
+    int s_len;
 
-	char char_buf[2];
-    smart_str tmp_time = {0};
+    char char_buf[2];
+    smart_str tmp_buf = {0};
 
-	while (*fmt) {
-		if (*fmt != '%') {
-			INS_CHAR_NR(xbuf, *fmt);
-		} else {
-			fmt++;
+    while (*fmt)
+    {
+        if (*fmt != '%')
+        {
+            INS_CHAR_NR(xbuf, *fmt);
+        }
+        else
+        {
+            fmt++;
 
-            switch(generate_type) {
-                case SEASLOG_GENERATE_CURRENT_TEMPLATE:
+            switch(generate_type)
+            {
+            case SEASLOG_GENERATE_CURRENT_TEMPLATE:
+            {
+                switch (*fmt)
+                {
+                case 'H': //HostName
+                    s = SEASLOG_G(host_name);
+                    s_len  = SEASLOG_G(host_name_len);
+                    break;
+                case 'P': //Precess Id
+                    s = SEASLOG_G(process_id);
+                    s_len  = SEASLOG_G(process_id_len);
+                    break;
+                case 'D': //Domain:Port
+                    s = SEASLOG_G(request_variable)->domain_port;
+                    s_len = SEASLOG_G(request_variable)->domain_port_len;
+                    break;
+                case 'R': //Request Uri
+                    s = Z_STRVAL_P(SEASLOG_G(request_variable)->request_uri);
+                    s_len = Z_STRLEN_P(SEASLOG_G(request_variable)->request_uri);
+                    break;
+                case 'm': //Request Method
+                    s = Z_STRVAL_P(SEASLOG_G(request_variable)->request_method);
+                    s_len = Z_STRLEN_P(SEASLOG_G(request_variable)->request_method);
+                    break;
+                case 'I': //Client IP
+                    s = SEASLOG_G(request_variable)->client_ip;
+                    s_len = SEASLOG_G(request_variable)->client_ip_len;
+                    break;
+                case NUL:
+                    continue;
+                default:
+                    char_buf[0] = '%';
+                    char_buf[1] = *fmt;
+                    s = char_buf;
+                    s_len = 2;
+                    break;
+                }
+            }
+            break;
+            case SEASLOG_GENERATE_LOG_INFO:
+            case SEASLOG_GENERATE_SYSLOG_INFO:
+            {
+                switch (*fmt)
+                {
+                case 'T': //Time  2017:08:16 19:15:02
+                    s = make_real_time(TSRMLS_C);
+                    s_len  = strlen(s);
+                    break;
+                case 't': //time  1502882102.862
+                {
+                    if (SEASLOG_SMART_STR_C(tmp_buf))
                     {
-                        switch (*fmt) {
-                            case 'H': //HostName
-                                s = SEASLOG_G(host_name);
-                                s_len  = SEASLOG_G(host_name_len);
-                                break;
-                            case 'P': //Precess Id
-                                s = SEASLOG_G(process_id);
-                                s_len  = SEASLOG_G(process_id_len);
-                                break;
-                            case NUL:
-                                continue;
-                            case 'D': //TODO Domain:Port
-                            case 'R': //TODO Request Uri
-                            case 'm': //TODO Request Method
-                            case 'I': //TODO Client IP
-                            case 'F': //TODO Filename
-                            case 'C': //TODO Class::Action
-                            case 'l': //TODO Code Line
-                            default:
-                                char_buf[0] = '%';
-                                char_buf[1] = *fmt;
-                                s = char_buf;
-                                s_len = 2;
-                                break;
-                        }
+                        smart_str_free(&tmp_buf);
+                    }
+                    mic_time(&tmp_buf);
+                    s = SEASLOG_SMART_STR_C(tmp_buf);
+                    s_len  = SEASLOG_SMART_STR_L(tmp_buf);
+                }
+                break;
+                case 'Q': //Request uniqid
+                    s = SEASLOG_G(request_id);
+                    s_len  = SEASLOG_G(request_id_len);
+                    break;
+                case 'L': //Level
+                case 'M': //Message
+                    s = va_arg(ap, char *);
+                    if (s != NULL)
+                    {
+                        s_len = strlen(s);
+                    }
+                    else
+                    {
+                        s = S_NULL;
+                        s_len = S_NULL_LEN;
                     }
                     break;
-                case SEASLOG_GENERATE_LOG_INFO:
-                case SEASLOG_GENERATE_SYSLOG_INFO:
+                case 'F': //Filename:Line  test.php:28
+                    if (SEASLOG_SMART_STR_C(tmp_buf))
                     {
-                        switch (*fmt) {
-                            case 'T': //Time  2017:08:16 19:15:02
-                                s = make_real_time(TSRMLS_C);
-                                s_len  = strlen(s);
-                                break;
-                            case 't': //time  1502882102.862
-                                {
-                                    if (SEASLOG_SMART_STR_C(tmp_time))
-                                    {
-                                        smart_str_free(&tmp_time);
-                                    }
-                                    mic_time(&tmp_time);
-                                    smart_str_0(&tmp_time);
-                                    s = SEASLOG_SMART_STR_C(tmp_time);
-                                    s_len  = SEASLOG_SMART_STR_L(tmp_time);
-                                }
-                                break;
-                            case 'Q': //Request uniqid
-                                s = SEASLOG_G(request_id);
-                                s_len  = SEASLOG_G(request_id_len);
-                                break;
-                            case 'L': //Level
-                            case 'M': //Message
-                                s = va_arg(ap, char *);
-                                if (s != NULL) {
-                                    s_len = strlen(s);
-                                } else {
-                                    s = S_NULL;
-                                    s_len = S_NULL_LEN;
-                                }
-                                break;
-
-                            case NUL:
-                                continue;
-
-                            default:
-                                char_buf[0] = '%';
-                                char_buf[1] = *fmt;
-                                s = char_buf;
-                                s_len = 2;
-                                break;
-                        }
+                        smart_str_free(&tmp_buf);
                     }
+                    get_code_filename_line(&tmp_buf TSRMLS_CC);
+                    s = SEASLOG_SMART_STR_C(tmp_buf);
+                    s_len  = SEASLOG_SMART_STR_L(tmp_buf);
                     break;
+                case 'C': //TODO Class::Action
+                case NUL:
+                    continue;
+                default:
+                    char_buf[0] = '%';
+                    char_buf[1] = *fmt;
+                    s = char_buf;
+                    s_len = 2;
+                    break;
+                }
+            }
+            break;
             }
 
-			INS_STRING(xbuf, s, s_len);
-		}
+            INS_STRING(xbuf, s, s_len);
+        }
 skip_output:
-		fmt++;
-	}
-
-    switch(generate_type) {
-        case SEASLOG_GENERATE_LOG_INFO:
-        case SEASLOG_GENERATE_SYSLOG_INFO:
-            INS_STRING(xbuf, SEASLOG_LOG_LINE_FEED_STR, SEASLOG_LOG_LINE_FEED_LEN);
-            break;
+        fmt++;
     }
 
-    if (SEASLOG_SMART_STR_C(tmp_time))
+    switch(generate_type)
     {
-        smart_str_free(&tmp_time);
+    case SEASLOG_GENERATE_LOG_INFO:
+    case SEASLOG_GENERATE_SYSLOG_INFO:
+        INS_STRING(xbuf, SEASLOG_LOG_LINE_FEED_STR, SEASLOG_LOG_LINE_FEED_LEN);
+        break;
+    }
+
+    if (SEASLOG_SMART_STR_C(tmp_buf))
+    {
+        smart_str_free(&tmp_buf);
     }
 }

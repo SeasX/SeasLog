@@ -17,6 +17,7 @@
 #ifndef _SEASLOG_H_
 #define _SEASLOG_H_
 
+#include "zend.h"
 #include "php.h"
 #include "php_ini.h"
 #include "main/php_main.h"
@@ -39,7 +40,7 @@
 
 #define SEASLOG_RES_NAME                    "SeasLog"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                     "1.7.4 dev"
+#define SEASLOG_VERSION                     "1.7.5 dev"
 #define SEASLOG_VERSION_ID                  10704
 
 #define SEASLOG_ALL                         "ALL"
@@ -111,6 +112,8 @@
 #define SEASLOG_GENERATE_LOG_INFO           2
 #define SEASLOG_GENERATE_SYSLOG_INFO        3
 
+#define SEASLOG_GLOBAL_VARS_SERVER  		TRACK_VARS_SERVER
+
 #if PHP_VERSION_ID >= 70000
 
 #define EX_ARRAY_DESTROY(arr) \
@@ -150,6 +153,17 @@ typedef struct _last_min_entry_t
     char *real_time;
 } last_min_entry_t;
 
+typedef struct _request_variable_t
+{
+    char *domain_port;
+    int domain_port_len;
+
+    char *client_ip;
+    int client_ip_len;
+
+    zval *request_uri;
+    zval *request_method;
+} request_variable_t;
 
 //Common Toolkit
 static int seaslog_get_level_int(char *level);
@@ -216,6 +230,11 @@ static void seaslog_init_pid(TSRMLS_D);
 static void seaslog_clear_pid(TSRMLS_D);
 static void seaslog_init_request_id(TSRMLS_D);
 static void seaslog_clear_request_id(TSRMLS_D);
+static void seaslog_init_auto_globals(TSRMLS_D);
+static void get_code_filename_line(smart_str *result TSRMLS_DC);
+static int seaslog_init_request_variable(TSRMLS_D);
+static void seaslog_clear_request_variable(TSRMLS_D);
+zval *seaslog_request_query(uint type, void *name, size_t len TSRMLS_DC);
 
 //Appender
 static int seaslog_real_log_ex(char *message, int message_len, char *opt, int opt_len TSRMLS_DC);

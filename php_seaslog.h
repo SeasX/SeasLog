@@ -136,6 +136,8 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *remote_host;
     int remote_port;
 
+    request_variable_t *request_variable;
+
 #if PHP_VERSION_ID >= 70000
     zval buffer;
     zval logger_list;

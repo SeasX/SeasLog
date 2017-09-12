@@ -143,32 +143,32 @@ static int check_log_level(int level TSRMLS_DC)
 
     switch (level)
     {
-        case SEASLOG_DEBUG_INT:
-            if (SEASLOG_G(level) >= SEASLOG_DEBUG_INT) return SUCCESS;
-            break;
-        case SEASLOG_INFO_INT:
-            if (SEASLOG_G(level) >= SEASLOG_INFO_INT) return SUCCESS;
-            break;
-        case SEASLOG_NOTICE_INT:
-            if (SEASLOG_G(level) >= SEASLOG_NOTICE_INT) return SUCCESS;
-            break;
-        case SEASLOG_WARNING_INT:
-            if (SEASLOG_G(level) >= SEASLOG_WARNING_INT) return SUCCESS;
-            break;
-        case SEASLOG_ERROR_INT:
-            if (SEASLOG_G(level) >= SEASLOG_ERROR_INT) return SUCCESS;
-            break;
-        case SEASLOG_CRITICAL_INT:
-            if (SEASLOG_G(level) >= SEASLOG_CRITICAL_INT) return SUCCESS;
-            break;
-        case SEASLOG_ALERT_INT:
-            if (SEASLOG_G(level) >= SEASLOG_ALERT_INT) return SUCCESS;
-            break;
-        case SEASLOG_EMERGENCY_INT:
-            if (SEASLOG_G(level) >= SEASLOG_EMERGENCY_INT) return SUCCESS;
-            break;
-        default:
-            return FAILURE;
+    case SEASLOG_DEBUG_INT:
+        if (SEASLOG_G(level) >= SEASLOG_DEBUG_INT) return SUCCESS;
+        break;
+    case SEASLOG_INFO_INT:
+        if (SEASLOG_G(level) >= SEASLOG_INFO_INT) return SUCCESS;
+        break;
+    case SEASLOG_NOTICE_INT:
+        if (SEASLOG_G(level) >= SEASLOG_NOTICE_INT) return SUCCESS;
+        break;
+    case SEASLOG_WARNING_INT:
+        if (SEASLOG_G(level) >= SEASLOG_WARNING_INT) return SUCCESS;
+        break;
+    case SEASLOG_ERROR_INT:
+        if (SEASLOG_G(level) >= SEASLOG_ERROR_INT) return SUCCESS;
+        break;
+    case SEASLOG_CRITICAL_INT:
+        if (SEASLOG_G(level) >= SEASLOG_CRITICAL_INT) return SUCCESS;
+        break;
+    case SEASLOG_ALERT_INT:
+        if (SEASLOG_G(level) >= SEASLOG_ALERT_INT) return SUCCESS;
+        break;
+    case SEASLOG_EMERGENCY_INT:
+        if (SEASLOG_G(level) >= SEASLOG_EMERGENCY_INT) return SUCCESS;
+        break;
+    default:
+        return FAILURE;
     }
 
     return FAILURE;
@@ -189,15 +189,17 @@ static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_
 
 static int make_log_dir(char *dir TSRMLS_DC)
 {
-	int ret;
+    int ret;
 
     if (SEASLOG_G(appender) == SEASLOG_APPENDER_FILE)
     {
-        if (strncasecmp(dir, "file://", sizeof("file://") - 1) == 0) {
+        if (strncasecmp(dir, "file://", sizeof("file://") - 1) == 0)
+        {
             dir += sizeof("file://") - 1;
         }
 
-        if (VCWD_ACCESS(dir, F_OK) == 0) {
+        if (VCWD_ACCESS(dir, F_OK) == 0)
+        {
             return SUCCESS;
         }
 
@@ -210,34 +212,41 @@ static int make_log_dir(char *dir TSRMLS_DC)
         int offset = 0;
         char buf[MAXPATHLEN];
 
-        if (!expand_filepath_with_mode(dir, buf, NULL, 0, CWD_EXPAND TSRMLS_CC)) {
+        if (!expand_filepath_with_mode(dir, buf, NULL, 0, CWD_EXPAND TSRMLS_CC))
+        {
             seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "%s %s", dir, "Invalid path");
             return FAILURE;
         }
 
         e = buf +  strlen(buf);
 
-        if ((p = memchr(buf, DEFAULT_SLASH, dir_len))) {
+        if ((p = memchr(buf, DEFAULT_SLASH, dir_len)))
+        {
             offset = p - buf + 1;
         }
 
-        if (p && dir_len == 1) {
+        if (p && dir_len == 1)
+        {
             /* buf == "DEFAULT_SLASH" */
         }
         else
         {
             /* find a top level directory we need to create */
-            while ( (p = strrchr(buf + offset, DEFAULT_SLASH)) || (offset != 1 && (p = strrchr(buf, DEFAULT_SLASH))) ) {
+            while ( (p = strrchr(buf + offset, DEFAULT_SLASH)) || (offset != 1 && (p = strrchr(buf, DEFAULT_SLASH))) )
+            {
                 int n = 0;
 
                 *p = '\0';
-                while (p > buf && *(p-1) == DEFAULT_SLASH) {
+                while (p > buf && *(p-1) == DEFAULT_SLASH)
+                {
                     ++n;
                     --p;
                     *p = '\0';
                 }
-                if (VCWD_STAT(buf, &sb) == 0) {
-                    while (1) {
+                if (VCWD_STAT(buf, &sb) == 0)
+                {
+                    while (1)
+                    {
                         *p = DEFAULT_SLASH;
                         if (!n) break;
                         --n;
@@ -248,7 +257,8 @@ static int make_log_dir(char *dir TSRMLS_DC)
             }
         }
 
-        if (p == buf) {
+        if (p == buf)
+        {
             ret = php_mkdir_ex(dir, SEASLOG_DIR_MODE, PHP_STREAM_MKDIR_RECURSIVE TSRMLS_CC);
             if (ret < 0)
             {
@@ -257,16 +267,21 @@ static int make_log_dir(char *dir TSRMLS_DC)
         }
         else
         {
-             if (!(ret = php_mkdir_ex(buf, SEASLOG_DIR_MODE, PHP_STREAM_MKDIR_RECURSIVE TSRMLS_CC))) {
-                if (!p) {
+            if (!(ret = php_mkdir_ex(buf, SEASLOG_DIR_MODE, PHP_STREAM_MKDIR_RECURSIVE TSRMLS_CC)))
+            {
+                if (!p)
+                {
                     p = buf;
                 }
 
-                while (++p != e) {
-                    if (*p == '\0') {
+                while (++p != e)
+                {
+                    if (*p == '\0')
+                    {
                         *p = DEFAULT_SLASH;
                         if ((*(p+1) != '\0') &&
-                            (ret = VCWD_MKDIR(buf, SEASLOG_DIR_MODE)) < 0) {
+                                (ret = VCWD_MKDIR(buf, SEASLOG_DIR_MODE)) < 0)
+                        {
                             seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "%s %s", buf, strerror(errno));
                             break;
                         }
@@ -275,11 +290,12 @@ static int make_log_dir(char *dir TSRMLS_DC)
             }
             else
             {
-                 seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "%s %s", buf, strerror(errno));
+                seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "%s %s", buf, strerror(errno));
             }
         }
 
-        if (ret < 0) {
+        if (ret < 0)
+        {
             return FAILURE;
         }
 

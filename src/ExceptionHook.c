@@ -107,8 +107,8 @@ static void seaslog_throw_exception(int type TSRMLS_DC, const char *format, ...)
     }
 
     if (SEASLOG_G(throw_exception)
-        && (SEASLOG_G(initRComplete) == SEASLOG_INITR_COMPLETE_YES)
-        && (SEASLOG_G(error_loop) <= 1))
+            && (SEASLOG_G(initRComplete) == SEASLOG_INITR_COMPLETE_YES)
+            && (SEASLOG_G(error_loop) <= 1))
     {
 
         if (type == SEASLOG_EXCEPTION_LOGGER_ERROR)
@@ -124,6 +124,6 @@ static void seaslog_throw_exception(int type TSRMLS_DC, const char *format, ...)
 
     }
 
-	efree(message);
-	va_end(args);
+    efree(message);
+    va_end(args);
 }
