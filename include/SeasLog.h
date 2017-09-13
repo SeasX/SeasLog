@@ -17,7 +17,6 @@
 #ifndef _SEASLOG_H_
 #define _SEASLOG_H_
 
-#include "zend.h"
 #include "php.h"
 #include "php_ini.h"
 #include "main/php_main.h"
@@ -106,7 +105,7 @@
 #define SEASLOG_GET_HOST_NULL               "NoHost"
 
 #define SEASLOG_LOG_LINE_FEED_STR           "\n"
-#define SEASLOG_LOG_LINE_FEED_LEN           sizeof(SEASLOG_LOG_LINE_FEED_STR)
+#define SEASLOG_LOG_LINE_FEED_LEN           sizeof(SEASLOG_LOG_LINE_FEED_STR) - 1
 
 #define SEASLOG_GENERATE_CURRENT_TEMPLATE   1
 #define SEASLOG_GENERATE_LOG_INFO           2

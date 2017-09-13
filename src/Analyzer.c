@@ -56,7 +56,8 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
     }
 
     fp = VCWD_POPEN(sh, "r");
-    if (! fp)
+
+    if (!fp)
     {
         seaslog_throw_exception(SEASLOG_EXCEPTION_CONTENT_ERROR TSRMLS_CC, "Unable to fork [%s]", sh);
         return -1;
@@ -77,7 +78,7 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
 static int get_detail(char *log_path, char *level, char *key_word, long start, long end, long order, zval *return_value TSRMLS_DC)
 {
     FILE * fp;
-    char buffer[SEASLOG_BUFFER_MAX_SIZE + 1];
+    char buffer[SEASLOG_BUFFER_MAX_SIZE];
     char *path;
     char *sh;
     char *command;
@@ -140,7 +141,7 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
         seaslog_throw_exception(SEASLOG_EXCEPTION_CONTENT_ERROR TSRMLS_CC, "Unable to fork [%s]", sh);
 
         efree(buffer);
-        return -1;
+        return FAILURE;
     }
     else
     {
@@ -159,5 +160,5 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     efree(command);
     efree(sh);
 
-    return 1;
+    return SUCCESS;
 }
