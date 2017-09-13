@@ -186,6 +186,8 @@ static int seaslog_init_request_variable(TSRMLS_D)
             return SUCCESS;
         }
     }
+
+    return SUCCESS;
 }
 
 static void seaslog_clear_request_variable(TSRMLS_D)
