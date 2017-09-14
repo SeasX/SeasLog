@@ -109,8 +109,8 @@ seaslog.default_basepath = "/var/log/www"
 ;Default Logger Path
 seaslog.default_logger = "default"
 
-;The DateTime Style.  Default "Y:m:d H:i:s"
-seaslog.default_datetime_format = "Y:m:d H:i:s"
+;The DateTime Style.  Default "Y-m-d H:i:s"
+seaslog.default_datetime_format = "Y-m-d H:i:s"
 
 ;Default Log template. 
 ;Default "%L | %P | %Q | %t | %T | %M"

@@ -111,8 +111,8 @@ seaslog.default_basepath = "/var/log/www"
 ;默认logger目录
 seaslog.default_logger = "default"
 
-;日期格式配置 默认"Y:m:d H:i:s"
-seaslog.default_datetime_format = "Y:m:d H:i:s"
+;日期格式配置 默认"Y-m-d H:i:s"
+seaslog.default_datetime_format = "Y-m-d H:i:s"
 
 ;日志格式模板 默认"%L | %P | %Q | %t | %T | %M"
 seaslog.default_template = "%L | %P | %Q | %t | %T | %M"
