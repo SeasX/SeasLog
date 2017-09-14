@@ -546,7 +546,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
     {
         long count_debug, count_info, count_notice, count_warn, count_erro, count_critical, count_alert, count_emergency;
         array_init(return_value);
-        log_path = "";
+        log_path = "*";
 
         count_debug     = get_type_count(log_path, SEASLOG_DEBUG, key_word TSRMLS_CC);
         count_info      = get_type_count(log_path, SEASLOG_INFO, key_word TSRMLS_CC);
@@ -568,7 +568,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
     }
     else if (argc == 1)
     {
-        log_path = "";
+        log_path = "*";
         count = get_type_count(log_path, level, key_word TSRMLS_CC);
 
         RETURN_LONG(count);
@@ -656,7 +656,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 
     if (level_len < 1 || (level && !strcmp(level, SEASLOG_ALL)))
     {
-        level = "|";
+        level = SEASLOG_ALL;
     }
 
 #endif
