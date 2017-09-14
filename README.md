@@ -249,9 +249,9 @@ At the same time, many preset variables that are preset by `SeasLog` can be used
 ```php
 var_dump(SEASLOG_DEBUG,SEASLOG_INFO,SEASLOG_NOTICE);
 /*
-string('debug') debug level
-string('info')  info level
-string('notice') notice level
+string('DEBUG') debug level
+string('INFO')  info level
+string('NOTICE') notice level
 */
 ```
 #### Function list

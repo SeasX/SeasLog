@@ -236,9 +236,9 @@ seaslog.ignore_warning = 1
 ```php
 var_dump(SEASLOG_DEBUG,SEASLOG_INFO,SEASLOG_NOTICE);
 /*
-string('debug') debug级别
-string('info')  info级别
-string('notice') notice级别
+string('DEBUG') debug级别
+string('INFO')  info级别
+string('NOTICE') notice级别
 */
 ```
 #### 函数列表
