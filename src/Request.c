@@ -207,46 +207,60 @@ static void get_code_filename_line(smart_str *result TSRMLS_DC)
 
 #if PHP_VERSION_ID >= 70000
     zend_string *filename = NULL;
-
-    zend_execute_data *ptr = EG(current_execute_data);
-
-    if ((!ptr->func || !ZEND_USER_CODE(ptr->func->common.type)) &&
-            ptr->prev_execute_data->func &&
-            ZEND_USER_CODE(ptr->prev_execute_data->func->common.type)
-       )
+    if (SEASLOG_G(in_error) == 1)
     {
-        ptr = ptr->prev_execute_data;
+        ret = SEASLOG_G(in_error_filename);
+        code_line = SEASLOG_G(in_error_lineno);
+    }
+    else
+    {
+        zend_execute_data *ptr = EG(current_execute_data);
+
+        if ((!ptr->func || !ZEND_USER_CODE(ptr->func->common.type)) &&
+                ptr->prev_execute_data->func &&
+                ZEND_USER_CODE(ptr->prev_execute_data->func->common.type)
+           )
+        {
+            ptr = ptr->prev_execute_data;
+        }
+
+        if (ptr->func && ZEND_USER_CODE(ptr->func->type))
+        {
+            ret = ZSTR_VAL(ptr->func->op_array.filename);
+            code_line = ptr->opline->lineno;
+        }
     }
 
-    if (ptr->func && ZEND_USER_CODE(ptr->func->type))
-    {
-        ret = ZSTR_VAL(ptr->func->op_array.filename);
-        code_line = ptr->opline->lineno;
+    filename = php_basename(ret, strlen(ret), NULL, 0);
 
-        filename = php_basename(ret, strlen(ret), NULL, 0);
+    smart_str_appendl(result,ZSTR_VAL(filename),ZSTR_LEN(filename));
+    smart_str_appendc(result,':');
+    smart_str_append_long(result,(long)code_line);
 
-        smart_str_appendl(result,ZSTR_VAL(filename),ZSTR_LEN(filename));
-        smart_str_appendc(result,':');
-        smart_str_append_long(result,(long)code_line);
-
-        smart_str_0(result);
-        zend_string_release(filename);
-    }
-
+    smart_str_0(result);
+    zend_string_release(filename);
 #else
     char *filename = NULL;
 
-    zend_execute_data *ptr = EG(current_execute_data);
-
-    if (ptr->op_array)
+    if (SEASLOG_G(in_error) == 1)
     {
-        ret = ptr->op_array->filename;
-        code_line = ptr->opline->lineno;
+        ret = SEASLOG_G(in_error_filename);
+        code_line = SEASLOG_G(in_error_lineno);
     }
-    else if (ptr->prev_execute_data && ptr->prev_execute_data->opline)
+    else
     {
-        ret = ptr->op_array->filename;
-        code_line = ptr->prev_execute_data->opline->lineno;
+        zend_execute_data *ptr = EG(current_execute_data);
+
+        if (ptr->op_array)
+        {
+            ret = ptr->op_array->filename;
+            code_line = ptr->opline->lineno;
+        }
+        else if (ptr->prev_execute_data && ptr->prev_execute_data->opline)
+        {
+            ret = ptr->op_array->filename;
+            code_line = ptr->prev_execute_data->opline->lineno;
+        }
     }
 
     php_basename(ret, strlen(ret), NULL, 0, &filename, &filename_len TSRMLS_CC);

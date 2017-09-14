@@ -19,10 +19,16 @@ static void process_event_error(int type, char * error_filename, uint error_line
     char *event_str;
     int event_str_len;
 
+    SEASLOG_G(in_error) = 1;
+    SEASLOG_G(in_error_filename) = (char *)error_filename;
+    SEASLOG_G(in_error_lineno) = (long)error_lineno;
+
     event_str_len = spprintf(&event_str, 0, "Error - type:%d - file:%s - line:%d - msg:%s", type, error_filename, error_lineno, msg);
 
     seaslog_log_ex(1, SEASLOG_CRITICAL, SEASLOG_CRITICAL_INT, event_str, event_str_len, NULL, 0, seaslog_ce TSRMLS_CC);
     efree(event_str);
+
+    SEASLOG_G(in_error) = 0;
 }
 
 void seaslog_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args)

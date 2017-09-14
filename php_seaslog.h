@@ -138,6 +138,10 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
 
     request_variable_t *request_variable;
 
+    int in_error;
+    char *in_error_filename;
+    long in_error_lineno;
+
 #if PHP_VERSION_ID >= 70000
     zval buffer;
     zval logger_list;
