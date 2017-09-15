@@ -114,8 +114,8 @@ seaslog.default_logger = "default"
 ;日期格式配置 默认"Y-m-d H:i:s"
 seaslog.default_datetime_format = "Y-m-d H:i:s"
 
-;日志格式模板 默认"%L | %P | %Q | %t | %T | %M"
-seaslog.default_template = "%L | %P | %Q | %t | %T | %M"
+;日志格式模板 默认"%T | %L | %P | %Q | %t | %M"
+seaslog.default_template = "%T | %L | %P | %Q | %t | %M"
 
 ;是否以type分文件 1是 0否(默认)
 seaslog.disting_type = 1
@@ -198,8 +198,8 @@ seaslog.ignore_warning = 1
 同时在模板中可以使用`SeasLog`预置的诸多预设变量，参照[预设变量表](#预设变量表)。
 
 #### 日志模板说明
-* 模板默认为：`seaslog.default_template = "%L | %P | %Q | %t | %T | %M"`
-* 意味着，默认的格式为`{level} | {pid} | {uniqid} | {timeStamp} |{dateTime} | {logInfo}`
+* 模板默认为：`seaslog.default_template = "%T | %L | %P | %Q | %t | %M"`
+* 意味着，默认的格式为`{dateTime} | {level} | {pid} | {uniqid} | {timeStamp} | {logInfo}`
 * 如果自定义的格式为：`seaslog.default_template = "[%T]:%L %P %Q %t %M" `
 * 那么，日志格式将被自定义为：`[{dateTime}]:{level} {pid} {uniqid} {timeStamp} {logInfo}`
 > 注意：`%L` 必须在`%M`之前，即：日志级别，必须在日志内容之前。
@@ -208,7 +208,7 @@ seaslog.ignore_warning = 1
 `SeasLog`提供了下列预设变量，可以直接使用在日志模板中，将在日志最终生成时替换成对应值。
 * `%L` - Level 日志级别。
 * `%M` - Message 日志信息。
-* `%T` - DateTime 如`2017:08:16 19:15:02`，受`seaslog.default_datetime_format`影响。
+* `%T` - DateTime 如`2017-08-16 19:15:02`，受`seaslog.default_datetime_format`影响。
 * `%t` - Timestamp 如`1502882102.862`，精确到毫秒数。
 * `%Q` - RequestId 区分单次请求，如没有调用`SeasLog::setRequestId($string)`方法，则在初始化请求时，采用内置的`static char *get_uniqid()`方法生成的惟一值。
 * `%H` - HostName 主机名。
@@ -533,7 +533,10 @@ Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
       Current = 'defauult'
     }
     Entry [ seaslog.default_datetime_format <ALL> ]
-      Current = 'Y:m:d H:i:s'
+      Current = 'Y-m-d H:i:s'
+    }
+    Entry [ seaslog.default_template <ALL> ]
+      Current = '%L | %P | %Q | %t | %T | %M'
     }
     Entry [ seaslog.disting_type <ALL> ]
       Current = '0'
@@ -565,20 +568,29 @@ Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
     Entry [ seaslog.remote_port <ALL> ]
       Current = '514'
     }
+    Entry [ seaslog.trim_wrap <ALL> ]
+      Current = '0'
+    }
+    Entry [ seaslog.throw_exception <ALL> ]
+      Current = '1'
+    }
+    Entry [ seaslog.ignore_warning <ALL> ]
+      Current = '1'
+    }
   }
 
   - Constants [16] {
-    Constant [ string SEASLOG_VERSION ] { 1.6.9 }
+    Constant [ string SEASLOG_VERSION ] { 1.7.5 }
     Constant [ string SEASLOG_AUTHOR ] { Chitao.Gao  [ neeke@php.net ] }
-    Constant [ string SEASLOG_ALL ] { all }
-    Constant [ string SEASLOG_DEBUG ] { debug }
-    Constant [ string SEASLOG_INFO ] { info }
-    Constant [ string SEASLOG_NOTICE ] { notice }
-    Constant [ string SEASLOG_WARNING ] { warning }
-    Constant [ string SEASLOG_ERROR ] { error }
-    Constant [ string SEASLOG_CRITICAL ] { critical }
-    Constant [ string SEASLOG_ALERT ] { alert }
-    Constant [ string SEASLOG_EMERGENCY ] { emergency }
+    Constant [ string SEASLOG_ALL ] { ALL }
+    Constant [ string SEASLOG_DEBUG ] { DEBUG }
+    Constant [ string SEASLOG_INFO ] { INFO }
+    Constant [ string SEASLOG_NOTICE ] { NOTICE }
+    Constant [ string SEASLOG_WARNING ] { WARNING }
+    Constant [ string SEASLOG_ERROR ] { ERROR }
+    Constant [ string SEASLOG_CRITICAL ] { CRITICAL }
+    Constant [ string SEASLOG_ALERT ] { ALERT }
+    Constant [ string SEASLOG_EMERGENCY ] { EMERGENCY }
     Constant [ integer SEASLOG_DETAIL_ORDER_ASC ] { 1 }
     Constant [ integer SEASLOG_DETAIL_ORDER_DESC ] { 2 }
     Constant [ integer SEASLOG_APPENDER_FILE ] { 1 }
@@ -819,11 +831,11 @@ log文件名，以 `年月日` 分文件，如今天是2014年02月18日期，�
 * LogFile = basePath / logger / 20140218.log
 
 如果 `seaslog.disting_type = 1`，则最终的log文件将是这样的三个文件
-* infoLogFile = basePath / logger / INFO.20140218.log
+* infoLogFile = basePath / logger / 20140218.INFO.log
 
-* warnLogFile = basePath / logger / WARN.20140218.log
+* warnLogFile = basePath / logger / 20140218.WARNING.log
 
-* erroLogFile = basePath / logger / ERRO.20140218.log
+* erroLogFile = basePath / logger / 20140218.ERROR.log
 
 ```php
 
@@ -854,18 +866,18 @@ SeasLog::error('test error 3');
 */
 ```
 > log格式受`seaslog.default_template`影响。
-> seaslog.default_template默认模板为 seaslog.default_template = "%L | %P | %Q | %t | %T | %M"
-> 那么在默认情况下，日志格式为： `{level} | {pid} | {uniqid} | {timeStamp} |{dateTime} | {logInfo}`
+> seaslog.default_template默认模板为 seaslog.default_template = "%T | %L | %P | %Q | %t | %M"
+> 那么在默认情况下，日志格式为： `{dateTime} | {level} | {pid} | {uniqid} | {timeStamp} | {logInfo}`
 > 关于自定义模板，及SeasLog中的预置值，可参阅 [自定义日志模板](#自定义日志模板)
 ```sh
-ERROR | 23625 | 599159975a9ff | 1406422432.786 | 2014:07:27 08:53:52 | this is a error test by log
-DEBUG | 23625 | 599159975a9ff | 1406422432.786 | 2014:07:27 08:53:52 | this is a neeke debug
-INFO | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | this is a info log
-NOTICE | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | this is a notice log
-WARNING | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | your github.com was down,please rboot it ASAP!
-ERROR | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | a error log
-CRITICAL | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | some thing was critical
-EMERGENCY | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | Just now, the house next door was completely burnt out! it is a joke
+2014-07-27 08:53:52 | ERROR | 23625 | 599159975a9ff | 1406422432.786 | this is a error test by log
+2014-07-27 08:53:52 | DEBUG | 23625 | 599159975a9ff | 1406422432.786 | this is a neeke debug
+2014-07-27 08:53:52 | INFO | 23625 | 599159975a9ff | 1406422432.787 | this is a info log
+2014-07-27 08:53:52 | NOTICE | 23625 | 599159975a9ff | 1406422432.787 | this is a notice log
+2014-07-27 08:53:52 | WARNING | 23625 | 599159975a9ff | 1406422432.787 | your github.com was down,please rboot it ASAP!
+2014-07-27 08:53:52 | ERROR | 23625 | 599159975a9ff | 1406422432.787 | a error log
+2014-07-27 08:53:52 | CRITICAL | 23625 | 599159975a9ff | 1406422432.787 | some thing was critical
+2014-07-27 08:53:52 | EMERGENCY | 23625 | 599159975a9ff | 1406422432.787 | Just now, the house next door was completely burnt out! it is a joke
 ```
 
 #### 当`seaslog.appender`配置为 `2（TCP）` 或 `3（UDP）` 时，日志将推送至remote_host:remote_port的TCP或UDP端口
@@ -875,9 +887,9 @@ EMERGENCY | 23625 | 599159975a9ff | 1406422432.787 | 2014:07:27 08:53:52 | Just 
 
 ```sh
 发送出去的格式如：
-<15>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: DEBUG | 21423 | 599157af4e937 | 1466787583.322 | 2016:06:25 00:59:43 | this is a neeke debug
-<14>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: INFO | 21423 | 599157af4e937 | 1466787583.323 | 2016:06:25 00:59:43 | this is a info log
-<13>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: NOTICE | 21423 | 599157af4e937 | 1466787583.324 | 2016:06:25 00:59:43 | this is a notice log
+<15>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: 2016-06-25 00:59:43 | DEBUG | 21423 | 599157af4e937 | 1466787583.322 | this is a neeke debug
+<14>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: 2016-06-25 00:59:43 | INFO | 21423 | 599157af4e937 | 1466787583.323 | this is a info log
+<13>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: 2016-06-25 00:59:43 | NOTICE | 21423 | 599157af4e937 | 1466787583.324 | this is a notice log
 ```
 
 ### SeasLog Analyzer的使用
@@ -891,21 +903,21 @@ $countResult_3 = SeasLog::analyzerCount(SEASLOG_ERROR,date('Ymd',time()));
 var_dump($countResult_1,$countResult_2,$countResult_3);
 /*
 array(8) {
-  ["debug"]=>
+  ["DEBUG"]=>
   int(3)
-  ["info"]=>
+  ["INFO"]=>
   int(3)
-  ["notice"]=>
+  ["NOTICE"]=>
   int(3)
-  ["warning"]=>
+  ["WARNING"]=>
   int(3)
-  ["error"]=>
+  ["ERROR"]=>
   int(6)
-  ["critical"]=>
+  ["CRITICAL"]=>
   int(3)
-  ["alert"]=>
+  ["ALERT"]=>
   int(3)
-  ["emergency"]=>
+  ["EMERGENCY"]=>
   int(3)
 }
 
@@ -929,26 +941,26 @@ SeasLog::analyzerDetail(SEASLOG_ERROR) == SeasLog::analyzerDetail(SEASLOG_ERROR,
 取当前模块下所有level为 SEASLOG_ERROR 的信息列表:
 array(6) {
  [0] =>
-  string(66) "error | 8568 | 599157af4e937 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
+  string(66) "2014-02-24 00:14:02 | ERROR | 8568 | 599157af4e937 | 1393172042.717 | test error 3 "
   [1] =>
-  string(66) "error | 8594 | 5991576584446 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
+  string(66) "2014-02-24 00:14:04 | ERROR | 8594 | 5991576584446 | 1393172044.104 | test error 3 "
   [2] =>
-  string(66) "error | 8620 | 1502697015147 | 1393172044.862 | 2014:02:24 00:14:04 | test error 3 "
+  string(66) "2014-02-24 00:14:04 | ERROR | 8620 | 1502697015147 | 1393172044.862 | test error 3 "
   [3] =>
-  string(66) "error | 8646 | 599159975a9ff | 1393172045.989 | 2014:02:24 00:14:05 | test error 3 "
+  string(66) "2014-02-24 00:14:05 | ERROR | 8646 | 599159975a9ff | 1393172045.989 | test error 3 "
   [4] =>
-  string(66) "error | 8672 | 599159986ec28 | 1393172047.882 | 2014:02:24 00:14:07 | test error 3 "
+  string(66) "2014-02-24 00:14:07 | ERROR | 8672 | 599159986ec28 | 1393172047.882 | test error 3 "
   [5] =>
-  string(66) "error | 8698 | 5991599981cec | 1393172048.736 | 2014:02:24 00:14:08 | test error 3 "
+  string(66) "2014-02-24 00:14:08 | ERROR | 8698 | 5991599981cec | 1393172048.736 | test error 3 "
 }
 
 SeasLog::analyzerDetail(SEASLOG_ERROR,date('Ymd',time()));
 只取得当前模块下，当前一天内,level为SEASLOG_ERROR 的信息列表:
 array(2) {
   [0] =>
-  string(66) "error | 8568 | 599157af4e937 | 1393172042.717 | 2014:02:24 00:14:02 | test error 3 "
+  string(66) "2014-02-24 00:14:02 | ERROR | 8568 | 599157af4e937 | 1393172042.717 | test error 3 "
   [1] =>
-  string(66) "error | 8594 | 5991576584446 | 1393172044.104 | 2014:02:24 00:14:04 | test error 3 "
+  string(66) "2014-02-24 00:14:04 | ERROR | 8594 | 5991576584446 | 1393172044.104 | test error 3 "
 }
 
 同理，取当月
@@ -983,14 +995,14 @@ email[mail_bcc] =
 
 [analyz]
 ; enum
-; SEASLOG_DEBUG      "debug"
-; SEASLOG_INFO       "info"
-; SEASLOG_NOTICE     "notice"
-; SEASLOG_WARNING    "warning"
-; SEASLOG_ERROR      "error"
-; SEASLOG_CRITICAL   "critical"
-; SEASLOG_ALERT      "alert"
-; SEASLOG_EMERGENCY  "emergency"
+; SEASLOG_DEBUG      "DEBUG"
+; SEASLOG_INFO       "INFO"
+; SEASLOG_NOTICE     "NOTICE"
+; SEASLOG_WARNING    "WARNING"
+; SEASLOG_ERROR      "ERROR"
+; SEASLOG_CRITICAL   "CRITICAL"
+; SEASLOG_ALERT      "ALERT"
+; SEASLOG_EMERGENCY  "EMERGENCY"
 
 test1[module] = test/bb
 test1[level] = SEASLOG_ERROR
