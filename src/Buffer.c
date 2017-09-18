@@ -53,7 +53,6 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_D
 #endif
 
     stream = process_stream(opt,opt_len TSRMLS_CC);
-//    stream = seaslog_stream_open_wrapper(opt TSRMLS_CC);
 
     if (stream == NULL)
     {
@@ -82,9 +81,6 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_D
         zend_hash_move_forward(ht);
     }
 #endif
-
-//    php_stream_close(stream);
-//    php_stream_free(stream, PHP_STREAM_FREE_RELEASE_STREAM);
 
     return SUCCESS;
 }

@@ -18,7 +18,6 @@ static int seaslog_real_log_ex(char *message, int message_len, char *opt, int op
 {
     php_stream *stream = NULL;
 
-//    stream = seaslog_stream_open_wrapper(opt TSRMLS_CC);
     stream = process_stream(opt,opt_len TSRMLS_CC);
 
     if (!stream)
@@ -27,8 +26,6 @@ static int seaslog_real_log_ex(char *message, int message_len, char *opt, int op
     }
 
     php_stream_write(stream, message, message_len);
-//    php_stream_close(stream);
-//    php_stream_free(stream, PHP_STREAM_FREE_RELEASE_STREAM);
 
     return SUCCESS;
 }

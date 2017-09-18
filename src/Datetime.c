@@ -70,8 +70,6 @@ static char *make_real_date(TSRMLS_D)
     if (now > SEASLOG_G(last_min)->sec + 60)
     {
         efree(SEASLOG_G(last_min)->real_time);
-        efree(SEASLOG_G(last_min));
-
         return seaslog_process_last_min(now, SEASLOG_INIT_FIRST_NO TSRMLS_CC);
     }
 
@@ -84,8 +82,6 @@ static char *make_real_time(TSRMLS_D)
     if (now > SEASLOG_G(last_sec)->sec)
     {
         efree(SEASLOG_G(last_sec)->real_time);
-        efree(SEASLOG_G(last_sec));
-
         return seaslog_process_last_sec(now, SEASLOG_INIT_FIRST_NO TSRMLS_CC);
     }
 
