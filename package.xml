@@ -23,20 +23,29 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2017-01-23</date>
-    <time>18:54:00</time>
+    <date>2017-09-15</date>
+    <time>20:11:00</time>
     <version>
-        <release>1.6.9</release>
-        <api>1.6.9</api>
+        <release>1.7.5</release>
+        <api>1.7.5</api>
     </version>
     <stability>
-        <release>stable</release>
+        <release>beta</release>
         <api>stable</api>
     </stability>
     <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
     <notes>
-        - Fixed issue #113 setBastPath.
-        - Fixed PHP --re seaslog result.
+        - Support send to Rsyslog(TCP/UDP) with RFC5424.
+        - Support RequestId differentiated requests to fixed issue #134.
+        - Support for log template customizations to fixed issue #12 #143.
+        - Update SeasLog Analyzer scripts version to 1.1.0, to fixed issue #139.
+        - Optimization of analyzerCount and analyzerDetail to fixed issue #133.
+        - Fixed issue #138. Error by file exists.
+        - Fixed issue #140. Error by setDatetimeFormat.
+        - Fixed issue #142. Error by too many open files.
+        - Fixed issue #144. Error by read log detail order desc.
+        - Fixed issue #145. Error by analyzerDetail.
+        - Fixed issue #146. Segfault at php-fpm.
     </notes>
     <contents>
         <dir name="/">
@@ -464,6 +473,23 @@
             <notes>
                 - Fixed issue #100 #102 #103 memory leak.
                 - Fixed Dir chmod 0755 and File chmod 0666.
+            </notes>
+        </release>
+        <release>
+            <date>2017-01-23</date>
+            <time>18:54:00</time>
+            <version>
+                <release>1.6.9</release>
+                <api>1.6.9</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+            <notes>
+                - Fixed issue #113 setBastPath.
+                - Fixed PHP --re seaslog result.
             </notes>
         </release>
     </changelog>

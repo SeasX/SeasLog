@@ -53,6 +53,7 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_D
 #endif
 
     stream = process_stream(opt,opt_len TSRMLS_CC);
+//    stream = seaslog_stream_open_wrapper(opt TSRMLS_CC);
 
     if (stream == NULL)
     {

@@ -191,8 +191,8 @@ static void seaslog_clear_logger_list(TSRMLS_D);
 static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSRMLS_DC);
 
 //Datetime
-static void seaslog_process_last_sec(int now, int if_first TSRMLS_DC);
-static void seaslog_process_last_min(int now, int if_first TSRMLS_DC);
+static char *seaslog_process_last_sec(int now, int if_first TSRMLS_DC);
+static char *seaslog_process_last_min(int now, int if_first TSRMLS_DC);
 static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_DC);
 static char *make_real_date(TSRMLS_D);
 static char *make_real_time(TSRMLS_D);
@@ -252,10 +252,10 @@ static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, size_t max
 static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, va_list ap);
 
 //StreamWrapper
-static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC);
+static inline php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC);
 static void seaslog_init_stream_list(TSRMLS_D);
 static void seaslog_clear_stream_list(TSRMLS_D);
-static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC);
+static inline php_stream *process_stream(char *opt, int opt_len TSRMLS_DC);
 
 
 //Analyzer
