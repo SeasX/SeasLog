@@ -24,10 +24,10 @@
         <active>yes</active>
     </lead>
     <date>2017-09-19</date>
-    <time>14:00:00</time>
+    <time>16:11:00</time>
     <version>
-        <release>1.7.5</release>
-        <api>1.7.5</api>
+        <release>1.7.6</release>
+        <api>1.7.6</api>
     </version>
     <stability>
         <release>stable</release>
@@ -35,18 +35,8 @@
     </stability>
     <license uri="http://www.php.net/license">PHP</license>
     <notes>
-        - Update license from Apache License 2.0 to PHP License 3.01.
-        - Support send to Rsyslog(TCP/UDP) with RFC5424.
-        - Support RequestId differentiated requests to fixed issue #134.
-        - Support for log template customizations to fixed issue #12 #143.
-        - Update SeasLog Analyzer scripts version to 1.1.0, to fixed issue #139.
-        - Optimization of analyzerCount and analyzerDetail to fixed issue #133.
-        - Fixed issue #138. Error by file exists.
-        - Fixed issue #140. Error by setDatetimeFormat.
-        - Fixed issue #142. Error by too many open files.
-        - Fixed issue #144. Error by read log detail order desc.
-        - Fixed issue #145. Error by analyzerDetail.
-        - Fixed issue #146. Segfault at php-fpm.
+        - Fixed analyzerDetail bug, use grep -ai key_words.
+        - Fixed issue #152. Segfault in cli.
     </notes>
     <contents>
         <dir name="/">
@@ -491,6 +481,33 @@
             <notes>
                 - Fixed issue #113 setBastPath.
                 - Fixed PHP --re seaslog result.
+            </notes>
+        </release>
+        <release>
+            <date>2017-09-19</date>
+            <time>14:00:00</time>
+            <version>
+                <release>1.7.5</release>
+                <api>1.7.5</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP</license>
+            <notes>
+                - Update license from Apache License 2.0 to PHP License 3.01.
+                - Support send to Rsyslog(TCP/UDP) with RFC5424.
+                - Support RequestId differentiated requests to fixed issue #134.
+                - Support for log template customizations to fixed issue #12 #143.
+                - Update SeasLog Analyzer scripts version to 1.1.0, to fixed issue #139.
+                - Optimization of analyzerCount and analyzerDetail to fixed issue #133.
+                - Fixed issue #138. Error by file exists.
+                - Fixed issue #140. Error by setDatetimeFormat.
+                - Fixed issue #142. Error by too many open files.
+                - Fixed issue #144. Error by read log detail order desc.
+                - Fixed issue #145. Error by analyzerDetail.
+                - Fixed issue #146. Segfault at php-fpm.
             </notes>
         </release>
     </changelog>
