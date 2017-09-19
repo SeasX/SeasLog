@@ -193,7 +193,12 @@ static int seaslog_init_request_variable(TSRMLS_D)
 static void seaslog_clear_request_variable(TSRMLS_D)
 {
     SEASLOG_ZVAL_PTR_DTOR(SEASLOG_G(request_variable)->request_uri);
-    SEASLOG_ZVAL_PTR_DTOR(SEASLOG_G(request_variable)->request_method);
+    
+    if( SEASLOG_G(request_variable)->request_method )
+    {
+        SEASLOG_ZVAL_PTR_DTOR(SEASLOG_G(request_variable)->request_method);
+    }
+    
     efree(SEASLOG_G(request_variable)->domain_port);
     efree(SEASLOG_G(request_variable)->client_ip);
     efree(SEASLOG_G(request_variable));
