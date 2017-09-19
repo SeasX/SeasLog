@@ -116,13 +116,13 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 
     array_init(return_value);
 
+    if (!strcmp(level, SEASLOG_ALL))
+    {
+        is_level_all = 1;
+    }
+
     if (SEASLOG_G(disting_type))
     {
-        if (!strcmp(level, SEASLOG_ALL))
-        {
-            is_level_all = 1;
-        }
-
         if (is_level_all == 1)
         {
             spprintf(&path, 0, "%s/%s.*", SEASLOG_G(last_logger)->logger_path, log_path);
