@@ -238,14 +238,22 @@ At the same time, many preset variables that are preset by `SeasLog` can be used
 ### Constants and functions
 #### Constant list
 `SeasLog exposes log level by eight levels.`
-* SEASLOG_DEBUG                       "DEBUG"
-* SEASLOG_INFO                        "INFO"
-* SEASLOG_NOTICE                      "NOTICE"
-* SEASLOG_WARNING                     "WARNING"
-* SEASLOG_ERROR                       "ERROR"
-* SEASLOG_CRITICAL                    "CRITICAL"
-* SEASLOG_ALERT                       "ALERT"
-* SEASLOG_EMERGENCY                   "EMERGENCY"
+##### SEASLOG_DEBUG       
+* "DEBUG"       - Detailed debug information.Fine-grained information events.
+##### SEASLOG_INFO
+* "INFO"        - Interesting events.Emphasizes the running process of the application.
+##### SEASLOG_NOTICE
+* "NOTICE"      - Normal but significant events.Information that is more important than the INFO level during execution.
+##### SEASLOG_WARNING
+* "WARNING"     - Exceptional occurrences that are not errors.Potentially aberrant information that needs attention and needs to be repaired.
+##### SEASLOG_ERROR
+* "ERROR"       - Runtime errors that do not require immediate action but should typically.
+##### SEASLOG_CRITICAL
+* "CRITICAL"    - Critical conditions.Need to be repaired immediately, and the program component is unavailable.
+##### SEASLOG_ALERT
+* "ALERT"       - Action must be taken immediately.Immediate attention should be given to relevant personnel for emergency repairs.
+##### SEASLOG_EMERGENCY
+* "EMERGENCY"   - System is unusable.
 ```php
 var_dump(SEASLOG_DEBUG,SEASLOG_INFO,SEASLOG_NOTICE);
 /*

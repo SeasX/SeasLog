@@ -1,17 +1,17 @@
 /*
-+----------------------------------------------------------------------+
-| SeasLog                                                              |
-+----------------------------------------------------------------------+
-| This source file is subject to version 2.0 of the Apache license,    |
-| that is bundled with this package in the file LICENSE, and is        |
-| available through the world-wide-web at the following url:           |
-| http://www.apache.org/licenses/LICENSE-2.0.html                      |
-| If you did not receive a copy of the Apache2.0 license and are unable|
-| to obtain it through the world-wide-web, please send a note to       |
-| license@php.net so we can mail you a copy immediately.               |
-+----------------------------------------------------------------------+
-| Author: Neeke.Gao  <neeke@php.net>                                   |
-+----------------------------------------------------------------------+
+  +----------------------------------------------------------------------+
+  | SeasLog                                                              |
+  +----------------------------------------------------------------------+
+  | This source file is subject to version 3.01 of the PHP license,      |
+  | that is bundled with this package in the file LICENSE, and is        |
+  | available through the world-wide-web at the following url:           |
+  | http://www.php.net/license/3_01.txt                                  |
+  | If you did not receive a copy of the PHP license and are unable to   |
+  | obtain it through the world-wide-web, please send a note to          |
+  | license@php.net so we can mail you a copy immediately.               |
+  +----------------------------------------------------------------------+
+  | Author: Chitao Gao  <neeke@php.net>                                  |
+  +----------------------------------------------------------------------+
 */
 
 static void seaslog_init_buffer(TSRMLS_D)
@@ -81,9 +81,6 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_D
         zend_hash_move_forward(ht);
     }
 #endif
-
-//    php_stream_close(stream);
-//    php_stream_free(stream, PHP_STREAM_FREE_RELEASE_STREAM);
 
     return SUCCESS;
 }

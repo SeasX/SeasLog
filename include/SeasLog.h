@@ -1,17 +1,17 @@
 /*
-+----------------------------------------------------------------------+
-| SeasLog                                                              |
-+----------------------------------------------------------------------+
-| This source file is subject to version 2.0 of the Apache license,    |
-| that is bundled with this package in the file LICENSE, and is        |
-| available through the world-wide-web at the following url:           |
-| http://www.apache.org/licenses/LICENSE-2.0.html                      |
-| If you did not receive a copy of the Apache2.0 license and are unable|
-| to obtain it through the world-wide-web, please send a note to       |
-| license@php.net so we can mail you a copy immediately.               |
-+----------------------------------------------------------------------+
-| Author: Neeke.Gao  <neeke@php.net>                                   |
-+----------------------------------------------------------------------+
+  +----------------------------------------------------------------------+
+  | SeasLog                                                              |
+  +----------------------------------------------------------------------+
+  | This source file is subject to version 3.01 of the PHP license,      |
+  | that is bundled with this package in the file LICENSE, and is        |
+  | available through the world-wide-web at the following url:           |
+  | http://www.php.net/license/3_01.txt                                  |
+  | If you did not receive a copy of the PHP license and are unable to   |
+  | obtain it through the world-wide-web, please send a note to          |
+  | license@php.net so we can mail you a copy immediately.               |
+  +----------------------------------------------------------------------+
+  | Author: Chitao Gao  <neeke@php.net>                                  |
+  +----------------------------------------------------------------------+
 */
 
 #ifndef _SEASLOG_H_
@@ -39,7 +39,7 @@
 
 #define SEASLOG_RES_NAME                    "SeasLog"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                     "1.7.5 dev"
+#define SEASLOG_VERSION                     "1.7.5"
 #define SEASLOG_VERSION_ID                  10705
 
 #define SEASLOG_ALL                         "ALL"
@@ -191,8 +191,8 @@ static void seaslog_clear_logger_list(TSRMLS_D);
 static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSRMLS_DC);
 
 //Datetime
-static void seaslog_process_last_sec(int now, int if_first TSRMLS_DC);
-static void seaslog_process_last_min(int now, int if_first TSRMLS_DC);
+static char *seaslog_process_last_sec(int now, int if_first TSRMLS_DC);
+static char *seaslog_process_last_min(int now, int if_first TSRMLS_DC);
 static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_DC);
 static char *make_real_date(TSRMLS_D);
 static char *make_real_time(TSRMLS_D);
@@ -252,10 +252,10 @@ static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, size_t max
 static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, va_list ap);
 
 //StreamWrapper
-static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC);
+static inline php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC);
 static void seaslog_init_stream_list(TSRMLS_D);
 static void seaslog_clear_stream_list(TSRMLS_D);
-static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC);
+static inline php_stream *process_stream(char *opt, int opt_len TSRMLS_DC);
 
 
 //Analyzer

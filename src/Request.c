@@ -1,17 +1,17 @@
 /*
-+----------------------------------------------------------------------+
-| SeasLog                                                              |
-+----------------------------------------------------------------------+
-| This source file is subject to version 2.0 of the Apache license,    |
-| that is bundled with this package in the file LICENSE, and is        |
-| available through the world-wide-web at the following url:           |
-| http://www.apache.org/licenses/LICENSE-2.0.html                      |
-| If you did not receive a copy of the Apache2.0 license and are unable|
-| to obtain it through the world-wide-web, please send a note to       |
-| license@php.net so we can mail you a copy immediately.               |
-+----------------------------------------------------------------------+
-| Author: Neeke.Gao  <neeke@php.net>                                   |
-+----------------------------------------------------------------------+
+  +----------------------------------------------------------------------+
+  | SeasLog                                                              |
+  +----------------------------------------------------------------------+
+  | This source file is subject to version 3.01 of the PHP license,      |
+  | that is bundled with this package in the file LICENSE, and is        |
+  | available through the world-wide-web at the following url:           |
+  | http://www.php.net/license/3_01.txt                                  |
+  | If you did not receive a copy of the PHP license and are unable to   |
+  | obtain it through the world-wide-web, please send a note to          |
+  | license@php.net so we can mail you a copy immediately.               |
+  +----------------------------------------------------------------------+
+  | Author: Chitao Gao  <neeke@php.net>                                  |
+  +----------------------------------------------------------------------+
 */
 
 static void seaslog_init_host_name(TSRMLS_D)
@@ -111,18 +111,12 @@ zval *seaslog_request_query(uint type, void *name, size_t len TSRMLS_DC)
 
     if (!carrier)
     {
-        zval *empty;
-        MAKE_STD_ZVAL(empty);
-        ZVAL_NULL(empty);
-        return empty;
+        return NULL;
     }
 
     if (zend_hash_find(Z_ARRVAL_PP(carrier), name, len + 1, (void **)&ret) == FAILURE)
     {
-        zval *empty;
-        MAKE_STD_ZVAL(empty);
-        ZVAL_NULL(empty);
-        return empty;
+        return NULL;
     }
 
     Z_ADDREF_P(*ret);
@@ -151,8 +145,7 @@ static int seaslog_init_request_variable(TSRMLS_D)
     else
     {
         domain = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_HOST") TSRMLS_CC);
-        SEASLOG_G(request_variable)->domain_port = Z_STRVAL_P(domain);
-        SEASLOG_G(request_variable)->domain_port_len = Z_STRLEN_P(domain);
+        SEASLOG_G(request_variable)->domain_port_len = spprintf(&SEASLOG_G(request_variable)->domain_port, 0, "%s", Z_STRVAL_P(domain));
         SEASLOG_ZVAL_PTR_DTOR(domain);
 
         SEASLOG_G(request_variable)->request_uri = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("REQUEST_URI") TSRMLS_CC);
@@ -162,8 +155,7 @@ static int seaslog_init_request_variable(TSRMLS_D)
         client_ip = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_X_REAL_IP") TSRMLS_CC);
         if (client_ip != NULL && Z_TYPE_P(client_ip) == IS_STRING)
         {
-            SEASLOG_G(request_variable)->client_ip = Z_STRVAL_P(client_ip);
-            SEASLOG_G(request_variable)->client_ip_len = Z_STRLEN_P(client_ip);
+            SEASLOG_G(request_variable)->client_ip_len = spprintf(&SEASLOG_G(request_variable)->client_ip, 0, "%s", Z_STRVAL_P(client_ip));
             SEASLOG_ZVAL_PTR_DTOR(client_ip);
             return SUCCESS;
         }
@@ -171,8 +163,7 @@ static int seaslog_init_request_variable(TSRMLS_D)
         client_ip = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_X_FORWARDED_FOR") TSRMLS_CC);
         if (client_ip != NULL && Z_TYPE_P(client_ip) == IS_STRING)
         {
-            SEASLOG_G(request_variable)->client_ip = Z_STRVAL_P(client_ip);
-            SEASLOG_G(request_variable)->client_ip_len = Z_STRLEN_P(client_ip);
+            SEASLOG_G(request_variable)->client_ip_len = spprintf(&SEASLOG_G(request_variable)->client_ip, 0, "%s", Z_STRVAL_P(client_ip));
             SEASLOG_ZVAL_PTR_DTOR(client_ip);
             return SUCCESS;
         }
@@ -180,8 +171,7 @@ static int seaslog_init_request_variable(TSRMLS_D)
         client_ip = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("REMOTE_ADDR") TSRMLS_CC);
         if (client_ip != NULL && Z_TYPE_P(client_ip) == IS_STRING)
         {
-            SEASLOG_G(request_variable)->client_ip = Z_STRVAL_P(client_ip);
-            SEASLOG_G(request_variable)->client_ip_len = Z_STRLEN_P(client_ip);
+            SEASLOG_G(request_variable)->client_ip_len = spprintf(&SEASLOG_G(request_variable)->client_ip, 0, "%s", Z_STRVAL_P(client_ip));
             SEASLOG_ZVAL_PTR_DTOR(client_ip);
             return SUCCESS;
         }

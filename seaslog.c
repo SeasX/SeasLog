@@ -1,17 +1,17 @@
 /*
-+----------------------------------------------------------------------+
-| SeasLog                                                              |
-+----------------------------------------------------------------------+
-| This source file is subject to version 2.0 of the Apache license,    |
-| that is bundled with this package in the file LICENSE, and is        |
-| available through the world-wide-web at the following url:           |
-| http://www.apache.org/licenses/LICENSE-2.0.html                      |
-| If you did not receive a copy of the Apache2.0 license and are unable|
-| to obtain it through the world-wide-web, please send a note to       |
-| license@php.net so we can mail you a copy immediately.               |
-+----------------------------------------------------------------------+
-| Author: Neeke.Gao  <neeke@php.net>                                   |
-+----------------------------------------------------------------------+
+  +----------------------------------------------------------------------+
+  | SeasLog                                                              |
+  +----------------------------------------------------------------------+
+  | This source file is subject to version 3.01 of the PHP license,      |
+  | that is bundled with this package in the file LICENSE, and is        |
+  | available through the world-wide-web at the following url:           |
+  | http://www.php.net/license/3_01.txt                                  |
+  | If you did not receive a copy of the PHP license and are unable to   |
+  | obtain it through the world-wide-web, please send a note to          |
+  | license@php.net so we can mail you a copy immediately.               |
+  +----------------------------------------------------------------------+
+  | Author: Chitao Gao  <neeke@php.net>                                  |
+  +----------------------------------------------------------------------+
 */
 
 #include "php_seaslog.h"
@@ -362,6 +362,8 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
     RETURN_TRUE;
 }
 
+/* {{{ proto string seaslog_get_version()
+   Return SeasLog version */
 PHP_FUNCTION(seaslog_get_version)
 {
     char *str;
@@ -370,7 +372,10 @@ PHP_FUNCTION(seaslog_get_version)
 
     SEASLOG_RETURN_STRINGL(str, len);
 }
+/* }}} */
 
+/* {{{ proto string seaslog_get_author()
+   Return SeasLog author */
 PHP_FUNCTION(seaslog_get_author)
 {
     char *str;
@@ -379,6 +384,7 @@ PHP_FUNCTION(seaslog_get_author)
 
     SEASLOG_RETURN_STRINGL(str, len);
 }
+/* }}} */
 
 PHP_METHOD(SEASLOG_RES_NAME, __construct)
 {
@@ -391,6 +397,8 @@ PHP_METHOD(SEASLOG_RES_NAME, __destruct)
     seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_NO TSRMLS_CC);
 }
 
+/* {{{ proto bool setBasePath(string base_path)
+   Set SeasLog base path */
 PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
 {
     zval *_base_path;
@@ -415,12 +423,18 @@ PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
 
     RETURN_FALSE;
 }
+/* }}} */
 
+/* {{{ proto string getBasePath()
+   Get SeasLog base path */
 PHP_METHOD(SEASLOG_RES_NAME, getBasePath)
 {
     SEASLOG_RETURN_STRINGL(SEASLOG_G(base_path), strlen(SEASLOG_G(base_path)));
 }
+/* }}} */
 
+/* {{{ proto bool setBasePath(string logger)
+   Set SeasLog logger path */
 PHP_METHOD(SEASLOG_RES_NAME, setLogger)
 {
     zval *_module;
@@ -441,13 +455,18 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
 
     RETURN_FALSE;
 }
+/* }}} */
 
-/*the last logger*/
+/* {{{ proto string getLastLogger()
+   Get SeasLog last logger path */
 PHP_METHOD(SEASLOG_RES_NAME, getLastLogger)
 {
     SEASLOG_RETURN_STRINGL(SEASLOG_G(last_logger)->logger, SEASLOG_G(last_logger)->logger_len);
 }
+/* }}} */
 
+/* {{{ proto bool setDatetimeFormat(string format)
+   Set SeasLog datetime format style */
 PHP_METHOD(SEASLOG_RES_NAME, setDatetimeFormat)
 {
     zval *_format;
@@ -480,8 +499,10 @@ PHP_METHOD(SEASLOG_RES_NAME, setDatetimeFormat)
 
     RETURN_FALSE;
 }
+/* }}} */
 
-/*the current format*/
+/* {{{ proto string getDatetimeFormat()
+   Get SeasLog datetime format style */
 PHP_METHOD(SEASLOG_RES_NAME, getDatetimeFormat)
 {
     char *str;
@@ -490,8 +511,10 @@ PHP_METHOD(SEASLOG_RES_NAME, getDatetimeFormat)
 
     SEASLOG_RETURN_STRINGL(str, len);
 }
+/* }}} */
 
-// 自定义批次号
+/* {{{ proto bool setRequestID(string request_id)
+   Set SeasLog request_id differentiated requests */
 PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
 {
     zval *_request_id;
@@ -524,13 +547,18 @@ PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
 
     RETURN_FALSE;
 }
+/* }}} */
 
+/* {{{ proto string getRequestID()
+   Get SeasLog request_id differentiated requests */
 PHP_METHOD(SEASLOG_RES_NAME, getRequestID)
 {
     SEASLOG_RETURN_STRINGL(SEASLOG_G(request_id), strlen(SEASLOG_G(request_id)));
 }
+/* }}} */
 
-
+/* {{{ proto array or int analyzerCount(string level [,string log_path, string key_word])
+   Get log count by level, log_path and key_word */
 PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
 {
     int argc = ZEND_NUM_ARGS();
@@ -581,7 +609,10 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
     }
 
 }
+/* }}} */
 
+/* {{{ proto array analyzerDetail(string level [,string log_path, string key_word, int start, int limit, int order])
+   Get log detail by level, log_path, key_word, start, limit, order */
 PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 {
     char *log_path, *level = NULL, *key_word = NULL;
@@ -663,7 +694,10 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 
     get_detail(log_path, level, key_word, start, start + limit - 1, order, return_value TSRMLS_CC);
 }
+/* }}} */
 
+/* {{{ proto array getBuffer()
+   Get the logs buffer in memory as array */
 PHP_METHOD(SEASLOG_RES_NAME, getBuffer)
 {
     if (SEASLOG_G(use_buffer))
@@ -675,14 +709,20 @@ PHP_METHOD(SEASLOG_RES_NAME, getBuffer)
 #endif
     }
 }
+/* }}} */
 
+/* {{{ proto bool flushBuffer()
+   Flush logs buffer, dump to appender file, or send to remote api with tcp/udp */
 PHP_METHOD(SEASLOG_RES_NAME, flushBuffer)
 {
     seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_CC);
 
     RETURN_TRUE;
 }
+/* }}} */
 
+/* {{{ proto bool log(string level, string message [, array content, string logger])
+   The Common Record Log Function  */
 PHP_METHOD(SEASLOG_RES_NAME, log)
 {
     int argc = ZEND_NUM_ARGS();
@@ -763,43 +803,68 @@ PHP_METHOD(SEASLOG_RES_NAME, log)
 
     RETURN_TRUE;
 }
+/* }}} */
 
+/* {{{ proto bool debug(string message [, array content, string logger])
+   Record debug log information */
 PHP_METHOD(SEASLOG_RES_NAME, debug)
 {
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_DEBUG, SEASLOG_DEBUG_INT);
 }
+/* }}} */
 
+/* {{{ proto bool info(string message [, array content, string logger])
+   Record info log information */
 PHP_METHOD(SEASLOG_RES_NAME, info)
 {
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_INFO, SEASLOG_INFO_INT);
 }
+/* }}} */
 
+/* {{{ proto bool notice(string message [, array content, string logger])
+   Record notice log information */
 PHP_METHOD(SEASLOG_RES_NAME, notice)
 {
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_NOTICE, SEASLOG_NOTICE_INT);
 }
+/* }}} */
 
+/* {{{ proto bool warning(string message [, array content, string logger])
+   Record warning log information */
 PHP_METHOD(SEASLOG_RES_NAME, warning)
 {
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_WARNING, SEASLOG_WARNING_INT);
 }
+/* }}} */
 
+/* {{{ proto bool error(string message [, array content, string logger])
+   Record error log information */
 PHP_METHOD(SEASLOG_RES_NAME, error)
 {
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_ERROR, SEASLOG_ERROR_INT);
 }
+/* }}} */
 
+/* {{{ proto bool critical(string message [, array content, string logger])
+   Record critical log information */
 PHP_METHOD(SEASLOG_RES_NAME, critical)
 {
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_CRITICAL, SEASLOG_CRITICAL_INT);
 }
+/* }}} */
 
+/* {{{ proto bool alert(string message [, array content, string logger])
+   Record alert log information */
 PHP_METHOD(SEASLOG_RES_NAME, alert)
 {
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_ALERT, SEASLOG_ALERT_INT);
 }
+/* }}} */
 
+/* {{{ proto bool emergency(string message [, array content, string logger])
+   Record emergency log information */
 PHP_METHOD(SEASLOG_RES_NAME, emergency)
 {
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_EMERGENCY, SEASLOG_EMERGENCY_INT);
 }
+/* }}} */
