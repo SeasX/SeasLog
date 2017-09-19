@@ -59,11 +59,11 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
 #else
         if (is_level_all == 1)
         {
-            spprintf(&sh, 0, "cat %s 2>/dev/null| grep '%s' -ac", path, key_word);
+            spprintf(&sh, 0, "cat %s 2>/dev/null| grep '%s' -aic", path, key_word);
         }
         else
         {
-            spprintf(&sh, 0, "cat %s 2>/dev/null| grep -a '%s' | grep '%s' -ac", path, level, key_word);
+            spprintf(&sh, 0, "cat %s 2>/dev/null| grep -ai '%s' | grep '%s' -aic", path, level, key_word);
         }
 #endif
     }
@@ -78,7 +78,7 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
         }
         else
         {
-            spprintf(&sh, 0, "cat %s 2>/dev/null| grep '%s' -ac", path, level);
+            spprintf(&sh, 0, "cat %s 2>/dev/null| grep '%s' -aic", path, level);
         }
 #endif
     }
@@ -115,6 +115,16 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     memset(buffer, '\0', sizeof(buffer));
 
     array_init(return_value);
+
+    if (start < 0)
+    {
+        start = SEASLOG_ANALYZER_DEFAULT_START;
+    }
+
+    if (end < 0)
+    {
+        end = SEASLOG_ANALYZER_DEFAULT_OFFSET;
+    }
 
     if (!strcmp(level, SEASLOG_ALL))
     {
@@ -157,11 +167,11 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 #else
         if (is_level_all == 1)
         {
-            spprintf(&sh, 0, "%s 2>/dev/null| grep -a '%s' | sed -n '%ld,%ld'p", command, key_word, start, end);
+            spprintf(&sh, 0, "%s 2>/dev/null| grep -ai '%s' | sed -n '%ld,%ld'p", command, key_word, start, end);
         }
         else
         {
-            spprintf(&sh, 0, "%s 2>/dev/null| grep -a '%s' | grep -a '%s' | sed -n '%ld,%ld'p", command, level, key_word, start, end);
+            spprintf(&sh, 0, "%s 2>/dev/null| grep -ai '%s' | grep -ai '%s' | sed -n '%ld,%ld'p", command, level, key_word, start, end);
         }
 #endif
     }
@@ -176,7 +186,7 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
         }
         else
         {
-            spprintf(&sh, 0, "%s 2>/dev/null| grep -a '%s' | sed -n '%ld,%ld'p", command, level, start, end);
+            spprintf(&sh, 0, "%s 2>/dev/null| grep -ai '%s' | sed -n '%ld,%ld'p", command, level, start, end);
         }
 #endif
     }
