@@ -23,18 +23,19 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2017-09-15</date>
-    <time>20:11:00</time>
+    <date>2017-09-19</date>
+    <time>14:00:00</time>
     <version>
         <release>1.7.5</release>
         <api>1.7.5</api>
     </version>
     <stability>
-        <release>beta</release>
+        <release>stable</release>
         <api>stable</api>
     </stability>
-    <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+    <license uri="http://www.php.net/license">PHP</license>
     <notes>
+        - Update license from Apache License 2.0 to PHP License 3.01.
         - Support send to Rsyslog(TCP/UDP) with RFC5424.
         - Support RequestId differentiated requests to fixed issue #134.
         - Support for log template customizations to fixed issue #12 #143.
