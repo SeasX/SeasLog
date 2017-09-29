@@ -39,8 +39,8 @@
 
 #define SEASLOG_RES_NAME                    "SeasLog"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                     "1.7.5"
-#define SEASLOG_VERSION_ID                  10705
+#define SEASLOG_VERSION                     "1.7.6"
+#define SEASLOG_VERSION_ID                  10706
 
 #define SEASLOG_ALL                         "ALL"
 #define SEASLOG_DEBUG                       "DEBUG"
@@ -110,6 +110,9 @@
 #define SEASLOG_GENERATE_CURRENT_TEMPLATE   1
 #define SEASLOG_GENERATE_LOG_INFO           2
 #define SEASLOG_GENERATE_SYSLOG_INFO        3
+
+#define SEASLOG_ANALYZER_DEFAULT_START      1
+#define SEASLOG_ANALYZER_DEFAULT_OFFSET     20
 
 #define SEASLOG_GLOBAL_VARS_SERVER  		TRACK_VARS_SERVER
 

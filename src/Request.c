@@ -136,8 +136,7 @@ static int seaslog_init_request_variable(TSRMLS_D)
     if (!strncmp(sapi_module.name, "cli", sizeof("cli") - 1))
     {
         SEASLOG_G(request_variable)->request_uri = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("SCRIPT_NAME") TSRMLS_CC);
-
-        SEASLOG_G(request_variable)->request_method = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("SUDO_COMMAND") TSRMLS_CC);
+        SEASLOG_G(request_variable)->request_method = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("SHELL") TSRMLS_CC);
 
         SEASLOG_G(request_variable)->domain_port_len = spprintf(&SEASLOG_G(request_variable)->domain_port, 0, "cli");
         SEASLOG_G(request_variable)->client_ip_len = spprintf(&SEASLOG_G(request_variable)->client_ip, 0, "local");
@@ -149,7 +148,6 @@ static int seaslog_init_request_variable(TSRMLS_D)
         SEASLOG_ZVAL_PTR_DTOR(domain);
 
         SEASLOG_G(request_variable)->request_uri = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("REQUEST_URI") TSRMLS_CC);
-
         SEASLOG_G(request_variable)->request_method = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("REQUEST_METHOD") TSRMLS_CC);
 
         client_ip = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_X_REAL_IP") TSRMLS_CC);
@@ -182,15 +180,26 @@ static int seaslog_init_request_variable(TSRMLS_D)
 
 static void seaslog_clear_request_variable(TSRMLS_D)
 {
-    SEASLOG_ZVAL_PTR_DTOR(SEASLOG_G(request_variable)->request_uri);
-    
-    if( SEASLOG_G(request_variable)->request_method )
+    if(SEASLOG_G(request_variable)->request_uri)
+    {
+        SEASLOG_ZVAL_PTR_DTOR(SEASLOG_G(request_variable)->request_uri);
+    }
+
+    if(SEASLOG_G(request_variable)->request_method)
     {
         SEASLOG_ZVAL_PTR_DTOR(SEASLOG_G(request_variable)->request_method);
     }
-    
-    efree(SEASLOG_G(request_variable)->domain_port);
-    efree(SEASLOG_G(request_variable)->client_ip);
+
+    if(SEASLOG_G(request_variable)->domain_port)
+    {
+        efree(SEASLOG_G(request_variable)->domain_port);
+    }
+
+    if(SEASLOG_G(request_variable)->client_ip)
+    {
+        efree(SEASLOG_G(request_variable)->client_ip);
+    }
+
     efree(SEASLOG_G(request_variable));
 }
 

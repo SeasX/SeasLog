@@ -651,7 +651,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 
     if (ZSTR_LEN(_level) < 1 || (_level && !strcmp(ZSTR_VAL(_level), SEASLOG_ALL)))
     {
-        level = "|";
+        level = SEASLOG_ALL;
     }
     else
     {
