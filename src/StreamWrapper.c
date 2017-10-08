@@ -152,10 +152,10 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
 {
     ulong stream_entry_hash;
     php_stream *stream = NULL;
-    zval *stream_zval;
     zval **stream_zval_get;
     HashTable *ht_list;
 #if PHP_VERSION_ID >= 70000
+    zval *stream_zval;
     zval stream_zval_to;
 #else
     zval *stream_zval_to;
