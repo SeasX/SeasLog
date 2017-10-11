@@ -532,10 +532,10 @@ PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
             switch (Z_TYPE_P(_request_id))
             {
             case IS_STRING:
-                SEASLOG_G(request_id) = estrdup(Z_STRVAL_P(_request_id));
+                SEASLOG_G(request_id_len) = spprintf(&SEASLOG_G(request_id), 0, "%s", Z_STRVAL_P(_request_id));
                 break;
             case IS_LONG:
-                spprintf(&SEASLOG_G(request_id), 0, "%ld", Z_LVAL_P(_request_id));
+                SEASLOG_G(request_id_len) = spprintf(&SEASLOG_G(request_id), 0, "%ld", Z_LVAL_P(_request_id));
                 break;
             default:
                 RETURN_FALSE;
