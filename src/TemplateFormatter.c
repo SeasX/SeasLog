@@ -78,6 +78,9 @@ static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_t
 {
     char *s = NULL;
     int s_len;
+	
+    char *level = va_arg(ap, char *);
+    char *message = va_arg(ap, char *);
 
     char char_buf[2];
     smart_str tmp_buf = {0};
@@ -159,7 +162,7 @@ static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_t
                     break;
                 case 'L': //Level
                 case 'M': //Message
-                    s = va_arg(ap, char *);
+                    s = *fmt == 'L' ? level : message;
                     if (s != NULL)
                     {
                         s_len = strlen(s);
