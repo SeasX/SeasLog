@@ -523,7 +523,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
     if (zend_parse_parameters(argc TSRMLS_CC, "z", &_request_id) == FAILURE)
         return;
 
-    if (argc > 0 && Z_STRLEN_P(_request_id) > 0)
+    if (argc > 0 && (Z_TYPE_P(_request_id) == IS_STRING || Z_TYPE_P(_request_id) == IS_LONG || Z_TYPE_P(_request_id) == IS_DOUBLE))
     {
         if (SEASLOG_G(request_id))
         {
@@ -536,6 +536,9 @@ PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
                 break;
             case IS_LONG:
                 SEASLOG_G(request_id_len) = spprintf(&SEASLOG_G(request_id), 0, "%ld", Z_LVAL_P(_request_id));
+                break;
+            case IS_DOUBLE:
+                SEASLOG_G(request_id_len) = spprintf(&SEASLOG_G(request_id), 0, "%.*G", (int) EG(precision), Z_DVAL_P(_request_id));
                 break;
             default:
                 RETURN_FALSE;
