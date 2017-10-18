@@ -31,7 +31,7 @@
 
 static void seaslog_init_template(TSRMLS_D)
 {
-    seaslog_spprintf(&SEASLOG_G(current_template) TSRMLS_CC, SEASLOG_GENERATE_CURRENT_TEMPLATE, 0);
+    seaslog_spprintf(&SEASLOG_G(current_template) TSRMLS_CC, SEASLOG_GENERATE_CURRENT_TEMPLATE, NULL, 0);
 }
 
 static void seaslog_clear_template(TSRMLS_D)
@@ -42,7 +42,7 @@ static void seaslog_clear_template(TSRMLS_D)
     }
 }
 
-static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, size_t max_len, ...)
+static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size_t max_len, ...)
 {
     int len;
     va_list ap;
@@ -52,11 +52,11 @@ static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, size_t max
     va_start(ap, max_len);
     if (generate_type == SEASLOG_GENERATE_CURRENT_TEMPLATE)
     {
-        seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(default_template), ap);
+        seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(default_template), level, ap);
     }
     else
     {
-        seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(current_template), ap);
+        seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(current_template), level, ap);
     }
     va_end(ap);
 
@@ -74,7 +74,7 @@ static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, size_t max
     return len;
 }
 
-static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, va_list ap)
+static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, char *level, va_list ap)
 {
     char *s = NULL;
     int s_len;
@@ -158,6 +158,9 @@ static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_t
                     s_len  = SEASLOG_G(request_id_len);
                     break;
                 case 'L': //Level
+                    s = level;
+                    s_len = strlen(level);
+                    break;
                 case 'M': //Message
                     s = va_arg(ap, char *);
                     if (s != NULL)
