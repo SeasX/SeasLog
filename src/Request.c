@@ -141,6 +141,10 @@ static int seaslog_init_request_variable(TSRMLS_D)
         SEASLOG_G(request_variable)->domain_port_len = spprintf(&SEASLOG_G(request_variable)->domain_port, 0, "cli");
         SEASLOG_G(request_variable)->client_ip_len = spprintf(&SEASLOG_G(request_variable)->client_ip, 0, "local");
     }
+    else if( !strncmp( sapi_module.name, "phpdbg", sizeof( "phpdbg" ) - 1 ) )
+    {
+
+    }
     else
     {
         domain = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_HOST") TSRMLS_CC);
