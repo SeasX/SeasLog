@@ -141,6 +141,11 @@ seaslog.buffer_size = 100
 ;   Before the 1.7.0 version, Default 0 (All of them).
 seaslog.level = 8
 
+;Log function recall depth
+;Will affected variable `LineNo` in `%F`
+;Default 0
+seaslog.recall_depth = 0
+
 ;Automatic Record final error with default logger. 
 ;1-Y(Default) 0-N
 seaslog.trace_error = 1

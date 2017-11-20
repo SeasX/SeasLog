@@ -208,7 +208,7 @@ static void get_code_filename_line(smart_str *result TSRMLS_DC)
     const char *ret;
     long code_line = 0;
     size_t filename_len;
-    int recall = SEASLOG_G(recall);
+    int recall_depth = SEASLOG_G(recall_depth);
 
 #if PHP_VERSION_ID >= 70000
     zend_string *filename = NULL;
@@ -221,7 +221,7 @@ static void get_code_filename_line(smart_str *result TSRMLS_DC)
     {
         zend_execute_data *ptr = EG(current_execute_data);
 
-        while(recall >= 0) {
+        while(recall_depth >= 0) {
             if (ptr->prev_execute_data != NULL && ptr->prev_execute_data->func &&
                     ZEND_USER_CODE(ptr->prev_execute_data->func->common.type)
                )
@@ -232,7 +232,7 @@ static void get_code_filename_line(smart_str *result TSRMLS_DC)
             {
                 break;
             }
-            recall--;
+            recall_depth--;
         }
         if (ptr->func && ZEND_USER_CODE(ptr->func->type))
         {
@@ -260,16 +260,16 @@ static void get_code_filename_line(smart_str *result TSRMLS_DC)
     else
     {
         zend_execute_data *ptr = EG(current_execute_data);
-        while(recall > 0) {
+        while(recall_depth > 0) {
             if (ptr->prev_execute_data && ptr->prev_execute_data->opline)
             {
                 ptr = ptr->prev_execute_data;
-                recall--;
             }
             else
             {
                 break;
             }
+            recall_depth--;
         }
 
         if (ptr->op_array)

@@ -131,7 +131,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     int buffer_count;
     int initRComplete;
     int error_loop;
-    int recall;
+    int recall_depth;
 
     int appender;
     char *remote_host;

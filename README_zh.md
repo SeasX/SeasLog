@@ -139,6 +139,11 @@ seaslog.buffer_size = 100
 ;   1.7.0 之前的版本，该值默认为0(所有日志);
 seaslog.level = 8
 
+;日志函数调用回溯层级
+;影响预定义变量 %F 中的行数
+;默认0
+seaslog.recall_depth = 0
+
 ;自动记录错误 默认1(开启)
 seaslog.trace_error = 1
 
