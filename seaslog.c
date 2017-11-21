@@ -523,19 +523,25 @@ PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
     if (zend_parse_parameters(argc TSRMLS_CC, "z", &_request_id) == FAILURE)
         return;
 
-    if (argc > 0 && Z_STRLEN_P(_request_id) > 0)
+    if (argc > 0)
     {
         if (SEASLOG_G(request_id))
         {
-            efree(SEASLOG_G(request_id));
-
             switch (Z_TYPE_P(_request_id))
             {
             case IS_STRING:
+                if (Z_STRLEN_P(_request_id) <= 0) {
+                    RETURN_FALSE;
+                }
+
+                efree(SEASLOG_G(request_id));
                 SEASLOG_G(request_id) = estrdup(Z_STRVAL_P(_request_id));
+                SEASLOG_G(request_id_len) = Z_STRLEN_P(_request_id);
                 break;
             case IS_LONG:
+                efree(SEASLOG_G(request_id));
                 spprintf(&SEASLOG_G(request_id), 0, "%ld", Z_LVAL_P(_request_id));
+                SEASLOG_G(request_id_len) = strlen(SEASLOG_G(request_id));
                 break;
             default:
                 RETURN_FALSE;
