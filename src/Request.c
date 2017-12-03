@@ -133,7 +133,7 @@ static int seaslog_init_request_variable(TSRMLS_D)
 
     SEASLOG_G(request_variable) = ecalloc(sizeof(request_variable_t), 1);
 
-    if (!strncmp(sapi_module.name, "cli", sizeof("cli") - 1))
+    if (!strncmp(sapi_module.name, "cli", sizeof("cli") - 1) || !strncmp(sapi_module.name, "phpdbg", sizeof("phpdbg") - 1))
     {
         SEASLOG_G(request_variable)->request_uri = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("SCRIPT_NAME") TSRMLS_CC);
         SEASLOG_G(request_variable)->request_method = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("SHELL") TSRMLS_CC);
