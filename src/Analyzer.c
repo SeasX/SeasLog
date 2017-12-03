@@ -36,11 +36,11 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
 
         if (is_level_all == 1)
         {
-            spprintf(&path, 0, "%s/%s.*", SEASLOG_G(last_logger)->logger_path, log_path);
+            spprintf(&path, 0, "%s/%s*.*", SEASLOG_G(last_logger)->logger_path, log_path);
         }
         else
         {
-            spprintf(&path, 0, "%s/%s.%s*", SEASLOG_G(last_logger)->logger_path, log_path, level);
+            spprintf(&path, 0, "%s/%s*.%s*", SEASLOG_G(last_logger)->logger_path, log_path, level);
         }
     }
     else
@@ -135,11 +135,11 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     {
         if (is_level_all == 1)
         {
-            spprintf(&path, 0, "%s/%s.*", SEASLOG_G(last_logger)->logger_path, log_path);
+            spprintf(&path, 0, "%s/%s*.*", SEASLOG_G(last_logger)->logger_path, log_path);
         }
         else
         {
-            spprintf(&path, 0, "%s/%s.%s*", SEASLOG_G(last_logger)->logger_path, log_path, level);
+            spprintf(&path, 0, "%s/%s*.%s*", SEASLOG_G(last_logger)->logger_path, log_path, level);
         }
     }
     else
