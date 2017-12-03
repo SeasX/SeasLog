@@ -148,6 +148,7 @@ STD_PHP_INI_BOOLEAN("seaslog.trace_exception", "0", PHP_INI_ALL, OnUpdateBool, t
 
 STD_PHP_INI_ENTRY("seaslog.buffer_size", "0", PHP_INI_ALL, OnUpdateLongGEZero, buffer_size, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.level", "8", PHP_INI_ALL, OnUpdateLongGEZero, level, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.recall_depth", "0", PHP_INI_ALL, OnUpdateLongGEZero, recall_depth, zend_seaslog_globals, seaslog_globals)
 
 
 STD_PHP_INI_ENTRY("seaslog.appender", "1", PHP_INI_ALL, OnUpdateLongGEZero, appender, zend_seaslog_globals, seaslog_globals)
@@ -523,7 +524,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
     if (zend_parse_parameters(argc TSRMLS_CC, "z", &_request_id) == FAILURE)
         return;
 
-    if (argc > 0 && Z_STRLEN_P(_request_id) > 0)
+    if (argc > 0 && (Z_TYPE_P(_request_id) == IS_STRING || Z_TYPE_P(_request_id) == IS_LONG || Z_TYPE_P(_request_id) == IS_DOUBLE))
     {
         if (SEASLOG_G(request_id))
         {
@@ -532,10 +533,13 @@ PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
             switch (Z_TYPE_P(_request_id))
             {
             case IS_STRING:
-                SEASLOG_G(request_id) = estrdup(Z_STRVAL_P(_request_id));
+                SEASLOG_G(request_id_len) = spprintf(&SEASLOG_G(request_id), 0, "%s", Z_STRVAL_P(_request_id));
                 break;
             case IS_LONG:
-                spprintf(&SEASLOG_G(request_id), 0, "%ld", Z_LVAL_P(_request_id));
+                SEASLOG_G(request_id_len) = spprintf(&SEASLOG_G(request_id), 0, "%ld", Z_LVAL_P(_request_id));
+                break;
+            case IS_DOUBLE:
+                SEASLOG_G(request_id_len) = spprintf(&SEASLOG_G(request_id), 0, "%.*G", (int) EG(precision), Z_DVAL_P(_request_id));
                 break;
             default:
                 RETURN_FALSE;

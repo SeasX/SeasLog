@@ -133,7 +133,7 @@ static int seaslog_init_request_variable(TSRMLS_D)
 
     SEASLOG_G(request_variable) = ecalloc(sizeof(request_variable_t), 1);
 
-    if (!strncmp(sapi_module.name, "cli", sizeof("cli") - 1))
+    if (!strncmp(sapi_module.name, "cli", sizeof("cli") - 1) || !strncmp(sapi_module.name, "phpdbg", sizeof("phpdbg") - 1))
     {
         SEASLOG_G(request_variable)->request_uri = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("SCRIPT_NAME") TSRMLS_CC);
         SEASLOG_G(request_variable)->request_method = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("SHELL") TSRMLS_CC);
@@ -208,6 +208,7 @@ static void get_code_filename_line(smart_str *result TSRMLS_DC)
     const char *ret;
     long code_line = 0;
     size_t filename_len;
+    int recall_depth = SEASLOG_G(recall_depth);
 
 #if PHP_VERSION_ID >= 70000
     zend_string *filename = NULL;
@@ -220,14 +221,19 @@ static void get_code_filename_line(smart_str *result TSRMLS_DC)
     {
         zend_execute_data *ptr = EG(current_execute_data);
 
-        if ((!ptr->func || !ZEND_USER_CODE(ptr->func->common.type)) &&
-                ptr->prev_execute_data->func &&
-                ZEND_USER_CODE(ptr->prev_execute_data->func->common.type)
-           )
-        {
-            ptr = ptr->prev_execute_data;
+        while(recall_depth >= 0) {
+            if (ptr->prev_execute_data != NULL && ptr->prev_execute_data->func &&
+                    ZEND_USER_CODE(ptr->prev_execute_data->func->common.type)
+               )
+            {
+                ptr = ptr->prev_execute_data;
+            }
+            else
+            {
+                break;
+            }
+            recall_depth--;
         }
-
         if (ptr->func && ZEND_USER_CODE(ptr->func->type))
         {
             ret = ZSTR_VAL(ptr->func->op_array.filename);
@@ -254,6 +260,17 @@ static void get_code_filename_line(smart_str *result TSRMLS_DC)
     else
     {
         zend_execute_data *ptr = EG(current_execute_data);
+        while(recall_depth > 0) {
+            if (ptr->prev_execute_data && ptr->prev_execute_data->opline)
+            {
+                ptr = ptr->prev_execute_data;
+            }
+            else
+            {
+                break;
+            }
+            recall_depth--;
+        }
 
         if (ptr->op_array)
         {

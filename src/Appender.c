@@ -95,7 +95,7 @@ static int appender_handle_file(char *message, int message_len, char *level, log
         log_file_path_len = spprintf(&log_file_path, 0, "%s/%s.log", logger->logger_path,real_date);
     }
 
-    log_len = seaslog_spprintf(&log_info TSRMLS_CC, SEASLOG_GENERATE_LOG_INFO, 0, level, message);
+    log_len = seaslog_spprintf(&log_info TSRMLS_CC, SEASLOG_GENERATE_LOG_INFO, level, 0, message);
 
     if (seaslog_real_buffer_log_ex(log_info, log_len, log_file_path, log_file_path_len + 1, ce TSRMLS_CC) == FAILURE)
     {
@@ -113,13 +113,13 @@ static int appender_handle_file(char *message, int message_len, char *level, log
 static int appender_handle_tcp_udp(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC)
 {
     char *log_info, *log_content, *time_RFC3339;
-    int log_len, log_content_len;
+    int log_len, log_content_len, PRI;
 
     time_RFC3339 = make_time_RFC3339(TSRMLS_C);
 
-    int PRI = SEASLOG_SYSLOG_FACILITY + seaslog_get_level_int(level);
+    PRI = SEASLOG_SYSLOG_FACILITY + seaslog_get_level_int(level);
 
-    log_content_len = seaslog_spprintf(&log_content TSRMLS_CC, SEASLOG_GENERATE_SYSLOG_INFO, 0, level, message);
+    log_content_len = seaslog_spprintf(&log_content TSRMLS_CC, SEASLOG_GENERATE_SYSLOG_INFO, level, 0, message);
 
     log_len = spprintf(&log_info, 0, "<%d>1 %s %s %s[%s]: %s", PRI, time_RFC3339, SEASLOG_G(host_name), logger->logger, SEASLOG_G(process_id), log_content);
 
@@ -189,7 +189,16 @@ static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_
 
 static int make_log_dir(char *dir TSRMLS_DC)
 {
-    int ret;
+    int ret, dir_len, offset;
+    char *p, *e;
+    char buf[MAXPATHLEN];
+
+#if PHP_VERSION_ID >= 70000
+    zend_stat_t sb;
+#else
+    struct stat sb;
+#endif
+
 
     if (SEASLOG_G(appender) == SEASLOG_APPENDER_FILE)
     {
@@ -203,14 +212,8 @@ static int make_log_dir(char *dir TSRMLS_DC)
             return SUCCESS;
         }
 
-        /* we look for directory separator from the end of string, thus hopefuly reducing our work load */
-        char *p;
-        char *e;
-        SEASLOG_INIT_STAT(sb);
-
-        int dir_len = (int)strlen(dir);
-        int offset = 0;
-        char buf[MAXPATHLEN];
+        dir_len = (int)strlen(dir);
+        offset = 0;
 
         if (!expand_filepath_with_mode(dir, buf, NULL, 0, CWD_EXPAND TSRMLS_CC))
         {
@@ -243,6 +246,7 @@ static int make_log_dir(char *dir TSRMLS_DC)
                     --p;
                     *p = '\0';
                 }
+
                 if (VCWD_STAT(buf, &sb) == 0)
                 {
                     while (1)

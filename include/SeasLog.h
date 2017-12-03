@@ -39,8 +39,8 @@
 
 #define SEASLOG_RES_NAME                    "SeasLog"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                     "1.7.6"
-#define SEASLOG_VERSION_ID                  10706
+#define SEASLOG_VERSION                     "1.7.7"
+#define SEASLOG_VERSION_ID                  10707
 
 #define SEASLOG_ALL                         "ALL"
 #define SEASLOG_DEBUG                       "DEBUG"
@@ -251,8 +251,8 @@ static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_
 //TemplateFormatter
 static void seaslog_init_template(TSRMLS_D);
 static void seaslog_clear_template(TSRMLS_D);
-static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, size_t max_len, ...);
-static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, va_list ap);
+static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size_t max_len, ...);
+static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, char *level, va_list ap);
 
 //StreamWrapper
 static inline php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC);
