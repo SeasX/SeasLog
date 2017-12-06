@@ -16,6 +16,8 @@
 
 static int seaslog_real_log_ex(char *message, int message_len, char *opt, int opt_len TSRMLS_DC)
 {
+    size_t written;
+    int retry = SEASLOG_G(appender_retry);
     php_stream *stream = NULL;
 
     stream = process_stream(opt,opt_len TSRMLS_CC);
@@ -25,7 +27,28 @@ static int seaslog_real_log_ex(char *message, int message_len, char *opt, int op
         return FAILURE;
     }
 
-    php_stream_write(stream, message, message_len);
+    written = php_stream_write(stream, message, message_len);
+    if (written != message_len)
+    {
+        if (retry > 0)
+        {
+            while(retry > 0)
+            {
+                written = php_stream_write(stream, message, message_len);
+                if (written == message_len)
+                {
+                    retry = 0;
+                    return SUCCESS;
+                }
+                else
+                {
+                    retry--;
+                }
+            }
+        }
+
+        return FAILURE;
+    }
 
     return SUCCESS;
 }

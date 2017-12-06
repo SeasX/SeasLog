@@ -158,6 +158,10 @@ seaslog.trace_exception = 0
 ;1File 2TCP 3UDP (Switch default 1)
 seaslog.appender = 1
 
+;Record Log Retry Count 
+;Default 0 (Do Not Retry)
+seaslog.appender_retry = 0
+
 ;If you use  Record TCP or UDP, configure this remote ip.
 ;Default "127.0.0.1"
 seaslog.remote_host = "127.0.0.1"

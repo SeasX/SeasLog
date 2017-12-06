@@ -153,6 +153,10 @@ seaslog.trace_exception = 0
 ;日志存储介质 1File 2TCP 3UDP (默认为1)
 seaslog.appender = 1
 
+;写入重试次数
+;默认0(不重试)
+seaslog.appender_retry = 0
+
 ;接收ip 默认127.0.0.1 (当使用TCP或UDP时必填)
 seaslog.remote_host = "127.0.0.1"
 
