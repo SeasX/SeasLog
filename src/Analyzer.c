@@ -199,7 +199,6 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     {
         seaslog_throw_exception(SEASLOG_EXCEPTION_CONTENT_ERROR TSRMLS_CC, "Unable to fork [%s]", sh);
 
-        efree(buffer);
         return FAILURE;
     }
     else
