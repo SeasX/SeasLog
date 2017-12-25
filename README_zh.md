@@ -1,6 +1,6 @@
 SeasLog
 ======
-[![Build Status](https://travis-ci.org/Neeke/SeasLog.svg?branch=master)](https://travis-ci.org/Neeke/SeasLog)
+[![Build Status](https://travis-ci.org/SeasX/SeasLog.svg?branch=master)](https://travis-ci.org/SeasX/SeasLog)
 
 An effective,fast,stable log extension for PHP
 
@@ -8,7 +8,7 @@ An effective,fast,stable log extension for PHP
 
 @交流群 312910117
 
-[English Document](https://github.com/Neeke/SeasLog/blob/master/README.md)
+[English Document](https://github.com/SeasX/SeasLog/blob/master/README.md)
 
 > ---
 - **[简介](#简介)**
@@ -52,7 +52,7 @@ php内置error_log、syslog函数功能强大且性能极好，但由于各种�
 好消息是，有不少第三方的log类库弥补了上述缺陷，如log4php、plog、Analog等(当然也有很多应用在项目中自己开发的log类)。其中以[log4php](http://logging.apache.org/log4php/)最为著名，设计精良、格式完美、文档完善、功能强大。推荐。
 
 不过log4php在性能方面表现非常差,下图是SeasLog与log4php的ab并发性能测试( 测试环境:Ubuntu12.04单机,CPU I3,内存 16G,硬盘 SATA 7200):
-![SeasLogVSlog4php](https://raw.githubusercontent.com/Neeke/SeasLog/master/tests/SeasLogVSlog4php.png)
+![SeasLogVSlog4php](https://raw.githubusercontent.com/SeasX/SeasLog/master/tests/SeasLogVSlog4php.png)
 
 
 那么有没有一种log类库满足以下需求呢：
@@ -152,6 +152,10 @@ seaslog.trace_exception = 0
 
 ;日志存储介质 1File 2TCP 3UDP (默认为1)
 seaslog.appender = 1
+
+;写入重试次数
+;默认0(不重试)
+seaslog.appender_retry = 0
 
 ;接收ip 默认127.0.0.1 (当使用TCP或UDP时必填)
 seaslog.remote_host = "127.0.0.1"

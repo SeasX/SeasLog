@@ -1,12 +1,12 @@
 SeasLog
 ======
-[![Build Status](https://travis-ci.org/Neeke/SeasLog.svg?branch=master)](https://travis-ci.org/Neeke/SeasLog)
+[![Build Status](https://travis-ci.org/SeasX/SeasLog.svg?branch=master)](https://travis-ci.org/SeasX/SeasLog)
 
 An effective,fast,stable log extension for PHP
 
 @author Chitao.Gao [neeke@php.net]
 
-[中文文档](https://github.com/Neeke/SeasLog/blob/master/README_zh.md)
+[中文文档](https://github.com/SeasX/SeasLog/blob/master/README_zh.md)
 
 > ---
 - **[Synopsis](#synopsis)**
@@ -50,7 +50,7 @@ The error_log, syslog function which built in PHP is powerful and excellent perf
 The good news is that there are a number of third-party log class library established to make up for the defects, such as log4php, plog, Analog (of course, there are many applications in the project development of the log class). Of which [log4php](http://logging.apache.org/log4php/) is the most famous and excellent design, perfect document format , powerful function，which is recommanded.
 
 But log4php did very badly in terms of performance, below chart is SeasLog with log4php ab concurrent performance test (test environment: Ubuntu12.04 standalone, I3 CPU, memory16g，hard disk SATA 7200) :
-![SeasLogVSlog4php](https://raw.githubusercontent.com/Neeke/SeasLog/master/tests/SeasLogVSlog4php.png)
+![SeasLogVSlog4php](https://raw.githubusercontent.com/SeasX/SeasLog/master/tests/SeasLogVSlog4php.png)
 
 
 So is there a log of libraries meet the following requirements：
@@ -157,6 +157,10 @@ seaslog.trace_exception = 0
 ;Switch the Record Log Data Store.     
 ;1File 2TCP 3UDP (Switch default 1)
 seaslog.appender = 1
+
+;Record Log Retry Count 
+;Default 0 (Do Not Retry)
+seaslog.appender_retry = 0
 
 ;If you use  Record TCP or UDP, configure this remote ip.
 ;Default "127.0.0.1"
