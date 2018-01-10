@@ -36,11 +36,11 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
 
         if (is_level_all == 1)
         {
-            spprintf(&path, 0, "%s/%s.*", SEASLOG_G(last_logger)->logger_path, log_path);
+            spprintf(&path, 0, "%s/%s*.*", SEASLOG_G(last_logger)->logger_path, log_path);
         }
         else
         {
-            spprintf(&path, 0, "%s/%s.%s*", SEASLOG_G(last_logger)->logger_path, log_path, level);
+            spprintf(&path, 0, "%s/%s*.%s*", SEASLOG_G(last_logger)->logger_path, log_path, level);
         }
     }
     else
@@ -135,11 +135,11 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     {
         if (is_level_all == 1)
         {
-            spprintf(&path, 0, "%s/%s.*", SEASLOG_G(last_logger)->logger_path, log_path);
+            spprintf(&path, 0, "%s/%s*.*", SEASLOG_G(last_logger)->logger_path, log_path);
         }
         else
         {
-            spprintf(&path, 0, "%s/%s.%s*", SEASLOG_G(last_logger)->logger_path, log_path, level);
+            spprintf(&path, 0, "%s/%s*.%s*", SEASLOG_G(last_logger)->logger_path, log_path, level);
         }
     }
     else
@@ -149,6 +149,8 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 
 #ifdef WINDOWS
     path = str_replace(path, "/", "\\");
+
+    spprintf(&command, 0, "%s", "findstr");
 #else
     if (order == SEASLOG_DETAIL_ORDER_DESC)
     {
@@ -163,7 +165,7 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     if (key_word && strlen(key_word) >= 1)
     {
 #ifdef WINDOWS
-        spprintf(&sh, 0, "findstr \"%s\" %s | findstr \"%s\" ", level, path, key_word);
+        spprintf(&sh, 0, "%s \"%s\" %s | %s \"%s\" ", command, level, path, command, key_word);
 #else
         if (is_level_all == 1)
         {
@@ -178,7 +180,7 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     else
     {
 #ifdef WINDOWS
-        spprintf(&sh, 0, "findstr \"%s\" %s", level, path);
+        spprintf(&sh, 0, "%s \"%s\" %s", command, level, path);
 #else
         if (is_level_all == 1)
         {
@@ -197,7 +199,6 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
     {
         seaslog_throw_exception(SEASLOG_EXCEPTION_CONTENT_ERROR TSRMLS_CC, "Unable to fork [%s]", sh);
 
-        efree(buffer);
         return FAILURE;
     }
     else

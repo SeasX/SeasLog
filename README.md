@@ -141,6 +141,11 @@ seaslog.buffer_size = 100
 ;   Before the 1.7.0 version, Default 0 (All of them).
 seaslog.level = 8
 
+;Log function recall depth
+;Will affected variable `LineNo` in `%F`
+;Default 0
+seaslog.recall_depth = 0
+
 ;Automatic Record final error with default logger. 
 ;1-Y(Default) 0-N
 seaslog.trace_error = 1
@@ -152,6 +157,10 @@ seaslog.trace_exception = 0
 ;Switch the Record Log Data Store.     
 ;1File 2TCP 3UDP (Switch default 1)
 seaslog.appender = 1
+
+;Record Log Retry Count 
+;Default 0 (Do Not Retry)
+seaslog.appender_retry = 0
 
 ;If you use  Record TCP or UDP, configure this remote ip.
 ;Default "127.0.0.1"
