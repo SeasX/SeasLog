@@ -36,7 +36,6 @@ void seaslog_error_cb(int type, const char *error_filename, const uint error_lin
     TSRMLS_FETCH();
     if (SEASLOG_G(trace_error) || SEASLOG_G(trace_warning) || SEASLOG_G(trace_notice))
     {
-        const char *event_type;
         char *msg;
         va_list args_copy;
 
