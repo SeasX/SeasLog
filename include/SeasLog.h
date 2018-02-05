@@ -39,7 +39,7 @@
 
 #define SEASLOG_RES_NAME                    "SeasLog"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                     "1.7.8"
+#define SEASLOG_VERSION                     "1.7.9"
 #define SEASLOG_VERSION_ID                  10708
 
 #define SEASLOG_ALL                         "ALL"
@@ -213,7 +213,7 @@ static void seaslog_clear_buffer(TSRMLS_D);
 //ErrorHook
 void (*old_error_cb)(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args);
 void seaslog_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args);
-static void process_event_error(int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC);
+static void process_event_error(const char *event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC);
 static void initErrorHooks(TSRMLS_D);
 static void recoveryErrorHooks(TSRMLS_D);
 

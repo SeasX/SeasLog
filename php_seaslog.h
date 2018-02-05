@@ -120,11 +120,14 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool disting_type;
     zend_bool disting_by_hour;
     zend_bool use_buffer;
-    zend_bool trace_error;
-    zend_bool trace_exception;
     zend_bool trim_wrap;
     zend_bool throw_exception;
     zend_bool ignore_warning;
+
+    zend_bool trace_notice;
+    zend_bool trace_warning;
+    zend_bool trace_error;
+    zend_bool trace_exception;
 
     int buffer_size;
     int level;

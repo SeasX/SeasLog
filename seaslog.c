@@ -143,6 +143,10 @@ STD_PHP_INI_ENTRY("seaslog.default_template", "%T | %L | %P | %Q | %t | %M", PHP
 STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour", "0", PHP_INI_ALL, OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.use_buffer", "0", PHP_INI_ALL, OnUpdateBool, use_buffer, zend_seaslog_globals, seaslog_globals)
+
+
+STD_PHP_INI_BOOLEAN("seaslog.trace_notice", "0", PHP_INI_ALL, OnUpdateBool, trace_notice, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_BOOLEAN("seaslog.trace_warning", "0", PHP_INI_ALL, OnUpdateBool, trace_warning, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.trace_error", "1", PHP_INI_ALL, OnUpdateBool, trace_error, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.trace_exception", "0", PHP_INI_ALL, OnUpdateBool, trace_exception, zend_seaslog_globals, seaslog_globals)
 
