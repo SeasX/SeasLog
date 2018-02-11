@@ -116,6 +116,10 @@ seaslog.default_datetime_format = "Y-m-d H:i:s"
 ;Default "%T | %L | %P | %Q | %t | %M"
 seaslog.default_template = "%T | %L | %P | %Q | %t | %M"
 
+;Switch use the logger with folder. 
+;1-Y(Default) 0-N
+seaslog.disting_folder = 1
+
 ;Switch use the logger with type.
 ;1-Y 0-N(Default)
 seaslog.disting_type = 0
@@ -182,6 +186,8 @@ seaslog.throw_exception = 1
 ;1-On(Default) 0-Off
 seaslog.ignore_warning = 1
 ```
+> `seaslog.disting_folder = 1` Switch use Logger DisTing by folder, it’s meaning SeasLog will create the file deistic by folder, and when this configure close SeasLog will create file use underline connect Logger and Time like default_20180211.log.
+
 > `seaslog.disting_type = 1` Switch use Logger DisTing by type, it’s meaning SeasLog will create the file deistic info\warn\error and the other type.
 
 > `seaslog.disting_by_hour = 1` Switch use Logger DisTing by hour. It’s  meaning SeasLog will create the file each one hour.

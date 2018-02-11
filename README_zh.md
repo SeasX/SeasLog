@@ -117,8 +117,11 @@ seaslog.default_datetime_format = "Y-m-d H:i:s"
 ;日志格式模板 默认"%T | %L | %P | %Q | %t | %M"
 seaslog.default_template = "%T | %L | %P | %Q | %t | %M"
 
+;是否以目录区分Logger 1是(默认) 0否
+seaslog.disting_folder = 1
+
 ;是否以type分文件 1是 0否(默认)
-seaslog.disting_type = 1
+seaslog.disting_type = 0
 
 ;是否每小时划分一个文件 1是 0否(默认)
 seaslog.disting_by_hour = 0
@@ -172,6 +175,8 @@ seaslog.throw_exception = 1
 ;是否开启忽略SeasLog自身warning  1开启(默认) 0否
 seaslog.ignore_warning = 1
 ```
+> `seaslog.disting_folder = 1` 开启以目录分文件，即logger以目录区分。当关闭时，logger以下划线拼接时间, 如default_20180211.log。
+
 > `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
 
 > `seaslog.disting_by_hour = 1` 开启每小时划分一个文件

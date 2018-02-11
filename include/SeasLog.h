@@ -39,8 +39,8 @@
 
 #define SEASLOG_RES_NAME                    "SeasLog"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                     "1.7.9"
-#define SEASLOG_VERSION_ID                  10708
+#define SEASLOG_VERSION                     "1.8.0"
+#define SEASLOG_VERSION_ID                  10800
 
 #define SEASLOG_ALL                         "ALL"
 #define SEASLOG_DEBUG                       "DEBUG"
@@ -104,6 +104,9 @@
 
 #define SEASLOG_GET_HOST_NULL               "NoHost"
 
+#define SEASLOG_LOGGER_SLASH                "/"
+#define SEASLOG_LOGGER_UNDERLINE            "_"
+
 #define SEASLOG_LOG_LINE_FEED_STR           "\n"
 #define SEASLOG_LOG_LINE_FEED_LEN           sizeof(SEASLOG_LOG_LINE_FEED_STR) - 1
 
@@ -136,6 +139,7 @@
 typedef struct _logger_entry_t
 {
     ulong logger_hash;
+    char *folder;
     char *logger;
     int logger_len;
     char *logger_path;
@@ -184,6 +188,7 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash);
 
 
 //Logger
+static void seaslog_init_slash_or_underline(TSRMLS_D);
 static void seaslog_init_last_time(TSRMLS_D);
 static void seaslog_clear_last_time(TSRMLS_D);
 static void seaslog_init_logger(TSRMLS_D);

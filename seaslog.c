@@ -140,6 +140,7 @@ STD_PHP_INI_ENTRY("seaslog.default_datetime_format", "Y-m-d H:i:s", PHP_INI_ALL,
 STD_PHP_INI_ENTRY("seaslog.default_template", "%T | %L | %P | %Q | %t | %M", PHP_INI_ALL, OnUpdateString, default_template, zend_seaslog_globals, seaslog_globals)
 
 
+STD_PHP_INI_BOOLEAN("seaslog.disting_folder", "1", PHP_INI_ALL, OnUpdateBool, disting_folder, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour", "0", PHP_INI_ALL, OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.use_buffer", "0", PHP_INI_ALL, OnUpdateBool, use_buffer, zend_seaslog_globals, seaslog_globals)
@@ -235,6 +236,7 @@ PHP_MSHUTDOWN_FUNCTION(seaslog)
 PHP_RINIT_FUNCTION(seaslog)
 {
     initRStart(TSRMLS_C);
+    seaslog_init_slash_or_underline(TSRMLS_C);
     seaslog_init_pid(TSRMLS_C);
     seaslog_init_host_name(TSRMLS_C);
     seaslog_init_request_id(TSRMLS_C);
