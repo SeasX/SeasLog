@@ -232,6 +232,8 @@ seaslog.ignore_warning = 1
 * `%m` - Request Method 请求类型，如`GET`; Cli模式下为执行命令，如`/bin/bash`。
 * `%I` - Client IP 来源客户端IP; Cli模式下为`local`。取值优先级为：HTTP_X_REAL_IP > HTTP_X_FORWARDED_FOR > REMOTE_ADDR
 * `%F` - FileName:LineNo 文件名:行号，如`UserService.php:118`。
+* `%U` - MemoryUsage 当前内容使用量，单位byte。调用`zend_memory_usage`。
+* `%u` - PeakMemoryUsage 当前内容使用峰值量，单位byte。调用`zend_memory_peak_usage`。
 * `%C` - `TODO` Class::Action 类名::方法名，如`UserService::getUserInfo`。
 
 ## 使用

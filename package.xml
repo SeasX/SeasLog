@@ -55,6 +55,7 @@
             </dir>
             <dir name="src">
                 <file role="src" name="Common.c" />
+                <file role="src" name="Performance.c" />
                 <file role="src" name="Analyzer.c" />
                 <file role="src" name="Appender.c" />
                 <file role="src" name="Buffer.c" />

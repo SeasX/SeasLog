@@ -39,8 +39,9 @@
 
 #define SEASLOG_RES_NAME                    "SeasLog"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                     "1.8.0"
+#define SEASLOG_VERSION                     "1.8.1"
 #define SEASLOG_VERSION_ID                  10800
+#define SEASLOG_SUPPORTS                    "https://github.com/SeasX/SeasLog"
 
 #define SEASLOG_ALL                         "ALL"
 #define SEASLOG_DEBUG                       "DEBUG"
@@ -270,5 +271,8 @@ static inline php_stream *process_stream(char *opt, int opt_len TSRMLS_DC);
 static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC);
 static int get_detail(char *log_path, char *level, char *key_word, long start, long end, long order, zval *return_value TSRMLS_DC);
 
+//Performance
+static void seaslog_memory_usage(smart_str *buf TSRMLS_DC);
+static void seaslog_peak_memory_usage(smart_str *buf TSRMLS_DC);
 
 #endif /* _SEASLOG_H_ */

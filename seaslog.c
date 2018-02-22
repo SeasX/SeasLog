@@ -25,6 +25,7 @@ ZEND_GET_MODULE(seaslog)
 #endif
 
 #include "src/Common.c"
+#include "src/Performance.c"
 #include "src/Analyzer.c"
 #include "src/StreamWrapper.c"
 #include "src/TemplateFormatter.c"
@@ -274,7 +275,7 @@ PHP_MINFO_FUNCTION(seaslog)
     php_info_print_table_header(2, "SeasLog support", "Enabled");
     php_info_print_table_row(2, "SeasLog Version", SEASLOG_VERSION);
     php_info_print_table_row(2, "SeasLog Author", SEASLOG_AUTHOR);
-    php_info_print_table_row(2, "SeasLog Supports", "https://github.com/Neeke/SeasLog");
+    php_info_print_table_row(2, "SeasLog Supports", SEASLOG_SUPPORTS);
     php_info_print_table_end();
 
     DISPLAY_INI_ENTRIES();

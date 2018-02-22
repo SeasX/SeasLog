@@ -246,6 +246,8 @@ At the same time, many preset variables that are preset by `SeasLog` can be used
 * `%m` - Request Method. Such as`Get`; When Cli it's the command script, Such as `/bin/bash`.
 * `%I` - Client IP; When Cli it's `local`. Priority value: HTTP_X_REAL_IP > HTTP_X_FORWARDED_FOR > REMOTE_ADDR
 * `%F` - FileName:LineNo. Such as `UserService.php:118`.
+* `%U` - MemoryUsage. byte. Call `zend_memory_usage`.
+* `%u` - PeakMemoryUsage. byte. Call `zend_memory_peak_usage`。
 * `%C` - `TODO` Class::Action. Such as `UserService::getUserInfo`
 
 ## Use age
