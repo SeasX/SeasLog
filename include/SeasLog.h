@@ -39,7 +39,7 @@
 
 #define SEASLOG_RES_NAME                    "SeasLog"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                     "1.8.1"
+#define SEASLOG_VERSION                     "1.8.2"
 #define SEASLOG_VERSION_ID                  10800
 #define SEASLOG_SUPPORTS                    "https://github.com/SeasX/SeasLog"
 
@@ -107,6 +107,7 @@
 
 #define SEASLOG_LOGGER_SLASH                "/"
 #define SEASLOG_LOGGER_UNDERLINE            "_"
+#define SEASLOG_ASTERISK                    "*"
 
 #define SEASLOG_LOG_LINE_FEED_STR           "\n"
 #define SEASLOG_LOG_LINE_FEED_LEN           sizeof(SEASLOG_LOG_LINE_FEED_STR) - 1
