@@ -690,7 +690,8 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
     else if (argc > 3)
     {
 #ifdef WINDOWS
-        zend_error(E_NOTICE, "Param start and limit don't support Windows");
+        seaslog_throw_exception(SEASLOG_EXCEPTION_WINDOWS_ERROR TSRMLS_CC, "%s", "Param start and limit don't support Windows");
+        RETURN_FALSE;
 #endif
     }
 
@@ -727,7 +728,8 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
     else if (argc > 3)
     {
 #ifdef WINDOWS
-        zend_error(E_NOTICE, "Param start and limit don't support Windows");
+        seaslog_throw_exception(SEASLOG_EXCEPTION_WINDOWS_ERROR TSRMLS_CC, "%s", "Param start and limit don't support Windows");
+        RETURN_FALSE;
 #endif
     }
     else
