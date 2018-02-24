@@ -189,6 +189,7 @@ static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_
     HashTable *ht_logger;
     char *folder;
     int folder_len;
+    char folder_tmp[1024];
 
 #if PHP_VERSION_ID >= 70000
     zval logger_array;
@@ -279,10 +280,9 @@ static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_
             if (folder != NULL)
             {
                 folder_len = logger_entry->logger_path_len - strlen(folder);
-                char tmp[folder_len];
-                strncpy(tmp, logger_entry->logger_path, folder_len);
-                tmp[folder_len] = '\0';
-                logger_entry->folder = tmp;
+                strncpy(folder_tmp, logger_entry->logger_path, folder_len);
+                folder_tmp[folder_len] = '\0';
+                logger_entry->folder = folder_tmp;
 
                 if (make_log_dir(logger_entry->folder TSRMLS_CC) == SUCCESS)
                 {
