@@ -23,20 +23,28 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2017-09-19</date>
-    <time>16:11:00</time>
+    <date>2018-02-26</date>
+    <time>10:26:00</time>
     <version>
-        <release>1.7.6</release>
-        <api>1.7.6</api>
+        <release>1.8.2</release>
+        <api>1.8.2</api>
     </version>
     <stability>
         <release>stable</release>
         <api>stable</api>
     </stability>
-    <license uri="http://www.php.net/license">PHP</license>
+    <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
     <notes>
-        - Fixed analyzerDetail bug, use grep -ai key_words.
-        - Fixed issue #152. Segfault in cli.
+        - New Feature #162 Configure seaslog.recall_depth support for filename and code line.
+        - New Feature #170 Configure seaslog.trace_notice and seaslog.trace_warning support trace notice and warning.
+        - New Feature #172 Configure seaslog.disting_folder support switch {Logger}/{Time}[.Type].log or {Logger}_{Time}[.Type].log.
+        - New Feature #174 Add %U(MemoryUsage) and %u(PeakMemoryUsage) into default variable table.
+        - New Feature #186 Use seaslog_throw_exception replace zend_error.
+        - Fixed issue #153 Disting_by_hour and disting_type can not use together.
+        - Fixed issue #156 Log template format error with %L and %M.
+        - Fixed issue #158 SeasLog::setRequestID intercepted error.
+        - Fixed issue #165 Phpdbg seg fault.
+        - Fixed issue #184 SeasLog::analyzerCount seg fault at PHP7-nts.
     </notes>
     <contents>
         <dir name="/">
@@ -509,6 +517,23 @@
                 - Fixed issue #144. Error by read log detail order desc.
                 - Fixed issue #145. Error by analyzerDetail.
                 - Fixed issue #146. Segfault at php-fpm.
+            </notes>
+        </release>
+        <release>
+            <date>2017-09-19</date>
+            <time>16:11:00</time>
+            <version>
+                <release>1.7.6</release>
+                <api>1.7.6</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP</license>
+            <notes>
+                - Fixed analyzerDetail bug, use grep -ai key_words.
+                - Fixed issue #152. Segfault in cli.
             </notes>
         </release>
     </changelog>
