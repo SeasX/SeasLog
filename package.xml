@@ -40,6 +40,7 @@
         - New Feature #172 Configure seaslog.disting_folder support switch {Logger}/{Time}[.Type].log or {Logger}_{Time}[.Type].log.
         - New Feature #174 Add %U(MemoryUsage) and %u(PeakMemoryUsage) into default variable table.
         - New Feature #186 Use seaslog_throw_exception replace zend_error.
+        - Fixed issue #65 Message template content match error.
         - Fixed issue #153 Disting_by_hour and disting_type can not use together.
         - Fixed issue #156 Log template format error with %L and %M.
         - Fixed issue #158 SeasLog::setRequestID intercepted error.
