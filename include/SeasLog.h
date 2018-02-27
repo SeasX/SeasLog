@@ -176,6 +176,7 @@ typedef struct _request_variable_t
 
 //Common Toolkit
 static int seaslog_get_level_int(char *level);
+static char *str_appender(char *str, int str_len);
 static char *str_replace(char *src, const char *from, const char *to);
 static char *delN(char *a);
 static char *get_uniqid();

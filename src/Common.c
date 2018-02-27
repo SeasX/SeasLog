@@ -94,11 +94,28 @@ static char *str_replace(char *src, const char *from, const char *to)
     return src;
 }
 
+static char *str_appender(char *str, int str_len)
+{
+    char *string_key_tmp = NULL;
+    smart_str tmp_key = {0};
+
+    smart_str_appendc(&tmp_key, '{');
+    smart_str_appendl(&tmp_key, str, str_len);
+    smart_str_appendc(&tmp_key, '}');
+    smart_str_0(&tmp_key);
+    string_key_tmp = estrndup(SEASLOG_SMART_STR_C(tmp_key), SEASLOG_SMART_STR_L(tmp_key));
+
+    smart_str_free(&tmp_key);
+
+    return string_key_tmp;
+}
+
 #if PHP_VERSION_ID >= 70000
 static char *php_strtr_array(char *str, int slen, HashTable *pats)
 {
     zend_ulong num_key;
     zend_string *str_key;
+    char  *string_key, *string_key_tmp = NULL;
     zval *entry;
     char *tmp = estrdup(str);
 
@@ -112,15 +129,36 @@ static char *php_strtr_array(char *str, int slen, HashTable *pats)
         {
             zend_string *s = zval_get_string(entry);
 
-            if (strstr(str,ZSTR_VAL(str_key)))
+            string_key = ZSTR_VAL(str_key);
+
+            if (string_key_tmp)
             {
-                tmp = str_replace(tmp, ZSTR_VAL(str_key), ZSTR_VAL(s));
+                efree(string_key_tmp);
+            }
+
+            if (string_key[0] != '{')
+            {
+                string_key_tmp = str_appender(string_key, ZSTR_LEN(str_key));
+            }
+            else
+            {
+                string_key_tmp = string_key;
+            }
+
+            if (strstr(tmp,string_key_tmp))
+            {
+                tmp = str_replace(tmp, string_key_tmp, ZSTR_VAL(s));
             }
 
             zend_string_release(s);
         }
     }
     ZEND_HASH_FOREACH_END();
+
+    if (string_key_tmp)
+    {
+        efree(string_key_tmp);
+    }
 
     return tmp;
 }
@@ -129,20 +167,13 @@ static char *php_strtr_array(char *str, int slen, HashTable *pats)
 static char *php_strtr_array(char *str, int slen, HashTable *hash)
 {
     zval **entry;
-    char  *string_key;
+    char  *string_key, *string_key_tmp = NULL;
     uint   string_key_len;
-    zval **trans;
-    zval   ctmp;
     ulong  num_key;
-    int    minlen = 128 * 1024;
-    int    maxlen = 0, pos, len, found;
-    char  *key;
     HashPosition hpos;
-    smart_str result = {0};
-    char  *result_str;
-    HashTable tmp_hash;
 
-    zend_hash_init(&tmp_hash, zend_hash_num_elements(hash), NULL, NULL, 0);
+    char *tmp = estrdup(str);
+
     zend_hash_internal_pointer_reset_ex(hash, &hpos);
 
     while (zend_hash_get_current_data_ex(hash, (void **)&entry, &hpos) == SUCCESS)
@@ -150,109 +181,51 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash)
         switch (zend_hash_get_current_key_ex(hash, &string_key, &string_key_len, &num_key, 0, &hpos))
         {
         case HASH_KEY_IS_STRING:
-            len = string_key_len - 1;
-            if (len < 1)
+            if (string_key_len > 1)
             {
-                zend_hash_destroy(&tmp_hash);
-            }
-            else
-            {
-                zend_hash_add(&tmp_hash, string_key, string_key_len, entry, sizeof(zval*), NULL);
-                if (len > maxlen)
+                if (string_key[0] != '{')
                 {
-                    maxlen = len;
+                    if (string_key_tmp)
+                    {
+                        efree(string_key_tmp);
+                    }
+
+                    string_key_tmp = str_appender(string_key, string_key_len - 1);
                 }
-                if (len < minlen)
+
+                if (string_key_tmp)
                 {
-                    minlen = len;
+                    string_key = string_key_tmp;
                 }
-            }
-            break;
 
-        case HASH_KEY_IS_LONG:
-            Z_TYPE(ctmp) = IS_LONG;
-            Z_LVAL(ctmp) = num_key;
-
-            convert_to_string(&ctmp);
-            len = Z_STRLEN(ctmp);
-            zend_hash_add(&tmp_hash, Z_STRVAL(ctmp), len + 1, entry, sizeof(zval*), NULL);
-            zval_dtor(&ctmp);
-
-            if (len > maxlen)
-            {
-                maxlen = len;
-            }
-            if (len < minlen)
-            {
-                minlen = len;
+                if (strstr(tmp,string_key))
+                {
+                    if (Z_TYPE_PP(entry) != IS_STRING)
+                    {
+                        zval strtmp;
+                        strtmp = **entry;
+                        zval_copy_ctor(&strtmp);
+                        convert_to_string(&strtmp);
+                        tmp = str_replace(tmp, string_key, Z_STRVAL(strtmp));
+                        zval_dtor(&strtmp);
+                    }
+                    else
+                    {
+                        tmp = str_replace(tmp, string_key, Z_STRVAL_PP(entry));
+                    }
+                }
             }
             break;
         }
         zend_hash_move_forward_ex(hash, &hpos);
     }
 
-    key = emalloc(maxlen + 1);
-    pos = 0;
-
-    while (pos < slen)
+    if (string_key_tmp)
     {
-        if ((pos + maxlen) > slen)
-        {
-            maxlen = slen - pos;
-        }
-
-        found = 0;
-        memcpy(key, str + pos, maxlen);
-
-        for (len = maxlen; len >= minlen; len--)
-        {
-            key[len] = 0;
-
-            if (zend_hash_find(&tmp_hash, key, len + 1, (void**)&trans) == SUCCESS)
-            {
-                char *tval;
-                int tlen;
-                zval tmp;
-
-                if (Z_TYPE_PP(trans) != IS_STRING)
-                {
-                    tmp = **trans;
-                    zval_copy_ctor(&tmp);
-                    convert_to_string(&tmp);
-                    tval = Z_STRVAL(tmp);
-                    tlen = Z_STRLEN(tmp);
-                }
-                else
-                {
-                    tval = Z_STRVAL_PP(trans);
-                    tlen = Z_STRLEN_PP(trans);
-                }
-
-                smart_str_appendl(&result, tval, tlen);
-                pos += len;
-                found = 1;
-
-                if (Z_TYPE_PP(trans) != IS_STRING)
-                {
-                    zval_dtor(&tmp);
-                }
-
-                break;
-            }
-        }
-
-        if (! found)
-        {
-            smart_str_appendc(&result, str[pos++]);
-        }
+        efree(string_key_tmp);
     }
 
-    zend_hash_destroy(&tmp_hash);
-    result_str = estrndup(result.c, result.len);
-    efree(key);
-    smart_str_free(&result);
-
-    return result_str;
+    return tmp;
 }
 #endif
 
