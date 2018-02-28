@@ -5,17 +5,17 @@
     <summary>A effective,fast,stable log extension for PHP.</summary>
     <description>
         A effective,fast,stable log extension for PHP.
-        - In the PHP project, for convenient record log
+        - In the PHP project, for convenient record log.
         - The default log directory and module configuration.
-        - Specify the log directory and get the current configuration
-        - Analysis of early warning framework preliminary
-        - Buffer debug efficient log buffer, convenient
-        - With PSR-3 Logger interface
-        - Error and exception automatic logging
-        - Support appender with File,TCP,UDP
-        - Send to Rsyslog(TCP/UDP) with RFC5424
-        - Support RequestId differentiated requests
-        - Support for log template customizations
+        - Specify the log directory and get the current configuration.
+        - Analysis of early warning framework preliminary.
+        - Buffer debug efficient log buffer, convenient.
+        - With PSR-3 Logger interface.
+        - Error and exception automatic logging.
+        - Support appender with File,TCP,UDP.
+        - Send to Rsyslog(TCP/UDP) with RFC5424.
+        - Support RequestId differentiated requests.
+        - Support for log template customizations.
     </description>
     <lead>
         <name>Chitao Gao</name>
