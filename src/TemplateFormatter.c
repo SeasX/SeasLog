@@ -182,6 +182,24 @@ static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_t
                     s = SEASLOG_SMART_STR_C(tmp_buf);
                     s_len  = SEASLOG_SMART_STR_L(tmp_buf);
                     break;
+                case 'U': //zend_memory_usage
+                    if (SEASLOG_SMART_STR_C(tmp_buf))
+                    {
+                        smart_str_free(&tmp_buf);
+                    }
+                    seaslog_memory_usage(&tmp_buf TSRMLS_CC);
+                    s = SEASLOG_SMART_STR_C(tmp_buf);
+                    s_len  = SEASLOG_SMART_STR_L(tmp_buf);
+                    break;
+                case 'u': //peak_memory_usage
+                    if (SEASLOG_SMART_STR_C(tmp_buf))
+                    {
+                        smart_str_free(&tmp_buf);
+                    }
+                    seaslog_peak_memory_usage(&tmp_buf TSRMLS_CC);
+                    s = SEASLOG_SMART_STR_C(tmp_buf);
+                    s_len  = SEASLOG_SMART_STR_L(tmp_buf);
+                    break;
                 case 'C': //TODO Class::Action
                 case NUL:
                     continue;

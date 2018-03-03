@@ -117,8 +117,11 @@ seaslog.default_datetime_format = "Y-m-d H:i:s"
 ;日志格式模板 默认"%T | %L | %P | %Q | %t | %M"
 seaslog.default_template = "%T | %L | %P | %Q | %t | %M"
 
+;是否以目录区分Logger 1是(默认) 0否
+seaslog.disting_folder = 1
+
 ;是否以type分文件 1是 0否(默认)
-seaslog.disting_type = 1
+seaslog.disting_type = 0
 
 ;是否每小时划分一个文件 1是 0否(默认)
 seaslog.disting_by_hour = 0
@@ -172,6 +175,8 @@ seaslog.throw_exception = 1
 ;是否开启忽略SeasLog自身warning  1开启(默认) 0否
 seaslog.ignore_warning = 1
 ```
+> `seaslog.disting_folder = 1` 开启以目录分文件，即logger以目录区分。当关闭时，logger以下划线拼接时间, 如default_20180211.log。
+
 > `seaslog.disting_type = 1` 开启以type分文件，即log文件区分info\warn\erro
 
 > `seaslog.disting_by_hour = 1` 开启每小时划分一个文件
@@ -227,6 +232,8 @@ seaslog.ignore_warning = 1
 * `%m` - Request Method 请求类型，如`GET`; Cli模式下为执行命令，如`/bin/bash`。
 * `%I` - Client IP 来源客户端IP; Cli模式下为`local`。取值优先级为：HTTP_X_REAL_IP > HTTP_X_FORWARDED_FOR > REMOTE_ADDR
 * `%F` - FileName:LineNo 文件名:行号，如`UserService.php:118`。
+* `%U` - MemoryUsage 当前内容使用量，单位byte。调用`zend_memory_usage`。
+* `%u` - PeakMemoryUsage 当前内容使用峰值量，单位byte。调用`zend_memory_peak_usage`。
 * `%C` - `TODO` Class::Action 类名::方法名，如`UserService::getUserInfo`。
 
 ## 使用

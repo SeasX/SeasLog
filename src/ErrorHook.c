@@ -14,7 +14,7 @@
   +----------------------------------------------------------------------+
 */
 
-static void process_event_error(int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC)
+static void process_event_error(const char *event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC)
 {
     char *event_str;
     int event_str_len;
@@ -23,7 +23,7 @@ static void process_event_error(int type, char * error_filename, uint error_line
     SEASLOG_G(in_error_filename) = (char *)error_filename;
     SEASLOG_G(in_error_lineno) = (long)error_lineno;
 
-    event_str_len = spprintf(&event_str, 0, "Error - type:%d - file:%s - line:%d - msg:%s", type, error_filename, error_lineno, msg);
+    event_str_len = spprintf(&event_str, 0, "%s - type:%d - file:%s - line:%d - msg:%s", event_type, type, error_filename, error_lineno, msg);
 
     seaslog_log_ex(1, SEASLOG_CRITICAL, SEASLOG_CRITICAL_INT, event_str, event_str_len, NULL, 0, seaslog_ce TSRMLS_CC);
     efree(event_str);
@@ -33,17 +33,38 @@ static void process_event_error(int type, char * error_filename, uint error_line
 
 void seaslog_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args)
 {
-    if (type == E_ERROR || type == E_PARSE || type == E_CORE_ERROR || type == E_COMPILE_ERROR || type == E_USER_ERROR || type == E_RECOVERABLE_ERROR)
+    TSRMLS_FETCH();
+    if (SEASLOG_G(trace_error) || SEASLOG_G(trace_warning) || SEASLOG_G(trace_notice))
     {
         char *msg;
         va_list args_copy;
-        TSRMLS_FETCH();
 
         va_copy(args_copy, args);
         vspprintf(&msg, 0, format, args_copy);
         va_end(args_copy);
 
-        process_event_error(type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
+        if (type == E_ERROR || type == E_PARSE || type == E_CORE_ERROR || type == E_COMPILE_ERROR || type == E_USER_ERROR || type == E_RECOVERABLE_ERROR)
+        {
+            if (SEASLOG_G(trace_error))
+            {
+                process_event_error("Error", type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
+            }
+        }
+        else if (type == E_WARNING || type == E_CORE_WARNING || type == E_COMPILE_WARNING || type == E_USER_WARNING)
+        {
+            if (SEASLOG_G(trace_warning))
+            {
+                process_event_error("Warning", type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
+            }
+        }
+        else if (type == E_NOTICE || type == E_USER_NOTICE || type == E_STRICT || type == E_DEPRECATED || type == E_USER_DEPRECATED)
+        {
+            if (SEASLOG_G(trace_notice))
+            {
+                process_event_error("Notice", type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
+            }
+        }
+
         efree(msg);
     }
 
@@ -52,20 +73,14 @@ void seaslog_error_cb(int type, const char *error_filename, const uint error_lin
 
 static void initErrorHooks(TSRMLS_D)
 {
-    if (SEASLOG_G(trace_error))
-    {
-        old_error_cb = zend_error_cb;
-        zend_error_cb = seaslog_error_cb;
-    }
+    old_error_cb = zend_error_cb;
+    zend_error_cb = seaslog_error_cb;
 }
 
 static void recoveryErrorHooks(TSRMLS_D)
 {
-    if (SEASLOG_G(trace_error))
+    if (old_error_cb)
     {
-        if (old_error_cb)
-        {
-            zend_error_cb = old_error_cb;
-        }
+        zend_error_cb = old_error_cb;
     }
 }

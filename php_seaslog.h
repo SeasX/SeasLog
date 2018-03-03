@@ -111,20 +111,25 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
 
     char *default_template;
     char *current_template;
+    char *slash_or_underline;
 
     logger_entry_t *tmp_logger;
     logger_entry_t *last_logger;
     last_sec_entry_t *last_sec;
     last_min_entry_t *last_min;
 
+    zend_bool disting_folder;
     zend_bool disting_type;
     zend_bool disting_by_hour;
     zend_bool use_buffer;
-    zend_bool trace_error;
-    zend_bool trace_exception;
     zend_bool trim_wrap;
     zend_bool throw_exception;
     zend_bool ignore_warning;
+
+    zend_bool trace_notice;
+    zend_bool trace_warning;
+    zend_bool trace_error;
+    zend_bool trace_exception;
 
     int buffer_size;
     int level;

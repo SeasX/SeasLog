@@ -25,6 +25,7 @@ ZEND_GET_MODULE(seaslog)
 #endif
 
 #include "src/Common.c"
+#include "src/Performance.c"
 #include "src/Analyzer.c"
 #include "src/StreamWrapper.c"
 #include "src/TemplateFormatter.c"
@@ -140,9 +141,14 @@ STD_PHP_INI_ENTRY("seaslog.default_datetime_format", "Y-m-d H:i:s", PHP_INI_ALL,
 STD_PHP_INI_ENTRY("seaslog.default_template", "%T | %L | %P | %Q | %t | %M", PHP_INI_ALL, OnUpdateString, default_template, zend_seaslog_globals, seaslog_globals)
 
 
+STD_PHP_INI_BOOLEAN("seaslog.disting_folder", "1", PHP_INI_ALL, OnUpdateBool, disting_folder, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_ALL, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour", "0", PHP_INI_ALL, OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.use_buffer", "0", PHP_INI_ALL, OnUpdateBool, use_buffer, zend_seaslog_globals, seaslog_globals)
+
+
+STD_PHP_INI_BOOLEAN("seaslog.trace_notice", "0", PHP_INI_ALL, OnUpdateBool, trace_notice, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_BOOLEAN("seaslog.trace_warning", "0", PHP_INI_ALL, OnUpdateBool, trace_warning, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.trace_error", "1", PHP_INI_ALL, OnUpdateBool, trace_error, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.trace_exception", "0", PHP_INI_ALL, OnUpdateBool, trace_exception, zend_seaslog_globals, seaslog_globals)
 
@@ -231,6 +237,7 @@ PHP_MSHUTDOWN_FUNCTION(seaslog)
 PHP_RINIT_FUNCTION(seaslog)
 {
     initRStart(TSRMLS_C);
+    seaslog_init_slash_or_underline(TSRMLS_C);
     seaslog_init_pid(TSRMLS_C);
     seaslog_init_host_name(TSRMLS_C);
     seaslog_init_request_id(TSRMLS_C);
@@ -268,7 +275,7 @@ PHP_MINFO_FUNCTION(seaslog)
     php_info_print_table_header(2, "SeasLog support", "Enabled");
     php_info_print_table_row(2, "SeasLog Version", SEASLOG_VERSION);
     php_info_print_table_row(2, "SeasLog Author", SEASLOG_AUTHOR);
-    php_info_print_table_row(2, "SeasLog Supports", "https://github.com/Neeke/SeasLog");
+    php_info_print_table_row(2, "SeasLog Supports", SEASLOG_SUPPORTS);
     php_info_print_table_end();
 
     DISPLAY_INI_ENTRIES();
@@ -314,9 +321,16 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
         RETURN_FALSE;
     }
 
-    if (argc > 1)
+    if (argc > 2)
     {
         if (seaslog_log_content(argc, level, level_int, ZSTR_VAL(message), ZSTR_LEN(message), HASH_OF(content), ZSTR_VAL(logger), ZSTR_LEN(logger), seaslog_ce TSRMLS_CC) == FAILURE)
+        {
+            RETURN_FALSE;
+        }
+    }
+    else if(argc > 1)
+    {
+        if (seaslog_log_content(argc, level, level_int, ZSTR_VAL(message), ZSTR_LEN(message), HASH_OF(content), "", 0, seaslog_ce TSRMLS_CC) == FAILURE)
         {
             RETURN_FALSE;
         }
@@ -567,25 +581,70 @@ PHP_METHOD(SEASLOG_RES_NAME, getRequestID)
 PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
 {
     int argc = ZEND_NUM_ARGS();
-    char *log_path, *level = NULL, *key_word = NULL;
+    char *log_path = NULL, *level = NULL, *key_word = NULL;
     int len = 0;
     int log_path_len, level_len, key_word_len;
     long count;
 
+#if PHP_VERSION_ID >= 70000
+
+    zend_string *_log_path = NULL;
+    zend_string *_level = NULL;
+    zend_string *_key_word = NULL;
+
+    if (zend_parse_parameters(argc TSRMLS_CC, "|SSS", &_level, &_log_path, &_key_word) == FAILURE)
+    {
+        RETURN_FALSE;
+    }
+
+    if (argc < 2)
+    {
+        log_path = SEASLOG_ASTERISK;
+    }
+
+    if (_log_path)
+    {
+        log_path = ZSTR_VAL(_log_path);
+    }
+
+    if (_level == NULL || ZSTR_LEN(_level) < 1 || (_level && !strcmp(ZSTR_VAL(_level), SEASLOG_ALL)))
+    {
+        level = SEASLOG_ALL;
+    }
+    else
+    {
+        level = ZSTR_VAL(_level);
+    }
+
+    if (_key_word)
+    {
+        key_word = ZSTR_VAL(_key_word);
+    }
+
+#else
+
     if (zend_parse_parameters(argc TSRMLS_CC, "|sss", &level, &level_len, &log_path, &log_path_len, &key_word, &key_word_len) == FAILURE)
-        return;
+    {
+        RETURN_FALSE;
+    }
+
+    if (argc < 2)
+    {
+        log_path = SEASLOG_ASTERISK;
+    }
+
+#endif
 
     if (argc == 0 || (argc == 1 && level && !strcmp(level, SEASLOG_ALL)))
     {
-        long count_debug, count_info, count_notice, count_warn, count_erro, count_critical, count_alert, count_emergency;
+        long count_debug, count_info, count_notice, count_warn, count_error, count_critical, count_alert, count_emergency;
         array_init(return_value);
-        log_path = "*";
 
         count_debug     = get_type_count(log_path, SEASLOG_DEBUG, key_word TSRMLS_CC);
         count_info      = get_type_count(log_path, SEASLOG_INFO, key_word TSRMLS_CC);
         count_notice    = get_type_count(log_path, SEASLOG_NOTICE, key_word TSRMLS_CC);
         count_warn      = get_type_count(log_path, SEASLOG_WARNING, key_word TSRMLS_CC);
-        count_erro      = get_type_count(log_path, SEASLOG_ERROR, key_word TSRMLS_CC);
+        count_error     = get_type_count(log_path, SEASLOG_ERROR, key_word TSRMLS_CC);
         count_critical  = get_type_count(log_path, SEASLOG_CRITICAL, key_word TSRMLS_CC);
         count_alert     = get_type_count(log_path, SEASLOG_ALERT, key_word TSRMLS_CC);
         count_emergency = get_type_count(log_path, SEASLOG_EMERGENCY, key_word TSRMLS_CC);
@@ -594,17 +653,10 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
         add_assoc_long(return_value, SEASLOG_INFO, count_info);
         add_assoc_long(return_value, SEASLOG_NOTICE, count_notice);
         add_assoc_long(return_value, SEASLOG_WARNING, count_warn);
-        add_assoc_long(return_value, SEASLOG_ERROR, count_erro);
+        add_assoc_long(return_value, SEASLOG_ERROR, count_error);
         add_assoc_long(return_value, SEASLOG_CRITICAL, count_critical);
         add_assoc_long(return_value, SEASLOG_ALERT, count_alert);
         add_assoc_long(return_value, SEASLOG_EMERGENCY, count_emergency);
-    }
-    else if (argc == 1)
-    {
-        log_path = "*";
-        count = get_type_count(log_path, level, key_word TSRMLS_CC);
-
-        RETURN_LONG(count);
     }
     else
     {
@@ -640,12 +692,13 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 
     if (argc < 2)
     {
-        log_path = "*";
+        log_path = SEASLOG_ASTERISK;
     }
     else if (argc > 3)
     {
 #ifdef WINDOWS
-        zend_error(E_NOTICE, "Param start and limit don't support Windows");
+        seaslog_throw_exception(SEASLOG_EXCEPTION_WINDOWS_ERROR TSRMLS_CC, "%s", "Param start and limit don't support Windows");
+        RETURN_FALSE;
 #endif
     }
 
@@ -677,12 +730,13 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 
     if (argc < 2)
     {
-        log_path = "*";
+        log_path = SEASLOG_ASTERISK;
     }
     else if (argc > 3)
     {
 #ifdef WINDOWS
-        zend_error(E_NOTICE, "Param start and limit don't support Windows");
+        seaslog_throw_exception(SEASLOG_EXCEPTION_WINDOWS_ERROR TSRMLS_CC, "%s", "Param start and limit don't support Windows");
+        RETURN_FALSE;
 #endif
     }
     else
