@@ -321,9 +321,16 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
         RETURN_FALSE;
     }
 
-    if (argc > 1)
+    if (argc > 2)
     {
         if (seaslog_log_content(argc, level, level_int, ZSTR_VAL(message), ZSTR_LEN(message), HASH_OF(content), ZSTR_VAL(logger), ZSTR_LEN(logger), seaslog_ce TSRMLS_CC) == FAILURE)
+        {
+            RETURN_FALSE;
+        }
+    }
+    else if(argc > 1)
+    {
+        if (seaslog_log_content(argc, level, level_int, ZSTR_VAL(message), ZSTR_LEN(message), HASH_OF(content), "", 0, seaslog_ce TSRMLS_CC) == FAILURE)
         {
             RETURN_FALSE;
         }
