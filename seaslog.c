@@ -309,8 +309,10 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
     int argc = ZEND_NUM_ARGS();
 
 #if PHP_VERSION_ID >= 70000
-    zend_string *message, *logger;
+    zend_string *message, *logger = NULL;
     zval *content;
+    char *logger_str = "";
+    int logger_len = 0;
 
     if (zend_parse_parameters(argc TSRMLS_CC, "S|zS", &message, &content, &logger) == FAILURE)
         return;
@@ -321,16 +323,15 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
         RETURN_FALSE;
     }
 
-    if (argc > 2)
+    if (logger != NULL)
     {
-        if (seaslog_log_content(argc, level, level_int, ZSTR_VAL(message), ZSTR_LEN(message), HASH_OF(content), ZSTR_VAL(logger), ZSTR_LEN(logger), seaslog_ce TSRMLS_CC) == FAILURE)
-        {
-            RETURN_FALSE;
-        }
+        logger_str = ZSTR_VAL(logger);
+        logger_len = ZSTR_LEN(logger);
     }
-    else if(argc > 1)
+
+    if (argc > 1)
     {
-        if (seaslog_log_content(argc, level, level_int, ZSTR_VAL(message), ZSTR_LEN(message), HASH_OF(content), "", 0, seaslog_ce TSRMLS_CC) == FAILURE)
+        if (seaslog_log_content(argc, level, level_int, ZSTR_VAL(message), ZSTR_LEN(message), HASH_OF(content), logger_str, logger_len, seaslog_ce TSRMLS_CC) == FAILURE)
         {
             RETURN_FALSE;
         }
