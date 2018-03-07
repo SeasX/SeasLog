@@ -39,7 +39,7 @@
 
 #define SEASLOG_RES_NAME                    "SeasLog"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                     "1.8.2"
+#define SEASLOG_VERSION                     "1.8.3"
 #define SEASLOG_VERSION_ID                  10800
 #define SEASLOG_SUPPORTS                    "https://github.com/SeasX/SeasLog"
 
@@ -170,8 +170,11 @@ typedef struct _request_variable_t
     char *client_ip;
     int client_ip_len;
 
-    zval *request_uri;
-    zval *request_method;
+    char *request_uri;
+    int request_uri_len;
+
+    char *request_method;
+    int request_method_len;
 } request_variable_t;
 
 //Common Toolkit

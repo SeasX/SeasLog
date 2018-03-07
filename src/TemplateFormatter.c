@@ -111,12 +111,12 @@ static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_t
                     s_len = SEASLOG_G(request_variable)->domain_port_len;
                     break;
                 case 'R': //Request Uri
-                    s = Z_STRVAL_P(SEASLOG_G(request_variable)->request_uri);
-                    s_len = Z_STRLEN_P(SEASLOG_G(request_variable)->request_uri);
+                    s = SEASLOG_G(request_variable)->request_uri;
+                    s_len = SEASLOG_G(request_variable)->request_uri_len;
                     break;
                 case 'm': //Request Method
-                    s = Z_STRVAL_P(SEASLOG_G(request_variable)->request_method);
-                    s_len = Z_STRLEN_P(SEASLOG_G(request_variable)->request_method);
+                    s = SEASLOG_G(request_variable)->request_method;
+                    s_len = SEASLOG_G(request_variable)->request_method_len;
                     break;
                 case 'I': //Client IP
                     s = SEASLOG_G(request_variable)->client_ip;
