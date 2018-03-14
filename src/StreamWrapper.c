@@ -180,7 +180,10 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     if ((stream_zval = zend_hash_index_find(ht_list, stream_entry_hash)) != NULL)
     {
         php_stream_from_zval_no_verify(stream,stream_zval);
-
+        if (stream && php_stream_eof(stream))
+        {
+            goto create_stream;
+        }
         return stream;
 #else
     ht_list = HASH_OF(SEASLOG_G(stream_list));
@@ -188,12 +191,16 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     if (zend_hash_index_find(ht_list, stream_entry_hash, (void **)&stream_zval_get) == SUCCESS)
     {
         php_stream_from_zval_no_verify(stream,stream_zval_get);
-
+        if (stream && php_stream_eof(stream))
+        {
+            goto create_stream;
+        }
         return stream;
 #endif
     }
     else
     {
+create_stream:
         stream = seaslog_stream_open_wrapper(opt TSRMLS_CC);
         if (stream == NULL)
         {
@@ -209,6 +216,8 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
             php_stream_to_zval(stream, stream_zval_to);
 #endif
             SEASLOG_ADD_INDEX_ZVAL(SEASLOG_G(stream_list),stream_entry_hash,stream_zval_to);
+
+            return stream;
         }
     }
 
