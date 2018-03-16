@@ -154,6 +154,7 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     php_stream *stream = NULL;
     zval **stream_zval_get;
     HashTable *ht_list;
+    php_stream_statbuf dest_s;
 #if PHP_VERSION_ID >= 70000
     zval *stream_zval;
     zval stream_zval_to;
@@ -180,7 +181,8 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     if ((stream_zval = zend_hash_index_find(ht_list, stream_entry_hash)) != NULL)
     {
         php_stream_from_zval_no_verify(stream,stream_zval);
-        if (stream && php_stream_eof(stream))
+        if ((stream && php_stream_eof(stream)) || (SEASLOG_APPENDER_FILE == SEASLOG_G(appender)
+            && php_stream_stat_path_ex(opt, PHP_STREAM_URL_STAT_QUIET | PHP_STREAM_URL_STAT_NOCACHE, &dest_s, NULL) == -1))
         {
             goto create_stream;
         }
@@ -191,7 +193,8 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     if (zend_hash_index_find(ht_list, stream_entry_hash, (void **)&stream_zval_get) == SUCCESS)
     {
         php_stream_from_zval_no_verify(stream,stream_zval_get);
-        if (stream && php_stream_eof(stream))
+        if ((stream && php_stream_eof(stream)) || (SEASLOG_APPENDER_FILE == SEASLOG_G(appender)
+            && php_stream_stat_path_ex(opt, PHP_STREAM_URL_STAT_QUIET | PHP_STREAM_URL_STAT_NOCACHE, &dest_s, NULL) == -1))
         {
             goto create_stream;
         }
