@@ -142,7 +142,7 @@ static char *php_strtr_array(char *str, int slen, HashTable *pats)
             }
             else
             {
-                string_key_tmp = string_key;
+                string_key_tmp = estrdup(string_key);
             }
 
             if (strstr(tmp,string_key_tmp))
