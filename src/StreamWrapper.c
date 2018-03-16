@@ -181,11 +181,27 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     if ((stream_zval = zend_hash_index_find(ht_list, stream_entry_hash)) != NULL)
     {
         php_stream_from_zval_no_verify(stream,stream_zval);
-        if ((stream && php_stream_eof(stream)) || (SEASLOG_APPENDER_FILE == SEASLOG_G(appender)
-            && php_stream_stat_path_ex(opt, PHP_STREAM_URL_STAT_QUIET | PHP_STREAM_URL_STAT_NOCACHE, &dest_s, NULL) == -1))
+
+        if (stream)
         {
-            goto create_stream;
+            switch SEASLOG_G(appender)
+            {
+            case SEASLOG_APPENDER_TCP:
+            case SEASLOG_APPENDER_UDP:
+                if (php_stream_eof(stream))
+                {
+                    goto create_stream;
+                }
+                break;
+            case SEASLOG_APPENDER_FILE:
+            default:
+                if (php_stream_stat_path_ex(opt, PHP_STREAM_URL_STAT_QUIET | PHP_STREAM_URL_STAT_NOCACHE, &dest_s, NULL) < 0)
+                {
+                    goto create_stream;
+                }
+            }
         }
+
         return stream;
 #else
     ht_list = HASH_OF(SEASLOG_G(stream_list));
@@ -193,11 +209,27 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     if (zend_hash_index_find(ht_list, stream_entry_hash, (void **)&stream_zval_get) == SUCCESS)
     {
         php_stream_from_zval_no_verify(stream,stream_zval_get);
-        if ((stream && php_stream_eof(stream)) || (SEASLOG_APPENDER_FILE == SEASLOG_G(appender)
-            && php_stream_stat_path_ex(opt, PHP_STREAM_URL_STAT_QUIET | PHP_STREAM_URL_STAT_NOCACHE, &dest_s, NULL) == -1))
+
+        if (stream)
         {
-            goto create_stream;
+            switch SEASLOG_G(appender)
+            {
+            case SEASLOG_APPENDER_TCP:
+            case SEASLOG_APPENDER_UDP:
+                if (php_stream_eof(stream))
+                {
+                    goto create_stream;
+                }
+                break;
+            case SEASLOG_APPENDER_FILE:
+            default:
+                if (php_stream_stat_path_ex(opt, PHP_STREAM_URL_STAT_QUIET | PHP_STREAM_URL_STAT_NOCACHE, &dest_s, NULL) < 0)
+                {
+                    goto create_stream;
+                }
+            }
         }
+
         return stream;
 #endif
     }
