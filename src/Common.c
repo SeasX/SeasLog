@@ -19,37 +19,30 @@ static int seaslog_get_level_int(char *level)
     if (strcmp(level, SEASLOG_DEBUG) == 0)
     {
         return SEASLOG_DEBUG_INT;
-
     }
     else if (strcmp(level, SEASLOG_INFO) == 0)
     {
         return SEASLOG_INFO_INT;
-
     }
     else if (strcmp(level, SEASLOG_NOTICE) == 0)
     {
         return SEASLOG_NOTICE_INT;
-
     }
     else if (strcmp(level, SEASLOG_WARNING) == 0)
     {
         return SEASLOG_WARNING_INT;
-
     }
     else if (strcmp(level, SEASLOG_ERROR) == 0)
     {
         return SEASLOG_ERROR_INT;
-
     }
     else if (strcmp(level, SEASLOG_CRITICAL) == 0)
     {
         return SEASLOG_CRITICAL_INT;
-
     }
     else if (strcmp(level, SEASLOG_ALERT) == 0)
     {
         return SEASLOG_ALERT_INT;
-
     }
     else if (strcmp(level, SEASLOG_EMERGENCY) == 0)
     {
@@ -57,6 +50,44 @@ static int seaslog_get_level_int(char *level)
     }
 
     return SEASLOG_DEBUG_INT;
+}
+
+static int check_log_level(int level TSRMLS_DC)
+{
+    if (SEASLOG_G(level) >= SEASLOG_DEBUG_INT) return SUCCESS;
+    if (SEASLOG_G(level) < SEASLOG_EMERGENCY_INT) return FAILURE;
+
+    switch (level)
+    {
+    case SEASLOG_DEBUG_INT:
+        if (SEASLOG_G(level) >= SEASLOG_DEBUG_INT) return SUCCESS;
+        break;
+    case SEASLOG_INFO_INT:
+        if (SEASLOG_G(level) >= SEASLOG_INFO_INT) return SUCCESS;
+        break;
+    case SEASLOG_NOTICE_INT:
+        if (SEASLOG_G(level) >= SEASLOG_NOTICE_INT) return SUCCESS;
+        break;
+    case SEASLOG_WARNING_INT:
+        if (SEASLOG_G(level) >= SEASLOG_WARNING_INT) return SUCCESS;
+        break;
+    case SEASLOG_ERROR_INT:
+        if (SEASLOG_G(level) >= SEASLOG_ERROR_INT) return SUCCESS;
+        break;
+    case SEASLOG_CRITICAL_INT:
+        if (SEASLOG_G(level) >= SEASLOG_CRITICAL_INT) return SUCCESS;
+        break;
+    case SEASLOG_ALERT_INT:
+        if (SEASLOG_G(level) >= SEASLOG_ALERT_INT) return SUCCESS;
+        break;
+    case SEASLOG_EMERGENCY_INT:
+        if (SEASLOG_G(level) >= SEASLOG_EMERGENCY_INT) return SUCCESS;
+        break;
+    default:
+        return FAILURE;
+    }
+
+    return FAILURE;
 }
 
 static char *str_replace(char *src, const char *from, const char *to)

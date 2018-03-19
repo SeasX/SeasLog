@@ -183,6 +183,7 @@ typedef struct _request_variable_t
 
 //Common Toolkit
 static int seaslog_get_level_int(char *level);
+static int check_log_level(int level TSRMLS_DC);
 static char *str_appender(char *str, int str_len);
 static char *str_replace(char *src, const char *from, const char *to);
 static char *delN(char *a);
@@ -258,9 +259,8 @@ zval *seaslog_request_query(uint type, void *name, size_t len TSRMLS_DC);
 static int seaslog_real_log_ex(char *message, int message_len, char *opt, int opt_len TSRMLS_DC);
 static int seaslog_log_content(int argc, char *level, int level_int, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
 static int seaslog_log_ex(int argc, char *level, int level_int, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
-static int appender_handle_file(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
-static int appender_handle_tcp_udp(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
-static int check_log_level(int level TSRMLS_DC);
+static int appender_handle_file(char *message, int message_len, char *level, int level_int, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
+static int appender_handle_tcp_udp(char *message, int message_len, char *level, int level_int, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
 static int make_log_dir(char *dir TSRMLS_DC);
 static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
 
