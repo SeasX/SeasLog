@@ -23,11 +23,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2018-02-26</date>
-    <time>10:26:00</time>
+    <date>2018-03-19</date>
+    <time>16:50:00</time>
     <version>
-        <release>1.8.2</release>
-        <api>1.8.2</api>
+        <release>1.8.4</release>
+        <api>1.8.4</api>
     </version>
     <stability>
         <release>stable</release>
@@ -46,6 +46,7 @@
         - Fixed issue #158 SeasLog::setRequestID intercepted error.
         - Fixed issue #165 Phpdbg seg fault.
         - Fixed issue #184 SeasLog::analyzerCount seg fault at PHP7-nts.
+        - Fixed issue #181 Perfect when stream's connection was broken.
     </notes>
     <contents>
         <dir name="/">
