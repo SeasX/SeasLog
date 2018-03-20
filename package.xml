@@ -2,9 +2,9 @@
 <package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
     <name>SeasLog</name>
     <channel>pecl.php.net</channel>
-    <summary>A effective,fast,stable log extension for PHP.</summary>
+    <summary>An effective,fast,stable log extension for PHP.</summary>
     <description>
-        A effective,fast,stable log extension for PHP.
+        An effective,fast,stable log extension for PHP.
         - In the PHP project, for convenient record log.
         - The default log directory and module configuration.
         - Specify the log directory and get the current configuration.
