@@ -559,7 +559,7 @@ class SeasLog
 ```php
 /usr/local/php/php-7.0.6-zts-debug/bin/php --re seaslog
 
-Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
+Extension [ <persistent> extension #29 SeasLog version 1.8.4 ] {
 
   - Dependencies {
   }
@@ -569,13 +569,16 @@ Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
       Current = '/var/log/www'
     }
     Entry [ seaslog.default_logger <ALL> ]
-      Current = 'defauult'
+      Current = 'default'
     }
     Entry [ seaslog.default_datetime_format <ALL> ]
       Current = 'Y-m-d H:i:s'
     }
     Entry [ seaslog.default_template <ALL> ]
-      Current = '%L | %P | %Q | %t | %T | %M'
+      Current = '%T | %L | %P | %Q | %t | %M'
+    }
+    Entry [ seaslog.disting_folder <ALL> ]
+      Current = '1'
     }
     Entry [ seaslog.disting_type <ALL> ]
       Current = '0'
@@ -584,22 +587,34 @@ Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
       Current = '0'
     }
     Entry [ seaslog.use_buffer <ALL> ]
-      Current = '1'
+      Current = '0'
+    }
+    Entry [ seaslog.trace_notice <ALL> ]
+      Current = '0'
+    }
+    Entry [ seaslog.trace_warning <ALL> ]
+      Current = '0'
     }
     Entry [ seaslog.trace_error <ALL> ]
       Current = '1'
     }
     Entry [ seaslog.trace_exception <ALL> ]
-      Current = '1'
+      Current = '0'
     }
     Entry [ seaslog.buffer_size <ALL> ]
-      Current = '10'
+      Current = '0'
     }
     Entry [ seaslog.level <ALL> ]
+      Current = '8'
+    }
+    Entry [ seaslog.recall_depth <ALL> ]
       Current = '0'
     }
     Entry [ seaslog.appender <ALL> ]
       Current = '1'
+    }
+    Entry [ seaslog.appender_retry <ALL> ]
+      Current = '0'
     }
     Entry [ seaslog.remote_host <ALL> ]
       Current = '127.0.0.1'
@@ -619,7 +634,7 @@ Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
   }
 
   - Constants [16] {
-    Constant [ string SEASLOG_VERSION ] { 1.7.5 }
+    Constant [ string SEASLOG_VERSION ] { 1.8.4 }
     Constant [ string SEASLOG_AUTHOR ] { Chitao.Gao  [ neeke@php.net ] }
     Constant [ string SEASLOG_ALL ] { ALL }
     Constant [ string SEASLOG_DEBUG ] { DEBUG }
@@ -653,7 +668,7 @@ Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
       - Static properties [0] {
       }
 
-      - Static methods [19] {
+      - Static methods [21] {
         Method [ <internal:SeasLog> static public method setBasePath ] {
 
           - Parameters [1] {
