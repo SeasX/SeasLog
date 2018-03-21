@@ -154,6 +154,7 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     php_stream *stream = NULL;
     zval **stream_zval_get;
     HashTable *ht_list;
+    php_stream_statbuf dest_s;
 #if PHP_VERSION_ID >= 70000
     zval *stream_zval;
     zval stream_zval_to;
@@ -181,6 +182,26 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     {
         php_stream_from_zval_no_verify(stream,stream_zval);
 
+        if (stream)
+        {
+            switch SEASLOG_G(appender)
+            {
+            case SEASLOG_APPENDER_TCP:
+            case SEASLOG_APPENDER_UDP:
+                if (php_stream_eof(stream))
+                {
+                    goto create_stream;
+                }
+                break;
+            case SEASLOG_APPENDER_FILE:
+            default:
+                if (php_stream_stat_path_ex(opt, PHP_STREAM_URL_STAT_QUIET | PHP_STREAM_URL_STAT_NOCACHE, &dest_s, NULL) < 0)
+                {
+                    goto create_stream;
+                }
+            }
+        }
+
         return stream;
 #else
     ht_list = HASH_OF(SEASLOG_G(stream_list));
@@ -189,11 +210,32 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     {
         php_stream_from_zval_no_verify(stream,stream_zval_get);
 
+        if (stream)
+        {
+            switch SEASLOG_G(appender)
+            {
+            case SEASLOG_APPENDER_TCP:
+            case SEASLOG_APPENDER_UDP:
+                if (php_stream_eof(stream))
+                {
+                    goto create_stream;
+                }
+                break;
+            case SEASLOG_APPENDER_FILE:
+            default:
+                if (php_stream_stat_path_ex(opt, PHP_STREAM_URL_STAT_QUIET | PHP_STREAM_URL_STAT_NOCACHE, &dest_s, NULL) < 0)
+                {
+                    goto create_stream;
+                }
+            }
+        }
+
         return stream;
 #endif
     }
     else
     {
+create_stream:
         stream = seaslog_stream_open_wrapper(opt TSRMLS_CC);
         if (stream == NULL)
         {
@@ -209,6 +251,8 @@ static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
             php_stream_to_zval(stream, stream_zval_to);
 #endif
             SEASLOG_ADD_INDEX_ZVAL(SEASLOG_G(stream_list),stream_entry_hash,stream_zval_to);
+
+            return stream;
         }
     }
 

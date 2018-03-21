@@ -111,12 +111,12 @@ static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_t
                     s_len = SEASLOG_G(request_variable)->domain_port_len;
                     break;
                 case 'R': //Request Uri
-                    s = Z_STRVAL_P(SEASLOG_G(request_variable)->request_uri);
-                    s_len = Z_STRLEN_P(SEASLOG_G(request_variable)->request_uri);
+                    s = SEASLOG_G(request_variable)->request_uri;
+                    s_len = SEASLOG_G(request_variable)->request_uri_len;
                     break;
                 case 'm': //Request Method
-                    s = Z_STRVAL_P(SEASLOG_G(request_variable)->request_method);
-                    s_len = Z_STRLEN_P(SEASLOG_G(request_variable)->request_method);
+                    s = SEASLOG_G(request_variable)->request_method;
+                    s_len = SEASLOG_G(request_variable)->request_method_len;
                     break;
                 case 'I': //Client IP
                     s = SEASLOG_G(request_variable)->client_ip;
@@ -179,6 +179,24 @@ static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_t
                         smart_str_free(&tmp_buf);
                     }
                     get_code_filename_line(&tmp_buf TSRMLS_CC);
+                    s = SEASLOG_SMART_STR_C(tmp_buf);
+                    s_len  = SEASLOG_SMART_STR_L(tmp_buf);
+                    break;
+                case 'U': //zend_memory_usage
+                    if (SEASLOG_SMART_STR_C(tmp_buf))
+                    {
+                        smart_str_free(&tmp_buf);
+                    }
+                    seaslog_memory_usage(&tmp_buf TSRMLS_CC);
+                    s = SEASLOG_SMART_STR_C(tmp_buf);
+                    s_len  = SEASLOG_SMART_STR_L(tmp_buf);
+                    break;
+                case 'u': //peak_memory_usage
+                    if (SEASLOG_SMART_STR_C(tmp_buf))
+                    {
+                        smart_str_free(&tmp_buf);
+                    }
+                    seaslog_peak_memory_usage(&tmp_buf TSRMLS_CC);
                     s = SEASLOG_SMART_STR_C(tmp_buf);
                     s_len  = SEASLOG_SMART_STR_L(tmp_buf);
                     break;

@@ -2,20 +2,20 @@
 <package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
     <name>SeasLog</name>
     <channel>pecl.php.net</channel>
-    <summary>A effective,fast,stable log extension for PHP.</summary>
+    <summary>An effective,fast,stable log extension for PHP.</summary>
     <description>
-        A effective,fast,stable log extension for PHP.
-        - In the PHP project, for convenient record log
+        An effective,fast,stable log extension for PHP.
+        - In the PHP project, for convenient record log.
         - The default log directory and module configuration.
-        - Specify the log directory and get the current configuration
-        - Analysis of early warning framework preliminary
-        - Buffer debug efficient log buffer, convenient
-        - With PSR-3 Logger interface
-        - Error and exception automatic logging
-        - Support appender with File,TCP,UDP
-        - Send to Rsyslog(TCP/UDP) with RFC5424
-        - Support RequestId differentiated requests
-        - Support for log template customizations
+        - Specify the log directory and get the current configuration.
+        - Analysis of early warning framework preliminary.
+        - Buffer debug efficient log buffer, convenient.
+        - With PSR-3 Logger interface.
+        - Error and exception automatic logging.
+        - Support appender with File,TCP,UDP.
+        - Send to Rsyslog(TCP/UDP) with RFC5424.
+        - Support RequestId differentiated requests.
+        - Support for log template customizations.
     </description>
     <lead>
         <name>Chitao Gao</name>
@@ -23,20 +23,30 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2017-09-19</date>
-    <time>16:11:00</time>
+    <date>2018-03-19</date>
+    <time>16:50:00</time>
     <version>
-        <release>1.7.6</release>
-        <api>1.7.6</api>
+        <release>1.8.4</release>
+        <api>1.8.4</api>
     </version>
     <stability>
         <release>stable</release>
         <api>stable</api>
     </stability>
-    <license uri="http://www.php.net/license">PHP</license>
+    <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
     <notes>
-        - Fixed analyzerDetail bug, use grep -ai key_words.
-        - Fixed issue #152. Segfault in cli.
+        - New Feature #162 Configure seaslog.recall_depth support for filename and code line.
+        - New Feature #170 Configure seaslog.trace_notice and seaslog.trace_warning support trace notice and warning.
+        - New Feature #172 Configure seaslog.disting_folder support switch {Logger}/{Time}[.Type].log or {Logger}_{Time}[.Type].log.
+        - New Feature #174 Add %U(MemoryUsage) and %u(PeakMemoryUsage) into default variable table.
+        - New Feature #186 Use seaslog_throw_exception replace zend_error.
+        - Fixed issue #65 Message template content match error.
+        - Fixed issue #153 Disting_by_hour and disting_type can not use together.
+        - Fixed issue #156 Log template format error with %L and %M.
+        - Fixed issue #158 SeasLog::setRequestID intercepted error.
+        - Fixed issue #165 Phpdbg seg fault.
+        - Fixed issue #184 SeasLog::analyzerCount seg fault at PHP7-nts.
+        - Fixed issue #181 Perfect when stream's connection was broken.
     </notes>
     <contents>
         <dir name="/">
@@ -55,6 +65,7 @@
             </dir>
             <dir name="src">
                 <file role="src" name="Common.c" />
+                <file role="src" name="Performance.c" />
                 <file role="src" name="Analyzer.c" />
                 <file role="src" name="Appender.c" />
                 <file role="src" name="Buffer.c" />
@@ -508,6 +519,23 @@
                 - Fixed issue #144. Error by read log detail order desc.
                 - Fixed issue #145. Error by analyzerDetail.
                 - Fixed issue #146. Segfault at php-fpm.
+            </notes>
+        </release>
+        <release>
+            <date>2017-09-19</date>
+            <time>16:11:00</time>
+            <version>
+                <release>1.7.6</release>
+                <api>1.7.6</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license">PHP</license>
+            <notes>
+                - Fixed analyzerDetail bug, use grep -ai key_words.
+                - Fixed issue #152. Segfault in cli.
             </notes>
         </release>
     </changelog>

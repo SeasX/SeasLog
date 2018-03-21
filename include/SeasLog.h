@@ -39,8 +39,9 @@
 
 #define SEASLOG_RES_NAME                    "SeasLog"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                     "1.7.8"
-#define SEASLOG_VERSION_ID                  10708
+#define SEASLOG_VERSION                     "1.8.4"
+#define SEASLOG_VERSION_ID                  10800
+#define SEASLOG_SUPPORTS                    "https://github.com/SeasX/SeasLog"
 
 #define SEASLOG_ALL                         "ALL"
 #define SEASLOG_DEBUG                       "DEBUG"
@@ -101,8 +102,13 @@
 
 #define SEASLOG_EXCEPTION_LOGGER_ERROR      4403
 #define SEASLOG_EXCEPTION_CONTENT_ERROR     4406
+#define SEASLOG_EXCEPTION_WINDOWS_ERROR     4407
 
 #define SEASLOG_GET_HOST_NULL               "NoHost"
+
+#define SEASLOG_LOGGER_SLASH                "/"
+#define SEASLOG_LOGGER_UNDERLINE            "_"
+#define SEASLOG_ASTERISK                    "*"
 
 #define SEASLOG_LOG_LINE_FEED_STR           "\n"
 #define SEASLOG_LOG_LINE_FEED_LEN           sizeof(SEASLOG_LOG_LINE_FEED_STR) - 1
@@ -115,6 +121,10 @@
 #define SEASLOG_ANALYZER_DEFAULT_OFFSET     20
 
 #define SEASLOG_GLOBAL_VARS_SERVER  		TRACK_VARS_SERVER
+
+#ifndef PHP_STREAM_URL_STAT_NOCACHE
+#define PHP_STREAM_URL_STAT_NOCACHE	        4
+#endif
 
 #if PHP_VERSION_ID >= 70000
 
@@ -136,6 +146,7 @@
 typedef struct _logger_entry_t
 {
     ulong logger_hash;
+    char *folder;
     char *logger;
     int logger_len;
     char *logger_path;
@@ -163,12 +174,17 @@ typedef struct _request_variable_t
     char *client_ip;
     int client_ip_len;
 
-    zval *request_uri;
-    zval *request_method;
+    char *request_uri;
+    int request_uri_len;
+
+    char *request_method;
+    int request_method_len;
 } request_variable_t;
 
 //Common Toolkit
 static int seaslog_get_level_int(char *level);
+static int check_log_level(int level TSRMLS_DC);
+static char *str_appender(char *str, int str_len);
 static char *str_replace(char *src, const char *from, const char *to);
 static char *delN(char *a);
 static char *get_uniqid();
@@ -184,6 +200,7 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash);
 
 
 //Logger
+static void seaslog_init_slash_or_underline(TSRMLS_D);
 static void seaslog_init_last_time(TSRMLS_D);
 static void seaslog_clear_last_time(TSRMLS_D);
 static void seaslog_init_logger(TSRMLS_D);
@@ -213,7 +230,7 @@ static void seaslog_clear_buffer(TSRMLS_D);
 //ErrorHook
 void (*old_error_cb)(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args);
 void seaslog_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args);
-static void process_event_error(int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC);
+static void process_event_error(const char *event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC);
 static void initErrorHooks(TSRMLS_D);
 static void recoveryErrorHooks(TSRMLS_D);
 
@@ -242,9 +259,8 @@ zval *seaslog_request_query(uint type, void *name, size_t len TSRMLS_DC);
 static int seaslog_real_log_ex(char *message, int message_len, char *opt, int opt_len TSRMLS_DC);
 static int seaslog_log_content(int argc, char *level, int level_int, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
 static int seaslog_log_ex(int argc, char *level, int level_int, char *message, int message_len, char *module, int module_len, zend_class_entry *ce TSRMLS_DC);
-static int appender_handle_file(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
-static int appender_handle_tcp_udp(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
-static int check_log_level(int level TSRMLS_DC);
+static int appender_handle_file(char *message, int message_len, char *level, int level_int, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
+static int appender_handle_tcp_udp(char *message, int message_len, char *level, int level_int, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC);
 static int make_log_dir(char *dir TSRMLS_DC);
 static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC);
 
@@ -265,5 +281,8 @@ static inline php_stream *process_stream(char *opt, int opt_len TSRMLS_DC);
 static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC);
 static int get_detail(char *log_path, char *level, char *key_word, long start, long end, long order, zval *return_value TSRMLS_DC);
 
+//Performance
+static void seaslog_memory_usage(smart_str *buf TSRMLS_DC);
+static void seaslog_peak_memory_usage(smart_str *buf TSRMLS_DC);
 
 #endif /* _SEASLOG_H_ */

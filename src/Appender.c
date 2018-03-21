@@ -92,17 +92,17 @@ static int seaslog_log_ex(int argc, char *level, int level_int, char *message, i
     {
     case SEASLOG_APPENDER_TCP:
     case SEASLOG_APPENDER_UDP:
-        return appender_handle_tcp_udp(message, message_len, level, logger, ce TSRMLS_CC);
+        return appender_handle_tcp_udp(message, message_len, level, level_int, logger, ce TSRMLS_CC);
         break;
     case SEASLOG_APPENDER_FILE:
     default:
-        return appender_handle_file(message, message_len, level, logger, ce TSRMLS_CC);
+        return appender_handle_file(message, message_len, level, level_int, logger, ce TSRMLS_CC);
     }
 
     return SUCCESS;
 }
 
-static int appender_handle_file(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC)
+static int appender_handle_file(char *message, int message_len, char *level, int level_int, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC)
 {
 
     char *log_file_path, *log_info, *real_date;
@@ -111,11 +111,11 @@ static int appender_handle_file(char *message, int message_len, char *level, log
     real_date = make_real_date(TSRMLS_C);
     if (SEASLOG_G(disting_type))
     {
-        log_file_path_len = spprintf(&log_file_path, 0, "%s/%s.%s.log", logger->logger_path, real_date, level);
+        log_file_path_len = spprintf(&log_file_path, 0, "%s%s%s.%s.log", logger->logger_path, SEASLOG_G(slash_or_underline), real_date, level);
     }
     else
     {
-        log_file_path_len = spprintf(&log_file_path, 0, "%s/%s.log", logger->logger_path,real_date);
+        log_file_path_len = spprintf(&log_file_path, 0, "%s%s%s.log", logger->logger_path, SEASLOG_G(slash_or_underline), real_date);
     }
 
     log_len = seaslog_spprintf(&log_info TSRMLS_CC, SEASLOG_GENERATE_LOG_INFO, level, 0, message);
@@ -133,14 +133,14 @@ static int appender_handle_file(char *message, int message_len, char *level, log
     return SUCCESS;
 }
 
-static int appender_handle_tcp_udp(char *message, int message_len, char *level, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC)
+static int appender_handle_tcp_udp(char *message, int message_len, char *level, int level_int, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC)
 {
     char *log_info, *log_content, *time_RFC3339;
     int log_len, log_content_len, PRI;
 
     time_RFC3339 = make_time_RFC3339(TSRMLS_C);
 
-    PRI = SEASLOG_SYSLOG_FACILITY + seaslog_get_level_int(level);
+    PRI = SEASLOG_SYSLOG_FACILITY + level_int;
 
     log_content_len = seaslog_spprintf(&log_content TSRMLS_CC, SEASLOG_GENERATE_SYSLOG_INFO, level, 0, message);
 
@@ -157,44 +157,6 @@ static int appender_handle_tcp_udp(char *message, int message_len, char *level, 
 
     efree(log_info);
     return SUCCESS;
-}
-
-static int check_log_level(int level TSRMLS_DC)
-{
-    if (SEASLOG_G(level) >= SEASLOG_DEBUG_INT) return SUCCESS;
-    if (SEASLOG_G(level) < SEASLOG_EMERGENCY_INT) return FAILURE;
-
-    switch (level)
-    {
-    case SEASLOG_DEBUG_INT:
-        if (SEASLOG_G(level) >= SEASLOG_DEBUG_INT) return SUCCESS;
-        break;
-    case SEASLOG_INFO_INT:
-        if (SEASLOG_G(level) >= SEASLOG_INFO_INT) return SUCCESS;
-        break;
-    case SEASLOG_NOTICE_INT:
-        if (SEASLOG_G(level) >= SEASLOG_NOTICE_INT) return SUCCESS;
-        break;
-    case SEASLOG_WARNING_INT:
-        if (SEASLOG_G(level) >= SEASLOG_WARNING_INT) return SUCCESS;
-        break;
-    case SEASLOG_ERROR_INT:
-        if (SEASLOG_G(level) >= SEASLOG_ERROR_INT) return SUCCESS;
-        break;
-    case SEASLOG_CRITICAL_INT:
-        if (SEASLOG_G(level) >= SEASLOG_CRITICAL_INT) return SUCCESS;
-        break;
-    case SEASLOG_ALERT_INT:
-        if (SEASLOG_G(level) >= SEASLOG_ALERT_INT) return SUCCESS;
-        break;
-    case SEASLOG_EMERGENCY_INT:
-        if (SEASLOG_G(level) >= SEASLOG_EMERGENCY_INT) return SUCCESS;
-        break;
-    default:
-        return FAILURE;
-    }
-
-    return FAILURE;
 }
 
 static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC)

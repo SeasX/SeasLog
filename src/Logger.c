@@ -14,6 +14,18 @@
   +----------------------------------------------------------------------+
 */
 
+static void seaslog_init_slash_or_underline(TSRMLS_D)
+{
+    if (SEASLOG_G(disting_folder))
+    {
+        SEASLOG_G(slash_or_underline) = SEASLOG_LOGGER_SLASH;
+    }
+    else
+    {
+        SEASLOG_G(slash_or_underline) = SEASLOG_LOGGER_UNDERLINE;
+    }
+}
+
 static void seaslog_init_last_time(TSRMLS_D)
 {
     int now;
@@ -75,13 +87,27 @@ static void seaslog_init_default_last_logger(TSRMLS_D)
 
     SEASLOG_G(last_logger)->logger_path_len = spprintf(&SEASLOG_G(last_logger)->logger_path, 0, "%s/%s", SEASLOG_G(base_path), SEASLOG_G(last_logger)->logger);
 
-    if (make_log_dir(SEASLOG_G(last_logger)->logger_path TSRMLS_CC) == SUCCESS)
+    if (SEASLOG_G(disting_folder))
     {
-        SEASLOG_G(last_logger)->access = SUCCESS;
+        if (make_log_dir(SEASLOG_G(last_logger)->logger_path TSRMLS_CC) == SUCCESS)
+        {
+            SEASLOG_G(last_logger)->access = SUCCESS;
+        }
+        else
+        {
+            SEASLOG_G(last_logger)->access = FAILURE;
+        }
     }
     else
     {
-        SEASLOG_G(last_logger)->access = FAILURE;
+        if (make_log_dir(SEASLOG_G(base_path) TSRMLS_CC) == SUCCESS)
+        {
+            SEASLOG_G(last_logger)->access = SUCCESS;
+        }
+        else
+        {
+            SEASLOG_G(last_logger)->access = FAILURE;
+        }
     }
 }
 
@@ -161,6 +187,9 @@ static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_
     logger_entry_t *logger_entry;
     HashTable *ht_list;
     HashTable *ht_logger;
+    char *folder;
+    int folder_len;
+    char folder_tmp[1024];
 
 #if PHP_VERSION_ID >= 70000
     zval logger_array;
@@ -230,16 +259,40 @@ static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_
     }
     else
     {
-        logger_entry->logger_len = spprintf(&logger_entry->logger, 0, "%s",logger);
+        logger_entry->logger_len = spprintf(&logger_entry->logger, 0, "%s", logger);
         logger_entry->logger_path_len = spprintf(&logger_entry->logger_path, 0, "%s/%s", SEASLOG_G(base_path), logger_entry->logger);
+        logger_entry->access = SUCCESS;
 
-        if (make_log_dir(logger_entry->logger_path TSRMLS_CC) == SUCCESS)
+        if (SEASLOG_G(disting_folder))
         {
-            logger_entry->access = SUCCESS;
+            if (make_log_dir(logger_entry->logger_path TSRMLS_CC) == SUCCESS)
+            {
+                logger_entry->access = SUCCESS;
+            }
+            else
+            {
+                logger_entry->access = FAILURE;
+            }
         }
         else
         {
-            logger_entry->access = FAILURE;
+            folder = strrchr(logger_entry->logger_path,'/');
+            if (folder != NULL)
+            {
+                folder_len = logger_entry->logger_path_len - strlen(folder);
+                strncpy(folder_tmp, logger_entry->logger_path, folder_len);
+                folder_tmp[folder_len] = '\0';
+                logger_entry->folder = folder_tmp;
+
+                if (make_log_dir(logger_entry->folder TSRMLS_CC) == SUCCESS)
+                {
+                    logger_entry->access = SUCCESS;
+                }
+                else
+                {
+                    logger_entry->access = FAILURE;
+                }
+            }
         }
 
 #if PHP_VERSION_ID >= 70000
