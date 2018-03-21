@@ -216,7 +216,6 @@ seaslog.ignore_warning = 1
 * 意味着，默认的格式为`{dateTime} | {level} | {pid} | {uniqid} | {timeStamp} | {logInfo}`
 * 如果自定义的格式为：`seaslog.default_template = "[%T]:%L %P %Q %t %M" `
 * 那么，日志格式将被自定义为：`[{dateTime}]:{level} {pid} {uniqid} {timeStamp} {logInfo}`
-> 注意：`%L` 必须在`%M`之前，即：日志级别，必须在日志内容之前。
 
 #### 预设变量表
 `SeasLog`提供了下列预设变量，可以直接使用在日志模板中，将在日志最终生成时替换成对应值。

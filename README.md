@@ -230,7 +230,6 @@ At the same time, many preset variables that are preset by `SeasLog` can be used
 
 * If you custom log template, such as:`seaslog.default_template = "[%T]:%L %P %Q %t %M" `
 * that's will mean,log style was custom as:`[{dateTime}]:{level} {pid} {uniqid} {timeStamp} {logInfo}`
-> Tips：The `%L` must before than the`%M`,that is：the log level must before than the log message。
 
 #### Default variable table
 `SeasLog`The following default variables are provided, which can be used directly in the log template and replaced as a corresponding value when the log is eventually generated.
