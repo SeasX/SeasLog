@@ -226,14 +226,14 @@ static void seaslog_clear_buffer(TSRMLS_D)
 
 #if PHP_VERSION_ID >= 70000
 
-        if (Z_TYPE(SEASLOG_G(buffer)) == IS_ARRAY)
+        if (IS_ARRAY == Z_TYPE(SEASLOG_G(buffer)))
         {
             EX_ARRAY_DESTROY(&SEASLOG_G(buffer));
         }
 
 #else
 
-        if (SEASLOG_G(buffer) && Z_TYPE_P(SEASLOG_G(buffer)) == IS_ARRAY)
+        if (SEASLOG_G(buffer) && IS_ARRAY == Z_TYPE_P(SEASLOG_G(buffer)))
         {
             EX_ARRAY_DESTROY(&(SEASLOG_G(buffer)));
         }

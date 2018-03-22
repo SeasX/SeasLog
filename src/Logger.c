@@ -169,12 +169,12 @@ static void seaslog_init_logger_list(TSRMLS_D)
 static void seaslog_clear_logger_list(TSRMLS_D)
 {
 #if PHP_VERSION_ID >= 70000
-    if (Z_TYPE(SEASLOG_G(logger_list)) == IS_ARRAY)
+    if (IS_ARRAY == Z_TYPE(SEASLOG_G(logger_list)))
     {
         EX_ARRAY_DESTROY(&SEASLOG_G(logger_list));
     }
 #else
-    if (SEASLOG_G(logger_list) && Z_TYPE_P(SEASLOG_G(logger_list)) == IS_ARRAY)
+    if (SEASLOG_G(logger_list) && IS_ARRAY == Z_TYPE_P(SEASLOG_G(logger_list)))
     {
         EX_ARRAY_DESTROY(&(SEASLOG_G(logger_list)));
     }

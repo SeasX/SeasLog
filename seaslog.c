@@ -309,15 +309,18 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
     int argc = ZEND_NUM_ARGS();
 
 #if PHP_VERSION_ID >= 70000
-    zend_string *message, *logger = NULL;
-    zval *content;
+    zend_string *message;
+    zval *content = NULL;
+    zend_string *logger = NULL;
     char *logger_str = "";
     int logger_len = 0;
 
     if (zend_parse_parameters(argc TSRMLS_CC, "S|zS", &message, &content, &logger) == FAILURE)
+    {
         return;
+    }
 
-    if (argc > 1 && Z_TYPE_P(content) != IS_ARRAY)
+    if (argc > 1 && IS_ARRAY != Z_TYPE_P(content))
     {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "The second argument is not an array");
         RETURN_FALSE;
@@ -345,14 +348,17 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
     }
 
 #else
-    char *message, *logger = NULL;
-    int message_len, logger_len = 0;
-    zval **content;
+    char *message;
+    zval *content = NULL;
+    char *logger = NULL;
+    int message_len = 0, logger_len = 0;
 
-    if (zend_parse_parameters(argc TSRMLS_CC, "s|Zs", &message, &message_len, &content, &logger, &logger_len) == FAILURE)
+    if (zend_parse_parameters(argc TSRMLS_CC, "s|zs", &message, &message_len, &content, &logger, &logger_len) == FAILURE)
+    {
         return;
+    }
 
-    if (argc > 1 && Z_TYPE_PP(content) != IS_ARRAY)
+    if (argc > 1 && IS_ARRAY != Z_TYPE_P(content))
     {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "The second argument is not an array");
         RETURN_FALSE;
@@ -360,7 +366,7 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
 
     if (argc > 1)
     {
-        if (seaslog_log_content(argc, level, level_int, message, message_len, HASH_OF(*content), logger, logger_len, seaslog_ce TSRMLS_CC) == FAILURE)
+        if (seaslog_log_content(argc, level, level_int, message, message_len, HASH_OF(content), logger, logger_len, seaslog_ce TSRMLS_CC) == FAILURE)
         {
             RETURN_FALSE;
         }
@@ -422,9 +428,11 @@ PHP_METHOD(SEASLOG_RES_NAME, setBasePath)
     int argc = ZEND_NUM_ARGS();
 
     if (zend_parse_parameters(argc TSRMLS_CC, "z", &_base_path) == FAILURE)
+    {
         return;
+    }
 
-    if (argc > 0 && (Z_TYPE_P(_base_path) == IS_STRING && Z_STRLEN_P(_base_path) > 0))
+    if (argc > 0 && (IS_STRING == Z_TYPE_P(_base_path) && Z_STRLEN_P(_base_path) > 0))
     {
         if (SEASLOG_G(base_path))
         {
@@ -458,9 +466,11 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
     int argc = ZEND_NUM_ARGS();
 
     if (zend_parse_parameters(argc TSRMLS_CC, "z", &_module) == FAILURE)
+    {
         return;
+    }
 
-    if (argc > 0 && (Z_TYPE_P(_module) == IS_STRING && Z_STRLEN_P(_module) > 0))
+    if (argc > 0 && (IS_STRING == Z_TYPE_P(_module) && Z_STRLEN_P(_module) > 0))
     {
         if (strncmp(SEASLOG_G(last_logger)->logger,Z_STRVAL_P(_module),Z_STRLEN_P(_module)))
         {
@@ -492,9 +502,11 @@ PHP_METHOD(SEASLOG_RES_NAME, setDatetimeFormat)
     int argc = ZEND_NUM_ARGS();
 
     if (zend_parse_parameters(argc TSRMLS_CC, "z", &_format) == FAILURE)
+    {
         return;
+    }
 
-    if (argc > 0 && (Z_TYPE_P(_format) == IS_STRING || Z_STRLEN_P(_format) > 0))
+    if (argc > 0 && (IS_STRING == Z_TYPE_P(_format) || Z_STRLEN_P(_format) > 0))
     {
         if (!strcmp(SEASLOG_G(current_datetime_format), SEASLOG_G(default_datetime_format)))
         {
@@ -538,9 +550,11 @@ PHP_METHOD(SEASLOG_RES_NAME, setRequestID)
     int argc = ZEND_NUM_ARGS();
 
     if (zend_parse_parameters(argc TSRMLS_CC, "z", &_request_id) == FAILURE)
+    {
         return;
+    }
 
-    if (argc > 0 && (Z_TYPE_P(_request_id) == IS_STRING || Z_TYPE_P(_request_id) == IS_LONG || Z_TYPE_P(_request_id) == IS_DOUBLE))
+    if (argc > 0 && (IS_STRING == Z_TYPE_P(_request_id) || IS_LONG == Z_TYPE_P(_request_id) || IS_DOUBLE == Z_TYPE_P(_request_id)))
     {
         if (SEASLOG_G(request_id))
         {
@@ -584,8 +598,8 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
     int argc = ZEND_NUM_ARGS();
     char *log_path = NULL, *level = NULL, *key_word = NULL;
     int len = 0;
-    int log_path_len, level_len, key_word_len;
-    long count;
+    int log_path_len = 0, level_len = 0, key_word_len = 0;
+    long count = 0;
 
 #if PHP_VERSION_ID >= 70000
 
@@ -595,7 +609,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
 
     if (zend_parse_parameters(argc TSRMLS_CC, "|SSS", &_level, &_log_path, &_key_word) == FAILURE)
     {
-        RETURN_FALSE;
+        return;
     }
 
     if (argc < 2)
@@ -626,7 +640,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
 
     if (zend_parse_parameters(argc TSRMLS_CC, "|sss", &level, &level_len, &log_path, &log_path_len, &key_word, &key_word_len) == FAILURE)
     {
-        RETURN_FALSE;
+        return;
     }
 
     if (argc < 2)
@@ -636,7 +650,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
 
 #endif
 
-    if (argc == 0 || (argc == 1 && level && !strcmp(level, SEASLOG_ALL)))
+    if (argc == 0 || (argc == 1 && level != NULL && !strcmp(level, SEASLOG_ALL)))
     {
         long count_debug, count_info, count_notice, count_warn, count_error, count_critical, count_alert, count_emergency;
         array_init(return_value);
@@ -673,8 +687,8 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
    Get log detail by level, log_path, key_word, start, limit, order */
 PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 {
-    char *log_path, *level = NULL, *key_word = NULL;
-    int log_path_len, level_len, key_word_len;
+    char *level = NULL, *log_path = NULL, *key_word = NULL;
+    int log_path_len = 0, level_len = 0, key_word_len = 0;
 
     long start = 1;
     long limit = 20;
@@ -688,7 +702,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 
     if (zend_parse_parameters(argc TSRMLS_CC, "S|SSlll", &_level, &_log_path, &_key_word, &start, &limit, &order) == FAILURE)
     {
-        RETURN_FALSE;
+        return;
     }
 
     if (argc < 2)
@@ -726,7 +740,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 
     if (zend_parse_parameters(argc TSRMLS_CC, "s|sslll", &level, &level_len, &log_path, &log_path_len, &key_word, &key_word_len, &start, &limit, &order) == FAILURE)
     {
-        RETURN_FALSE;
+        return;
     }
 
     if (argc < 2)
@@ -789,15 +803,17 @@ PHP_METHOD(SEASLOG_RES_NAME, log)
     int level_int;
 
 #if PHP_VERSION_ID >= 70000
-    zend_string *level = NULL;
-    zend_string *message = NULL;
+    zend_string *level;
+    zend_string *message;
     zend_string *logger = NULL;
-    zval *content;
+    zval *content = NULL;
 
     if (zend_parse_parameters(argc TSRMLS_CC, "SS|zS", &level, &message, &content, &logger) == FAILURE)
+    {
         return;
+    }
 
-    if (argc > 2 && Z_TYPE_P(content) != IS_ARRAY)
+    if (argc > 2 && IS_ARRAY != Z_TYPE_P(content))
     {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "The three argument is not an array");
         RETURN_FALSE;
@@ -828,14 +844,18 @@ PHP_METHOD(SEASLOG_RES_NAME, log)
     }
 
 #else
-    char *message, *level = NULL, *logger = NULL;
+    char *level;
+    char *message;
+    zval *content = NULL;
+    char *logger = NULL;
     int message_len = 0, level_len = 0, logger_len = 0;
-    zval **content;
 
-    if (zend_parse_parameters(argc TSRMLS_CC, "ss|Zs", &level, &level_len, &message, &message_len, &content, &logger, &logger_len) == FAILURE)
+    if (zend_parse_parameters(argc TSRMLS_CC, "ss|zs", &level, &level_len, &message, &message_len, &content, &logger, &logger_len) == FAILURE)
+    {
         return;
+    }
 
-    if (argc > 2 && Z_TYPE_PP(content) != IS_ARRAY)
+    if (argc > 2 && IS_ARRAY != Z_TYPE_P(content))
     {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "The three argument is not an array");
         RETURN_FALSE;
@@ -845,7 +865,7 @@ PHP_METHOD(SEASLOG_RES_NAME, log)
 
     if (argc > 2)
     {
-        if (seaslog_log_content(argc, level, level_int, message, message_len, HASH_OF(*content), logger, logger_len, seaslog_ce TSRMLS_CC) == FAILURE)
+        if (seaslog_log_content(argc, level, level_int, message, message_len, HASH_OF(content), logger, logger_len, seaslog_ce TSRMLS_CC) == FAILURE)
         {
             RETURN_FALSE;
         }

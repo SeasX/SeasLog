@@ -111,7 +111,7 @@ static void seaslog_clear_stream_list(TSRMLS_D)
 #endif
 
 #if PHP_VERSION_ID >= 70000
-    if (Z_TYPE(SEASLOG_G(stream_list)) == IS_ARRAY)
+    if (IS_ARRAY == Z_TYPE(SEASLOG_G(stream_list)))
     {
         ht = Z_ARRVAL(SEASLOG_G(stream_list));
         ZEND_HASH_FOREACH_KEY_VAL(ht, num_key, str_key, stream_zval_get_php7)
@@ -127,7 +127,7 @@ static void seaslog_clear_stream_list(TSRMLS_D)
         EX_ARRAY_DESTROY(&SEASLOG_G(stream_list));
     }
 #else
-    if (SEASLOG_G(stream_list) && Z_TYPE_P(SEASLOG_G(stream_list)) == IS_ARRAY)
+    if (SEASLOG_G(stream_list) && IS_ARRAY == Z_TYPE_P(SEASLOG_G(stream_list)))
     {
         ht = HASH_OF(SEASLOG_G(stream_list));
 

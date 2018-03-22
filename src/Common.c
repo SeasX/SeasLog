@@ -231,7 +231,7 @@ static char *php_strtr_array(char *str, int slen, HashTable *hash)
 
                 if (strstr(tmp,string_key))
                 {
-                    if (Z_TYPE_PP(entry) != IS_STRING)
+                    if (IS_STRING != Z_TYPE_PP(entry))
                     {
                         zval strtmp;
                         strtmp = **entry;
