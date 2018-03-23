@@ -116,6 +116,10 @@ seaslog.default_datetime_format = "Y-m-d H:i:s"
 ;Default "%T | %L | %P | %Q | %t | %M"
 seaslog.default_template = "%T | %L | %P | %Q | %t | %M"
 
+;Switch use the logger with folder. 
+;1-Y(Default) 0-N
+seaslog.disting_folder = 1
+
 ;Switch use the logger with type.
 ;1-Y 0-N(Default)
 seaslog.disting_type = 0
@@ -141,6 +145,11 @@ seaslog.buffer_size = 100
 ;   Before the 1.7.0 version, Default 0 (All of them).
 seaslog.level = 8
 
+;Log function recall depth
+;Will affected variable `LineNo` in `%F`
+;Default 0
+seaslog.recall_depth = 0
+
 ;Automatic Record final error with default logger. 
 ;1-Y(Default) 0-N
 seaslog.trace_error = 1
@@ -152,6 +161,10 @@ seaslog.trace_exception = 0
 ;Switch the Record Log Data Store.     
 ;1File 2TCP 3UDP (Switch default 1)
 seaslog.appender = 1
+
+;Record Log Retry Count 
+;Default 0 (Do Not Retry)
+seaslog.appender_retry = 0
 
 ;If you use  Record TCP or UDP, configure this remote ip.
 ;Default "127.0.0.1"
@@ -173,6 +186,8 @@ seaslog.throw_exception = 1
 ;1-On(Default) 0-Off
 seaslog.ignore_warning = 1
 ```
+> `seaslog.disting_folder = 1` Switch use Logger DisTing by folder, it’s meaning SeasLog will create the file deistic by folder, and when this configure close SeasLog will create file use underline connect Logger and Time like default_20180211.log.
+
 > `seaslog.disting_type = 1` Switch use Logger DisTing by type, it’s meaning SeasLog will create the file deistic info\warn\error and the other type.
 
 > `seaslog.disting_by_hour = 1` Switch use Logger DisTing by hour. It’s  meaning SeasLog will create the file each one hour.
@@ -215,7 +230,6 @@ At the same time, many preset variables that are preset by `SeasLog` can be used
 
 * If you custom log template, such as:`seaslog.default_template = "[%T]:%L %P %Q %t %M" `
 * that's will mean,log style was custom as:`[{dateTime}]:{level} {pid} {uniqid} {timeStamp} {logInfo}`
-> Tips：The `%L` must before than the`%M`,that is：the log level must before than the log message。
 
 #### Default variable table
 `SeasLog`The following default variables are provided, which can be used directly in the log template and replaced as a corresponding value when the log is eventually generated.
@@ -231,6 +245,8 @@ At the same time, many preset variables that are preset by `SeasLog` can be used
 * `%m` - Request Method. Such as`Get`; When Cli it's the command script, Such as `/bin/bash`.
 * `%I` - Client IP; When Cli it's `local`. Priority value: HTTP_X_REAL_IP > HTTP_X_FORWARDED_FOR > REMOTE_ADDR
 * `%F` - FileName:LineNo. Such as `UserService.php:118`.
+* `%U` - MemoryUsage. byte. Call `zend_memory_usage`.
+* `%u` - PeakMemoryUsage. byte. Call `zend_memory_peak_usage`。
 * `%C` - `TODO` Class::Action. Such as `UserService::getUserInfo`
 
 ## Use age
@@ -542,7 +558,7 @@ class SeasLog
 ```php
 /usr/local/php/php-7.0.6-zts-debug/bin/php --re seaslog
 
-Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
+Extension [ <persistent> extension #29 SeasLog version 1.8.4 ] {
 
   - Dependencies {
   }
@@ -552,13 +568,16 @@ Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
       Current = '/var/log/www'
     }
     Entry [ seaslog.default_logger <ALL> ]
-      Current = 'defauult'
+      Current = 'default'
     }
     Entry [ seaslog.default_datetime_format <ALL> ]
       Current = 'Y-m-d H:i:s'
     }
     Entry [ seaslog.default_template <ALL> ]
-      Current = '%L | %P | %Q | %t | %T | %M'
+      Current = '%T | %L | %P | %Q | %t | %M'
+    }
+    Entry [ seaslog.disting_folder <ALL> ]
+      Current = '1'
     }
     Entry [ seaslog.disting_type <ALL> ]
       Current = '0'
@@ -567,22 +586,34 @@ Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
       Current = '0'
     }
     Entry [ seaslog.use_buffer <ALL> ]
-      Current = '1'
+      Current = '0'
+    }
+    Entry [ seaslog.trace_notice <ALL> ]
+      Current = '0'
+    }
+    Entry [ seaslog.trace_warning <ALL> ]
+      Current = '0'
     }
     Entry [ seaslog.trace_error <ALL> ]
       Current = '1'
     }
     Entry [ seaslog.trace_exception <ALL> ]
-      Current = '1'
+      Current = '0'
     }
     Entry [ seaslog.buffer_size <ALL> ]
-      Current = '10'
+      Current = '0'
     }
     Entry [ seaslog.level <ALL> ]
+      Current = '8'
+    }
+    Entry [ seaslog.recall_depth <ALL> ]
       Current = '0'
     }
     Entry [ seaslog.appender <ALL> ]
       Current = '1'
+    }
+    Entry [ seaslog.appender_retry <ALL> ]
+      Current = '0'
     }
     Entry [ seaslog.remote_host <ALL> ]
       Current = '127.0.0.1'
@@ -602,7 +633,7 @@ Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
   }
 
   - Constants [16] {
-    Constant [ string SEASLOG_VERSION ] { 1.7.5 }
+    Constant [ string SEASLOG_VERSION ] { 1.8.4 }
     Constant [ string SEASLOG_AUTHOR ] { Chitao.Gao  [ neeke@php.net ] }
     Constant [ string SEASLOG_ALL ] { ALL }
     Constant [ string SEASLOG_DEBUG ] { DEBUG }
@@ -636,7 +667,7 @@ Extension [ <persistent> extension #32 SeasLog version 1.6.9 ] {
       - Static properties [0] {
       }
 
-      - Static methods [19] {
+      - Static methods [21] {
         Method [ <internal:SeasLog> static public method setBasePath ] {
 
           - Parameters [1] {
