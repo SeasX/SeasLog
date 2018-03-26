@@ -97,7 +97,7 @@ $ pecl install seaslog
 ```
 
 ### Windows环境中使用SeasLog
-到PECL/SeasLog主页找到对应的dll进行安装 [PECL/SeasLog Windows Dll](http://pecl.php.net/package/SeasLog/1.6.0/windows)
+到PECL/SeasLog主页找到对应的dll进行安装 [PECL/SeasLog Windows Dll](http://pecl.php.net/package/SeasLog/1.8.4/windows)
 
 ### seaslog.ini的配置
 ```conf
