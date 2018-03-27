@@ -10,6 +10,8 @@ An effective,fast,stable log extension for PHP
 
 [English Document](https://github.com/SeasX/SeasLog/blob/master/README.md)
 
+[日志规范](https://github.com/SeasX/SeasLog/blob/master/Specification/README_zh.md)
+
 > ---
 - **[简介](#简介)**
     - **[为什么使用SeasLog](#为什么使用seaslog)**
