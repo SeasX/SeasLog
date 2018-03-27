@@ -109,7 +109,7 @@ debug信息、细粒度信息事件
 
 <font color=green>［正例］</font>在php.ini或SeasLog.ini中设置seaslog.level值，控制只输出日志级别INFO以上级别的信息。
 
-<font color=blue>［参考］</font> [SeasLog 配置](https://github.com/Neeke/SeasLog/blob/master/README_zh.md#seaslogini%E7%9A%84%E9%85%8D%E7%BD%AE)
+<font color=blue>［参考］</font> [SeasLog 配置](https://github.com/SeasX/SeasLog/blob/master/README_zh.md#seaslogini%E7%9A%84%E9%85%8D%E7%BD%AE)
 
 <font color=green>［正例］</font>在 log4j.configurationFile 指定的配置文件中，为log4j2设置Logger Level，控制只输出日志级别INFO以上级别的信息。
 
