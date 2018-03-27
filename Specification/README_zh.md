@@ -27,7 +27,7 @@
 
 较log4j,logback而言，log4j2的异步模式具有更好的性能。
 
-<font color=blue>［参考］</font>(http://logging.apache.org/log4j/2.x/manual/async.html#AllAsync) [http://logging.apache.org/log4j/2.x/manual/async.html#AllAsync](http://logging.apache.org/log4j/2.x/manual/async.html#AllAsync)
+<font color=blue>［参考］</font>[http://logging.apache.org/log4j/2.x/manual/async.html#AllAsync](http://logging.apache.org/log4j/2.x/manual/async.html#AllAsync)
 
 # 目录名称
 
