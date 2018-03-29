@@ -16,8 +16,7 @@
 
 #if PHP_VERSION_ID >= 70000
 
-# define SEASLOG_MAKE_ZVAL(z) \
-	z = ecalloc(sizeof(zval), 1);
+# define SEASLOG_MAKE_ZVAL(z) zval _stack_zval_##z; z = &(_stack_zval_##z)
 
 # define SEASLOG_ZVAL_STRING(z, s) ZVAL_STRING(z, s)
 # define SEASLOG_ZVAL_STRINGL(z, s, l) ZVAL_STRINGL(z, s, l)
