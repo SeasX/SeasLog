@@ -200,7 +200,7 @@ static int make_log_dir(char *dir TSRMLS_DC)
         dir_len = (int)strlen(dir);
         offset = 0;
 
-        if (!expand_filepath_with_mode(dir, buf, NULL, 0, CWD_EXPAND TSRMLS_CC))
+        if (!SEASLOG_EXPAND_FILE_PATH(dir, buf))
         {
             seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "%s %s", dir, "Invalid path");
             return FAILURE;

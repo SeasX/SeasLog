@@ -35,6 +35,8 @@
 # define SEASLOG_AUTO_GLOBAL(n) zend_is_auto_global_str(ZEND_STRL(n) TSRMLS_CC)
 # define SEASLOG_ZVAL_PTR_DTOR(z) zval_ptr_dtor(z)
 
+# define SEASLOG_EXPAND_FILE_PATH(dir, buf) expand_filepath_with_mode(dir, buf, NULL, 0, CWD_EXPAND)
+
 #else
 
 # define SEASLOG_MAKE_ZVAL(z) MAKE_STD_ZVAL(z)
@@ -54,5 +56,11 @@
 # define SEASLOG_SMART_STR_L(str) str.len
 # define SEASLOG_AUTO_GLOBAL(n) zend_is_auto_global(n, sizeof(n)-1 TSRMLS_CC)
 # define SEASLOG_ZVAL_PTR_DTOR(z) zval_ptr_dtor(&z)
+
+# if PHP_API_VERSION >= 20100412
+# define SEASLOG_EXPAND_FILE_PATH(dir, buf) expand_filepath_with_mode(dir, buf, NULL, 0, CWD_EXPAND TSRMLS_CC)
+# else
+# define SEASLOG_EXPAND_FILE_PATH(dir, buf) expand_filepath_ex(dir, buf, NULL, 0 TSRMLS_CC)
+# endif
 
 #endif
