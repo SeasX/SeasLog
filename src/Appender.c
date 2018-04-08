@@ -37,7 +37,6 @@ static int seaslog_real_log_ex(char *message, int message_len, char *opt, int op
                 written = php_stream_write(stream, message, message_len);
                 if (written == message_len)
                 {
-                    retry = 0;
                     return SUCCESS;
                 }
                 else
