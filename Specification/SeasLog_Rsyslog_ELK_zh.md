@@ -49,7 +49,7 @@ input(type="imfile"
 
 #### 2. 使用 TCP/UDP
 
-SeasLog 中使用 [RFC5424](https://tools.ietf.org/html/rfc5424) 规范远程输出日志
+SeasLog 中使用 [RFC5424](https://www.rfc-editor.org/rfc/rfc5424.txt) 规范远程输出日志
 
 输出日志格式为 `<{PRI}>1 {time_RFC3339} {host_name} {domain_port} {process_id} {logger} {log_message}`
 
@@ -113,7 +113,7 @@ template(name="logformat" type="string" string="app-name: %APP-NAME%\nmsgid: %MS
 :msg,contains,        "seaslog"            ?logfile;logformat
 ```
 
-TCP/UDP 输出, Rsyslog 的 rawmsg 原始日志格式为[RFC5424](https://tools.ietf.org/html/rfc5424) 规范 `<{PRI}>1 {time_RFC3339} {host_name} {domain_port} {process_id} {logger} {log_message}`
+TCP/UDP 输出, Rsyslog 的 rawmsg 原始日志格式为[RFC5424](https://www.rfc-editor.org/rfc/rfc5424.txt) 规范 `<{PRI}>1 {time_RFC3339} {host_name} {domain_port} {process_id} {logger} {log_message}`
 
 ```conf
 app-name: cli
