@@ -389,11 +389,7 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
    Return SeasLog version */
 PHP_FUNCTION(seaslog_get_version)
 {
-    char *str;
-    int len = 0;
-    len = spprintf(&str, 0, "%s", SEASLOG_VERSION);
-
-    SEASLOG_RETURN_STRINGL(str, len);
+    SEASLOG_RETURN_STRINGL(SEASLOG_VERSION, strlen(SEASLOG_VERSION));
 }
 /* }}} */
 
@@ -401,11 +397,7 @@ PHP_FUNCTION(seaslog_get_version)
    Return SeasLog author */
 PHP_FUNCTION(seaslog_get_author)
 {
-    char *str;
-    int len = 0;
-    len = spprintf(&str, 0, "%s", SEASLOG_AUTHOR);
-
-    SEASLOG_RETURN_STRINGL(str, len);
+    SEASLOG_RETURN_STRINGL(SEASLOG_AUTHOR, strlen(SEASLOG_AUTHOR));
 }
 /* }}} */
 
@@ -534,11 +526,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setDatetimeFormat)
    Get SeasLog datetime format style */
 PHP_METHOD(SEASLOG_RES_NAME, getDatetimeFormat)
 {
-    char *str;
-    int len = 0;
-    len = spprintf(&str, 0, "%s", SEASLOG_G(current_datetime_format));
-
-    SEASLOG_RETURN_STRINGL(str, len);
+    SEASLOG_RETURN_STRINGL(SEASLOG_G(current_datetime_format), strlen(SEASLOG_G(current_datetime_format)));
 }
 /* }}} */
 

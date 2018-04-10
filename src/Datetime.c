@@ -20,6 +20,10 @@ static char *seaslog_process_last_sec(int now, int if_first TSRMLS_DC)
     {
         SEASLOG_G(last_sec) = ecalloc(sizeof(last_sec_entry_t), 1);
     }
+    else
+    {
+        efree(SEASLOG_G(last_sec)->real_time);
+    }
 
     SEASLOG_G(last_sec)->sec = now;
     SEASLOG_G(last_sec)->real_time = seaslog_format_date(SEASLOG_G(current_datetime_format), SEASLOG_G(current_datetime_format_len), now TSRMLS_CC);
