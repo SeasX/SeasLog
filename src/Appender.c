@@ -143,7 +143,7 @@ static int appender_handle_tcp_udp(char *message, int message_len, char *level, 
 
     log_content_len = seaslog_spprintf(&log_content TSRMLS_CC, SEASLOG_GENERATE_SYSLOG_INFO, level, 0, message);
 
-    log_len = spprintf(&log_info, 0, "<%d>1 %s %s %s[%s]: %s", PRI, time_RFC3339, SEASLOG_G(host_name), logger->logger, SEASLOG_G(process_id), log_content);
+    log_len = spprintf(&log_info, 0, "<%d>1 %s %s %s %s %s %s", PRI, time_RFC3339, SEASLOG_G(host_name), SEASLOG_G(request_variable)->domain_port, SEASLOG_G(process_id), logger->logger, log_content);
 
     efree(time_RFC3339);
     efree(log_content);
