@@ -24,6 +24,7 @@ static int seaslog_real_log_ex(char *message, int message_len, char *opt, int op
 
     if (!stream)
     {
+        seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "SeasLog Can Not Connection TCP or UDP Server - %s", message);
         return FAILURE;
     }
 
