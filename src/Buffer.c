@@ -249,3 +249,4 @@ static void seaslog_clear_buffer(TSRMLS_D)
 
     }
 }
+

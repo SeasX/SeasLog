@@ -29,3 +29,4 @@ if test "$PHP_SEASLOG" != "no"; then
     dnl PHP_ADD_INCLUDE([$ext_srcdir/include])
 
 fi
+

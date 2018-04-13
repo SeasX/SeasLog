@@ -311,3 +311,4 @@ static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_
 
     return logger_entry;
 }
+

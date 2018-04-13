@@ -324,3 +324,4 @@ static void get_code_filename_line(smart_str *result TSRMLS_DC)
 
 #endif
 }
+

@@ -11,3 +11,4 @@ include_once "config/autoload.php";
 use core\analyzer;
 
 analyzer::run();
+

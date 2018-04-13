@@ -232,3 +232,4 @@ seaslog.remote_host = "192.168.0.2"
 ;接收端口 默认514 (当使用TCP或UDP时必填)
 seaslog.remote_port = 5555
 ```
+

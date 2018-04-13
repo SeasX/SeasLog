@@ -1090,3 +1090,4 @@ test5[level] = SEASLOG_DEBUG
 ;Run this shell every day at three clock in the morning.
 0 3 * * * /path/to/php /path/to/SeasLog/Analyzer/SeasLogAnalyzer.php
 ```
+

@@ -30,3 +30,4 @@ static void seaslog_peak_memory_usage(smart_str *buf TSRMLS_DC)
 
     smart_str_0(buf);
 }
+

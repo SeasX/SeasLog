@@ -305,3 +305,4 @@ static void initREnd(TSRMLS_D)
 {
     SEASLOG_G(initRComplete) = SEASLOG_INITR_COMPLETE_YES;
 }
+

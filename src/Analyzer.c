@@ -220,3 +220,4 @@ static int get_detail(char *log_path, char *level, char *key_word, long start, l
 
     return SUCCESS;
 }
+

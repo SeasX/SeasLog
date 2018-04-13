@@ -294,3 +294,4 @@ static int make_log_dir(char *dir TSRMLS_DC)
         return SUCCESS;
     }
 }
+

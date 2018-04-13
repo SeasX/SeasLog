@@ -29,3 +29,4 @@ var_dump(Seaslog::analyzerDetail(SEASLOG_ERROR, "*", NULL, 1, 1000, SEASLOG_DETA
 
 var_dump(SeasLog::analyzerCount(SEASLOG_DEBUG));
 var_dump(Seaslog::analyzerDetail(SEASLOG_DEBUG));
+

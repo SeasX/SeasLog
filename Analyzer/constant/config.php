@@ -86,3 +86,4 @@ class config
         return (string)config::$config['base']['wait_analyz_log_path'];
     }
 }
+

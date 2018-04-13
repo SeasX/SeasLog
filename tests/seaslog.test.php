@@ -42,3 +42,4 @@ var_dump(SeasLog::getLastLogger());
 
 $buffer = SeasLog::getBuffer();
 var_dump($buffer);
+
