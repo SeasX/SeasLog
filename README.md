@@ -135,6 +135,10 @@ seaslog.use_buffer = 0
 ;The buffer size
 seaslog.buffer_size = 100
 
+;disable buffer in cli
+;1-Y 0-N(Default)
+seaslog.buffer_disabled_in_cli = 1
+
 ;Record logger level. 
 ;0-EMERGENCY 1-ALERT 2-CRITICAL 3-ERROR 4-WARNING 5-NOTICE 6-INFO 7-DEBUG 8-ALL
 ;Default 8 (All of them).
@@ -195,6 +199,8 @@ seaslog.ignore_warning = 1
 > `seaslog.use_buffer = 1` Switch the configure use_buffer on. The use_buffer switch default off. If switch use_buffer on, SeasLog prerecord the log with memory, and them would be rewritten down into the Data Store by request shutdown or php process exit (PHP RSHUTDOWN or PHP MSHUTDOWN).
 
 > `seaslog.buffer_size = 100` Configure the buffer_size with 100.  The buffer_size default 0, it’s meaning don’t use buffer. If buffer_size > 0,   SeasLog will rewritten down into the Data Store when the prerecorded log in memory count >= this buffer_size,and then refresh the memory poll.
+
+> `seaslog.buffer_disabled_in_cli = 1` Switch the configure buffer_disabled_in_cli on. The buffer_disabled_in_cli switch default off. If switch buffer_disabled_in_cli on, and running in cli, seaslog.use_buffer setting will be discarded, Seaslog write to the Data Store IMMEDIATELY.
 
 > `seaslog.level = 8` Default logger level.The Default value was 8, it’s meaning SeasLog will record all of the level.
 
@@ -586,6 +592,9 @@ Extension [ <persistent> extension #29 SeasLog version 1.8.4 ] {
       Current = '0'
     }
     Entry [ seaslog.use_buffer <ALL> ]
+      Current = '0'
+    }
+    Entry [ seaslog.buffer_disabled_in_cli <SYSTEM> ]
       Current = '0'
     }
     Entry [ seaslog.trace_notice <ALL> ]

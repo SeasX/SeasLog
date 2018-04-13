@@ -13,6 +13,7 @@
   | Author: Chitao Gao  <neeke@php.net>                                  |
   +----------------------------------------------------------------------+
 */
+#include "main/SAPI.h"
 
 static void seaslog_init_buffer(TSRMLS_D)
 {
@@ -20,6 +21,12 @@ static void seaslog_init_buffer(TSRMLS_D)
 
     if (SEASLOG_G(use_buffer))
     {
+        if (strcmp(sapi_module.name, "cli") == 0
+            && SEASLOG_G(buffer_disabled_in_cli)
+        ) {
+            SEASLOG_G(use_buffer) = 0;
+            return;
+        }
 
         SEASLOG_G(buffer_count) = 0;
 

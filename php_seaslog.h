@@ -125,6 +125,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool trim_wrap;
     zend_bool throw_exception;
     zend_bool ignore_warning;
+    zend_bool buffer_disabled_in_cli;
 
     zend_bool trace_notice;
     zend_bool trace_warning;

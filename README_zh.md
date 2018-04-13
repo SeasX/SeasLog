@@ -136,6 +136,10 @@ seaslog.use_buffer = 0
 ;buffer中缓冲数量 默认0(不使用buffer_size)
 seaslog.buffer_size = 100
 
+;cli运行时关闭buffer
+;1-Y 0-N(默认)
+seaslog.buffer_disabled_in_cli = 0
+
 ;记录日志级别，数字越大，根据级别记的日志越多。
 ;0-EMERGENCY 1-ALERT 2-CRITICAL 3-ERROR 4-WARNING 5-NOTICE 6-INFO 7-DEBUG 8-ALL
 ;默认8(所有日志)
@@ -188,6 +192,8 @@ seaslog.ignore_warning = 1
 > `seaslog.use_buffer = 1` 开启buffer。默认关闭。当开启此项时，日志预存于内存，当请求结束时(或异常退出时)一次写入文件。
 
 > `seaslog.buffer_size = 100` 设置缓冲数量为100. 默认为0,即无缓冲数量限制.当buffer_size大于0时,缓冲量达到该值则写一次文件.
+
+> `seaslog.buffer_disabled_in_cli = 1` 开启CLI运行时禁用缓存。默认关闭。当开启此项时，CLI运行时将忽略seaslog.use_buffer设定，日志写入文件。
 
 > `seaslog.level = 8` 记录的日志级别.默认为8,即所有日志均记录。
 
@@ -575,6 +581,9 @@ Extension [ <persistent> extension #29 SeasLog version 1.8.4 ] {
       Current = '0'
     }
     Entry [ seaslog.use_buffer <ALL> ]
+      Current = '0'
+    }
+    Entry [ seaslog.buffer_disabled_in_cli <SYSTEM> ]
       Current = '0'
     }
     Entry [ seaslog.trace_notice <ALL> ]
