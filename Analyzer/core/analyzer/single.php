@@ -15,7 +15,9 @@ class single extends analyzerBase
     {
         $analyz = config::getAnalyz();
 
-        if (!is_array($analyz) || count($analyz) < 1) return '';
+        if (!is_array($analyz) || count($analyz) < 1) {
+            return '';
+        }
 
         foreach ($analyz as $rName => $config) {
             self::analyzerRun($rName, $config);
