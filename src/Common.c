@@ -14,6 +14,16 @@
   +----------------------------------------------------------------------+
 */
 
+static int check_sapi_is_cli(TSRMLS_D)
+{
+    if (!strncmp(sapi_module.name , SL_S(SEASLOG_CLI_KEY)))
+    {
+        return SUCCESS;
+    }
+
+    return FAILURE;
+}
+
 static int seaslog_get_level_int(char *level)
 {
     if (strcmp(level, SEASLOG_DEBUG) == 0)

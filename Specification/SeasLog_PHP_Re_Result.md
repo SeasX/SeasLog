@@ -16,7 +16,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.5 ] {
       Current = 'default'
     }
     Entry [ seaslog.default_datetime_format <SYSTEM> ]
-      Current = 'Y-m-d H:i:s.z'
+      Current = 'Y-m-d H:i:s'
     }
     Entry [ seaslog.default_template <SYSTEM> ]
       Current = '%T | %L | %P | %Q | %t | %M'
@@ -28,10 +28,13 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.5 ] {
       Current = '0'
     }
     Entry [ seaslog.disting_by_hour <SYSTEM> ]
-      Current = '1'
+      Current = '0'
     }
     Entry [ seaslog.use_buffer <SYSTEM> ]
-      Current = '1'
+      Current = '0'
+    }
+    Entry [ seaslog.buffer_size <ALL> ]
+      Current = '0'
     }
     Entry [ seaslog.buffer_disabled_in_cli <SYSTEM> ]
       Current = '0'
@@ -47,9 +50,6 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.5 ] {
     }
     Entry [ seaslog.trace_exception <SYSTEM> ]
       Current = '0'
-    }
-    Entry [ seaslog.buffer_size <ALL> ]
-      Current = '100'
     }
     Entry [ seaslog.level <ALL> ]
       Current = '8'
@@ -115,7 +115,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.5 ] {
       - Static properties [0] {
       }
 
-      - Static methods [21] {
+      - Static methods [22] {
         Method [ <internal:SeasLog> static public method setBasePath ] {
 
           - Parameters [1] {
@@ -178,6 +178,9 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.5 ] {
         }
 
         Method [ <internal:SeasLog> static public method getBuffer ] {
+        }
+
+        Method [ <internal:SeasLog> static public method getBufferEnabled ] {
         }
 
         Method [ <internal:SeasLog> static public method flushBuffer ] {

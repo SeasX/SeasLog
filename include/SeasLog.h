@@ -106,6 +106,8 @@
 
 #define SEASLOG_GET_HOST_NULL               "NoHost"
 
+#define SEASLOG_CLI_KEY                     "cli"
+
 #define SEASLOG_LOGGER_SLASH                "/"
 #define SEASLOG_LOGGER_UNDERLINE            "_"
 #define SEASLOG_ASTERISK                    "*"
@@ -182,6 +184,7 @@ typedef struct _request_variable_t
 } request_variable_t;
 
 //Common Toolkit
+static int check_sapi_is_cli(TSRMLS_D);
 static int seaslog_get_level_int(char *level);
 static int check_log_level(int level TSRMLS_DC);
 static char *str_appender(char *str, int str_len);
@@ -221,6 +224,8 @@ static char *make_time_RFC3339(TSRMLS_D);
 
 
 //Buffer
+static void initBufferSwitch(TSRMLS_D);
+static int seaslog_check_buffer_enable(TSRMLS_D);
 static void seaslog_init_buffer(TSRMLS_D);
 static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_DC);
 static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce TSRMLS_DC);

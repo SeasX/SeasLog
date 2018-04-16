@@ -2,9 +2,13 @@
 Check for SeasLog::getBuffer() function.
 --SKIPIF--
 <?php
-if (!extension_loaded('seaslog')) print 'skip';
-if (!ini_get('seaslog.use_buffer')) print 'skip';
-if (intval(ini_get('seaslog.buffer_size')) < 5) print 'skip';
+if (!extension_loaded('seaslog')
+    || !ini_get('seaslog.use_buffer')
+    || intval(ini_get('seaslog.buffer_size')) < 5
+    || !SeasLog::getBufferEnabled())
+{
+    print 'skip';
+}
 ?>
 --FILE--
 <?php
