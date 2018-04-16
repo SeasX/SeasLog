@@ -8,3 +8,4 @@ if (PHP_SEASLOG != "no") {
 
 	AC_DEFINE("HAVE_SEASLOG", 1, "Have Seaslog Support");
 }
+

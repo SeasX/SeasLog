@@ -14,3 +14,4 @@ $logger_2->aaa = 2222;
 var_dump($logger_1->aaa);
 
 var_dump($logger_2);
+

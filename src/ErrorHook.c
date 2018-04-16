@@ -84,3 +84,4 @@ static void recoveryErrorHooks(TSRMLS_D)
         zend_error_cb = old_error_cb;
     }
 }
+

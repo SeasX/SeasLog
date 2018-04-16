@@ -11,3 +11,4 @@ var_dump(SeasLog::getRequestID() == $id);
 --EXPECT--
 bool(true)
 bool(true)
+

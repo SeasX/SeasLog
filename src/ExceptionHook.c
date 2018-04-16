@@ -127,3 +127,4 @@ static void seaslog_throw_exception(int type TSRMLS_DC, const char *format, ...)
     efree(message);
     va_end(args);
 }
+

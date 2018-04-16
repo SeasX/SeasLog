@@ -24,3 +24,4 @@ class single extends analyzerBase
         \SeasLog::info('Single Process Done.', array(), 'SeasLogAnalyzer');
     }
 }
+

@@ -145,6 +145,7 @@ STD_PHP_INI_BOOLEAN("seaslog.disting_folder", "1", PHP_INI_SYSTEM, OnUpdateBool,
 STD_PHP_INI_BOOLEAN("seaslog.disting_type", "0", PHP_INI_SYSTEM, OnUpdateBool, disting_type, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.disting_by_hour", "0", PHP_INI_SYSTEM, OnUpdateBool, disting_by_hour, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_BOOLEAN("seaslog.use_buffer", "0", PHP_INI_SYSTEM, OnUpdateBool, use_buffer, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_BOOLEAN("seaslog.buffer_disabled_in_cli", "0", PHP_INI_SYSTEM, OnUpdateBool, buffer_disabled_in_cli, zend_seaslog_globals, seaslog_globals)
 
 
 STD_PHP_INI_BOOLEAN("seaslog.trace_notice", "0", PHP_INI_ALL, OnUpdateBool, trace_notice, zend_seaslog_globals, seaslog_globals)
@@ -936,3 +937,4 @@ PHP_METHOD(SEASLOG_RES_NAME, emergency)
     seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAM_PASSTHRU, SEASLOG_EMERGENCY, SEASLOG_EMERGENCY_INT);
 }
 /* }}} */
+

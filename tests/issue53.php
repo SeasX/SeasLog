@@ -20,3 +20,4 @@ sleep(60);
 
 SeasLog::error('a error log');
 SeasLog::critical('some thing was critical');
+

@@ -25,3 +25,4 @@ var_dump(SeasLog::info('33333'));
 
 
 var_dump(SeasLog::getBuffer());
+

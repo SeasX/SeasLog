@@ -10,3 +10,4 @@ for($i=0; $i<100; $i++){
 
     var_dump(SeasLog::getBuffer());
 }
+

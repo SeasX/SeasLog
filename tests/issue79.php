@@ -32,3 +32,4 @@ class testBasePathAndLogger
 
 $testObj = new testBasePathAndLogger();
 $testObj->TestRun();
+

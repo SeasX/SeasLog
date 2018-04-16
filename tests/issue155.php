@@ -33,3 +33,4 @@ ini_set('seaslog.recall_depth', 3);
 $fileAndLine->test('should line ' . __LINE__);
 ini_set('seaslog.recall_depth', 4);
 $fileAndLine->test('should line ' . __LINE__);
+

@@ -8,3 +8,4 @@ var_dump(seaslog_get_author() == 'Chitao.Gao  [ neeke@php.net ]');
 ?>
 --EXPECT--
 bool(true)
+

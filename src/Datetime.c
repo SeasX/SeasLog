@@ -111,3 +111,4 @@ static char *make_time_RFC3339(TSRMLS_D)
     int now = (long)time(NULL);
     return seaslog_format_date("Y-m-d\\TH:i:sP", 14, now TSRMLS_CC);
 }
+
