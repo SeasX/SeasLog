@@ -137,7 +137,7 @@ seaslog.buffer_size = 100
 
 ;disable buffer in cli
 ;1-Y 0-N(Default)
-seaslog.buffer_disabled_in_cli = 1
+seaslog.buffer_disabled_in_cli = 0
 
 ;Record logger level. 
 ;0-EMERGENCY 1-ALERT 2-CRITICAL 3-ERROR 4-WARNING 5-NOTICE 6-INFO 7-DEBUG 8-ALL

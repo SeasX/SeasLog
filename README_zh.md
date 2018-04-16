@@ -137,7 +137,7 @@ seaslog.use_buffer = 0
 seaslog.buffer_size = 100
 
 ;cli运行时关闭buffer
-;1-Y 0-N(默认)
+;1是 0否(默认)
 seaslog.buffer_disabled_in_cli = 0
 
 ;记录日志级别，数字越大，根据级别记的日志越多。
