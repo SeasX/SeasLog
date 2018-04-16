@@ -80,8 +80,26 @@
             <dir name="CodeTips">
                 <file role="src" name="SeasLogCodeTips.php"/>
             </dir>
+            <dir name="Specification">
+                <file role="src" name="README_zh.md"/>
+                <file role="src" name="SeasLog_PHP_Re_Result.md"/>
+                <file role="src" name="SeasLog_Rsyslog_ELK_zh.md"/>
+            </dir>
             <dir name="tests">
                 <file role="src" name="001.phpt" />
+                <file role="src" name="002.phpt" />
+                <file role="src" name="003.phpt" />
+                <file role="src" name="004.phpt" />
+                <file role="src" name="005.phpt" />
+                <file role="src" name="006.phpt" />
+                <file role="src" name="007.phpt" />
+                <file role="src" name="008.phpt" />
+                <file role="src" name="009.phpt" />
+                <file role="src" name="010.phpt" />
+                <file role="src" name="011.phpt" />
+                <file role="src" name="012.phpt" />
+                <file role="src" name="013.phpt" />
+                <file role="src" name="014.phpt" />
                 <file role="src" name="seaslog.test.php" />
                 <file role="src" name="SeasLogVSlog4php.png" />
             </dir>
