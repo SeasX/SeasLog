@@ -13,3 +13,4 @@ function SeasLog_AutoLoader($class)
 }
 
 spl_autoload_register('SeasLog_AutoLoader');
+

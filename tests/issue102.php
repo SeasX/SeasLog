@@ -6,3 +6,4 @@
 
 $a = new test();
 var_dump($a);
+

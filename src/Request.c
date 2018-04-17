@@ -135,7 +135,7 @@ static int seaslog_init_request_variable(TSRMLS_D)
 
     SEASLOG_G(request_variable) = ecalloc(sizeof(request_variable_t), 1);
 
-    if (!strncmp(sapi_module.name, "cli", sizeof("cli") - 1) || !strncmp(sapi_module.name, "phpdbg", sizeof("phpdbg") - 1))
+    if (!strncmp(sapi_module.name, SEASLOG_CLI_KEY, sizeof(SEASLOG_CLI_KEY) - 1) || !strncmp(sapi_module.name, SEASLOG_PHPDBG_KEY, sizeof(SEASLOG_PHPDBG_KEY) - 1))
     {
         request_uri = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("SCRIPT_NAME") TSRMLS_CC);
         if (request_uri != NULL && IS_STRING == Z_TYPE_P(request_uri))
@@ -324,3 +324,4 @@ static void get_code_filename_line(smart_str *result TSRMLS_DC)
 
 #endif
 }
+

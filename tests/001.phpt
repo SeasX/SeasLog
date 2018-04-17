@@ -3,7 +3,7 @@ Check for seaslog presence
 --SKIPIF--
 <?php if (!extension_loaded("seaslog")) print "skip"; ?>
 --FILE--
-<?php 
+<?php
 echo "seaslog extension is available";
 /*
 	you can add regression tests for your extension here
@@ -19,3 +19,4 @@ echo "seaslog extension is available";
 ?>
 --EXPECT--
 seaslog extension is available
+

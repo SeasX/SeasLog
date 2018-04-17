@@ -14,13 +14,36 @@
   +----------------------------------------------------------------------+
 */
 
+static void initBufferSwitch(TSRMLS_D)
+{
+    SEASLOG_G(enable_buffer_real) = FAILURE;
+
+    if (SUCCESS == check_sapi_is_cli(TSRMLS_C) && SEASLOG_G(buffer_disabled_in_cli))
+    {
+        SEASLOG_G(enable_buffer_real) = FAILURE;
+        return;
+    }
+
+    if (SEASLOG_G(use_buffer) && SEASLOG_G(buffer_size) > 0)
+    {
+        SEASLOG_G(enable_buffer_real) = SUCCESS;
+        return;
+    }
+
+    return;
+}
+
+static int seaslog_check_buffer_enable(TSRMLS_D)
+{
+    return SUCCESS == SEASLOG_G(enable_buffer_real);
+}
+
 static void seaslog_init_buffer(TSRMLS_D)
 {
     zval *z_buffer;
 
-    if (SEASLOG_G(use_buffer))
+    if (seaslog_check_buffer_enable(TSRMLS_C))
     {
-
         SEASLOG_G(buffer_count) = 0;
 
 #if PHP_VERSION_ID >= 70000
@@ -177,7 +200,7 @@ static void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
     zval **ppzval;
 #endif
 
-    if (SEASLOG_G(use_buffer))
+    if (seaslog_check_buffer_enable(TSRMLS_C))
     {
         if (SEASLOG_G(buffer_count) < 1)
         {
@@ -220,7 +243,7 @@ static void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
 
 static void seaslog_clear_buffer(TSRMLS_D)
 {
-    if (SEASLOG_G(use_buffer))
+    if (seaslog_check_buffer_enable(TSRMLS_C))
     {
         SEASLOG_G(buffer_count) = 0;
 
@@ -242,3 +265,4 @@ static void seaslog_clear_buffer(TSRMLS_D)
 
     }
 }
+

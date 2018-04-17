@@ -6,3 +6,4 @@
 
 $array = ['key' => 'test array'];
 SeasLog::debug('SeasLog Test: {var}', ['{var}' => $array['key']]);
+

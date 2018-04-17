@@ -27,3 +27,4 @@ var_dump(SeasLog::analyzerCount(SEASLOG_DEBUG));
 
 
 var_dump(SEASLOG_ALL);
+
