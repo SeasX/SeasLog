@@ -81,6 +81,7 @@ PHP_METHOD(SEASLOG_RES_NAME, getDatetimeFormat);
 PHP_METHOD(SEASLOG_RES_NAME, analyzerCount);
 PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail);
 PHP_METHOD(SEASLOG_RES_NAME, getBuffer);
+PHP_METHOD(SEASLOG_RES_NAME, getBufferEnabled);
 PHP_METHOD(SEASLOG_RES_NAME, flushBuffer);
 PHP_METHOD(SEASLOG_RES_NAME, log);
 PHP_METHOD(SEASLOG_RES_NAME, debug);
@@ -122,6 +123,8 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool disting_type;
     zend_bool disting_by_hour;
     zend_bool use_buffer;
+    zend_bool buffer_disabled_in_cli;
+    zend_bool enable_buffer_real;
     zend_bool trim_wrap;
     zend_bool throw_exception;
     zend_bool ignore_warning;

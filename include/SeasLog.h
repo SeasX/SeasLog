@@ -39,8 +39,8 @@
 
 #define SEASLOG_RES_NAME                    "SeasLog"
 #define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                     "1.8.4"
-#define SEASLOG_VERSION_ID                  10800
+#define SEASLOG_VERSION                     "1.8.5"
+#define SEASLOG_VERSION_ID                  10805
 #define SEASLOG_SUPPORTS                    "https://github.com/SeasX/SeasLog"
 
 #define SEASLOG_ALL                         "ALL"
@@ -105,6 +105,9 @@
 #define SEASLOG_EXCEPTION_WINDOWS_ERROR     4407
 
 #define SEASLOG_GET_HOST_NULL               "NoHost"
+
+#define SEASLOG_CLI_KEY                     "cli"
+#define SEASLOG_PHPDBG_KEY                  "phpdbg"
 
 #define SEASLOG_LOGGER_SLASH                "/"
 #define SEASLOG_LOGGER_UNDERLINE            "_"
@@ -182,6 +185,7 @@ typedef struct _request_variable_t
 } request_variable_t;
 
 //Common Toolkit
+static int check_sapi_is_cli(TSRMLS_D);
 static int seaslog_get_level_int(char *level);
 static int check_log_level(int level TSRMLS_DC);
 static char *str_appender(char *str, int str_len);
@@ -221,6 +225,8 @@ static char *make_time_RFC3339(TSRMLS_D);
 
 
 //Buffer
+static void initBufferSwitch(TSRMLS_D);
+static int seaslog_check_buffer_enable(TSRMLS_D);
 static void seaslog_init_buffer(TSRMLS_D);
 static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_DC);
 static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce TSRMLS_DC);
@@ -286,3 +292,4 @@ static void seaslog_memory_usage(smart_str *buf TSRMLS_DC);
 static void seaslog_peak_memory_usage(smart_str *buf TSRMLS_DC);
 
 #endif /* _SEASLOG_H_ */
+

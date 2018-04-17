@@ -135,6 +135,10 @@ seaslog.use_buffer = 0
 ;The buffer size
 seaslog.buffer_size = 100
 
+;disable buffer in cli
+;1-Y 0-N(Default)
+seaslog.buffer_disabled_in_cli = 0
+
 ;Record logger level. 
 ;0-EMERGENCY 1-ALERT 2-CRITICAL 3-ERROR 4-WARNING 5-NOTICE 6-INFO 7-DEBUG 8-ALL
 ;Default 8 (All of them).
@@ -149,6 +153,14 @@ seaslog.level = 8
 ;Will affected variable `LineNo` in `%F`
 ;Default 0
 seaslog.recall_depth = 0
+
+;Automatic Record notice with default logger
+;1-Y 0-N(Default)
+seaslog.trace_notice = 0
+
+;Automatic Record warning with default logger
+;1-Y 0-N(Default)
+seaslog.trace_warning = 0
 
 ;Automatic Record final error with default logger. 
 ;1-Y(Default) 0-N
@@ -195,6 +207,8 @@ seaslog.ignore_warning = 1
 > `seaslog.use_buffer = 1` Switch the configure use_buffer on. The use_buffer switch default off. If switch use_buffer on, SeasLog prerecord the log with memory, and them would be rewritten down into the Data Store by request shutdown or php process exit (PHP RSHUTDOWN or PHP MSHUTDOWN).
 
 > `seaslog.buffer_size = 100` Configure the buffer_size with 100.  The buffer_size default 0, it’s meaning don’t use buffer. If buffer_size > 0,   SeasLog will rewritten down into the Data Store when the prerecorded log in memory count >= this buffer_size,and then refresh the memory poll.
+
+> `seaslog.buffer_disabled_in_cli = 1` Switch the configure buffer_disabled_in_cli on. The buffer_disabled_in_cli switch default off. If switch buffer_disabled_in_cli on, and running in cli, seaslog.use_buffer setting will be discarded, Seaslog write to the Data Store IMMEDIATELY.
 
 > `seaslog.level = 8` Default logger level.The Default value was 8, it’s meaning SeasLog will record all of the level.
 
@@ -553,286 +567,10 @@ class SeasLog
 
 ```
 
+
+
 ### PHP Re result
-
-```php
-/usr/local/php/php-7.0.6-zts-debug/bin/php --re seaslog
-
-Extension [ <persistent> extension #29 SeasLog version 1.8.4 ] {
-
-  - Dependencies {
-  }
-
-  - INI {
-    Entry [ seaslog.default_basepath <ALL> ]
-      Current = '/var/log/www'
-    }
-    Entry [ seaslog.default_logger <ALL> ]
-      Current = 'default'
-    }
-    Entry [ seaslog.default_datetime_format <ALL> ]
-      Current = 'Y-m-d H:i:s'
-    }
-    Entry [ seaslog.default_template <ALL> ]
-      Current = '%T | %L | %P | %Q | %t | %M'
-    }
-    Entry [ seaslog.disting_folder <ALL> ]
-      Current = '1'
-    }
-    Entry [ seaslog.disting_type <ALL> ]
-      Current = '0'
-    }
-    Entry [ seaslog.disting_by_hour <ALL> ]
-      Current = '0'
-    }
-    Entry [ seaslog.use_buffer <ALL> ]
-      Current = '0'
-    }
-    Entry [ seaslog.trace_notice <ALL> ]
-      Current = '0'
-    }
-    Entry [ seaslog.trace_warning <ALL> ]
-      Current = '0'
-    }
-    Entry [ seaslog.trace_error <ALL> ]
-      Current = '1'
-    }
-    Entry [ seaslog.trace_exception <ALL> ]
-      Current = '0'
-    }
-    Entry [ seaslog.buffer_size <ALL> ]
-      Current = '0'
-    }
-    Entry [ seaslog.level <ALL> ]
-      Current = '8'
-    }
-    Entry [ seaslog.recall_depth <ALL> ]
-      Current = '0'
-    }
-    Entry [ seaslog.appender <ALL> ]
-      Current = '1'
-    }
-    Entry [ seaslog.appender_retry <ALL> ]
-      Current = '0'
-    }
-    Entry [ seaslog.remote_host <ALL> ]
-      Current = '127.0.0.1'
-    }
-    Entry [ seaslog.remote_port <ALL> ]
-      Current = '514'
-    }
-    Entry [ seaslog.trim_wrap <ALL> ]
-      Current = '0'
-    }
-    Entry [ seaslog.throw_exception <ALL> ]
-      Current = '1'
-    }
-    Entry [ seaslog.ignore_warning <ALL> ]
-      Current = '1'
-    }
-  }
-
-  - Constants [16] {
-    Constant [ string SEASLOG_VERSION ] { 1.8.4 }
-    Constant [ string SEASLOG_AUTHOR ] { Chitao.Gao  [ neeke@php.net ] }
-    Constant [ string SEASLOG_ALL ] { ALL }
-    Constant [ string SEASLOG_DEBUG ] { DEBUG }
-    Constant [ string SEASLOG_INFO ] { INFO }
-    Constant [ string SEASLOG_NOTICE ] { NOTICE }
-    Constant [ string SEASLOG_WARNING ] { WARNING }
-    Constant [ string SEASLOG_ERROR ] { ERROR }
-    Constant [ string SEASLOG_CRITICAL ] { CRITICAL }
-    Constant [ string SEASLOG_ALERT ] { ALERT }
-    Constant [ string SEASLOG_EMERGENCY ] { EMERGENCY }
-    Constant [ integer SEASLOG_DETAIL_ORDER_ASC ] { 1 }
-    Constant [ integer SEASLOG_DETAIL_ORDER_DESC ] { 2 }
-    Constant [ integer SEASLOG_APPENDER_FILE ] { 1 }
-    Constant [ integer SEASLOG_APPENDER_TCP ] { 2 }
-    Constant [ integer SEASLOG_APPENDER_UDP ] { 3 }
-  }
-
-  - Functions {
-    Function [ <internal:SeasLog> function seaslog_get_version ] {
-    }
-    Function [ <internal:SeasLog> function seaslog_get_author ] {
-    }
-  }
-
-  - Classes [1] {
-    Class [ <internal:SeasLog> class SeasLog ] {
-
-      - Constants [0] {
-      }
-
-      - Static properties [0] {
-      }
-
-      - Static methods [21] {
-        Method [ <internal:SeasLog> static public method setBasePath ] {
-
-          - Parameters [1] {
-            Parameter #0 [ <required> $base_path ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method getBasePath ] {
-        }
-
-        Method [ <internal:SeasLog> static public method setLogger ] {
-
-          - Parameters [1] {
-            Parameter #0 [ <required> $logger ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method getLastLogger ] {
-        }
-
-        Method [ <internal:SeasLog> static public method setRequestID ] {
-
-          - Parameters [1] {
-            Parameter #0 [ <required> $request_id ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method getRequestID ] {
-        }
-
-        Method [ <internal:SeasLog> static public method setDatetimeFormat ] {
-
-          - Parameters [1] {
-            Parameter #0 [ <required> $format ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method getDatetimeFormat ] {
-        }
-
-        Method [ <internal:SeasLog> static public method analyzerCount ] {
-
-          - Parameters [3] {
-            Parameter #0 [ <required> $level ]
-            Parameter #1 [ <optional> $log_path ]
-            Parameter #2 [ <optional> $key_word ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method analyzerDetail ] {
-
-          - Parameters [6] {
-            Parameter #0 [ <required> $level ]
-            Parameter #1 [ <optional> $log_path ]
-            Parameter #2 [ <optional> $key_word ]
-            Parameter #3 [ <optional> $start ]
-            Parameter #4 [ <optional> $limit ]
-            Parameter #5 [ <optional> $order ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method getBuffer ] {
-        }
-
-        Method [ <internal:SeasLog> static public method flushBuffer ] {
-        }
-
-        Method [ <internal:SeasLog> static public method log ] {
-
-          - Parameters [4] {
-            Parameter #0 [ <required> $level ]
-            Parameter #1 [ <optional> $message ]
-            Parameter #2 [ <optional> $content ]
-            Parameter #3 [ <optional> $logger ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method debug ] {
-
-          - Parameters [3] {
-            Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
-            Parameter #2 [ <optional> $logger ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method info ] {
-
-          - Parameters [3] {
-            Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
-            Parameter #2 [ <optional> $logger ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method notice ] {
-
-          - Parameters [3] {
-            Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
-            Parameter #2 [ <optional> $logger ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method warning ] {
-
-          - Parameters [3] {
-            Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
-            Parameter #2 [ <optional> $logger ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method error ] {
-
-          - Parameters [3] {
-            Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
-            Parameter #2 [ <optional> $logger ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method critical ] {
-
-          - Parameters [3] {
-            Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
-            Parameter #2 [ <optional> $logger ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method alert ] {
-
-          - Parameters [3] {
-            Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
-            Parameter #2 [ <optional> $logger ]
-          }
-        }
-
-        Method [ <internal:SeasLog> static public method emergency ] {
-
-          - Parameters [3] {
-            Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
-            Parameter #2 [ <optional> $logger ]
-          }
-        }
-      }
-
-      - Properties [0] {
-      }
-
-      - Methods [2] {
-        Method [ <internal:SeasLog, ctor> public method __construct ] {
-        }
-
-        Method [ <internal:SeasLog, dtor> public method __destruct ] {
-        }
-      }
-    }
-  }
-}
-
-```
+[SeasLog_PHP_Re_Result](https://github.com/SeasX/SeasLog/blob/master/Specification/SeasLog_PHP_Re_Result.md)
 
 
 ### The useage of seaslog logger
@@ -1081,3 +819,4 @@ test5[level] = SEASLOG_DEBUG
 ;Run this shell every day at three clock in the morning.
 0 3 * * * /path/to/php /path/to/SeasLog/Analyzer/SeasLogAnalyzer.php
 ```
+

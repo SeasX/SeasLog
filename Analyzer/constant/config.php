@@ -20,10 +20,12 @@ class config
      */
     static public function getConfig()
     {
-        if (count(self::$config) > 1) return self::$config;
+        if (count(self::$config) > 1) {
+            return self::$config;
+        }
 
         $ini    = BASE_PATH . '/config/config.ini';
-        $config = @parse_ini_file($ini, TRUE);
+        $config = @parse_ini_file($ini, true);
 
         if (!is_array($config) || count($config) < 1) {
             throw new \Exception($ini . ' is null');
@@ -41,11 +43,11 @@ class config
     static public function getForkCount()
     {
         if (!array_key_exists('fork', config::$config) || !array_key_exists('fork_open', config::$config['fork'])) {
-            return FALSE;
+            return false;
         }
 
         if (!config::$config['fork']['fork_open'] || intval(config::$config['fork']['fork_count']) < 1) {
-            return FALSE;
+            return false;
         }
 
         return intval(config::$config['fork']['fork_count']);
@@ -57,7 +59,9 @@ class config
      */
     static public function getAnalyzEmail()
     {
-        if (!array_key_exists('warning', config::$config) || !array_key_exists('email', config::$config['warning'])) return array();
+        if (!array_key_exists('warning', config::$config) || !array_key_exists('email', config::$config['warning'])) {
+            return array();
+        }
 
         $emailConfig             = config::$config['warning']['email'];
         $emailConfig['mail_to']  = explode(',', $emailConfig['mail_to']);
@@ -73,7 +77,10 @@ class config
      */
     static public function getAnalyz()
     {
-        if (!array_key_exists('analyz', config::$config) || !is_array(config::$config['analyz'])) return array();
+        if (!array_key_exists('analyz', config::$config) || !is_array(config::$config['analyz'])) {
+            return array();
+        }
+
         return (array)config::$config['analyz'];
     }
 
@@ -86,3 +93,4 @@ class config
         return (string)config::$config['base']['wait_analyz_log_path'];
     }
 }
+

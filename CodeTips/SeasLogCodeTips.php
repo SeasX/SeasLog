@@ -37,7 +37,7 @@ class SeasLog
      */
     static public function setBasePath($basePath)
     {
-        return TRUE;
+        return true;
     }
 
     /**
@@ -52,12 +52,14 @@ class SeasLog
 
     /**
      * 设置本次请求标识
+     *
      * @param string
+     *
      * @return bool
      */
     static public function setRequestID($request_id)
     {
-        return TRUE;
+        return true;
     }
 
     /**
@@ -71,13 +73,14 @@ class SeasLog
 
     /**
      * 设置模块目录
+     *
      * @param $module
      *
      * @return bool
      */
     static public function setLogger($module)
     {
-        return TRUE;
+        return true;
     }
 
     /**
@@ -91,13 +94,14 @@ class SeasLog
 
     /**
      * 设置DatetimeFormat配置
+     *
      * @param $format
      *
      * @return bool
      */
     static public function setDatetimeFormat($format)
     {
-        return TRUE;
+        return true;
     }
 
     /**
@@ -111,13 +115,14 @@ class SeasLog
 
     /**
      * 统计所有类型（或单个类型）行数
+     *
      * @param string $level
      * @param string $log_path
-     * @param null $key_word
+     * @param null   $key_word
      *
      * @return array | long
      */
-    static public function analyzerCount($level = 'all', $log_path = '*', $key_word = NULL)
+    static public function analyzerCount($level = 'all', $log_path = '*', $key_word = null)
     {
         return array();
     }
@@ -127,14 +132,14 @@ class SeasLog
      *
      * @param        $level
      * @param string $log_path
-     * @param null $key_word
-     * @param int $start
-     * @param int $limit
+     * @param null   $key_word
+     * @param int    $start
+     * @param int    $limit
      * @param        $order
      *
      * @return array
      */
-    static public function analyzerDetail($level = SEASLOG_INFO, $log_path = '*', $key_word = NULL, $start = 1, $limit = 20, $order = SEASLOG_DETAIL_ORDER_ASC)
+    static public function analyzerDetail($level = SEASLOG_INFO, $log_path = '*', $key_word = null, $start = 1, $limit = 20, $order = SEASLOG_DETAIL_ORDER_ASC)
     {
         return array();
     }
@@ -156,14 +161,14 @@ class SeasLog
      */
     static public function flushBuffer()
     {
-        return TRUE;
+        return true;
     }
 
     /**
      * 记录debug日志
      *
      * @param        $message
-     * @param array $content
+     * @param array  $content
      * @param string $module
      */
     static public function debug($message, array $content = array(), $module = '')
@@ -175,7 +180,7 @@ class SeasLog
      * 记录info日志
      *
      * @param        $message
-     * @param array $content
+     * @param array  $content
      * @param string $module
      */
     static public function info($message, array $content = array(), $module = '')
@@ -187,7 +192,7 @@ class SeasLog
      * 记录notice日志
      *
      * @param        $message
-     * @param array $content
+     * @param array  $content
      * @param string $module
      */
     static public function notice($message, array $content = array(), $module = '')
@@ -199,7 +204,7 @@ class SeasLog
      * 记录warning日志
      *
      * @param        $message
-     * @param array $content
+     * @param array  $content
      * @param string $module
      */
     static public function warning($message, array $content = array(), $module = '')
@@ -211,7 +216,7 @@ class SeasLog
      * 记录error日志
      *
      * @param        $message
-     * @param array $content
+     * @param array  $content
      * @param string $module
      */
     static public function error($message, array $content = array(), $module = '')
@@ -223,7 +228,7 @@ class SeasLog
      * 记录critical日志
      *
      * @param        $message
-     * @param array $content
+     * @param array  $content
      * @param string $module
      */
     static public function critical($message, array $content = array(), $module = '')
@@ -235,7 +240,7 @@ class SeasLog
      * 记录alert日志
      *
      * @param        $message
-     * @param array $content
+     * @param array  $content
      * @param string $module
      */
     static public function alert($message, array $content = array(), $module = '')
@@ -247,7 +252,7 @@ class SeasLog
      * 记录emergency日志
      *
      * @param        $message
-     * @param array $content
+     * @param array  $content
      * @param string $module
      */
     static public function emergency($message, array $content = array(), $module = '')
@@ -257,9 +262,10 @@ class SeasLog
 
     /**
      * 通用日志方法
+     *
      * @param        $level
      * @param        $message
-     * @param array $content
+     * @param array  $content
      * @param string $module
      */
     static public function log($level, $message, array $content = array(), $module = '')
@@ -267,3 +273,4 @@ class SeasLog
 
     }
 }
+

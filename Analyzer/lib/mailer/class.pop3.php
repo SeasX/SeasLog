@@ -76,34 +76,36 @@ class POP3
     public function __construct()
     {
         $this->pop_conn  = 0;
-        $this->connected = FALSE;
-        $this->error     = NULL;
+        $this->connected = false;
+        $this->error     = null;
     }
 
     /**
      * Combination of public events - connect, login, disconnect
      * @access public
-     * @param string $host
+     *
+     * @param string   $host
      * @param bool|int $port
      * @param bool|int $tval
-     * @param string $username
-     * @param string $password
-     * @param int $debug_level
+     * @param string   $username
+     * @param string   $password
+     * @param int      $debug_level
+     *
      * @return bool
      */
-    public function Authorise($host, $port = FALSE, $tval = FALSE, $username, $password, $debug_level = 0)
+    public function Authorise($host, $port = false, $tval = false, $username, $password, $debug_level = 0)
     {
         $this->host = $host;
 
         //  If no port value is passed, retrieve it
-        if ($port == FALSE) {
+        if ($port == false) {
             $this->port = $this->POP3_PORT;
         } else {
             $this->port = $port;
         }
 
         //  If no port value is passed, retrieve it
-        if ($tval == FALSE) {
+        if ($tval == false) {
             $this->tval = $this->POP3_TIMEOUT;
         } else {
             $this->tval = $tval;
@@ -114,7 +116,7 @@ class POP3
         $this->password = $password;
 
         //  Refresh the error log
-        $this->error = NULL;
+        $this->error = null;
 
         //  Connect
         $result = $this->Connect($this->host, $this->port, $this->tval);
@@ -125,7 +127,7 @@ class POP3
             if ($login_result) {
                 $this->Disconnect();
 
-                return TRUE;
+                return true;
             }
 
         }
@@ -133,22 +135,24 @@ class POP3
         //  We need to disconnect regardless if the login succeeded
         $this->Disconnect();
 
-        return FALSE;
+        return false;
     }
 
     /**
      * Connect to the POP3 server
      * @access public
-     * @param string $host
+     *
+     * @param string   $host
      * @param bool|int $port
-     * @param integer $tval
+     * @param integer  $tval
+     *
      * @return boolean
      */
-    public function Connect($host, $port = FALSE, $tval = 30)
+    public function Connect($host, $port = false, $tval = 30)
     {
         //  Are we already connected?
         if ($this->connected) {
-            return TRUE;
+            return true;
         }
 
         /*
@@ -174,19 +178,19 @@ class POP3
         }
 
         //  Did we connect?
-        if ($this->pop_conn == FALSE) {
+        if ($this->pop_conn == false) {
             //  It would appear not...
             $this->error = array(
                 'error'  => "Failed to connect to server $host on port $port",
                 'errno'  => $errno,
-                'errstr' => $errstr
+                'errstr' => $errstr,
             );
 
             if ($this->do_debug >= 1) {
                 $this->displayErrors();
             }
 
-            return FALSE;
+            return false;
         }
 
         //  Increase the stream time-out
@@ -207,8 +211,9 @@ class POP3
         //  Check for the +OK
         if ($this->checkResponse($pop3_response)) {
             //  The connection is established and the POP3 server is talking
-            $this->connected = TRUE;
-            return TRUE;
+            $this->connected = true;
+
+            return true;
         }
 
     }
@@ -216,13 +221,15 @@ class POP3
     /**
      * Login to the POP3 server (does not support APOP yet)
      * @access public
+     *
      * @param string $username
      * @param string $password
+     *
      * @return boolean
      */
     public function Login($username = '', $password = '')
     {
-        if ($this->connected == FALSE) {
+        if ($this->connected == false) {
             $this->error = 'Not connected to POP3 server';
 
             if ($this->do_debug >= 1) {
@@ -251,12 +258,12 @@ class POP3
             $pop3_response = $this->getResponse();
 
             if ($this->checkResponse($pop3_response)) {
-                return TRUE;
+                return true;
             } else {
-                return FALSE;
+                return false;
             }
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -279,7 +286,9 @@ class POP3
      * Get the socket response back.
      * $size is the maximum number of bytes to retrieve
      * @access private
+     *
      * @param integer $size
+     *
      * @return string
      */
     private function getResponse($size = 128)
@@ -292,7 +301,9 @@ class POP3
     /**
      * Send a string down the open socket connection to the POP3 server
      * @access private
+     *
      * @param string $string
+     *
      * @return integer
      */
     private function sendString($string)
@@ -305,7 +316,9 @@ class POP3
     /**
      * Checks the POP3 server response for +OK or -ERR
      * @access private
+     *
      * @param string $string
+     *
      * @return boolean
      */
     private function checkResponse($string)
@@ -314,16 +327,16 @@ class POP3
             $this->error = array(
                 'error'  => "Server reported an error: $string",
                 'errno'  => 0,
-                'errstr' => ''
+                'errstr' => '',
             );
 
             if ($this->do_debug >= 1) {
                 $this->displayErrors();
             }
 
-            return FALSE;
+            return false;
         } else {
-            return TRUE;
+            return true;
         }
 
     }
@@ -346,9 +359,10 @@ class POP3
     /**
      * Takes over from PHP for the socket warning handler
      * @access private
+     *
      * @param integer $errno
-     * @param string $errstr
-     * @param string $errfile
+     * @param string  $errstr
+     * @param string  $errfile
      * @param integer $errline
      */
     private function catchWarning($errno, $errstr, $errfile, $errline)
@@ -356,9 +370,10 @@ class POP3
         $this->error[] = array(
             'error'  => "Connecting to the POP3 server raised a PHP warning: ",
             'errno'  => $errno,
-            'errstr' => $errstr
+            'errstr' => $errstr,
         );
     }
 
     //  End of class
 }
+

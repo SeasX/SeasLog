@@ -143,7 +143,7 @@ static int appender_handle_tcp_udp(char *message, int message_len, char *level, 
 
     log_content_len = seaslog_spprintf(&log_content TSRMLS_CC, SEASLOG_GENERATE_SYSLOG_INFO, level, 0, message);
 
-    log_len = spprintf(&log_info, 0, "<%d>1 %s %s %s[%s]: %s", PRI, time_RFC3339, SEASLOG_G(host_name), logger->logger, SEASLOG_G(process_id), log_content);
+    log_len = spprintf(&log_info, 0, "<%d>1 %s %s %s %s %s %s", PRI, time_RFC3339, SEASLOG_G(host_name), SEASLOG_G(request_variable)->domain_port, SEASLOG_G(process_id), logger->logger, log_content);
 
     efree(time_RFC3339);
     efree(log_content);
@@ -160,7 +160,7 @@ static int appender_handle_tcp_udp(char *message, int message_len, char *level, 
 
 static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_file_path, int log_file_path_len, zend_class_entry *ce TSRMLS_DC)
 {
-    if (SEASLOG_G(use_buffer))
+    if (seaslog_check_buffer_enable(TSRMLS_C))
     {
         seaslog_buffer_set(message, message_len, log_file_path, log_file_path_len, ce TSRMLS_CC);
         return SUCCESS;
@@ -199,7 +199,7 @@ static int make_log_dir(char *dir TSRMLS_DC)
         dir_len = (int)strlen(dir);
         offset = 0;
 
-        if (!expand_filepath_with_mode(dir, buf, NULL, 0, CWD_EXPAND TSRMLS_CC))
+        if (!SEASLOG_EXPAND_FILE_PATH(dir, buf))
         {
             seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "%s %s", dir, "Invalid path");
             return FAILURE;
@@ -294,3 +294,4 @@ static int make_log_dir(char *dir TSRMLS_DC)
         return SUCCESS;
     }
 }
+

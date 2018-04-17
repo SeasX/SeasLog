@@ -39,3 +39,4 @@ while (True) {
     sleep(1);
     test_log();
 }
+
