@@ -107,6 +107,7 @@
 #define SEASLOG_GET_HOST_NULL               "NoHost"
 
 #define SEASLOG_CLI_KEY                     "cli"
+#define SEASLOG_PHPDBG_KEY                  "phpdbg"
 
 #define SEASLOG_LOGGER_SLASH                "/"
 #define SEASLOG_LOGGER_UNDERLINE            "_"
