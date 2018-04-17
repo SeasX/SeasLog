@@ -155,6 +155,12 @@ seaslog.level = 8
 ;默认0
 seaslog.recall_depth = 0
 
+;自动记录notice 默认0(关闭)
+seaslog.trace_notice = 0
+
+;自动记录warning 默认0(开启)
+seaslog.trace_warning = 0
+
 ;自动记录错误 默认1(开启)
 seaslog.trace_error = 1
 

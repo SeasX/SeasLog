@@ -154,6 +154,14 @@ seaslog.level = 8
 ;Default 0
 seaslog.recall_depth = 0
 
+;Automatic Record notice with default logger
+;1-Y 0-N(Default)
+seaslog.trace_notice = 0
+
+;Automatic Record warning with default logger
+;1-Y 0-N(Default)
+seaslog.trace_warning = 0
+
 ;Automatic Record final error with default logger. 
 ;1-Y(Default) 0-N
 seaslog.trace_error = 1
