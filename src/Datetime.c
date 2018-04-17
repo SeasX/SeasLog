@@ -37,6 +37,10 @@ static char *seaslog_process_last_min(int now, int if_first TSRMLS_DC)
     {
         SEASLOG_G(last_min) = ecalloc(sizeof(last_min_entry_t), 1);
     }
+    else
+    {
+        efree(SEASLOG_G(last_min)->real_time);
+    }
 
     SEASLOG_G(last_min)->sec = now;
 
@@ -73,7 +77,6 @@ static char *make_real_date(TSRMLS_D)
     int now = (long)time(NULL);
     if (now > SEASLOG_G(last_min)->sec + 60)
     {
-        efree(SEASLOG_G(last_min)->real_time);
         return seaslog_process_last_min(now, SEASLOG_INIT_FIRST_NO TSRMLS_CC);
     }
 
@@ -85,7 +88,6 @@ static char *make_real_time(TSRMLS_D)
     int now = (long)time(NULL);
     if (now > SEASLOG_G(last_sec)->sec)
     {
-        efree(SEASLOG_G(last_sec)->real_time);
         return seaslog_process_last_sec(now, SEASLOG_INIT_FIRST_NO TSRMLS_CC);
     }
 
