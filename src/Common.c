@@ -16,7 +16,7 @@
 
 static int check_sapi_is_cli(TSRMLS_D)
 {
-    if (!strncmp(sapi_module.name , SL_S(SEASLOG_CLI_KEY)))
+    if (!strncmp(sapi_module.name , SEASLOG_CLI_KEY, sizeof(SEASLOG_CLI_KEY) - 1))
     {
         return SUCCESS;
     }
