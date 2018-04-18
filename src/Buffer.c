@@ -20,7 +20,6 @@ static void initBufferSwitch(TSRMLS_D)
 
     if (SUCCESS == check_sapi_is_cli(TSRMLS_C) && SEASLOG_G(buffer_disabled_in_cli))
     {
-        SEASLOG_G(enable_buffer_real) = FAILURE;
         return;
     }
 

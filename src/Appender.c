@@ -46,6 +46,19 @@ static int seaslog_real_log_ex(char *message, int message_len, char *opt, int op
             }
         }
 
+        switch SEASLOG_G(appender)
+        {
+        case SEASLOG_APPENDER_TCP:
+            seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "SeasLog Can Not Send Data To TCP Server - tcp://%s:%d - %s", SEASLOG_G(remote_host), SEASLOG_G(remote_port), message);
+            break;
+        case SEASLOG_APPENDER_UDP:
+            seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "SeasLog Can Not Send Data To UDP Server - udp://%s:%d - %s", SEASLOG_G(remote_host), SEASLOG_G(remote_port), message);
+            break;
+        case SEASLOG_APPENDER_FILE:
+        default:
+            seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "SeasLog Can Not Send Data To File - %s - %s", opt, message);
+        }
+
         return FAILURE;
     }
 

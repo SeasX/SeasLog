@@ -186,6 +186,10 @@ seaslog.remote_host = "127.0.0.1"
 ;Default 514
 seaslog.remote_port = 514
 
+;If you use Record TCP or UDP, configure this remote timeout.
+;Default 1 second
+seaslog.remote_timeout = 1
+
 ;Trim the \n and \r in log message.
 ;1-On 0-Off(Default)
 seaslog.trim_wrap = 0

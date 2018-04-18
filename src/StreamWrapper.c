@@ -30,7 +30,7 @@ static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
     {
     case SEASLOG_APPENDER_TCP:
         reslen = spprintf(&res, 0, "tcp://%s:%d", SEASLOG_G(remote_host), SEASLOG_G(remote_port));
-        stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, 0, NULL, NULL, NULL);
+        stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, &SEASLOG_G(remote_timeout_real), NULL, NULL, NULL);
 
         if (stream == NULL)
         {
@@ -44,7 +44,7 @@ static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
 
     case SEASLOG_APPENDER_UDP:
         reslen = spprintf(&res, 0, "udp://%s:%d", SEASLOG_G(remote_host), SEASLOG_G(remote_port));
-        stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, 0, NULL, NULL, NULL);
+        stream = php_stream_xport_create(res, reslen, REPORT_ERRORS, STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT, 0, &SEASLOG_G(remote_timeout_real), NULL, NULL, NULL);
 
         if (stream == NULL)
         {

@@ -69,6 +69,9 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.5 ] {
     Entry [ seaslog.remote_port <ALL> ]
       Current = '514'
     }
+    Entry [ seaslog.remote_timeout <SYSTEM> ]
+      Current = '1'
+    }
     Entry [ seaslog.trim_wrap <ALL> ]
       Current = '0'
     }

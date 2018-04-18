@@ -164,6 +164,7 @@ STD_PHP_INI_ENTRY("seaslog.appender", "1", PHP_INI_SYSTEM, OnUpdateLongGEZero, a
 STD_PHP_INI_ENTRY("seaslog.appender_retry", "0", PHP_INI_ALL, OnUpdateLongGEZero, appender_retry, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.remote_host", "127.0.0.1", PHP_INI_ALL, OnUpdateString, remote_host, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.remote_port", "514", PHP_INI_ALL, OnUpdateLongGEZero, remote_port, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.remote_timeout", "1", PHP_INI_SYSTEM, OnUpdateLongGEZero, remote_timeout, zend_seaslog_globals, seaslog_globals)
 
 STD_PHP_INI_BOOLEAN("seaslog.trim_wrap", "0", PHP_INI_ALL, OnUpdateBool, trim_wrap, zend_seaslog_globals, seaslog_globals)
 
@@ -224,6 +225,7 @@ PHP_MINIT_FUNCTION(seaslog)
     initErrorHooks(TSRMLS_C);
     initExceptionHooks(TSRMLS_C);
     initBufferSwitch(TSRMLS_C);
+    initRemoteTimeout(TSRMLS_C);
 
     return SUCCESS;
 }

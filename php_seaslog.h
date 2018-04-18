@@ -145,6 +145,8 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     int appender_retry;
     char *remote_host;
     int remote_port;
+    int remote_timeout;
+    struct timeval remote_timeout_real;
 
     request_variable_t *request_variable;
 
