@@ -215,6 +215,7 @@ static void seaslog_clear_logger_list(TSRMLS_D);
 static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSRMLS_DC);
 
 //Datetime
+static void initRemoteTimeout(TSRMLS_D);
 static char *seaslog_process_last_sec(int now, int if_first TSRMLS_DC);
 static char *seaslog_process_last_min(int now, int if_first TSRMLS_DC);
 static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_DC);
@@ -222,6 +223,7 @@ static char *make_real_date(TSRMLS_D);
 static char *make_real_time(TSRMLS_D);
 static void mic_time(smart_str *buf);
 static char *make_time_RFC3339(TSRMLS_D);
+static struct timeval seaslog_get_remote_timeout(TSRMLS_D);
 
 
 //Buffer

@@ -14,6 +14,27 @@
   +----------------------------------------------------------------------+
 */
 
+static void initRemoteTimeout(TSRMLS_D)
+{
+#ifndef PHP_WIN32
+	time_t conv;
+#else
+	long conv;
+#endif
+	struct timeval tv;
+
+#ifndef PHP_WIN32
+    conv = (time_t) (SEASLOG_G(remote_timeout) * 1000000.0);
+    tv.tv_sec = conv / 1000000;
+#else
+    conv = (long) (SEASLOG_G(remote_timeout) * 1000000.0);
+    tv.tv_sec = conv / 1000000;
+#endif
+    tv.tv_usec = conv % 1000000;
+
+    SEASLOG_G(remote_timeout_real) = tv;
+}
+
 static char *seaslog_process_last_sec(int now, int if_first TSRMLS_DC)
 {
     if (SEASLOG_INIT_FIRST_YES == if_first)
@@ -112,5 +133,10 @@ static char *make_time_RFC3339(TSRMLS_D)
 {
     int now = (long)time(NULL);
     return seaslog_format_date("Y-m-d\\TH:i:sP", 14, now TSRMLS_CC);
+}
+
+static struct timeval seaslog_get_remote_timeout(TSRMLS_D)
+{
+    return SEASLOG_G(remote_timeout_real);
 }
 
