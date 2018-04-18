@@ -180,6 +180,9 @@ seaslog.remote_host = "127.0.0.1"
 ;接收端口 默认514 (当使用TCP或UDP时必填)
 seaslog.remote_port = 514
 
+;接收端口的超时时间 默认1秒
+seaslog.remote_timeout = 1
+
 ;过滤日志中的回车和换行符 (默认为0)
 seaslog.trim_wrap = 0
 
