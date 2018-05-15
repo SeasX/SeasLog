@@ -44,6 +44,52 @@ function testFilePutContents($iTotal, $sLogMessage, $sFilePutPath)
 }
 
 
+function testFopenOnceClose($iTotal, $sLogMessage, $sFilePutPath)
+{
+	if (file_exists($sFilePutPath))
+	{
+		unlink($sFilePutPath);
+	}
+
+	$file = fopen($sFilePutPath, "a");
+
+	for ($i = 0; $i < $iTotal; $i++)
+	{
+		$iTime = time();
+		$log_tmp = date('Y-m-d H:i:s', $iTime) . ' | info | ' . posix_getpid() . ' | ' . rand(1, 100000) . ' | ' . $iTime . ' | ' . $sLogMessage . PHP_EOL;
+		fwrite($file, $log_tmp);
+	}
+
+	fclose($file);
+
+	if (file_exists($sFilePutPath))
+	{
+		unlink($sFilePutPath);
+	}
+}
+
+function testFopenEachClose($iTotal, $sLogMessage, $sFilePutPath)
+{
+	if (file_exists($sFilePutPath))
+	{
+		unlink($sFilePutPath);
+	}
+
+	for ($i = 0; $i < $iTotal; $i++)
+	{
+		$file = fopen($sFilePutPath, "a");
+		$iTime = time();
+		$log_tmp = date('Y-m-d H:i:s', $iTime) . ' | info | ' . posix_getpid() . ' | ' . rand(1, 100000) . ' | ' . $iTime . ' | ' . $sLogMessage . PHP_EOL;
+		fwrite($file, $log_tmp);
+		fclose($file);
+	}
+
+	if (file_exists($sFilePutPath))
+	{
+		unlink($sFilePutPath);
+	}
+}
+
 ///////////////////////////
 function getmicrotime()
 {
@@ -92,6 +138,10 @@ testSyslog($iTotal, $sLogMessage);
 $t = end_test($t, "testSyslog");
 testFilePutContents($iTotal, $sLogMessage, $sFilePutPath);
 $t = end_test($t, "testFilePutContents");
+testFopenOnceClose($iTotal, $sLogMessage, $sFilePutPath);
+$t = end_test($t, "testFopenOnceClose");
+testFopenEachClose($iTotal, $sLogMessage, $sFilePutPath);
+$t = end_test($t, "testFopenEachClose");
 total($t0, "Total");
 
 
