@@ -19,7 +19,7 @@ class analyzerBase
 
         \SeasLog::setLogger($config['module']);
 
-        $logLevel = intval($config['level']);
+        $logLevel = $config['level'];
         if (empty($logLevel)) {
             $logLevel = SEASLOG_ERROR;
         }
