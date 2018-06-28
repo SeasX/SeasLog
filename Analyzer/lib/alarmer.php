@@ -32,11 +32,30 @@ class alarmer
     public function SendEmail($subject, $content, $to = array(), $cc = array(), $bcc = array(), $attachments = array())
     {
         $mail = new mailer\PHPMailer();
-        $mail->IsSMTP();
+
+        if (!isset(self::$_config['smtp_mailer'])) {
+            self::$_config['smtp_mailer'] = 'smtp';
+        }
+
+        switch (self::$_config['smtp_mailer']) {
+            case 'mail':
+                $mail->IsMail();
+                break;
+            
+            case 'sendmail':
+                $mail->IsSendmail();
+                break;
+
+            case 'smtp':
+            default:
+                $mail->IsSMTP();
+                break;
+        }
 
         $mail->CharSet  = 'UTF-8';
         $mail->Encoding = 'base64';
         $mail->SMTPAuth = true;
+        $mail->SMTPSecure = self::$_config['smtp_secure'];
         $mail->Host     = self::$_config['smtp_host'];
         $mail->Port     = self::$_config['smtp_port'];
         $mail->Username = self::$_config['smtp_user'];
