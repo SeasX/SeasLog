@@ -272,7 +272,7 @@ seaslog.ignore_warning = 1
 ##### SEASLOG_CRITICAL
 * "CRITICAL"    - 紧急情况、需要立刻进行修复、程序组件不可用
 ##### SEASLOG_ALERT
-* "ALERT"       - 必级立即采取行动的紧急事件、需要立即通知相关人员紧急修复
+* "ALERT"       - 必须立即采取行动的紧急事件、需要立即通知相关人员紧急修复
 ##### SEASLOG_EMERGENCY
 * "EMERGENCY"   - 系统不可用
 ```php
