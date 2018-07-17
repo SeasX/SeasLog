@@ -14,7 +14,11 @@
   +----------------------------------------------------------------------+
 */
 
-static void initBufferSwitch(TSRMLS_D)
+#include "Buffer.h"
+#include "Common.h"
+#include "StreamWrapper.h"
+
+void initBufferSwitch(TSRMLS_D)
 {
     SEASLOG_G(enable_buffer_real) = FAILURE;
 
@@ -32,12 +36,12 @@ static void initBufferSwitch(TSRMLS_D)
     return;
 }
 
-static int seaslog_check_buffer_enable(TSRMLS_D)
+int seaslog_check_buffer_enable(TSRMLS_D)
 {
     return SUCCESS == SEASLOG_G(enable_buffer_real);
 }
 
-static void seaslog_init_buffer(TSRMLS_D)
+void seaslog_init_buffer(TSRMLS_D)
 {
     zval *z_buffer;
 
@@ -107,7 +111,7 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_D
     return SUCCESS;
 }
 
-static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce TSRMLS_DC)
+int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce TSRMLS_DC)
 {
 #if PHP_VERSION_ID >= 70000
 
@@ -187,7 +191,7 @@ static int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int 
     return SUCCESS;
 }
 
-static void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
+void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
 {
     HashTable   *ht;
 
@@ -240,7 +244,7 @@ static void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
 }
 
 
-static void seaslog_clear_buffer(TSRMLS_D)
+void seaslog_clear_buffer(TSRMLS_D)
 {
     if (seaslog_check_buffer_enable(TSRMLS_C))
     {

@@ -14,6 +14,11 @@
   +----------------------------------------------------------------------+
 */
 
+#include "ErrorHook.h"
+#include "Appender.h"
+
+void (*old_error_cb)(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args);
+
 static void process_event_error(const char *event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC)
 {
     char *event_str;
@@ -71,13 +76,13 @@ void seaslog_error_cb(int type, const char *error_filename, const uint error_lin
     old_error_cb(type, error_filename, error_lineno, format, args);
 }
 
-static void initErrorHooks(TSRMLS_D)
+void initErrorHooks(TSRMLS_D)
 {
     old_error_cb = zend_error_cb;
     zend_error_cb = seaslog_error_cb;
 }
 
-static void recoveryErrorHooks(TSRMLS_D)
+void recoveryErrorHooks(TSRMLS_D)
 {
     if (old_error_cb)
     {

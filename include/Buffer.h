@@ -14,21 +14,25 @@
   +----------------------------------------------------------------------+
 */
 
-#include "Performance.h"
+#ifndef _SEASLOG_BUFFER_H_
+#define _SEASLOG_BUFFER_H_
 
-void seaslog_memory_usage(smart_str *buf TSRMLS_DC)
-{
-    long int usage = zend_memory_usage(0 TSRMLS_CC);
-    smart_str_append_long(buf, usage);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    smart_str_0(buf);
+#include "php_seaslog.h"
+
+void initBufferSwitch(TSRMLS_D);
+void seaslog_init_buffer(TSRMLS_D);
+void seaslog_shutdown_buffer(int re_init TSRMLS_DC);
+void seaslog_clear_buffer(TSRMLS_D);
+int seaslog_check_buffer_enable(TSRMLS_D);
+int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce TSRMLS_DC);
+
+#ifdef __cplusplus
 }
+#endif
 
-void seaslog_peak_memory_usage(smart_str *buf TSRMLS_DC)
-{
-    long int usage = zend_memory_peak_usage(0 TSRMLS_CC);
-    smart_str_append_long(buf, usage);
-
-    smart_str_0(buf);
-}
+#endif /* _SEASLOG_BUFFER_H_ */
 

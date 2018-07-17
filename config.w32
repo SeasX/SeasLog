@@ -4,7 +4,20 @@
 ARG_ENABLE("seaslog", "enable seaslog support", "no");
 
 if (PHP_SEASLOG != "no") {
-	EXTENSION("seaslog", "seaslog.c");
+    seaslog_source_file="seaslog.c \
+        src/Performance.c \
+        src/Analyzer.c \
+        src/StreamWrapper.c \
+        src/TemplateFormatter.c \
+        src/ExceptionHook.c \
+        src/Appender.c \
+        src/Datetime.c \
+        src/Logger.c \
+        src/Buffer.c \
+        src/ErrorHook.c \
+        src/Request.c \
+        src/Common.c"
+	EXTENSION("seaslog", $seaslog_source_file);
 
 	AC_DEFINE("HAVE_SEASLOG", 1, "Have Seaslog Support");
 }

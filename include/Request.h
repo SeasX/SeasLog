@@ -14,21 +14,29 @@
   +----------------------------------------------------------------------+
 */
 
-#include "Performance.h"
+#ifndef _SEASLOG_REQUEST_H_
+#define _SEASLOG_REQUEST_H_
 
-void seaslog_memory_usage(smart_str *buf TSRMLS_DC)
-{
-    long int usage = zend_memory_usage(0 TSRMLS_CC);
-    smart_str_append_long(buf, usage);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    smart_str_0(buf);
+#include "php_seaslog.h"
+
+void seaslog_init_pid(TSRMLS_D);
+void seaslog_init_host_name(TSRMLS_D);
+void seaslog_init_request_id(TSRMLS_D);
+void seaslog_init_auto_globals(TSRMLS_D);
+int seaslog_init_request_variable(TSRMLS_D);
+void seaslog_clear_request_id(TSRMLS_D);
+void seaslog_clear_pid(TSRMLS_D);
+void seaslog_clear_host_name(TSRMLS_D);
+void seaslog_clear_request_variable(TSRMLS_D);
+void get_code_filename_line(smart_str *result TSRMLS_DC);
+
+#ifdef __cplusplus
 }
+#endif
 
-void seaslog_peak_memory_usage(smart_str *buf TSRMLS_DC)
-{
-    long int usage = zend_memory_peak_usage(0 TSRMLS_CC);
-    smart_str_append_long(buf, usage);
-
-    smart_str_0(buf);
-}
+#endif /* _SEASLOG_REQUEST_H_ */
 

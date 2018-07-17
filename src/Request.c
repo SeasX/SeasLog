@@ -14,7 +14,10 @@
   +----------------------------------------------------------------------+
 */
 
-static void seaslog_init_host_name(TSRMLS_D)
+#include "Request.h"
+#include "Common.h"
+
+void seaslog_init_host_name(TSRMLS_D)
 {
     char buf[255];
 
@@ -29,7 +32,7 @@ static void seaslog_init_host_name(TSRMLS_D)
     }
 }
 
-static void seaslog_clear_host_name(TSRMLS_D)
+void seaslog_clear_host_name(TSRMLS_D)
 {
     if (SEASLOG_G(host_name))
     {
@@ -37,12 +40,12 @@ static void seaslog_clear_host_name(TSRMLS_D)
     }
 }
 
-static void seaslog_init_pid(TSRMLS_D)
+void seaslog_init_pid(TSRMLS_D)
 {
     SEASLOG_G(process_id_len) = spprintf(&SEASLOG_G(process_id),0, "%d", getpid());
 }
 
-static void seaslog_clear_pid(TSRMLS_D)
+void seaslog_clear_pid(TSRMLS_D)
 {
     if (SEASLOG_G(process_id))
     {
@@ -50,13 +53,13 @@ static void seaslog_clear_pid(TSRMLS_D)
     }
 }
 
-static void seaslog_init_request_id(TSRMLS_D)
+void seaslog_init_request_id(TSRMLS_D)
 {
     SEASLOG_G(request_id) = get_uniqid();
     SEASLOG_G(request_id_len) = strlen(SEASLOG_G(request_id));
 }
 
-static void seaslog_clear_request_id(TSRMLS_D)
+void seaslog_clear_request_id(TSRMLS_D)
 {
     if (SEASLOG_G(request_id))
     {
@@ -64,7 +67,7 @@ static void seaslog_clear_request_id(TSRMLS_D)
     }
 }
 
-static void seaslog_init_auto_globals(TSRMLS_D)
+void seaslog_init_auto_globals(TSRMLS_D)
 {
     SEASLOG_AUTO_GLOBAL("_SERVER");
 }
@@ -126,7 +129,7 @@ zval *seaslog_request_query(uint type, void *name, size_t len TSRMLS_DC)
 #endif
 }
 
-static int seaslog_init_request_variable(TSRMLS_D)
+int seaslog_init_request_variable(TSRMLS_D)
 {
     zval *client_ip;
     zval *domain;
@@ -205,7 +208,7 @@ static int seaslog_init_request_variable(TSRMLS_D)
     return SUCCESS;
 }
 
-static void seaslog_clear_request_variable(TSRMLS_D)
+void seaslog_clear_request_variable(TSRMLS_D)
 {
     if(SEASLOG_G(request_variable)->request_uri)
     {
@@ -230,7 +233,7 @@ static void seaslog_clear_request_variable(TSRMLS_D)
     efree(SEASLOG_G(request_variable));
 }
 
-static void get_code_filename_line(smart_str *result TSRMLS_DC)
+void get_code_filename_line(smart_str *result TSRMLS_DC)
 {
     const char *ret;
     long code_line = 0;

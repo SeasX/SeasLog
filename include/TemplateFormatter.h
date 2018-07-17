@@ -14,21 +14,23 @@
   +----------------------------------------------------------------------+
 */
 
-#include "Performance.h"
+#ifndef _SEASLOG_TEMPLATEFORMATTER_H_
+#define _SEASLOG_TEMPLATEFORMATTER_H_
 
-void seaslog_memory_usage(smart_str *buf TSRMLS_DC)
-{
-    long int usage = zend_memory_usage(0 TSRMLS_CC);
-    smart_str_append_long(buf, usage);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    smart_str_0(buf);
+#include "php_seaslog.h"
+
+void seaslog_init_template(TSRMLS_D);
+void seaslog_clear_template(TSRMLS_D);
+int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size_t max_len, ...);
+void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, char *level, va_list ap);
+
+#ifdef __cplusplus
 }
+#endif
 
-void seaslog_peak_memory_usage(smart_str *buf TSRMLS_DC)
-{
-    long int usage = zend_memory_peak_usage(0 TSRMLS_CC);
-    smart_str_append_long(buf, usage);
-
-    smart_str_0(buf);
-}
+#endif /* _SEASLOG_TEMPLATEFORMATTER_H_ */
 
