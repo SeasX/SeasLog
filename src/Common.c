@@ -66,40 +66,11 @@ int seaslog_get_level_int(char *level)
 
 int check_log_level(int level TSRMLS_DC)
 {
-    if (level >= SEASLOG_DEBUG_INT) return SUCCESS;
-    if (level < SEASLOG_EMERGENCY_INT) return FAILURE;
-
-    switch (level)
-    {
-    case SEASLOG_DEBUG_INT:
-        if (level >= SEASLOG_DEBUG_INT) return SUCCESS;
-        break;
-    case SEASLOG_INFO_INT:
-        if (level >= SEASLOG_INFO_INT) return SUCCESS;
-        break;
-    case SEASLOG_NOTICE_INT:
-        if (level >= SEASLOG_NOTICE_INT) return SUCCESS;
-        break;
-    case SEASLOG_WARNING_INT:
-        if (level >= SEASLOG_WARNING_INT) return SUCCESS;
-        break;
-    case SEASLOG_ERROR_INT:
-        if (level >= SEASLOG_ERROR_INT) return SUCCESS;
-        break;
-    case SEASLOG_CRITICAL_INT:
-        if (level >= SEASLOG_CRITICAL_INT) return SUCCESS;
-        break;
-    case SEASLOG_ALERT_INT:
-        if (level >= SEASLOG_ALERT_INT) return SUCCESS;
-        break;
-    case SEASLOG_EMERGENCY_INT:
-        if (level >= SEASLOG_EMERGENCY_INT) return SUCCESS;
-        break;
-    default:
+    if (level < SEASLOG_EMERGENCY_INT || level > SEASLOG_G(level)) {
         return FAILURE;
     }
 
-    return FAILURE;
+    return SUCCESS;
 }
 
 static char *str_replace(char *src, const char *from, const char *to)
