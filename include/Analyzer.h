@@ -17,18 +17,10 @@
 #ifndef _SEASLOG_ANALYZER_H_
 #define _SEASLOG_ANALYZER_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "php_seaslog.h"
 
 long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC);
 int get_detail(char *log_path, char *level, char *key_word, long start, long end, long order, zval *return_value TSRMLS_DC);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _SEASLOG_ANALYZER_H_ */
 

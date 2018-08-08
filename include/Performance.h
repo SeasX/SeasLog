@@ -17,18 +17,10 @@
 #ifndef _SEASLOG_PERFORMANCE_H_
 #define _SEASLOG_PERFORMANCE_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "php_seaslog.h"
 
 void seaslog_memory_usage(smart_str *buf TSRMLS_DC);
 void seaslog_peak_memory_usage(smart_str *buf TSRMLS_DC);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _SEASLOG_PERFORMANCE_H_ */
 
