@@ -14,6 +14,11 @@
   +----------------------------------------------------------------------+
 */
 
+#include "ExceptionHook.h"
+#include "Appender.h"
+
+static void (*old_throw_exception_hook)(zval *exception TSRMLS_DC);
+
 static void process_event_exception(int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC)
 {
     char *event_str;
@@ -64,7 +69,7 @@ void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
     }
 }
 
-static void initExceptionHooks(TSRMLS_D)
+void initExceptionHooks(TSRMLS_D)
 {
     if (SEASLOG_G(trace_exception))
     {
@@ -77,7 +82,7 @@ static void initExceptionHooks(TSRMLS_D)
     }
 }
 
-static void recoveryExceptionHooks(TSRMLS_D)
+void recoveryExceptionHooks(TSRMLS_D)
 {
     if (SEASLOG_G(trace_exception))
     {
@@ -88,7 +93,7 @@ static void recoveryExceptionHooks(TSRMLS_D)
     }
 }
 
-static void seaslog_throw_exception(int type TSRMLS_DC, const char *format, ...)
+void seaslog_throw_exception(int type TSRMLS_DC, const char *format, ...)
 {
     va_list args;
     char *message = NULL;

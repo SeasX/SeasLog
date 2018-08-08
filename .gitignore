@@ -26,3 +26,6 @@
 a.out
 tags
 
+# .idea
+.idea/*
+

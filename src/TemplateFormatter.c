@@ -14,6 +14,11 @@
   +----------------------------------------------------------------------+
 */
 
+#include "TemplateFormatter.h"
+#include "Performance.h"
+#include "Datetime.h"
+#include "Request.h"
+
 #define NUL             '\0'
 #define INT_NULL        ((int *)0)
 
@@ -29,12 +34,12 @@
 } while (0)
 
 
-static void seaslog_init_template(TSRMLS_D)
+void seaslog_init_template(TSRMLS_D)
 {
     seaslog_spprintf(&SEASLOG_G(current_template) TSRMLS_CC, SEASLOG_GENERATE_CURRENT_TEMPLATE, NULL, 0);
 }
 
-static void seaslog_clear_template(TSRMLS_D)
+void seaslog_clear_template(TSRMLS_D)
 {
     if (SEASLOG_G(current_template))
     {
@@ -42,7 +47,7 @@ static void seaslog_clear_template(TSRMLS_D)
     }
 }
 
-static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size_t max_len, ...)
+int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size_t max_len, ...)
 {
     int len;
     va_list ap;
@@ -74,7 +79,7 @@ static int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *leve
     return len;
 }
 
-static void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, char *level, va_list ap)
+void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, char *level, va_list ap)
 {
     char *s = NULL;
     int s_len;

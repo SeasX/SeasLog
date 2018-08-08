@@ -14,7 +14,11 @@
   +----------------------------------------------------------------------+
 */
 
-static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
+#include "StreamWrapper.h"
+#include "ErrorHook.h"
+#include "ExceptionHook.h"
+
+php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
 {
     php_stream *stream = NULL;
     char *res = NULL;
@@ -81,7 +85,7 @@ static php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
     return stream;
 }
 
-static void seaslog_init_stream_list(TSRMLS_D)
+void seaslog_init_stream_list(TSRMLS_D)
 {
     zval *z_stream_list;
 
@@ -97,7 +101,7 @@ static void seaslog_init_stream_list(TSRMLS_D)
 
 }
 
-static void seaslog_clear_stream_list(TSRMLS_D)
+void seaslog_clear_stream_list(TSRMLS_D)
 {
     php_stream *stream = NULL;
     HashTable *ht;
@@ -148,7 +152,7 @@ static void seaslog_clear_stream_list(TSRMLS_D)
 
 }
 
-static php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
+php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
 {
     ulong stream_entry_hash;
     php_stream *stream = NULL;

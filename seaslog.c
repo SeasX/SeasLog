@@ -24,18 +24,17 @@ static PHP_GSHUTDOWN_FUNCTION(seaslog);
 ZEND_GET_MODULE(seaslog)
 #endif
 
-#include "src/Common.c"
-#include "src/Performance.c"
-#include "src/Analyzer.c"
-#include "src/StreamWrapper.c"
-#include "src/TemplateFormatter.c"
-#include "src/Appender.c"
-#include "src/Buffer.c"
-#include "src/Datetime.c"
-#include "src/ErrorHook.c"
-#include "src/ExceptionHook.c"
-#include "src/Logger.c"
-#include "src/Request.c"
+#include "ErrorHook.h"
+#include "Buffer.h"
+#include "Datetime.h"
+#include "ExceptionHook.h"
+#include "Logger.h"
+#include "Request.h"
+#include "TemplateFormatter.h"
+#include "StreamWrapper.h"
+#include "Appender.h"
+#include "Analyzer.h"
+#include "Common.h"
 
 const zend_function_entry seaslog_functions[] =
 {
@@ -242,7 +241,9 @@ PHP_MSHUTDOWN_FUNCTION(seaslog)
 
 PHP_RINIT_FUNCTION(seaslog)
 {
-    initRStart(TSRMLS_C);
+    SEASLOG_G(initRComplete) = SEASLOG_INITR_COMPLETE_NO;
+    SEASLOG_G(error_loop) = 0;
+
     seaslog_init_slash_or_underline(TSRMLS_C);
     seaslog_init_pid(TSRMLS_C);
     seaslog_init_host_name(TSRMLS_C);
@@ -255,7 +256,7 @@ PHP_RINIT_FUNCTION(seaslog)
     seaslog_init_logger(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
     seaslog_init_stream_list(TSRMLS_C);
-    initREnd(TSRMLS_C);
+    SEASLOG_G(initRComplete) = SEASLOG_INITR_COMPLETE_YES;
     return SUCCESS;
 }
 

@@ -14,7 +14,23 @@
   +----------------------------------------------------------------------+
 */
 
-static void initRemoteTimeout(TSRMLS_D)
+#include "Datetime.h"
+
+static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_DC)
+{
+#if PHP_VERSION_ID >= 70000
+    zend_string *_date;
+    char *_date_tmp;
+    _date = php_format_date(format, format_len, ts, 1 TSRMLS_CC);
+    _date_tmp = estrdup(ZSTR_VAL(_date));
+    zend_string_release(_date);
+    return _date_tmp;
+#else
+    return php_format_date(format, format_len, ts, 1 TSRMLS_CC);
+#endif
+}
+
+void initRemoteTimeout(TSRMLS_D)
 {
 #ifndef PHP_WIN32
 	time_t conv;
@@ -35,7 +51,7 @@ static void initRemoteTimeout(TSRMLS_D)
     SEASLOG_G(remote_timeout_real) = tv;
 }
 
-static char *seaslog_process_last_sec(int now, int if_first TSRMLS_DC)
+char *seaslog_process_last_sec(int now, int if_first TSRMLS_DC)
 {
     if (SEASLOG_INIT_FIRST_YES == if_first)
     {
@@ -52,7 +68,7 @@ static char *seaslog_process_last_sec(int now, int if_first TSRMLS_DC)
     return SEASLOG_G(last_sec)->real_time;
 }
 
-static char *seaslog_process_last_min(int now, int if_first TSRMLS_DC)
+char *seaslog_process_last_min(int now, int if_first TSRMLS_DC)
 {
     if (SEASLOG_INIT_FIRST_YES == if_first)
     {
@@ -77,21 +93,7 @@ static char *seaslog_process_last_min(int now, int if_first TSRMLS_DC)
     return SEASLOG_G(last_min)->real_time;
 }
 
-static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_DC)
-{
-#if PHP_VERSION_ID >= 70000
-    zend_string *_date;
-    char *_date_tmp;
-    _date = php_format_date(format, format_len, ts, 1 TSRMLS_CC);
-    _date_tmp = estrdup(ZSTR_VAL(_date));
-    zend_string_release(_date);
-    return _date_tmp;
-#else
-    return php_format_date(format, format_len, ts, 1 TSRMLS_CC);
-#endif
-}
-
-static char *make_real_date(TSRMLS_D)
+char *make_real_date(TSRMLS_D)
 {
     char *_date = NULL;
 
@@ -104,7 +106,7 @@ static char *make_real_date(TSRMLS_D)
     return SEASLOG_G(last_min)->real_time;
 }
 
-static char *make_real_time(TSRMLS_D)
+char *make_real_time(TSRMLS_D)
 {
     int now = (long)time(NULL);
     if (now > SEASLOG_G(last_sec)->sec)
@@ -115,7 +117,7 @@ static char *make_real_time(TSRMLS_D)
     return SEASLOG_G(last_sec)->real_time;
 }
 
-static void mic_time(smart_str *buf)
+void mic_time(smart_str *buf)
 {
     struct timeval now;
 
@@ -129,7 +131,7 @@ static void mic_time(smart_str *buf)
     smart_str_0(buf);
 }
 
-static char *make_time_RFC3339(TSRMLS_D)
+char *make_time_RFC3339(TSRMLS_D)
 {
     int now = (long)time(NULL);
     return seaslog_format_date("Y-m-d\\TH:i:sP", 14, now TSRMLS_CC);

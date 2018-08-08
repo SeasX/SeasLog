@@ -14,7 +14,11 @@
   +----------------------------------------------------------------------+
 */
 
-static void seaslog_init_slash_or_underline(TSRMLS_D)
+#include "Logger.h"
+#include "Datetime.h"
+#include "Appender.h"
+
+void seaslog_init_slash_or_underline(TSRMLS_D)
 {
     if (SEASLOG_G(disting_folder))
     {
@@ -26,7 +30,7 @@ static void seaslog_init_slash_or_underline(TSRMLS_D)
     }
 }
 
-static void seaslog_init_last_time(TSRMLS_D)
+void seaslog_init_last_time(TSRMLS_D)
 {
     int now;
 
@@ -38,7 +42,7 @@ static void seaslog_init_last_time(TSRMLS_D)
     seaslog_process_last_min(now, SEASLOG_INIT_FIRST_YES TSRMLS_CC);
 }
 
-static void seaslog_clear_last_time(TSRMLS_D)
+void seaslog_clear_last_time(TSRMLS_D)
 {
     if (SEASLOG_G(last_sec))
     {
@@ -58,7 +62,7 @@ static void seaslog_clear_last_time(TSRMLS_D)
     }
 }
 
-static void seaslog_init_logger(TSRMLS_D)
+void seaslog_init_logger(TSRMLS_D)
 {
     SEASLOG_G(base_path) = estrdup(SEASLOG_G(default_basepath));
 
@@ -69,7 +73,7 @@ static void seaslog_init_logger(TSRMLS_D)
 }
 
 
-static void seaslog_init_default_last_logger(TSRMLS_D)
+void seaslog_init_default_last_logger(TSRMLS_D)
 {
     if (SEASLOG_G(last_logger)->logger)
     {
@@ -112,7 +116,7 @@ static void seaslog_init_default_last_logger(TSRMLS_D)
 }
 
 
-static void seaslog_clear_logger(TSRMLS_D)
+void seaslog_clear_logger(TSRMLS_D)
 {
     if (SEASLOG_G(base_path))
     {
@@ -150,7 +154,7 @@ static void seaslog_clear_logger(TSRMLS_D)
     }
 }
 
-static void seaslog_init_logger_list(TSRMLS_D)
+void seaslog_init_logger_list(TSRMLS_D)
 {
     zval *z_logger_list;
 
@@ -166,7 +170,7 @@ static void seaslog_init_logger_list(TSRMLS_D)
 #endif
 }
 
-static void seaslog_clear_logger_list(TSRMLS_D)
+void seaslog_clear_logger_list(TSRMLS_D)
 {
 #if PHP_VERSION_ID >= 70000
     if (IS_ARRAY == Z_TYPE(SEASLOG_G(logger_list)))
@@ -181,7 +185,7 @@ static void seaslog_clear_logger_list(TSRMLS_D)
 #endif
 }
 
-static logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSRMLS_DC)
+logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSRMLS_DC)
 {
     ulong logger_entry_hash = zend_inline_hash_func(logger, logger_len);
     logger_entry_t *logger_entry;

@@ -14,7 +14,11 @@
   +----------------------------------------------------------------------+
 */
 
-static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
+#include "Analyzer.h"
+#include "Common.h"
+#include "ExceptionHook.h"
+
+long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
 {
     FILE * fp;
     char buffer[BUFSIZ];
@@ -103,7 +107,7 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
     return count;
 }
 
-static int get_detail(char *log_path, char *level, char *key_word, long start, long end, long order, zval *return_value TSRMLS_DC)
+int get_detail(char *log_path, char *level, char *key_word, long start, long end, long order, zval *return_value TSRMLS_DC)
 {
     FILE * fp;
     char buffer[SEASLOG_BUFFER_MAX_SIZE];

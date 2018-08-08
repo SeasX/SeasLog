@@ -23,7 +23,22 @@ if test "$PHP_SEASLOG" != "no"; then
   dnl # --with-seaslog -> add include path
   dnl PHP_ADD_INCLUDE($SEASLOG_DIR/include)
 
-    PHP_NEW_EXTENSION(seaslog, seaslog.c, $ext_shared)
+    seaslog_source_file="seaslog.c \
+        src/Performance.c \
+        src/Analyzer.c \
+        src/StreamWrapper.c \
+        src/TemplateFormatter.c \
+        src/ExceptionHook.c \
+        src/Appender.c \
+        src/Datetime.c
+        src/Logger.c \
+        src/Buffer.c \
+        src/ErrorHook.c \
+        src/Request.c \
+        src/Common.c"
+    PHP_NEW_EXTENSION(seaslog, $seaslog_source_file, $ext_shared,,,)
+
+    PHP_INSTALL_HEADERS([ext/SeasLog], [*.h config.h include/*.h])
 
     dnl PHP_ADD_INCLUDE([$ext_srcdir])
     dnl PHP_ADD_INCLUDE([$ext_srcdir/include])
