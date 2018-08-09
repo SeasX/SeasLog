@@ -17,18 +17,10 @@
 #ifndef _SEASLOG_ERRORHOOK_H_
 #define _SEASLOG_ERRORHOOK_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "php_seaslog.h"
 
 void initErrorHooks(TSRMLS_D);
 void recoveryErrorHooks(TSRMLS_D);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _SEASLOG_ERRORHOOK_H_ */
 

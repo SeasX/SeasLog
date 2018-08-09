@@ -17,10 +17,6 @@
 #ifndef _SEASLOG_LOGGER_H_
 #define _SEASLOG_LOGGER_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "php_seaslog.h"
 
 void seaslog_init_slash_or_underline(TSRMLS_D);
@@ -32,10 +28,6 @@ void seaslog_clear_logger_list(TSRMLS_D);
 void seaslog_clear_last_time(TSRMLS_D);
 void seaslog_init_default_last_logger(TSRMLS_D);
 logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSRMLS_DC);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _SEASLOG_LOGGER_H_ */
 

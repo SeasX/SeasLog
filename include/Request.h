@@ -17,10 +17,6 @@
 #ifndef _SEASLOG_REQUEST_H_
 #define _SEASLOG_REQUEST_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "php_seaslog.h"
 
 void seaslog_init_pid(TSRMLS_D);
@@ -33,10 +29,6 @@ void seaslog_clear_pid(TSRMLS_D);
 void seaslog_clear_host_name(TSRMLS_D);
 void seaslog_clear_request_variable(TSRMLS_D);
 void get_code_filename_line(smart_str *result TSRMLS_DC);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _SEASLOG_REQUEST_H_ */
 

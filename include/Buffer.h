@@ -17,10 +17,6 @@
 #ifndef _SEASLOG_BUFFER_H_
 #define _SEASLOG_BUFFER_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "php_seaslog.h"
 
 void initBufferSwitch(TSRMLS_D);
@@ -29,10 +25,6 @@ void seaslog_shutdown_buffer(int re_init TSRMLS_DC);
 void seaslog_clear_buffer(TSRMLS_D);
 int seaslog_check_buffer_enable(TSRMLS_D);
 int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce TSRMLS_DC);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _SEASLOG_BUFFER_H_ */
 

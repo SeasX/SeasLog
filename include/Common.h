@@ -17,10 +17,6 @@
 #ifndef _SEASLOG_COMMON_H_
 #define _SEASLOG_COMMON_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "php_seaslog.h"
 
 int check_sapi_is_cli(TSRMLS_D);
@@ -31,10 +27,6 @@ int message_trim_wrap(char *message,int message_len TSRMLS_DC);
 char* delN(char *a);
 char* get_uniqid();
 char* php_strtr_array(char *str, int slen, HashTable *pats);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _SEASLOG_COMMON_H_ */
 

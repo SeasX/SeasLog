@@ -17,20 +17,12 @@
 #ifndef _SEASLOG_EXCEPTIONHOOK_H_
 #define _SEASLOG_EXCEPTIONHOOK_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "php_seaslog.h"
 
 void seaslog_throw_exception(int type TSRMLS_DC, const char *format, ...);
 void initExceptionHooks(TSRMLS_D);
 void recoveryExceptionHooks(TSRMLS_D);
 void seaslog_throw_exception_hook(zval *exception TSRMLS_DC);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _SEASLOG_EXCEPTIONHOOK_H_ */
 
