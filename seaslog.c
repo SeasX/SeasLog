@@ -36,6 +36,8 @@ ZEND_GET_MODULE(seaslog)
 #include "Analyzer.h"
 #include "Common.h"
 
+zend_class_entry *seaslog_ce;
+
 const zend_function_entry seaslog_functions[] =
 {
     PHP_FE(seaslog_get_version, NULL)
