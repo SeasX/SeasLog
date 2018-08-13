@@ -140,7 +140,7 @@ PHP_MINFO_FUNCTION(seaslog);
 PHP_FUNCTION(seaslog_get_version);
 PHP_FUNCTION(seaslog_get_author);
 
-zend_class_entry *seaslog_ce;
+static zend_class_entry *seaslog_ce;
 PHP_METHOD(SEASLOG_RES_NAME, __construct);
 PHP_METHOD(SEASLOG_RES_NAME, __destruct);
 PHP_METHOD(SEASLOG_RES_NAME, setBasePath);
