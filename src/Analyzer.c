@@ -27,7 +27,6 @@ static long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC
         return (long)0;
     }
 
-    //all过滤时不区分disting_type
     if (!strcmp(level, SEASLOG_ALL))
     {
         is_level_all = 1;
