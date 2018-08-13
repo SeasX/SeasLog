@@ -31,13 +31,13 @@ long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
         return (long)0;
     }
 
+    if (!strcmp(level, SEASLOG_ALL))
+    {
+        is_level_all = 1;
+    }
+ 
     if (SEASLOG_G(disting_type))
     {
-        if (!strcmp(level, SEASLOG_ALL))
-        {
-            is_level_all = 1;
-        }
-
         if (is_level_all == 1)
         {
             spprintf(&path, 0, "%s%s%s*.*", SEASLOG_G(last_logger)->logger_path, SEASLOG_G(slash_or_underline), log_path);

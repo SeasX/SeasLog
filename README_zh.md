@@ -765,6 +765,13 @@ fork_count = 3
 [warning]
 email[smtp_host] = smtp.163.com
 email[smtp_port] = 25
+; 是否开启加密协议 tsl ssl, 留空为不开启
+email[smtp_secure] =
+; 邮件发送类型 smtp, sendmail, mail
+; smtp: PHP实现的smtp协议
+; sendmail: 需配置php.ini中sendmail_path
+; mail: 使用PHP内置mail()函数
+email[smtp_mailer] = smtp
 email[subject_pre] = 预警邮件 -
 email[smtp_user] = seaslogdemo@163.com
 email[smtp_pwd] = seaslog#demo
@@ -784,13 +791,18 @@ email[mail_bcc] =
 ; SEASLOG_ALERT      "ALERT"
 ; SEASLOG_EMERGENCY  "EMERGENCY"
 
-test1[module] = test/bb
+; 可以实现分别监控不同模块下特定级别的日志发送给不同的邮箱
+; test1 监控任务表示
+; 统计test模块SEASLOG_ERROR等级的日志数量，如果数量大于3则发送报警邮件到gaochitao@weiboyi.com
+
+test1[module] = test
 test1[level] = SEASLOG_ERROR
-test1[bar] = 1
+test1[bar] = 3
 test1[mail_to] = gaochitao@weiboyi.com
 
 test2[module] = 222
 test2[level] = SEASLOG_WARNING
+test2[mail_to] = gaochitao@weiboyi.com,seaslog@weiboyi.com
 
 test3[module] = 333
 test3[level] = SEASLOG_CRITICAL

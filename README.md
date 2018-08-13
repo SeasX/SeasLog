@@ -803,7 +803,7 @@ email[mail_bcc] =
 test1[module] = test/bb
 test1[level] = SEASLOG_ERROR
 test1[bar] = 1
-test1[mail_to] = gaochitao@weiboyi.com
+test1[mail_to] = neeke@test.com
 
 test2[module] = 222
 test2[level] = SEASLOG_WARNING
