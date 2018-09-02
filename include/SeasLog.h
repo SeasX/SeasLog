@@ -37,96 +37,102 @@
 
 #include <stdlib.h>
 
-#define SEASLOG_RES_NAME                    "SeasLog"
-#define SEASLOG_AUTHOR                      "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                     "1.8.5"
-#define SEASLOG_VERSION_ID                  10805
-#define SEASLOG_SUPPORTS                    "https://github.com/SeasX/SeasLog"
+#define SEASLOG_RES_NAME                        "SeasLog"
+#define SEASLOG_AUTHOR                          "Chitao.Gao  [ neeke@php.net ]"
+#define SEASLOG_VERSION                         "1.8.6"
+#define SEASLOG_VERSION_ID                      10806
+#define SEASLOG_SUPPORTS                        "https://github.com/SeasX/SeasLog"
 
-#define SEASLOG_ALL                         "ALL"
-#define SEASLOG_DEBUG                       "DEBUG"
-#define SEASLOG_INFO                        "INFO"
-#define SEASLOG_NOTICE                      "NOTICE"
-#define SEASLOG_WARNING                     "WARNING"
-#define SEASLOG_ERROR                       "ERROR"
-#define SEASLOG_CRITICAL                    "CRITICAL"
-#define SEASLOG_ALERT                       "ALERT"
-#define SEASLOG_EMERGENCY                   "EMERGENCY"
+#define SEASLOG_ALL                             "ALL"
+#define SEASLOG_DEBUG                           "DEBUG"
+#define SEASLOG_INFO                            "INFO"
+#define SEASLOG_NOTICE                          "NOTICE"
+#define SEASLOG_WARNING                         "WARNING"
+#define SEASLOG_ERROR                           "ERROR"
+#define SEASLOG_CRITICAL                        "CRITICAL"
+#define SEASLOG_ALERT                           "ALERT"
+#define SEASLOG_EMERGENCY                       "EMERGENCY"
 
-#define SEASLOG_ALL_INT                     8
-#define SEASLOG_DEBUG_INT                   7
-#define SEASLOG_INFO_INT                    6
-#define SEASLOG_NOTICE_INT                  5
-#define SEASLOG_WARNING_INT                 4
-#define SEASLOG_ERROR_INT                   3
-#define SEASLOG_CRITICAL_INT                2
-#define SEASLOG_ALERT_INT                   1
-#define SEASLOG_EMERGENCY_INT               0
+#define SEASLOG_ALL_INT                         8
+#define SEASLOG_DEBUG_INT                       7
+#define SEASLOG_INFO_INT                        6
+#define SEASLOG_NOTICE_INT                      5
+#define SEASLOG_WARNING_INT                     4
+#define SEASLOG_ERROR_INT                       3
+#define SEASLOG_CRITICAL_INT                    2
+#define SEASLOG_ALERT_INT                       1
+#define SEASLOG_EMERGENCY_INT                   0
 
-#define SEASLOG_SYSLOG_FACILITY             8 //LOG_USER
+#define SEASLOG_SYSLOG_FACILITY                 8 //LOG_USER
 
-#define SEASLOG_APPENDER_FILE               1
-#define SEASLOG_APPENDER_TCP                2
-#define SEASLOG_APPENDER_UDP                3
+#define SEASLOG_APPENDER_FILE                   1
+#define SEASLOG_APPENDER_TCP                    2
+#define SEASLOG_APPENDER_UDP                    3
 
-#define SEASLOG_DETAIL_ORDER_ASC            1
-#define SEASLOG_DETAIL_ORDER_DESC           2
+#define SEASLOG_DETAIL_ORDER_ASC                1
+#define SEASLOG_DETAIL_ORDER_DESC               2
 
-#define SEASLOG_EVENT_ERROR                 1
-#define SEASLOG_EVENT_EXCEPTION             2
+#define SEASLOG_EVENT_ERROR                     1
+#define SEASLOG_EVENT_EXCEPTION                 2
 
-#define SEASLOG_DIR_MODE                    (mode_t)0777
-#define SEASLOG_FILE_MODE                   (mode_t)0666
+#define SEASLOG_DIR_MODE                        (mode_t)0777
+#define SEASLOG_FILE_MODE                       (mode_t)0666
 
-#define SEASLOG_INIT_FIRST_YES              1
-#define SEASLOG_INIT_FIRST_NO               2
+#define SEASLOG_INIT_FIRST_YES                  1
+#define SEASLOG_INIT_FIRST_NO                   2
 
-#define SEASLOG_BUFFER_RE_INIT_YES          1
-#define SEASLOG_BUFFER_RE_INIT_NO           2
+#define SEASLOG_BUFFER_RE_INIT_YES              1
+#define SEASLOG_BUFFER_RE_INIT_NO               2
 
-#define SEASLOG_INITR_COMPLETE_YES          1
-#define SEASLOG_INITR_COMPLETE_NO           2
+#define SEASLOG_INITR_COMPLETE_YES              1
+#define SEASLOG_INITR_COMPLETE_NO               2
 
-#define SEASLOG_PROCESS_LOGGER_LAST         1
-#define SEASLOG_PROCESS_LOGGER_TMP          2
+#define SEASLOG_PROCESS_LOGGER_LAST             1
+#define SEASLOG_PROCESS_LOGGER_TMP              2
 
-#define SL_S(s)                             s, sizeof(s) - 1
+#define SL_S(s)                                 s, sizeof(s) - 1
 
-#define SEASLOG_HASH_VALUE_LOGGER           1
-#define SEASLOG_HASH_VALUE_PATH             2
-#define SEASLOG_HASH_VALUE_ACCESS           3
+#define SEASLOG_HASH_VALUE_LOGGER               1
+#define SEASLOG_HASH_VALUE_PATH                 2
+#define SEASLOG_HASH_VALUE_ACCESS               3
 
-#define SEASLOG_BUFFER_MAX_SIZE             65535
+#define SEASLOG_BUFFER_MAX_SIZE                 65535
 
-#define SEASLOG_TRIM_WRAP                   26
+#define SEASLOG_TRIM_WRAP                       26
 
-#define SEASLOG_EXCEPTION_LOGGER_ERROR      4403
-#define SEASLOG_EXCEPTION_CONTENT_ERROR     4406
-#define SEASLOG_EXCEPTION_WINDOWS_ERROR     4407
+#define SEASLOG_EXCEPTION_LOGGER_ERROR          4403
+#define SEASLOG_EXCEPTION_CONTENT_ERROR         4406
+#define SEASLOG_EXCEPTION_WINDOWS_ERROR         4407
 
-#define SEASLOG_GET_HOST_NULL               "NoHost"
+#define SEASLOG_GET_HOST_NULL                   "NoHost"
 
-#define SEASLOG_CLI_KEY                     "cli"
-#define SEASLOG_PHPDBG_KEY                  "phpdbg"
+#define SEASLOG_CLI_KEY                         "cli"
+#define SEASLOG_PHPDBG_KEY                      "phpdbg"
 
-#define SEASLOG_LOGGER_SLASH                "/"
-#define SEASLOG_LOGGER_UNDERLINE            "_"
-#define SEASLOG_ASTERISK                    "*"
+#define SEASLOG_LOGGER_SLASH                    "/"
+#define SEASLOG_LOGGER_UNDERLINE                "_"
+#define SEASLOG_ASTERISK                        "*"
 
-#define SEASLOG_LOG_LINE_FEED_STR           "\n"
-#define SEASLOG_LOG_LINE_FEED_LEN           sizeof(SEASLOG_LOG_LINE_FEED_STR) - 1
+#define SEASLOG_LOG_LINE_FEED_STR               "\n"
+#define SEASLOG_LOG_LINE_FEED_LEN               sizeof(SEASLOG_LOG_LINE_FEED_STR) - 1
 
-#define SEASLOG_GENERATE_CURRENT_TEMPLATE   1
-#define SEASLOG_GENERATE_LOG_INFO           2
-#define SEASLOG_GENERATE_SYSLOG_INFO        3
+#define SEASLOG_GENERATE_CURRENT_TEMPLATE       1
+#define SEASLOG_GENERATE_LOG_INFO               2
+#define SEASLOG_GENERATE_SYSLOG_INFO            3
 
-#define SEASLOG_ANALYZER_DEFAULT_START      1
-#define SEASLOG_ANALYZER_DEFAULT_OFFSET     20
+#define SEASLOG_ANALYZER_DEFAULT_START          1
+#define SEASLOG_ANALYZER_DEFAULT_OFFSET         20
 
-#define SEASLOG_GLOBAL_VARS_SERVER  		TRACK_VARS_SERVER
+#define SEASLOG_STREAM_LIST_DESTROY_YES         1
+#define SEASLOG_STREAM_LIST_DESTROY_NO          2
+
+#define SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL     1
+#define SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN  2
+
+#define SEASLOG_GLOBAL_VARS_SERVER  		    TRACK_VARS_SERVER
 
 #ifndef PHP_STREAM_URL_STAT_NOCACHE
-#define PHP_STREAM_URL_STAT_NOCACHE	        4
+#define PHP_STREAM_URL_STAT_NOCACHE	            4
 #endif
 
 #if PHP_VERSION_ID >= 70000

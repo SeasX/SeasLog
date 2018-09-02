@@ -101,7 +101,7 @@ void seaslog_init_stream_list(TSRMLS_D)
 
 }
 
-void seaslog_clear_stream_list(TSRMLS_D)
+void seaslog_clear_stream_list(int destroy TSRMLS_DC)
 {
     php_stream *stream = NULL;
     HashTable *ht;
@@ -111,6 +111,7 @@ void seaslog_clear_stream_list(TSRMLS_D)
     zend_string *str_key;
     zval *stream_zval_get_php7;
 #else
+    ulong num_key;
     zval **stream_zval_get;
 #endif
 
@@ -124,11 +125,15 @@ void seaslog_clear_stream_list(TSRMLS_D)
             if (stream)
             {
                 php_stream_close(stream);
+                zend_hash_index_del(ht, num_key);
             }
         }
         ZEND_HASH_FOREACH_END();
 
-        EX_ARRAY_DESTROY(&SEASLOG_G(stream_list));
+        if (SEASLOG_STREAM_LIST_DESTROY_YES == destroy)
+        {
+            EX_ARRAY_DESTROY(&SEASLOG_G(stream_list));
+        }
     }
 #else
     if (SEASLOG_G(stream_list) && IS_ARRAY == Z_TYPE_P(SEASLOG_G(stream_list)))
@@ -138,15 +143,20 @@ void seaslog_clear_stream_list(TSRMLS_D)
         zend_hash_internal_pointer_reset(ht);
         while (zend_hash_get_current_data(ht, (void **)&stream_zval_get) == SUCCESS)
         {
+            zend_hash_get_current_key_ex(ht, NULL, NULL, &num_key, 1, NULL);
             php_stream_from_zval_no_verify(stream,stream_zval_get);
             if (stream)
             {
                 php_stream_close(stream);
+                zend_hash_index_del(ht, num_key);
             }
             zend_hash_move_forward(ht);
         }
 
-        EX_ARRAY_DESTROY(&(SEASLOG_G(stream_list)));
+        if (SEASLOG_STREAM_LIST_DESTROY_YES == destroy)
+        {
+            EX_ARRAY_DESTROY(&(SEASLOG_G(stream_list)));
+        }
     }
 #endif
 

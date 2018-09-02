@@ -68,6 +68,11 @@ ZEND_BEGIN_ARG_INFO_EX(seaslog_setLogger_arginfo, 0, 0, 1)
 ZEND_ARG_INFO(0, logger)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(seaslog_closeLoggerStream_arginfo, 0, 0, 1)
+ZEND_ARG_INFO(0, model)
+ZEND_ARG_INFO(0, logger)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(seaslog_setDatetimeFormat_arginfo, 0, 0, 1)
 ZEND_ARG_INFO(0, format)
 ZEND_END_ARG_INFO()
@@ -108,6 +113,7 @@ const zend_function_entry seaslog_methods[] =
     PHP_ME(SEASLOG_RES_NAME, setBasePath,   seaslog_setBasePath_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getBasePath,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, setLogger,     seaslog_setLogger_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, closeLoggerStream,     seaslog_closeLoggerStream_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getLastLogger, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
     PHP_ME(SEASLOG_RES_NAME, setRequestID,  seaslog_setRequestID_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
@@ -213,6 +219,9 @@ PHP_MINIT_FUNCTION(seaslog)
     REGISTER_LONG_CONSTANT("SEASLOG_APPENDER_TCP", SEASLOG_APPENDER_TCP, CONST_PERSISTENT | CONST_CS);
     REGISTER_LONG_CONSTANT("SEASLOG_APPENDER_UDP", SEASLOG_APPENDER_UDP, CONST_PERSISTENT | CONST_CS);
 
+    REGISTER_LONG_CONSTANT("SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL", SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL, CONST_PERSISTENT | CONST_CS);
+    REGISTER_LONG_CONSTANT("SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN", SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, CONST_PERSISTENT | CONST_CS);
+
     INIT_CLASS_ENTRY(seaslog, SEASLOG_RES_NAME, seaslog_methods);
 
 #if PHP_VERSION_ID >= 70000
@@ -274,7 +283,7 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
     seaslog_clear_host_name(TSRMLS_C);
     seaslog_clear_template(TSRMLS_C);
     seaslog_clear_request_variable(TSRMLS_C);
-    seaslog_clear_stream_list(TSRMLS_C);
+    seaslog_clear_stream_list(SEASLOG_STREAM_LIST_DESTROY_YES TSRMLS_CC);
     return SUCCESS;
 }
 
@@ -459,7 +468,7 @@ PHP_METHOD(SEASLOG_RES_NAME, getBasePath)
 }
 /* }}} */
 
-/* {{{ proto bool setBasePath(string logger)
+/* {{{ proto bool setLogger(string logger)
    Set SeasLog logger path */
 PHP_METHOD(SEASLOG_RES_NAME, setLogger)
 {
@@ -480,6 +489,52 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
 
         RETURN_TRUE;
     }
+
+    RETURN_FALSE;
+}
+/* }}} */
+
+/* {{{ proto bool closeLoggerStream([int model, string logger])
+   Close SeasLog logger stream */
+PHP_METHOD(SEASLOG_RES_NAME, closeLoggerStream)
+{
+    zval *_module;
+    long model = 1;
+    int argc = ZEND_NUM_ARGS();
+
+    if (zend_parse_parameters(argc TSRMLS_CC, "|lz", &model, &_module) == FAILURE)
+    {
+        return;
+    }
+
+    if (argc == 0)
+    {
+        model = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL;
+    }
+
+    if (model == SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL)
+    {
+        seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_CC);
+        seaslog_clear_stream_list(SEASLOG_STREAM_LIST_DESTROY_NO TSRMLS_CC);
+        RETURN_TRUE;
+    }
+
+    if (argc > 0 && model == SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN && argc < 2)
+    {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "With the first argument is SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, the second argument is required.");
+        RETURN_FALSE;
+    }
+
+//
+//    if (argc > 0 && (IS_STRING == Z_TYPE_P(_module) && Z_STRLEN_P(_module) > 0))
+//    {
+//        if (strncmp(SEASLOG_G(last_logger)->logger,Z_STRVAL_P(_module),Z_STRLEN_P(_module)))
+//        {
+//            process_logger(Z_STRVAL_P(_module), Z_STRLEN_P(_module), SEASLOG_PROCESS_LOGGER_LAST TSRMLS_CC);
+//        }
+//
+//        RETURN_TRUE;
+//    }
 
     RETURN_FALSE;
 }
