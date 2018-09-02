@@ -165,9 +165,9 @@ typedef struct _logger_entry_t
 
 typedef struct _stream_entry_t
 {
+    char *opt;
+    int opt_len;
     ulong stream_entry_hash;
-    char *logger;
-    int logger_len;
     php_stream *stream_entry;
 } stream_entry_t;
 
