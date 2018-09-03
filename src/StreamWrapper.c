@@ -269,7 +269,13 @@ create_stream:
         }
         else
         {
+
+#if PHP_VERSION_ID >= 70000
             stream_entry = ecalloc(1,sizeof(stream_entry_t));
+#else
+            stream_entry = pecalloc(1,sizeof(stream_entry_t),1);
+#endif
+
             stream_entry->opt_len = spprintf(&stream_entry->opt, 0, "%s",opt);
             stream_entry->stream_entry_hash = stream_entry_hash;
             stream_entry->stream = stream;
