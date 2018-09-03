@@ -15,11 +15,13 @@ var_dump(SeasLog::debug('this is a debug log {test}.',array('test' => 'replace')
 var_dump(SeasLog::info('this is a info log {test}.',array('test' => 'replace')));
 var_dump(SeasLog::notice('this is a notice log {test}.',array('test' => 'replace')));
 var_dump(SeasLog::warning('this is a warning log {test}.',array('test' => 'replace')));
+var_dump(SeasLog::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, 'logger'));
 var_dump(SeasLog::closeLoggerStream());
 var_dump(SeasLog::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL));
 var_dump(SeasLog::warning('this is a warning log {test}.',array('test' => 'replace')));
 ?>
 --EXPECT--
+bool(true)
 bool(true)
 bool(true)
 bool(true)

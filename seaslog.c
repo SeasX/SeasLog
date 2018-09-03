@@ -283,7 +283,7 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
     seaslog_clear_host_name(TSRMLS_C);
     seaslog_clear_template(TSRMLS_C);
     seaslog_clear_request_variable(TSRMLS_C);
-    seaslog_clear_stream_list(SEASLOG_STREAM_LIST_DESTROY_YES TSRMLS_CC);
+    seaslog_clear_stream(SEASLOG_STREAM_LIST_DESTROY_YES, SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL, NULL TSRMLS_CC);
     return SUCCESS;
 }
 
@@ -512,29 +512,27 @@ PHP_METHOD(SEASLOG_RES_NAME, closeLoggerStream)
         model = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL;
     }
 
-    if (model == SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL)
+    if (SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL == model)
     {
         seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_CC);
-        seaslog_clear_stream_list(SEASLOG_STREAM_LIST_DESTROY_NO TSRMLS_CC);
+        seaslog_clear_stream(SEASLOG_STREAM_LIST_DESTROY_NO, SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL, NULL TSRMLS_CC);
         RETURN_TRUE;
     }
 
-    if (argc > 0 && model == SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN && argc < 2)
+    if (argc > 0 && SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN == model && argc < 2)
     {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "With the first argument is SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, the second argument is required.");
         RETURN_FALSE;
     }
 
-//
-//    if (argc > 0 && (IS_STRING == Z_TYPE_P(_module) && Z_STRLEN_P(_module) > 0))
-//    {
-//        if (strncmp(SEASLOG_G(last_logger)->logger,Z_STRVAL_P(_module),Z_STRLEN_P(_module)))
-//        {
-//            process_logger(Z_STRVAL_P(_module), Z_STRLEN_P(_module), SEASLOG_PROCESS_LOGGER_LAST TSRMLS_CC);
-//        }
-//
-//        RETURN_TRUE;
-//    }
+    if (argc == 2 && (IS_STRING == Z_TYPE_P(_module) && Z_STRLEN_P(_module) > 0))
+    {
+        seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_CC);
+        if (SUCCESS == seaslog_clear_stream(SEASLOG_STREAM_LIST_DESTROY_NO, SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, Z_STRVAL_P(_module) TSRMLS_CC))
+        {
+            RETURN_TRUE;
+        }
+    }
 
     RETURN_FALSE;
 }

@@ -128,6 +128,7 @@
 
 #define SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL     1
 #define SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN  2
+#define SEASLOG_CLOSE_LOGGER_STREAM_CAN_DELETE  3
 
 #define SEASLOG_GLOBAL_VARS_SERVER  		    TRACK_VARS_SERVER
 
@@ -168,7 +169,8 @@ typedef struct _stream_entry_t
     char *opt;
     int opt_len;
     ulong stream_entry_hash;
-    php_stream *stream_entry;
+    php_stream *stream;
+    int can_delete;
 } stream_entry_t;
 
 typedef struct _last_sec_entry_t
