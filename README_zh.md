@@ -34,8 +34,8 @@ An effective,fast,stable log extension for PHP
         - [获取与设置basePath](#获取与设置basepath)
         - [设置logger与获取lastLogger](#设置logger与获取lastlogger)
         - [快速写入log](#速写入log)
-        - [使用TCP或UDP发送时的数据格式](#使用TCP或UDP发送时的数据格式)
-        - [手动清除LoggerStream缓存](#手动清除LoggerStream缓存)
+        - [使用TCP或UDP发送时的数据格式](#使用tcp或udp发送时的数据格式)
+        - [手动清除LoggerStream缓存](#手动清除loggerstream缓存)
     - **[SeasLog Analyzer的使用](#seaslog-analyzer的使用)**
         - [快速统计某类型log的count值](#快速统计某类型log的count值)
         - [获取某类型log列表](#获取某类型log列表)
