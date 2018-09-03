@@ -33,7 +33,9 @@ An effective,fast,stable log extension for PHP
     - **[SeasLog Logger的使用](#seaslog-logger的使用)**
         - [获取与设置basePath](#获取与设置basepath)
         - [设置logger与获取lastLogger](#设置logger与获取lastlogger)
-        - [快速写入log](#快速写入log)
+        - [快速写入log](#速写入log)
+        - [使用TCP或UDP发送时的数据格式](#使用TCP或UDP发送时的数据格式)
+        - [手动清除LoggerStream缓存](#手动清除LoggerStream缓存)
     - **[SeasLog Analyzer的使用](#seaslog-analyzer的使用)**
         - [快速统计某类型log的count值](#快速统计某类型log的count值)
         - [获取某类型log列表](#获取某类型log列表)
@@ -303,6 +305,8 @@ define('SEASLOG_ALERT', 'ALERT');
 define('SEASLOG_EMERGENCY', 'EMERGENCY');
 define('SEASLOG_DETAIL_ORDER_ASC', 1);
 define('SEASLOG_DETAIL_ORDER_DESC', 2);
+define('SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL', 1);
+define('SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN', 2);
 
 class SeasLog
 {
@@ -325,7 +329,7 @@ class SeasLog
      */
     static public function setBasePath($basePath)
     {
-        return TRUE;
+        return true;
     }
 
     /**
@@ -337,32 +341,51 @@ class SeasLog
     {
         return 'the base_path';
     }
-    
+
     /**
      * 设置本次请求标识
+     *
      * @param string
+     *
      * @return bool
      */
-    static public function setRequestID($request_id){
-        return TRUE;
+    static public function setRequestID($request_id)
+    {
+        return true;
     }
+
     /**
      * 获取本次请求标识
      * @return string
      */
-    static public function getRequestID(){
+    static public function getRequestID()
+    {
         return uniqid();
     }
 
     /**
      * 设置模块目录
+     *
      * @param $module
      *
      * @return bool
      */
     static public function setLogger($module)
     {
-        return TRUE;
+        return true;
+    }
+
+    /**
+     * 手动清除logger的stream流
+     *
+     * @param $model
+     * @param $logger
+     *
+     * @return bool
+     */
+    static public function closeLoggerStream($model, $logger)
+    {
+        return true;
     }
 
     /**
@@ -376,13 +399,14 @@ class SeasLog
 
     /**
      * 设置DatetimeFormat配置
+     *
      * @param $format
      *
      * @return bool
      */
     static public function setDatetimeFormat($format)
     {
-        return TRUE;
+        return true;
     }
 
     /**
@@ -396,13 +420,14 @@ class SeasLog
 
     /**
      * 统计所有类型（或单个类型）行数
+     *
      * @param string $level
      * @param string $log_path
      * @param null   $key_word
      *
      * @return array | long
      */
-    static public function analyzerCount($level = 'all', $log_path = '*', $key_word = NULL)
+    static public function analyzerCount($level = 'all', $log_path = '*', $key_word = null)
     {
         return array();
     }
@@ -415,11 +440,11 @@ class SeasLog
      * @param null   $key_word
      * @param int    $start
      * @param int    $limit
-     * @param        $order 默认为正序 SEASLOG_DETAIL_ORDER_ASC，可选倒序 SEASLOG_DETAIL_ORDER_DESC
+     * @param        $order
      *
      * @return array
      */
-    static public function analyzerDetail($level = SEASLOG_INFO, $log_path = '*', $key_word = NULL, $start = 1, $limit = 20, $order = SEASLOG_DETAIL_ORDER_ASC)
+    static public function analyzerDetail($level = SEASLOG_INFO, $log_path = '*', $key_word = null, $start = 1, $limit = 20, $order = SEASLOG_DETAIL_ORDER_ASC)
     {
         return array();
     }
@@ -441,7 +466,7 @@ class SeasLog
      */
     static public function flushBuffer()
     {
-        return TRUE;
+        return true;
     }
 
     /**
@@ -542,6 +567,7 @@ class SeasLog
 
     /**
      * 通用日志方法
+     *
      * @param        $level
      * @param        $message
      * @param array  $content
@@ -660,7 +686,8 @@ SeasLog::error('test error 3');
 2014-07-27 08:53:52 | EMERGENCY | 23625 | 599159975a9ff | 1406422432.787 | Just now, the house next door was completely burnt out! it is a joke
 ```
 
-#### 当`seaslog.appender`配置为 `2（TCP）` 或 `3（UDP）` 时，日志将推送至remote_host:remote_port的TCP或UDP端口
+#### 使用TCP或UDP发送时的数据格式
+当`seaslog.appender`配置为 `2（TCP）` 或 `3（UDP）` 时，日志将推送至remote_host:remote_port的TCP或UDP端口
 > SeasLog发送至远端时，遵循规范[RFC5424](http://www.faqs.org/rfcs/rfc5424.html)
 > log格式统一为：`<PRI>1 {timeStampWithRFC3339} {HostName} {loggerName}[{pid}]: {logInfo}`
 > 上述`{logInfo}` 受配置  `seaslog.default_template`影响。
@@ -670,6 +697,24 @@ SeasLog::error('test error 3');
 <15>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: 2016-06-25 00:59:43 | DEBUG | 21423 | 599157af4e937 | 1466787583.322 | this is a neeke debug
 <14>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: 2016-06-25 00:59:43 | INFO | 21423 | 599157af4e937 | 1466787583.323 | this is a info log
 <13>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: 2016-06-25 00:59:43 | NOTICE | 21423 | 599157af4e937 | 1466787583.324 | this is a notice log
+```
+
+#### 手动清除LoggerStream缓存
+`SeasLog`会将日志Logger开启的Stream句柄进行缓存，以节省创建流时引起的开销。句柄将在请求结束时自动释放。
+如果在CLI模式下，进程退出时也会自动释放。或者你可以使用下面的函数进行手动释放。
+> 手动关闭所有的Logger Stream句柄：
+```php
+SeasLog::closeLoggerStream();
+
+或
+
+SeasLog::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL);
+
+```
+
+> 手动关闭指定的Logger Stream句柄：
+```php
+SeasLog::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, 'logger_name');
 ```
 
 ### SeasLog Analyzer的使用

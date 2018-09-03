@@ -3,7 +3,7 @@
 ```php
 /path/to/php --re seaslog
 
-Extension [ <persistent> extension #44 SeasLog version 1.8.5 ] {
+Extension [ <persistent> extension #44 SeasLog version 1.8.6 ] {
 
   - Dependencies {
   }
@@ -83,8 +83,8 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.5 ] {
     }
   }
 
-  - Constants [16] {
-    Constant [ string SEASLOG_VERSION ] { 1.8.5 }
+  - Constants [18] {
+    Constant [ string SEASLOG_VERSION ] { 1.8.6 }
     Constant [ string SEASLOG_AUTHOR ] { Chitao.Gao  [ neeke@php.net ] }
     Constant [ string SEASLOG_ALL ] { ALL }
     Constant [ string SEASLOG_DEBUG ] { DEBUG }
@@ -100,6 +100,8 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.5 ] {
     Constant [ integer SEASLOG_APPENDER_FILE ] { 1 }
     Constant [ integer SEASLOG_APPENDER_TCP ] { 2 }
     Constant [ integer SEASLOG_APPENDER_UDP ] { 3 }
+    Constant [ integer SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL ] { 1 }
+    Constant [ integer SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN ] { 2 }
   }
 
   - Functions {
@@ -118,7 +120,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.5 ] {
       - Static properties [0] {
       }
 
-      - Static methods [22] {
+      - Static methods [23] {
         Method [ <internal:SeasLog> static public method setBasePath ] {
 
           - Parameters [1] {
@@ -133,6 +135,14 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.5 ] {
 
           - Parameters [1] {
             Parameter #0 [ <required> $logger ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method closeLoggerStream ] {
+
+          - Parameters [2] {
+            Parameter #0 [ <required> $model ]
+            Parameter #1 [ <optional> $logger ]
           }
         }
 

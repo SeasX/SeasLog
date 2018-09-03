@@ -28,6 +28,8 @@ An effective,fast,stable log extension for PHP
         - [Get and set base path](#get-and-set-base-path)
         - [Get and set logger](#get-and-set-logger)
         - [Fast write log](#fast-write-log)
+        - [Data format when sent by TCP or UDP](#data-format-when-sent-by-tcp-or-udp)
+        - [Manually release stream flow from logger](#manually-release-stream-flow-from-logger)
     - **[The useage of SeasLog Analyzer](#the-useage-of-seaslog-analyzer)**
         - [Fast count some type of log count value](#fast-count-some-type-of-log-count-value)
         - [Acquisit some type of log list](#acquisit-some-type-of-log-list)
@@ -317,6 +319,8 @@ define('SEASLOG_ALERT', 'ALERT');
 define('SEASLOG_EMERGENCY', 'EMERGENCY');
 define('SEASLOG_DETAIL_ORDER_ASC', 1);
 define('SEASLOG_DETAIL_ORDER_DESC', 2);
+define('SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL', 1);
+define('SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN', 2);
 
 class SeasLog
 {
@@ -377,6 +381,19 @@ class SeasLog
     static public function setLogger($module)
     {
         return TRUE;
+    }
+    
+    /**
+     * Manually release stream flow from logger
+     *
+     * @param $model
+     * @param $logger
+     *
+     * @return bool
+     */
+    static public function closeLoggerStream($model, $logger)
+    {
+        return true;
     }
 
     /**
@@ -676,7 +693,9 @@ The `logger` cased by the third param would be used right this right now, like a
 2014-07-27 08:53:52 | EMERGENCY | 23625 | 599159975a9ff | 1406422432.787 | Just now, the house next door was completely burnt out! it is a joke
 ```
 
-#### SeasLog will send log to  tcp://remote_host:remote_port or udp://remote_host:remote_port server, when `seaslog.appender` configured to `2 (TCP)` or `3 (UDP)`.
+#### Data format when sent by TCP or UDP
+
+SeasLog will send log to  tcp://remote_host:remote_port or udp://remote_host:remote_port server, when `seaslog.appender` configured to `2 (TCP)` or `3 (UDP)`.
 > When `SeasLog` send log to TCP/UDP，style follow [RFC5424](http://www.faqs.org/rfcs/rfc5424.html)
 > log style is formatted by SeasLog with send header:`<PRI>1 {timeStampWithRFC3339} {HostName} {loggerName}[{pid}]: {logInfo}`
 > The `{logInfo}` affected by  `seaslog.default_template`.
@@ -686,6 +705,24 @@ The log style finally formatted such as:
 <15>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: 2016-06-25 00:59:43 | DEBUG | 21423 | 599157af4e937 | 1466787583.322 | this is a neeke debug
 <14>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: 2016-06-25 00:59:43 | INFO | 21423 | 599157af4e937 | 1466787583.323 | this is a info log
 <13>1 2017-08-27T01:24:59+08:00 vagrant-ubuntu-trusty test/logger[27171]: 2016-06-25 00:59:43 | NOTICE | 21423 | 599157af4e937 | 1466787583.324 | this is a notice log
+```
+
+#### Manually release stream flow from logger
+`SeasLog' caches the stream handle opened by the log logger to save the overhead of creating a stream. The handle will be automatically released at the end of the request.
+If in CLI mode, the process will also automatically release when it exits. Or you can use the following functions to manually release.
+> Manually release all of the logger stream handle：
+```php
+SeasLog::closeLoggerStream();
+
+or
+
+SeasLog::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL);
+
+```
+
+> Manually release the specified logger stream handle：
+```php
+SeasLog::closeLoggerStream(SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, 'logger_name');
 ```
 
 ### The useage of SeasLog Analyzer

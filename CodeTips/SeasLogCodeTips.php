@@ -15,6 +15,8 @@ define('SEASLOG_ALERT', 'ALERT');
 define('SEASLOG_EMERGENCY', 'EMERGENCY');
 define('SEASLOG_DETAIL_ORDER_ASC', 1);
 define('SEASLOG_DETAIL_ORDER_DESC', 2);
+define('SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL', 1);
+define('SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN', 2);
 
 class SeasLog
 {
@@ -79,6 +81,19 @@ class SeasLog
      * @return bool
      */
     static public function setLogger($module)
+    {
+        return true;
+    }
+
+    /**
+     * 手动清除logger的stream流
+     *
+     * @param $model
+     * @param $logger
+     *
+     * @return bool
+     */
+    static public function closeLoggerStream($model, $logger)
     {
         return true;
     }
