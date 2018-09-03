@@ -162,10 +162,17 @@ int seaslog_clear_stream(int destroy, int model, char *opt TSRMLS_DC)
                     efree(stream_entry->opt);
                     zend_hash_index_del(ht, num_key);
                 }
+                else
+                {
+                    zend_hash_move_forward(ht);
+                }
 
                 result = SUCCESS;
             }
-            zend_hash_move_forward(ht);
+            else
+            {
+                zend_hash_move_forward(ht);
+            }
         }
 
         if (SEASLOG_STREAM_LIST_DESTROY_YES == destroy)
