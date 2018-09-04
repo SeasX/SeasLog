@@ -19,56 +19,6 @@
 #include "ExceptionHook.h"
 #include "TemplateFormatter.h"
 
-void get_keyword_template(smart_str *xbuf TSRMLS_DC, char *key_word TSRMLS_DC)
-{
-    if (!key_word || !strcmp(key_word, SEASLOG_ALL))
-    {
-        smart_str_appendl(xbuf, SEASLOG_ALL, strlen(SEASLOG_ALL));
-        return;
-    }
-    char template_tmp[100];
-    template_tmp[0] = '\0';
-    char *template = SEASLOG_G(default_template);
-    int len;
-    int isStart = 0;
-    int isStop = 0;
-    int index = 0;
-    while (*template && *template != '\0' && index <= 100)
-    {
-        switch (*template)
-        {
-            case '%':
-                if (isStart)
-                {
-                    isStop = 1;
-                }
-                else
-                {
-                    if (*(++template) == 'L') {
-                        len = strlen(key_word);
-                        strcat(template_tmp, key_word);
-                        index = index + len - 1;
-                        isStart = 1;
-                    } else {
-                        index = -1;
-                    }
-                }
-                break;
-            default:
-                template_tmp[index] = *template;
-                break;
-        }
-        if (isStop) {
-            template_tmp[index] = '\0';
-            break;
-        }
-        template_tmp[index + 1] = '\0';
-        template++;
-        index++;
-    }
-    smart_str_appendl(xbuf, template_tmp, strlen(template_tmp));
-}
-
 long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
 {
     FILE * fp;
