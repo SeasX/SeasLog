@@ -709,7 +709,7 @@ The log style finally formatted such as:
 
 #### Manually release stream flow from logger
 `SeasLog' caches the stream handle opened by the log logger to save the overhead of creating a stream. The handle will be automatically released at the end of the request.
-If in CLI mode, the process will also automatically release when it exits. Or you can use the following functions to manually release.
+If in CLI mode, the process will also automatically release when it exits. Or you can use the following functions to manually release(manually release function needs to update SeasLog 1.8.6 or updated version).
 > Manually release all of the logger stream handle：
 ```php
 SeasLog::closeLoggerStream();

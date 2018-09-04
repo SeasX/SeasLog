@@ -701,7 +701,7 @@ SeasLog::error('test error 3');
 
 #### 手动清除LoggerStream缓存
 `SeasLog`会将日志Logger开启的Stream句柄进行缓存，以节省创建流时引起的开销。句柄将在请求结束时自动释放。
-如果在CLI模式下，进程退出时也会自动释放。或者你可以使用下面的函数进行手动释放。
+如果在CLI模式下，进程退出时也会自动释放。或者你可以使用下面的函数进行手动释放(手动释放函数需要更新SeasLog 1.8.6或更新版本)。
 > 手动关闭所有的Logger Stream句柄：
 ```php
 SeasLog::closeLoggerStream();
