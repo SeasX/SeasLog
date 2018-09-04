@@ -744,6 +744,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
     long limit = 20;
     long order = SEASLOG_DETAIL_ORDER_ASC;
     int argc = ZEND_NUM_ARGS();
+    smart_str xbuf = {0};
 
 #if PHP_VERSION_ID >= 70000
     zend_string *_log_path = NULL;
@@ -815,8 +816,12 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
     }
 
 #endif
+    get_keyword_template(&xbuf TSRMLS_CC, level TSRMLS_CC);
+    smart_str_0(&xbuf);
 
+    level = SEASLOG_SMART_STR_C(xbuf);
     get_detail(log_path, level, key_word, start, start + limit - 1, order, return_value TSRMLS_CC);
+    smart_str_free(&xbuf);
 }
 /* }}} */
 

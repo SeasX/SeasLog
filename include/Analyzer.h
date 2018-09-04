@@ -19,6 +19,7 @@
 
 #include "php_seaslog.h"
 
+void get_keyword_template(smart_str *xbuf TSRMLS_DC, char *key_word TSRMLS_DC);
 long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC);
 int get_detail(char *log_path, char *level, char *key_word, long start, long end, long order, zval *return_value TSRMLS_DC);
 
