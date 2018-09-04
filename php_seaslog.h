@@ -64,6 +64,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
 
     char *default_template;
     char *current_template;
+    char *level_template;
     char *slash_or_underline;
 
     logger_entry_t *tmp_logger;

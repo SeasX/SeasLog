@@ -737,14 +737,13 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
    Get log detail by level, log_path, key_word, start, limit, order */
 PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 {
-    char *level = NULL, *log_path = NULL, *key_word = NULL;
+    char *level = NULL, *log_path = NULL, *key_word = NULL, *level_template = NULL;
     int log_path_len = 0, level_len = 0, key_word_len = 0;
 
     long start = 1;
     long limit = 20;
     long order = SEASLOG_DETAIL_ORDER_ASC;
     int argc = ZEND_NUM_ARGS();
-    smart_str xbuf = {0};
 
 #if PHP_VERSION_ID >= 70000
     zend_string *_log_path = NULL;
@@ -816,12 +815,10 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
     }
 
 #endif
-    get_keyword_template(&xbuf TSRMLS_CC, level TSRMLS_CC);
-    smart_str_0(&xbuf);
+    seaslog_spprintf(&level_template TSRMLS_CC, SEASLOG_GENERATE_LEVEL_TEMPLATE, level, 0);
 
-    level = SEASLOG_SMART_STR_C(xbuf);
-    get_detail(log_path, level, key_word, start, start + limit - 1, order, return_value TSRMLS_CC);
-    smart_str_free(&xbuf);
+    get_detail(log_path, level_template, key_word, start, start + limit - 1, order, return_value TSRMLS_CC);
+    efree(level_template);
 }
 /* }}} */
 

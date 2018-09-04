@@ -17,6 +17,7 @@
 #include "Analyzer.h"
 #include "Common.h"
 #include "ExceptionHook.h"
+#include "TemplateFormatter.h"
 
 void get_keyword_template(smart_str *xbuf TSRMLS_DC, char *key_word TSRMLS_DC)
 {
@@ -72,10 +73,9 @@ long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
 {
     FILE * fp;
     char buffer[BUFSIZ];
-    char *path, *sh;
+    char *path, *sh, *level_template = NULL;
     long count;
     int is_level_all = 0;
-    smart_str xbuf = {0};
 
     if (SEASLOG_G(last_logger)->access == FAILURE)
     {
@@ -88,10 +88,8 @@ long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
     }
     else
     {
-        get_keyword_template(&xbuf TSRMLS_CC, level TSRMLS_CC);
-        smart_str_0(&xbuf);
-
-        level = SEASLOG_SMART_STR_C(xbuf);
+        seaslog_spprintf(&level_template TSRMLS_CC, SEASLOG_GENERATE_LEVEL_TEMPLATE, level, 0);
+        level = level_template;
     }
 
 
@@ -162,7 +160,10 @@ long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
     count = atoi(delN(buffer));
     efree(path);
     efree(sh);
-    smart_str_free(&xbuf);
+    if (level_template)
+    {
+        efree(level_template);
+    }
 
     return count;
 }
