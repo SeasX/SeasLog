@@ -1,6 +1,7 @@
 SeasLog
 ======
 [![Build Status](https://travis-ci.org/SeasX/SeasLog.svg?branch=master)](https://travis-ci.org/SeasX/SeasLog)
+[![Build status](https://ci.appveyor.com/api/projects/status/xkf8y7msk7kskon2?svg=true)](https://ci.appveyor.com/project/Neeke/seaslog)
 
 An effective,fast,stable log extension for PHP
 
