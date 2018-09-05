@@ -25,6 +25,12 @@
 #define S_NULL          "(null)"
 #define S_NULL_LEN      6
 
+#if PHP_VERSION_ID >= 70000
+#define EXIST_CHAR(xbuf)  xbuf->s
+#else
+#define EXIST_CHAR(xbuf) xbuf->c
+#endif
+
 #define INS_CHAR_NR(xbuf, ch) do {	\
 	smart_str_appendc(xbuf, ch);	\
 } while (0)
@@ -66,7 +72,7 @@ int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size
             seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(default_template), level, ap);
             break;
         case SEASLOG_GENERATE_LEVEL_TEMPLATE:
-            if (level && !strcmp(level, SEASLOG_ALL))
+            if (strlen(SEASLOG_G(level_template)) == 0 || (level && !strcmp(level, SEASLOG_ALL)))
             {
                 INS_STRING(&xbuf, SEASLOG_ALL, strlen(SEASLOG_ALL));
             }
@@ -299,6 +305,10 @@ skip_output:
             SEASLOG_G(level_template) = estrdup(level_template);
             break;
         }
+    }
+    if (!EXIST_CHAR(xbuf))
+    {
+        INS_STRING(xbuf, "", 0);
     }
 
     if (SEASLOG_SMART_STR_C(tmp_buf))
