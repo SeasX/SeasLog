@@ -112,22 +112,29 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
     char char_buf[2];
     smart_str tmp_buf = {0};
 
-    char level_template[100];
-    level_template[0] = '\0';
+    char level_template[SEASLOG_BUFFER_MAX_SIZE];
     int level_format_start = 0;
     int level_format_stop = 0;
     int level_format_over = 0;
     int level_format_index = 0;
+
+    if (SEASLOG_GENERATE_CURRENT_TEMPLATE == generate_type)
+    {
+        level_template[0] = '\0';
+    }
 
     while (*fmt)
     {
         if (*fmt != '%')
         {
             INS_CHAR_NR(xbuf, *fmt);
-            if (!level_format_stop)
+            if (SEASLOG_GENERATE_CURRENT_TEMPLATE == generate_type)
             {
-                level_template[level_format_index] = *fmt;
-                level_format_index++;
+                if (level_format_stop == 0)
+                {
+                    level_template[level_format_index] = *fmt;
+                    level_format_index++;
+                }
             }
         }
         else
@@ -306,6 +313,7 @@ skip_output:
             break;
         }
     }
+
     if (!EXIST_CHAR(xbuf))
     {
         INS_STRING(xbuf, "", 0);
