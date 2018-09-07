@@ -1,23 +1,22 @@
 // vim:ft=javascript
 
-ARG_ENABLE("seaslog", "enable seaslog support", "no");
+ARG_ENABLE("seaslog", "enable seaslog support", "yes");
 
 if (PHP_SEASLOG != "no") {
-    seaslog_source_file="seaslog.c \
-        src/Performance.c \
-        src/Analyzer.c \
-        src/StreamWrapper.c \
-        src/TemplateFormatter.c \
-        src/ExceptionHook.c \
-        src/Appender.c \
-        src/Datetime.c \
-        src/Logger.c \
-        src/Buffer.c \
-        src/ErrorHook.c \
-        src/Request.c \
-        src/Common.c"
+    seaslog_source_file="Performance.c \
+        Analyzer.c \
+        StreamWrapper.c \
+        TemplateFormatter.c \
+        ExceptionHook.c \
+        Appender.c \
+        Datetime.c \
+        Logger.c \
+        Buffer.c \
+        ErrorHook.c \
+        Request.c \
+        Common.c"
 
-    seaslog_headers="include/Analyzer.h \
+    seaslog_headers=" include/Analyzer.h \
         include/Appender.h \
         include/Buffer.h \
         include/Common.h \
@@ -32,7 +31,11 @@ if (PHP_SEASLOG != "no") {
         include/StreamWrapper.h \
         include/TemplateFormatter.h"
 
-	EXTENSION("seaslog", seaslog_source_file, true, "/I" + configure_module_dirname + "/include /I" + configure_module_dirname);
+	EXTENSION("seaslog", "seaslog.c", true, "/I" + configure_module_dirname + "/include /I" + configure_module_dirname);
+
+    ADD_SOURCES(configure_module_dirname + "\\src", seaslog_source_file, "seaslog");
+
+    PHP_INSTALL_HEADERS(configure_module_dirname, "php_seaslog.h" + seaslog_headers);
 
 	AC_DEFINE("HAVE_SEASLOG", 1, "Have Seaslog Support");
 }
