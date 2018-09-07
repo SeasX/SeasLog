@@ -24,7 +24,7 @@
         <active>yes</active>
     </lead>
     <date>2018-09-07</date>
-    <time>15:00:00</time>
+    <time>17:45:00</time>
     <version>
         <release>1.8.6</release>
         <api>1.8.6</api>
@@ -35,7 +35,6 @@
     </stability>
     <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
     <notes>
-        -
         - New Feature Add log message collection recommendations docs.
         - New Feature Add bench_mark.php
         - New Feature #218 add SeasLog::closeLoggerStream()

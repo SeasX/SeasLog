@@ -1,6 +1,6 @@
 // vim:ft=javascript
 
-ARG_ENABLE("seaslog", "enable seaslog support", "no");
+ARG_ENABLE("seaslog", "enable seaslog support", "yes");
 
 if (PHP_SEASLOG != "no") {
 
@@ -30,6 +30,6 @@ if (PHP_SEASLOG != "no") {
     } else {
         WARNING("seaslog not enabled, headers not found");
     }
-
+  
 }
 
