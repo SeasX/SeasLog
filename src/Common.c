@@ -73,7 +73,7 @@ int check_log_level(int level TSRMLS_DC)
     return SUCCESS;
 }
 
-static char *str_replace(char *src, const char *from, const char *to)
+char *str_replace(char *src, const char *from, const char *to)
 {
     char *needle;
     char *tmp;

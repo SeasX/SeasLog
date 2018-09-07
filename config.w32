@@ -16,7 +16,23 @@ if (PHP_SEASLOG != "no") {
         src/ErrorHook.c \
         src/Request.c \
         src/Common.c"
-	EXTENSION("seaslog", $seaslog_source_file);
+
+    seaslog_headers="include/Analyzer.h \
+        include/Appender.h \
+        include/Buffer.h \
+        include/Common.h \
+        include/Datetime.h \
+        include/ErrorHook.h \
+        include/ExceptionHook.h \
+        include/Logger.h \
+        include/Performance.h \
+        include/php7_wrapper.h \
+        include/Request.h \
+        include/SeasLog.h \
+        include/StreamWrapper.h \
+        include/TemplateFormatter.h"
+
+	EXTENSION("seaslog", seaslog_source_file, true, "/I" + configure_module_dirname + "/include /I" + configure_module_dirname);
 
 	AC_DEFINE("HAVE_SEASLOG", 1, "Have Seaslog Support");
 }
