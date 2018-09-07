@@ -35,7 +35,6 @@
     </stability>
     <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
     <notes>
-        -
         - New Feature Add log message collection recommendations docs.
         - New Feature Add bench_mark.php
         - New Feature #218 add SeasLog::closeLoggerStream()
