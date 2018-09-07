@@ -3,37 +3,33 @@
 ARG_ENABLE("seaslog", "enable seaslog support", "no");
 
 if (PHP_SEASLOG != "no") {
-    seaslog_source_file="seaslog.c \
-        src/Performance.c \
-        src/Analyzer.c \
-        src/StreamWrapper.c \
-        src/TemplateFormatter.c \
-        src/ExceptionHook.c \
-        src/Appender.c \
-        src/Datetime.c \
-        src/Logger.c \
-        src/Buffer.c \
-        src/ErrorHook.c \
-        src/Request.c \
-        src/Common.c"
 
-    seaslog_headers="include/Analyzer.h \
-        include/Appender.h \
-        include/Buffer.h \
-        include/Common.h \
-        include/Datetime.h \
-        include/ErrorHook.h \
-        include/ExceptionHook.h \
-        include/Logger.h \
-        include/Performance.h \
-        include/php7_wrapper.h \
-        include/Request.h \
-        include/SeasLog.h \
-        include/StreamWrapper.h \
-        include/TemplateFormatter.h"
+    if (CHECK_HEADER_ADD_INCLUDE("SeasLog.h", "CFLAGS_SEASLOG", PHP_PHP_BUILD + "\\include;" + PHP_EXTRA_INCLUDES)) {
 
-	EXTENSION("seaslog", seaslog_source_file, true, "/I" + configure_module_dirname + "/include /I" + configure_module_dirname);
+        seaslog_source_file="Performance.c \
+            Analyzer.c \
+            StreamWrapper.c \
+            TemplateFormatter.c \
+            ExceptionHook.c \
+            Appender.c \
+            Datetime.c \
+            Logger.c \
+            Buffer.c \
+            ErrorHook.c \
+            Request.c \
+            Common.c"
 
-	AC_DEFINE("HAVE_SEASLOG", 1, "Have Seaslog Support");
+        EXTENSION("seaslog", "seaslog.c");
+
+        ADD_SOURCES(configure_module_dirname + "\\src", seaslog_source_file, "seaslog");
+
+        ADD_FLAG("CFLAGS_SEASLOG", ' /I "' + configure_module_dirname + "/include /I" + configure_module_dirname + '" ');
+
+	    AC_DEFINE("HAVE_SEASLOG", 1, "Have Seaslog Support");
+
+    } else {
+        WARNING("seaslog not enabled, headers not found");
+    }
+
 }
 
