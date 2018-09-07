@@ -23,11 +23,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2018-03-23</date>
-    <time>18:30:00</time>
+    <date>2018-09-07</date>
+    <time>15:00:00</time>
     <version>
-        <release>1.8.4</release>
-        <api>1.8.4</api>
+        <release>1.8.6</release>
+        <api>1.8.6</api>
     </version>
     <stability>
         <release>stable</release>
@@ -35,18 +35,21 @@
     </stability>
     <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
     <notes>
-        - New Feature #162 Configure seaslog.recall_depth support for filename and code line.
-        - New Feature #170 Configure seaslog.trace_notice and seaslog.trace_warning support trace notice and warning.
-        - New Feature #172 Configure seaslog.disting_folder support switch {Logger}/{Time}[.Type].log or {Logger}_{Time}[.Type].log.
-        - New Feature #174 Add %U(MemoryUsage) and %u(PeakMemoryUsage) into default variable table.
-        - New Feature #186 Use seaslog_throw_exception replace zend_error.
-        - Fixed issue #65 Message template content match error.
-        - Fixed issue #153 Disting_by_hour and disting_type can not use together.
-        - Fixed issue #156 Log template format error with %L and %M.
-        - Fixed issue #158 SeasLog::setRequestID intercepted error.
-        - Fixed issue #165 Phpdbg seg fault.
-        - Fixed issue #184 SeasLog::analyzerCount seg fault at PHP7-nts.
-        - Fixed issue #181 Perfect when stream's connection was broken.
+        -
+        - New Feature Add log message collection recommendations docs.
+        - New Feature Add bench_mark.php
+        - New Feature #218 add SeasLog::closeLoggerStream()
+        - Fixed check_log_level:log level should lower than setting 'seaslog.level'
+        - Fixed core dump in phpdbg.
+        - Fixed smtp_secure and smtp_mailer.
+        - Fixed issue #125 #203 Add seaslog.buffer_disabled_in_cli to config, default false.
+        - Fixed issue #196 php5.3.x undefined symbol: expand_filepath_with_mode.
+        - Fixed issue #195 rsyslog recive log with RFC5424.
+        - Fixed issue #200 error warning when tcp/udp error.
+        - Fixed issue #202 Add unit tests.
+        - Fixed issue #210 add seaslog.remote_timeout to config, default 1 second.
+        - Fixed issue #215 analyzerCount error.
+        - Fixed issue #228 analyzerDetail error.
     </notes>
     <contents>
         <dir name="/">
@@ -554,6 +557,33 @@
             <notes>
                 - Fixed analyzerDetail bug, use grep -ai key_words.
                 - Fixed issue #152. Segfault in cli.
+            </notes>
+        </release>
+        <release>
+            <date>2018-03-23</date>
+            <time>18:30:00</time>
+            <version>
+                <release>1.8.4</release>
+                <api>1.8.4</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
+            <notes>
+                - New Feature #162 Configure seaslog.recall_depth support for filename and code line.
+                - New Feature #170 Configure seaslog.trace_notice and seaslog.trace_warning support trace notice and warning.
+                - New Feature #172 Configure seaslog.disting_folder support switch {Logger}/{Time}[.Type].log or {Logger}_{Time}[.Type].log.
+                - New Feature #174 Add %U(MemoryUsage) and %u(PeakMemoryUsage) into default variable table.
+                - New Feature #186 Use seaslog_throw_exception replace zend_error.
+                - Fixed issue #65 Message template content match error.
+                - Fixed issue #153 Disting_by_hour and disting_type can not use together.
+                - Fixed issue #156 Log template format error with %L and %M.
+                - Fixed issue #158 SeasLog::setRequestID intercepted error.
+                - Fixed issue #165 Phpdbg seg fault.
+                - Fixed issue #184 SeasLog::analyzerCount seg fault at PHP7-nts.
+                - Fixed issue #181 Perfect when stream's connection was broken.
             </notes>
         </release>
     </changelog>
