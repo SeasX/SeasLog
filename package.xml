@@ -64,6 +64,18 @@
             <dir name="include">
                 <file role="src" name="SeasLog.h" />
                 <file role="src" name="php7_wrapper.h" />
+                <file role="src" name="Analyzer.h" />
+                <file role="src" name="Appender.h" />
+                <file role="src" name="Buffer.h" />
+                <file role="src" name="Common.h" />
+                <file role="src" name="Datetime.h" />
+                <file role="src" name="ErrorHook.h" />
+                <file role="src" name="ExceptionHook.h" />
+                <file role="src" name="Logger.h" />
+                <file role="src" name="Performance.h" />
+                <file role="src" name="Request.h" />
+                <file role="src" name="StreamWrapper.h" />
+                <file role="src" name="TemplateFormatter.h" />
             </dir>
             <dir name="src">
                 <file role="src" name="Common.c" />
