@@ -287,5 +287,17 @@ class SeasLog
     {
 
     }
+
+    /**
+     * 释放指定句柄
+     *
+     * @param        $level
+     * @param        $name
+     */
+    static public function closeLoggerStream($level = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, $name = 'logger_name');
+    {
+        return true;
+    }
+
 }
 
