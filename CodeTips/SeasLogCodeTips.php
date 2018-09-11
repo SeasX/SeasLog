@@ -93,7 +93,7 @@ class SeasLog
      *
      * @return bool
      */
-    static public function closeLoggerStream($model, $logger)
+    static public function closeLoggerStream($level = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, $name = 'logger_name');
     {
         return true;
     }
@@ -287,5 +287,6 @@ class SeasLog
     {
 
     }
+
 }
 
