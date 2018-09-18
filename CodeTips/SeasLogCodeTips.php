@@ -76,11 +76,11 @@ class SeasLog
     /**
      * 设置模块目录
      *
-     * @param $module
+     * @param $logger
      *
      * @return bool
      */
-    static public function setLogger($module)
+    static public function setLogger($logger)
     {
         return true;
     }
@@ -88,12 +88,12 @@ class SeasLog
     /**
      * 手动清除logger的stream流
      *
-     * @param $model
-     * @param $logger
+     * @param int    $model
+     * @param string $logger
      *
      * @return bool
      */
-    static public function closeLoggerStream($level = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, $name = 'logger_name');
+    static public function closeLoggerStream($model = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, $logger)
     {
         return true;
     }
