@@ -30,13 +30,16 @@ var_dump(is_array($aLogsWithLogger) && count($aLogsWithLogger) > 1);
 $aLogsWithKeyWord = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace');
 var_dump(is_array($aLogsWithKeyWord) && count($aLogsWithKeyWord) > 1);
 
-$aLogsWithLimit = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace',1,3);
-var_dump(is_array($aLogsWithLimit) && count($aLogsWithLimit) == 3);
+if (strtoupper(substr(PHP_OS,0,3)) === 'WIN') {
+    var_dump(true);
+    var_dump(true);
+} else {
+    $aLogsWithLimit = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace',1,3);
+    var_dump(is_array($aLogsWithLimit) && count($aLogsWithLimit) == 3);
 
-$aLogsWithOrder = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace',1,3,SEASLOG_DETAIL_ORDER_DESC);
-var_dump(is_array($aLogsWithOrder) && count($aLogsWithOrder) == 3);
-
-
+    $aLogsWithOrder = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace',1,3,SEASLOG_DETAIL_ORDER_DESC);
+    var_dump(is_array($aLogsWithOrder) && count($aLogsWithOrder) == 3);
+}
 ?>
 --EXPECT--
 bool(true)
