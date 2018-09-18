@@ -737,7 +737,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerCount)
    Get log detail by level, log_path, key_word, start, limit, order */
 PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
 {
-    char *level = NULL, *log_path = NULL, *key_word = NULL, *level_template = NULL;
+    char *level = NULL, *log_path = NULL, *key_word = NULL;
     int log_path_len = 0, level_len = 0, key_word_len = 0;
 
     long start = 1;
@@ -815,10 +815,7 @@ PHP_METHOD(SEASLOG_RES_NAME, analyzerDetail)
     }
 
 #endif
-    seaslog_spprintf(&level_template TSRMLS_CC, SEASLOG_GENERATE_LEVEL_TEMPLATE, level, 0);
-
-    get_detail(log_path, level_template, key_word, start, start + limit - 1, order, return_value TSRMLS_CC);
-    efree(level_template);
+    get_detail(log_path, level, key_word, start, start + limit - 1, order, return_value TSRMLS_CC);
 }
 /* }}} */
 
