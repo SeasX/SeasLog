@@ -41,7 +41,7 @@ class alarmer
             case 'mail':
                 $mail->IsMail();
                 break;
-            
+
             case 'sendmail':
                 $mail->IsSendmail();
                 break;

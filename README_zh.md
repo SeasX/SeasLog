@@ -148,7 +148,7 @@ seaslog.buffer_disabled_in_cli = 0
 ;默认8(所有日志)
 ;
 ;   注意, 该配置项自1.7.0版本开始有变动。
-;   在1.7.0版本之前, 该值数字越小，根据级别记的日志越多: 
+;   在1.7.0版本之前, 该值数字越小，根据级别记的日志越多:
 ;   0-all 1-debug 2-info 3-notice 4-warning 5-error 6-critical 7-alert 8-emergency
 ;   1.7.0 之前的版本，该值默认为0(所有日志);
 seaslog.level = 8
@@ -262,7 +262,7 @@ seaslog.ignore_warning = 1
 ### 常量与函数
 #### 常量列表
 `SeasLog 共将日志分成8个级别`
-##### SEASLOG_DEBUG       
+##### SEASLOG_DEBUG
 * "DEBUG"       - debug信息、细粒度信息事件
 ##### SEASLOG_INFO
 * "INFO"        - 重要事件、强调应用程序的运行过程

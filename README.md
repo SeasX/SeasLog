@@ -98,7 +98,7 @@ $ pecl install seaslog
 ```
 
 ### Use SeasLog with Windows
-Go to PECL/SeasLog and find .dll to install. [PECL/SeasLog Windows Dll](http://pecl.php.net/package/SeasLog/1.8.4/windows) 
+Go to PECL/SeasLog and find .dll to install. [PECL/SeasLog Windows Dll](http://pecl.php.net/package/SeasLog/1.8.4/windows)
 
 ### seaslog.ini
 ```conf
@@ -115,11 +115,11 @@ seaslog.default_logger = "default"
 ;The DateTime Style.  Default "Y-m-d H:i:s"
 seaslog.default_datetime_format = "Y-m-d H:i:s"
 
-;Default Log template. 
+;Default Log template.
 ;Default "%T | %L | %P | %Q | %t | %M"
 seaslog.default_template = "%T | %L | %P | %Q | %t | %M"
 
-;Switch use the logger with folder. 
+;Switch use the logger with folder.
 ;1-Y(Default) 0-N
 seaslog.disting_folder = 1
 
@@ -142,12 +142,12 @@ seaslog.buffer_size = 100
 ;1-Y 0-N(Default)
 seaslog.buffer_disabled_in_cli = 0
 
-;Record logger level. 
+;Record logger level.
 ;0-EMERGENCY 1-ALERT 2-CRITICAL 3-ERROR 4-WARNING 5-NOTICE 6-INFO 7-DEBUG 8-ALL
 ;Default 8 (All of them).
 ;
 ;   Tips: The configuration item has changed since the 1.7.0 version.
-;   Before the 1.7.0 version, the smaller the value, the more logs are taken according to the level: 
+;   Before the 1.7.0 version, the smaller the value, the more logs are taken according to the level:
 ;   0-all 1-debug 2-info 3-notice 4-warning 5-error 6-critical 7-alert 8-emergency
 ;   Before the 1.7.0 version, Default 0 (All of them).
 seaslog.level = 8
@@ -165,19 +165,19 @@ seaslog.trace_notice = 0
 ;1-Y 0-N(Default)
 seaslog.trace_warning = 0
 
-;Automatic Record final error with default logger. 
+;Automatic Record final error with default logger.
 ;1-Y(Default) 0-N
 seaslog.trace_error = 1
 
-;Automatic Record exception with default logger. 
+;Automatic Record exception with default logger.
 ;1-Y 0-N(Default)
 seaslog.trace_exception = 0
 
-;Switch the Record Log Data Store.     
+;Switch the Record Log Data Store.
 ;1File 2TCP 3UDP (Switch default 1)
 seaslog.appender = 1
 
-;Record Log Retry Count 
+;Record Log Retry Count
 ;Default 0 (Do Not Retry)
 seaslog.appender_retry = 0
 
@@ -240,7 +240,7 @@ seaslog.ignore_warning = 1
 > `seaslog.ignore_warning = 1` Open a warning to ignore SeasLog itself. When directory permissions or receive server ports are blocked, they are ignored; when closed, a warning is thrown.
 
 ### Custom log template
-Many friends mentioned the need for custom log templates during their use, 
+Many friends mentioned the need for custom log templates during their use,
 so `SeasLog` began with the 1.7.2 version and has the ability to allow users to customize the template for the log.
 
 At the same time, many preset variables that are preset by `SeasLog` can be used in the template,please reference[Default variable table](#default-variable-table).
@@ -275,7 +275,7 @@ At the same time, many preset variables that are preset by `SeasLog` can be used
 ### Constants and functions
 #### Constant list
 `SeasLog exposes log level by eight levels.`
-##### SEASLOG_DEBUG       
+##### SEASLOG_DEBUG
 * "DEBUG"       - Detailed debug information.Fine-grained information events.
 ##### SEASLOG_INFO
 * "INFO"        - Interesting events.Emphasizes the running process of the application.
@@ -300,7 +300,7 @@ string('NOTICE') notice level
 */
 ```
 #### Function list
-`SeasLog` provides such a set of functions that you can easily get and set the root directory, log module directory, fast write and statistics. 
+`SeasLog` provides such a set of functions that you can easily get and set the root directory, log module directory, fast write and statistics.
 Believe that from the following pseudo code comments, you can quickly get function information, specific use will follow.
 
 ```php
@@ -356,7 +356,7 @@ class SeasLog
     {
         return 'the base_path';
     }
-    
+
     /**
      * Set The requestID
      * @param string
@@ -383,7 +383,7 @@ class SeasLog
     {
         return TRUE;
     }
-    
+
     /**
      * Manually release stream flow from logger
      *

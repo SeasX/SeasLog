@@ -117,18 +117,18 @@ TCP/UDP 输出, Rsyslog 的 rawmsg 原始日志格式为[RFC5424](https://www.rf
 
 ```conf
 app-name: cli
-msgid: default 
-msg: 2018-04-08 10:22:19 | INFO | 3748 | 5ac97cdba4926 | 1523154139.674 | i am cli test seaslog rsyslog 
-rawmsg: <14>1 2018-04-08T10:22:19+08:00 whj-desktop cli 3748 default 2018-04-08 10:22:19 | INFO | 3748 | 5ac97cdba4926 | 1523154139.674 | i am cli test seaslog rsyslog 
+msgid: default
+msg: 2018-04-08 10:22:19 | INFO | 3748 | 5ac97cdba4926 | 1523154139.674 | i am cli test seaslog rsyslog
+rawmsg: <14>1 2018-04-08T10:22:19+08:00 whj-desktop cli 3748 default 2018-04-08 10:22:19 | INFO | 3748 | 5ac97cdba4926 | 1523154139.674 | i am cli test seaslog rsyslog
 ```
 
 File 输出, Rsyslog 采集到的日志格式是 `seaslog.default_template`
 
 ```conf
 app-name: tag1
-msgid: - 
-msg: 2018-04-08 10:34:14 | INFO | 15597 | 5ac97fa6330a9 | 1523154854.209 | i am cli test seaslog rsyslog 
-rawmsg: 2018-04-08 10:34:14 | INFO | 15597 | 5ac97fa6330a9 | 1523154854.209 | i am cli test seaslog rsyslog 
+msgid: -
+msg: 2018-04-08 10:34:14 | INFO | 15597 | 5ac97fa6330a9 | 1523154854.209 | i am cli test seaslog rsyslog
+rawmsg: 2018-04-08 10:34:14 | INFO | 15597 | 5ac97fa6330a9 | 1523154854.209 | i am cli test seaslog rsyslog
 ```
 
 
@@ -162,7 +162,7 @@ filter {
 output{
     if [type] == "seaslog" {
         elasticsearch {
-            hosts => ["127.0.0.1:9200"] 
+            hosts => ["127.0.0.1:9200"]
             index => "rsyslog-%{+YYYY.MM.dd}"
         }
     }
