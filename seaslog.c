@@ -421,13 +421,13 @@ PHP_FUNCTION(seaslog_get_author)
 
 PHP_METHOD(SEASLOG_RES_NAME, __construct)
 {
-    seaslog_init_logger(TSRMLS_C);
-    seaslog_init_buffer(TSRMLS_C);
+    RETURN_TRUE;
 }
 
 PHP_METHOD(SEASLOG_RES_NAME, __destruct)
 {
-    seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_NO TSRMLS_CC);
+    seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_CC);
+    RETURN_TRUE;
 }
 
 /* {{{ proto bool setBasePath(string base_path)
