@@ -39,8 +39,8 @@
 
 #define SEASLOG_RES_NAME                        "SeasLog"
 #define SEASLOG_AUTHOR                          "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                         "1.8.7"
-#define SEASLOG_VERSION_ID                      10807
+#define SEASLOG_VERSION                         "1.8.8"
+#define SEASLOG_VERSION_ID                      10808
 #define SEASLOG_SUPPORTS                        "https://github.com/SeasX/SeasLog"
 
 #define SEASLOG_ALL                             "ALL"
@@ -108,6 +108,11 @@
 
 #define SEASLOG_CLI_KEY                         "cli"
 #define SEASLOG_PHPDBG_KEY                      "phpdbg"
+
+#define SEASLOG_REQUEST_VARIABLE_DOMAIN_PORT    1
+#define SEASLOG_REQUEST_VARIABLE_REQUEST_URI    2
+#define SEASLOG_REQUEST_VARIABLE_REQUEST_METHOD 3
+#define SEASLOG_REQUEST_VARIABLE_CLIENT_IP      4
 
 #define SEASLOG_LOGGER_SLASH                    "/"
 #define SEASLOG_LOGGER_UNDERLINE                "_"

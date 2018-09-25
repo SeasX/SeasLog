@@ -322,6 +322,10 @@ define('SEASLOG_DETAIL_ORDER_ASC', 1);
 define('SEASLOG_DETAIL_ORDER_DESC', 2);
 define('SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL', 1);
 define('SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN', 2);
+define('SEASLOG_REQUEST_VARIABLE_DOMAIN_PORT', 1);
+define('SEASLOG_REQUEST_VARIABLE_REQUEST_URI', 2);
+define('SEASLOG_REQUEST_VARIABLE_REQUEST_METHOD', 3);
+define('SEASLOG_REQUEST_VARIABLE_CLIENT_IP', 4);
 
 class SeasLog
 {
@@ -392,7 +396,7 @@ class SeasLog
      *
      * @return bool
      */
-    static public function closeLoggerStream($model, $logger)
+    static public function closeLoggerStream($model = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL, $logger)
     {
         return true;
     }
@@ -426,6 +430,31 @@ class SeasLog
         return 'the datetimeFormat';
     }
 
+    /**
+     * Set Reqeust Variable
+     *
+     * @param $key
+     * @param $value
+     *
+     * @return bool
+     */
+    static public function setRequestVariable($key, $value)
+    {
+        return true;
+    }
+
+    /**
+     * Get Reqeust Variable
+     *
+     * @param $key
+     *
+     * @return string
+     */
+    static public function getRequestVariable($key)
+    {
+        return '';
+    }
+    
     /**
      * Count All Types（Or Type）Log Lines
      * @param string $level

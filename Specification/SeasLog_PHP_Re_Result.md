@@ -3,7 +3,7 @@
 ```php
 /path/to/php --re seaslog
 
-Extension [ <persistent> extension #44 SeasLog version 1.8.6 ] {
+Extension [ <persistent> extension #44 SeasLog version 1.8.8 ] {
 
   - Dependencies {
   }
@@ -83,8 +83,8 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.6 ] {
     }
   }
 
-  - Constants [18] {
-    Constant [ string SEASLOG_VERSION ] { 1.8.6 }
+  - Constants [22] {
+    Constant [ string SEASLOG_VERSION ] { 1.8.8 }
     Constant [ string SEASLOG_AUTHOR ] { Chitao.Gao  [ neeke@php.net ] }
     Constant [ string SEASLOG_ALL ] { ALL }
     Constant [ string SEASLOG_DEBUG ] { DEBUG }
@@ -102,6 +102,10 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.6 ] {
     Constant [ integer SEASLOG_APPENDER_UDP ] { 3 }
     Constant [ integer SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL ] { 1 }
     Constant [ integer SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN ] { 2 }
+    Constant [ integer SEASLOG_REQUEST_VARIABLE_DOMAIN_PORT ] { 1 }
+    Constant [ integer SEASLOG_REQUEST_VARIABLE_REQUEST_URI ] { 2 }
+    Constant [ integer SEASLOG_REQUEST_VARIABLE_REQUEST_METHOD ] { 3 }
+    Constant [ integer SEASLOG_REQUEST_VARIABLE_CLIENT_IP ] { 4 }
   }
 
   - Functions {
@@ -167,6 +171,21 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.6 ] {
         }
 
         Method [ <internal:SeasLog> static public method getDatetimeFormat ] {
+        }
+
+        Method [ <internal:SeasLog> static public method setRequestVariable ] {
+
+          - Parameters [2] {
+            Parameter #0 [ <required> $key ]
+            Parameter #1 [ <optional> $value ]
+          }
+        }
+
+        Method [ <internal:SeasLog> static public method getRequestVariable ] {
+
+          - Parameters [1] {
+            Parameter #0 [ <required> $key ]
+          }
         }
 
         Method [ <internal:SeasLog> static public method analyzerCount ] {

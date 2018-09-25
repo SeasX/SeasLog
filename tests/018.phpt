@@ -2,7 +2,7 @@
 Check for new SeasLog().
 --SKIPIF--
 <?php
-if (!extension_loaded('seaslog')
+if (!extension_loaded('seaslog'))
 {
     print 'skip';
 }

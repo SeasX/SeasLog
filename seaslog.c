@@ -105,6 +105,15 @@ ZEND_ARG_INFO(0, content)
 ZEND_ARG_INFO(0, logger)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(seaslog_setRequestVariable_arginfo, 0, 0, 1)
+ZEND_ARG_INFO(0, key)
+ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_getRequestVariable_arginfo, 0, 0, 1)
+ZEND_ARG_INFO(0, key)
+ZEND_END_ARG_INFO()
+
 const zend_function_entry seaslog_methods[] =
 {
     PHP_ME(SEASLOG_RES_NAME, __construct,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
@@ -121,6 +130,10 @@ const zend_function_entry seaslog_methods[] =
 
     PHP_ME(SEASLOG_RES_NAME, setDatetimeFormat,     seaslog_setDatetimeFormat_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getDatetimeFormat,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+
+    PHP_ME(SEASLOG_RES_NAME, setRequestVariable,   seaslog_setRequestVariable_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getRequestVariable,   seaslog_getRequestVariable_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+
     PHP_ME(SEASLOG_RES_NAME, analyzerCount, seaslog_analyzerCount_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, analyzerDetail,seaslog_analyzerDetail_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getBuffer,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
@@ -221,6 +234,11 @@ PHP_MINIT_FUNCTION(seaslog)
 
     REGISTER_LONG_CONSTANT("SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL", SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL, CONST_PERSISTENT | CONST_CS);
     REGISTER_LONG_CONSTANT("SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN", SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN, CONST_PERSISTENT | CONST_CS);
+
+    REGISTER_LONG_CONSTANT("SEASLOG_REQUEST_VARIABLE_DOMAIN_PORT", SEASLOG_REQUEST_VARIABLE_DOMAIN_PORT, CONST_PERSISTENT | CONST_CS);
+    REGISTER_LONG_CONSTANT("SEASLOG_REQUEST_VARIABLE_REQUEST_URI", SEASLOG_REQUEST_VARIABLE_REQUEST_URI, CONST_PERSISTENT | CONST_CS);
+    REGISTER_LONG_CONSTANT("SEASLOG_REQUEST_VARIABLE_REQUEST_METHOD", SEASLOG_REQUEST_VARIABLE_REQUEST_METHOD, CONST_PERSISTENT | CONST_CS);
+    REGISTER_LONG_CONSTANT("SEASLOG_REQUEST_VARIABLE_CLIENT_IP", SEASLOG_REQUEST_VARIABLE_CLIENT_IP, CONST_PERSISTENT | CONST_CS);
 
     INIT_CLASS_ENTRY(seaslog, SEASLOG_RES_NAME, seaslog_methods);
 
@@ -640,6 +658,98 @@ PHP_METHOD(SEASLOG_RES_NAME, getRequestID)
     SEASLOG_RETURN_STRINGL(SEASLOG_G(request_id), strlen(SEASLOG_G(request_id)));
 }
 /* }}} */
+
+
+/* {{{ proto bool setRequestVariable(int key, string value)
+   Set SeasLog request variable */
+PHP_METHOD(SEASLOG_RES_NAME, setRequestVariable)
+{
+    zval *value;
+    long key = 0;
+    int argc = ZEND_NUM_ARGS();
+
+    if (zend_parse_parameters(argc TSRMLS_CC, "lz", &key, &value) == FAILURE)
+    {
+        return;
+    }
+
+    if (IS_STRING != Z_TYPE_P(value))
+    {
+        RETURN_FALSE;
+    }
+
+    switch (key)
+    {
+    case SEASLOG_REQUEST_VARIABLE_DOMAIN_PORT:
+        if(SEASLOG_G(request_variable)->domain_port)
+        {
+            efree(SEASLOG_G(request_variable)->domain_port);
+        }
+        SEASLOG_G(request_variable)->domain_port_len = spprintf(&SEASLOG_G(request_variable)->domain_port, 0, "%s", Z_STRVAL_P(value));
+        break;
+    case SEASLOG_REQUEST_VARIABLE_REQUEST_URI:
+        if (SEASLOG_G(request_variable)->request_uri)
+        {
+            efree(SEASLOG_G(request_variable)->request_uri);
+        }
+        SEASLOG_G(request_variable)->request_uri_len = spprintf(&SEASLOG_G(request_variable)->request_uri, 0, "%s", Z_STRVAL_P(value));
+        break;
+    case SEASLOG_REQUEST_VARIABLE_REQUEST_METHOD:
+        if(SEASLOG_G(request_variable)->request_method)
+        {
+            efree(SEASLOG_G(request_variable)->request_method);
+        }
+        SEASLOG_G(request_variable)->request_method_len = spprintf(&SEASLOG_G(request_variable)->request_method, 0, "%s", Z_STRVAL_P(value));
+        break;
+    case SEASLOG_REQUEST_VARIABLE_CLIENT_IP:
+        if(SEASLOG_G(request_variable)->client_ip)
+        {
+            efree(SEASLOG_G(request_variable)->client_ip);
+        }
+        SEASLOG_G(request_variable)->client_ip_len = spprintf(&SEASLOG_G(request_variable)->client_ip, 0, "%s", Z_STRVAL_P(value));
+        break;
+    default:
+        RETURN_FALSE;
+    }
+
+    RETURN_TRUE;
+}
+/* }}} */
+
+/* {{{ proto bool getRequestVariable(int key)
+   Get SeasLog request variable */
+PHP_METHOD(SEASLOG_RES_NAME, getRequestVariable)
+{
+    long key = 0;
+    int argc = ZEND_NUM_ARGS();
+
+    if (zend_parse_parameters(argc TSRMLS_CC, "l", &key) == FAILURE)
+    {
+        return;
+    }
+
+    switch (key)
+    {
+    case SEASLOG_REQUEST_VARIABLE_DOMAIN_PORT:
+        SEASLOG_RETURN_STRINGL(SEASLOG_G(request_variable)->domain_port, SEASLOG_G(request_variable)->domain_port_len);
+        break;
+    case SEASLOG_REQUEST_VARIABLE_REQUEST_URI:
+        SEASLOG_RETURN_STRINGL(SEASLOG_G(request_variable)->request_uri, SEASLOG_G(request_variable)->request_uri_len);
+        break;
+    case SEASLOG_REQUEST_VARIABLE_REQUEST_METHOD:
+        SEASLOG_RETURN_STRINGL(SEASLOG_G(request_variable)->request_method, SEASLOG_G(request_variable)->request_method_len);
+        break;
+    case SEASLOG_REQUEST_VARIABLE_CLIENT_IP:
+        SEASLOG_RETURN_STRINGL(SEASLOG_G(request_variable)->client_ip, SEASLOG_G(request_variable)->client_ip_len);
+        break;
+    default:
+        RETURN_FALSE;
+    }
+
+    RETURN_FALSE;
+}
+/* }}} */
+
 
 /* {{{ proto array or int analyzerCount(string level [,string log_path, string key_word])
    Get log count by level, log_path and key_word */
