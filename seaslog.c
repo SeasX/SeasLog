@@ -712,6 +712,8 @@ PHP_METHOD(SEASLOG_RES_NAME, setRequestVariable)
         RETURN_FALSE;
     }
 
+    seaslog_re_init_template(TSRMLS_C);
+
     RETURN_TRUE;
 }
 /* }}} */

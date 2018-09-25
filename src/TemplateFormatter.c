@@ -45,6 +45,12 @@ void seaslog_init_template(TSRMLS_D)
     seaslog_spprintf(&SEASLOG_G(current_template) TSRMLS_CC, SEASLOG_GENERATE_CURRENT_TEMPLATE, NULL, 0);
 }
 
+void seaslog_re_init_template(TSRMLS_D)
+{
+    efree(SEASLOG_G(current_template));
+    seaslog_spprintf(&SEASLOG_G(current_template) TSRMLS_CC, SEASLOG_GENERATE_RE_CURRENT_TEMPLATE, NULL, 0);
+}
+
 void seaslog_clear_template(TSRMLS_D)
 {
     if (SEASLOG_G(current_template))
@@ -69,6 +75,7 @@ int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size
     switch (generate_type)
     {
         case SEASLOG_GENERATE_CURRENT_TEMPLATE:
+        case SEASLOG_GENERATE_RE_CURRENT_TEMPLATE:
             seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(default_template), level, ap);
             break;
         case SEASLOG_GENERATE_LEVEL_TEMPLATE:
@@ -144,30 +151,35 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
             switch(generate_type)
             {
             case SEASLOG_GENERATE_CURRENT_TEMPLATE:
+            case SEASLOG_GENERATE_RE_CURRENT_TEMPLATE:
             {
-                if (!level_format_stop)
+                if (SEASLOG_GENERATE_CURRENT_TEMPLATE == generate_type)
                 {
-                    if (level_format_start)
+                    if (!level_format_stop)
                     {
-                        level_format_stop = 1;
-                        level_template[level_format_index] = '\0';
-                        level_format_over = 1;
-                    }
-                    else
-                    {
-                        if (*fmt == 'L')
+                        if (level_format_start)
                         {
-                            level_template[level_format_index++] = '%';
-                            level_template[level_format_index] = *fmt;
-                            level_format_index++;
-                            level_format_start = 1;
+                            level_format_stop = 1;
+                            level_template[level_format_index] = '\0';
+                            level_format_over = 1;
                         }
                         else
                         {
-                            level_format_index = 0;
+                            if (*fmt == 'L')
+                            {
+                                level_template[level_format_index++] = '%';
+                                level_template[level_format_index] = *fmt;
+                                level_format_index++;
+                                level_format_start = 1;
+                            }
+                            else
+                            {
+                                level_format_index = 0;
+                            }
                         }
                     }
                 }
+
                 switch (*fmt)
                 {
                 case 'H': //HostName
