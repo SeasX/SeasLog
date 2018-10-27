@@ -873,11 +873,11 @@ email[mail_bcc] =
 test1[module] = test
 test1[level] = SEASLOG_ERROR
 test1[bar] = 3
-test1[mail_to] = gaochitao@weiboyi.com
+test1[mail_to] = neeke@php.net
 
 test2[module] = 222
 test2[level] = SEASLOG_WARNING
-test2[mail_to] = gaochitao@weiboyi.com,seaslog@weiboyi.com
+test2[mail_to] = neeke@php.net,ciogao@gmail.com
 
 test3[module] = 333
 test3[level] = SEASLOG_CRITICAL
