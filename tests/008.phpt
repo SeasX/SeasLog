@@ -12,8 +12,19 @@ var_dump(SeasLog::error('this is a error log test.'));
 var_dump(SeasLog::critical('this is a critical log test.'));
 var_dump(SeasLog::alert('this is a alert log test.'));
 var_dump(SeasLog::emergency('this is a emergency log test.'));
+
+$aLogs = array(
+    'this is a log_1 from array',
+    'this is a log_2 from array',
+    'this is a log_3 from array {test}',
+    112233445566,
+    NULL,
+);
+
+var_dump(SeasLog::debug($aLogs));
 ?>
 --EXPECT--
+bool(true)
 bool(true)
 bool(true)
 bool(true)
