@@ -3,7 +3,7 @@
 ```php
 /path/to/php --re seaslog
 
-Extension [ <persistent> extension #44 SeasLog version 1.8.8 ] {
+Extension [ <persistent> extension #44 SeasLog version 1.9.0 ] {
 
   - Dependencies {
   }
@@ -84,7 +84,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.8.8 ] {
   }
 
   - Constants [22] {
-    Constant [ string SEASLOG_VERSION ] { 1.8.8 }
+    Constant [ string SEASLOG_VERSION ] { 1.9.0 }
     Constant [ string SEASLOG_AUTHOR ] { Chitao.Gao  [ neeke@php.net ] }
     Constant [ string SEASLOG_ALL ] { ALL }
     Constant [ string SEASLOG_DEBUG ] { DEBUG }
