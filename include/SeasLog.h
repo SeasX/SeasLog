@@ -39,8 +39,8 @@
 
 #define SEASLOG_RES_NAME                        "SeasLog"
 #define SEASLOG_AUTHOR                          "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                         "1.8.8"
-#define SEASLOG_VERSION_ID                      10808
+#define SEASLOG_VERSION                         "1.9.0"
+#define SEASLOG_VERSION_ID                      10900
 #define SEASLOG_SUPPORTS                        "https://github.com/SeasX/SeasLog"
 
 #define SEASLOG_ALL                             "ALL"
@@ -136,6 +136,9 @@
 #define SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL     1
 #define SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN  2
 #define SEASLOG_CLOSE_LOGGER_STREAM_CAN_DELETE  3
+
+#define SEASLOG_LOG_FUNCTION_ARGC_USUAL         1
+#define SEASLOG_LOG_FUNCTION_ARGC_UNUSUAL       2
 
 #define SEASLOG_GLOBAL_VARS_SERVER  		    TRACK_VARS_SERVER
 
