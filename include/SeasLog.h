@@ -39,8 +39,8 @@
 
 #define SEASLOG_RES_NAME                        "SeasLog"
 #define SEASLOG_AUTHOR                          "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                         "1.8.6"
-#define SEASLOG_VERSION_ID                      10806
+#define SEASLOG_VERSION                         "1.9.0"
+#define SEASLOG_VERSION_ID                      10900
 #define SEASLOG_SUPPORTS                        "https://github.com/SeasX/SeasLog"
 
 #define SEASLOG_ALL                             "ALL"
@@ -109,6 +109,11 @@
 #define SEASLOG_CLI_KEY                         "cli"
 #define SEASLOG_PHPDBG_KEY                      "phpdbg"
 
+#define SEASLOG_REQUEST_VARIABLE_DOMAIN_PORT    1
+#define SEASLOG_REQUEST_VARIABLE_REQUEST_URI    2
+#define SEASLOG_REQUEST_VARIABLE_REQUEST_METHOD 3
+#define SEASLOG_REQUEST_VARIABLE_CLIENT_IP      4
+
 #define SEASLOG_LOGGER_SLASH                    "/"
 #define SEASLOG_LOGGER_UNDERLINE                "_"
 #define SEASLOG_ASTERISK                        "*"
@@ -120,6 +125,7 @@
 #define SEASLOG_GENERATE_LOG_INFO               2
 #define SEASLOG_GENERATE_SYSLOG_INFO            3
 #define SEASLOG_GENERATE_LEVEL_TEMPLATE         4
+#define SEASLOG_GENERATE_RE_CURRENT_TEMPLATE    5
 
 #define SEASLOG_ANALYZER_DEFAULT_START          1
 #define SEASLOG_ANALYZER_DEFAULT_OFFSET         20
@@ -130,6 +136,9 @@
 #define SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL     1
 #define SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN  2
 #define SEASLOG_CLOSE_LOGGER_STREAM_CAN_DELETE  3
+
+#define SEASLOG_LOG_FUNCTION_ARGC_USUAL         1
+#define SEASLOG_LOG_FUNCTION_ARGC_UNUSUAL       2
 
 #define SEASLOG_GLOBAL_VARS_SERVER  		    TRACK_VARS_SERVER
 

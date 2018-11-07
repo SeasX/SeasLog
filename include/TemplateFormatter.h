@@ -20,6 +20,7 @@
 #include "php_seaslog.h"
 
 void seaslog_init_template(TSRMLS_D);
+void seaslog_re_init_template(TSRMLS_D);
 void seaslog_clear_template(TSRMLS_D);
 int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size_t max_len, ...);
 void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, char *level, va_list ap);

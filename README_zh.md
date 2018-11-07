@@ -9,6 +9,8 @@ An effective,fast,stable log extension for PHP
 
 @交流群 312910117
 
+[PHP手册](http://php.net/SeasLog)
+
 [English Document](https://github.com/SeasX/SeasLog/blob/master/README.md)
 
 [日志规范](https://github.com/SeasX/SeasLog/blob/master/Specification/README_zh.md)
@@ -308,6 +310,10 @@ define('SEASLOG_DETAIL_ORDER_ASC', 1);
 define('SEASLOG_DETAIL_ORDER_DESC', 2);
 define('SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL', 1);
 define('SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN', 2);
+define('SEASLOG_REQUEST_VARIABLE_DOMAIN_PORT', 1);
+define('SEASLOG_REQUEST_VARIABLE_REQUEST_URI', 2);
+define('SEASLOG_REQUEST_VARIABLE_REQUEST_METHOD', 3);
+define('SEASLOG_REQUEST_VARIABLE_CLIENT_IP', 4);
 
 class SeasLog
 {
@@ -384,7 +390,7 @@ class SeasLog
      *
      * @return bool
      */
-    static public function closeLoggerStream($model, $logger)
+    static public function closeLoggerStream($model = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL, $logger)
     {
         return true;
     }
@@ -417,6 +423,31 @@ class SeasLog
     static public function getDatetimeFormat()
     {
         return 'the datetimeFormat';
+    }
+
+    /**
+     * 设置请求变量
+     *
+     * @param $key
+     * @param $value
+     *
+     * @return bool
+     */
+    static public function setRequestVariable($key, $value)
+    {
+        return true;
+    }
+
+    /**
+     * 获取请求变量
+     *
+     * @param $key
+     *
+     * @return string
+     */
+    static public function getRequestVariable($key)
+    {
+        return '';
     }
 
     /**
@@ -473,9 +504,9 @@ class SeasLog
     /**
      * 记录debug日志
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function debug($message, array $content = array(), $module = '')
     {
@@ -485,9 +516,9 @@ class SeasLog
     /**
      * 记录info日志
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function info($message, array $content = array(), $module = '')
     {
@@ -497,9 +528,9 @@ class SeasLog
     /**
      * 记录notice日志
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function notice($message, array $content = array(), $module = '')
     {
@@ -509,9 +540,9 @@ class SeasLog
     /**
      * 记录warning日志
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function warning($message, array $content = array(), $module = '')
     {
@@ -521,9 +552,9 @@ class SeasLog
     /**
      * 记录error日志
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function error($message, array $content = array(), $module = '')
     {
@@ -533,9 +564,9 @@ class SeasLog
     /**
      * 记录critical日志
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function critical($message, array $content = array(), $module = '')
     {
@@ -545,9 +576,9 @@ class SeasLog
     /**
      * 记录alert日志
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function alert($message, array $content = array(), $module = '')
     {
@@ -557,9 +588,9 @@ class SeasLog
     /**
      * 记录emergency日志
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function emergency($message, array $content = array(), $module = '')
     {
@@ -569,10 +600,10 @@ class SeasLog
     /**
      * 通用日志方法
      *
-     * @param        $level
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param              $level
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function log($level, $message, array $content = array(), $module = '')
     {
@@ -644,6 +675,19 @@ log文件名，以 `年月日` 分文件，如今天是2014年02月18日期，�
 
 * erroLogFile = basePath / logger / 20140218.ERROR.log
 
+用于记录日志的函数原型有两个：
+* SeasLog::log($level, $messages[, $content, $logger])
+
+* SeasLog::$level($messages[, $content, $logger])
+
+> $level - 参见上文所列的8个级别
+
+> $messages - 可以使用`string`或`array`两种类型, `array`仅接受一维数组
+
+> $content - 仅接受一维数组，用于替换$messages中log的占位符
+
+> $logger - 可以临时为当前操作指定一个logger，而不改变getLastLogger方法的取值
+
 ```php
 
 SeasLog::log(SEASLOG_ERROR,'this is a error test by ::log');
@@ -664,6 +708,9 @@ SeasLog::alert('yes this is a {messageName}',array('{messageName}' => 'alertMSG'
 
 SeasLog::emergency('Just now, the house next door was completely burnt out! {note}',array('{note}' => 'it`s a joke'));
 
+$aMessages = array('test log from array abc {website}','test log from array def {action}');
+$aContent = array('website' => 'github.com','action' => 'rboot'));
+SeasLog::debug($aMessages,$aContent);
 /*
 这些函数同时也接受第3个参数为logger的设置项
 注意，当last_logger == 'default'时等同于:
@@ -685,6 +732,8 @@ SeasLog::error('test error 3');
 2014-07-27 08:53:52 | ERROR | 23625 | 599159975a9ff | 1406422432.787 | a error log
 2014-07-27 08:53:52 | CRITICAL | 23625 | 599159975a9ff | 1406422432.787 | some thing was critical
 2014-07-27 08:53:52 | EMERGENCY | 23625 | 599159975a9ff | 1406422432.787 | Just now, the house next door was completely burnt out! it is a joke
+2014-07-27 08:53:52 | DEBUG | 23625 | 599159975a9ff | 1406422432.787 | test log from array abc github.com
+2014-07-27 08:53:52 | DEBUG | 23625 | 599159975a9ff | 1406422432.787 | test log from array def rboot
 ```
 
 #### 使用TCP或UDP发送时的数据格式
@@ -844,11 +893,11 @@ email[mail_bcc] =
 test1[module] = test
 test1[level] = SEASLOG_ERROR
 test1[bar] = 3
-test1[mail_to] = gaochitao@weiboyi.com
+test1[mail_to] = neeke@php.net
 
 test2[module] = 222
 test2[level] = SEASLOG_WARNING
-test2[mail_to] = gaochitao@weiboyi.com,seaslog@weiboyi.com
+test2[mail_to] = neeke@php.net,ciogao@gmail.com
 
 test3[module] = 333
 test3[level] = SEASLOG_CRITICAL

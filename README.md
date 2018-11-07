@@ -7,6 +7,8 @@ An effective,fast,stable log extension for PHP
 
 @author Chitao.Gao [neeke@php.net]
 
+[Documentation On php.net](http://php.net/SeasLog)
+
 [中文文档](https://github.com/SeasX/SeasLog/blob/master/README_zh.md)
 
 > ---
@@ -322,6 +324,10 @@ define('SEASLOG_DETAIL_ORDER_ASC', 1);
 define('SEASLOG_DETAIL_ORDER_DESC', 2);
 define('SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL', 1);
 define('SEASLOG_CLOSE_LOGGER_STREAM_MOD_ASSIGN', 2);
+define('SEASLOG_REQUEST_VARIABLE_DOMAIN_PORT', 1);
+define('SEASLOG_REQUEST_VARIABLE_REQUEST_URI', 2);
+define('SEASLOG_REQUEST_VARIABLE_REQUEST_METHOD', 3);
+define('SEASLOG_REQUEST_VARIABLE_CLIENT_IP', 4);
 
 class SeasLog
 {
@@ -392,7 +398,7 @@ class SeasLog
      *
      * @return bool
      */
-    static public function closeLoggerStream($model, $logger)
+    static public function closeLoggerStream($model = SEASLOG_CLOSE_LOGGER_STREAM_MOD_ALL, $logger)
     {
         return true;
     }
@@ -426,6 +432,31 @@ class SeasLog
         return 'the datetimeFormat';
     }
 
+    /**
+     * Set Reqeust Variable
+     *
+     * @param $key
+     * @param $value
+     *
+     * @return bool
+     */
+    static public function setRequestVariable($key, $value)
+    {
+        return true;
+    }
+
+    /**
+     * Get Reqeust Variable
+     *
+     * @param $key
+     *
+     * @return string
+     */
+    static public function getRequestVariable($key)
+    {
+        return '';
+    }
+    
     /**
      * Count All Types（Or Type）Log Lines
      * @param string $level
@@ -479,9 +510,9 @@ class SeasLog
     /**
      * Record Debug Log
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function debug($message, array $content = array(), $module = '')
     {
@@ -491,9 +522,9 @@ class SeasLog
     /**
      * Record Info Log
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function info($message, array $content = array(), $module = '')
     {
@@ -503,9 +534,9 @@ class SeasLog
     /**
      * Record Notice Log
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function notice($message, array $content = array(), $module = '')
     {
@@ -515,9 +546,9 @@ class SeasLog
     /**
      * Record Warning Log
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function warning($message, array $content = array(), $module = '')
     {
@@ -527,9 +558,9 @@ class SeasLog
     /**
      * Record Error Log
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function error($message, array $content = array(), $module = '')
     {
@@ -539,9 +570,9 @@ class SeasLog
     /**
      * Record Critical Log
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function critical($message, array $content = array(), $module = '')
     {
@@ -551,9 +582,9 @@ class SeasLog
     /**
      * Record Alert Log
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function alert($message, array $content = array(), $module = '')
     {
@@ -563,9 +594,9 @@ class SeasLog
     /**
      * Record Emergency Log
      *
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function emergency($message, array $content = array(), $module = '')
     {
@@ -574,10 +605,10 @@ class SeasLog
 
     /**
      * The Common Record Log Function
-     * @param        $level
-     * @param        $message
-     * @param array  $content
-     * @param string $module
+     * @param              $level
+     * @param string|array $message
+     * @param array        $content
+     * @param string       $module
      */
     static public function log($level, $message, array $content = array(), $module = '')
     {
@@ -627,7 +658,7 @@ string(7) "default"
 string(15) "testModule/app1"
 */
 ```
-> 与basePath相类似的，
+> Similar to basePath，
 
 > Use the Function `SeasLog::getLastLogger()` will get the value of `seaslog.default_logger` what configured in php.ini(seaslog.ini).
 
@@ -640,7 +671,7 @@ Log filename, begin with `YearMonthDay`.It will be `{fileName}` = `20140218`,bec
 
 Would you remember that `seaslog.disting_type` in `php.ini`?
 
-Switch Default `seaslog.disting_type = 0`, If we used `SeasLog` today, the log file will been finally :
+Switch Default `seaslog.disting_type = 0`, If we used `SeasLog` today, the log file will been finally:
 * LogFile = basePath / logger / 20140218.log
 
 If `seaslog.disting_type = 1`, the log file would be looks like
@@ -649,6 +680,19 @@ If `seaslog.disting_type = 1`, the log file would be looks like
 * warnLogFile = basePath / logger / 20140218.WARNING.log
 
 * erroLogFile = basePath / logger / 20140218.ERROR.log
+
+There are two prototypes of functions for logging：
+* SeasLog::log($level, $messages[, $content, $logger])
+
+* SeasLog::$level($messages[, $content, $logger])
+
+> $level - See the 8 levels listed above
+
+> $messages - You can use two types of `string` or `array`, and `array` accepts only one dimensional array.
+
+> $content - Only accept one-dimensional array to replace placeholder of log in $messages.
+
+> $logger - You can temporarily specify a logger for the current operation without changing the value of the getLastLogger method.
 
 ```php
 
@@ -670,6 +714,9 @@ SeasLog::alert('yes this is a {messageName}',array('{messageName}' => 'alertMSG'
 
 SeasLog::emergency('Just now, the house next door was completely burnt out! {note}',array('{note}' => 'it`s a joke'));
 
+$aMessages = array('test log from array abc {website}','test log from array def {action}');
+$aContent = array('website' => 'github.com','action' => 'rboot'));
+SeasLog::debug($aMessages,$aContent);
 /*
 These functions can receive `logger` cased by the third param all the time.
 Tips:  `last_logger == ‘default’` will be used same to:
@@ -692,6 +739,8 @@ The `logger` cased by the third param would be used right this right now, like a
 2014-07-27 08:53:52 | ERROR | 23625 | 599159975a9ff | 1406422432.787 | a error log
 2014-07-27 08:53:52 | CRITICAL | 23625 | 599159975a9ff | 1406422432.787 | some thing was critical
 2014-07-27 08:53:52 | EMERGENCY | 23625 | 599159975a9ff | 1406422432.787 | Just now, the house next door was completely burnt out! it is a joke
+2014-07-27 08:53:52 | DEBUG | 23625 | 599159975a9ff | 1406422432.787 | test log from array abc github.com
+2014-07-27 08:53:52 | DEBUG | 23625 | 599159975a9ff | 1406422432.787 | test log from array def rboot
 ```
 
 #### Data format when sent by TCP or UDP
@@ -841,10 +890,11 @@ email[mail_bcc] =
 test1[module] = test/bb
 test1[level] = SEASLOG_ERROR
 test1[bar] = 1
-test1[mail_to] = neeke@test.com
+test1[mail_to] = neeke@php.net
 
 test2[module] = 222
 test2[level] = SEASLOG_WARNING
+test2[mail_to] = neeke@php.net,ciogao@gmail.com
 
 test3[module] = 333
 test3[level] = SEASLOG_CRITICAL
