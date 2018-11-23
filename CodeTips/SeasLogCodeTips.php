@@ -214,10 +214,13 @@ class SeasLog
      * @param string|array $message
      * @param array        $content
      * @param string       $module
+     *
+     * @return bool
      */
     static public function debug($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_DEBUG
+        return true;
     }
 
     /**
@@ -226,10 +229,13 @@ class SeasLog
      * @param string|array $message
      * @param array        $content
      * @param string       $module
+     *
+     * @return bool
      */
     static public function info($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_INFO
+        return true;
     }
 
     /**
@@ -238,10 +244,13 @@ class SeasLog
      * @param string|array $message
      * @param array        $content
      * @param string       $module
+     *
+     * @return bool
      */
     static public function notice($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_NOTICE
+        return true;
     }
 
     /**
@@ -250,10 +259,13 @@ class SeasLog
      * @param string|array $message
      * @param array        $content
      * @param string       $module
+     *
+     * @return bool
      */
     static public function warning($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_WARNING
+        return true;
     }
 
     /**
@@ -262,10 +274,13 @@ class SeasLog
      * @param string|array $message
      * @param array        $content
      * @param string       $module
+     *
+     * @return bool
      */
     static public function error($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_ERROR
+        return true;
     }
 
     /**
@@ -274,10 +289,13 @@ class SeasLog
      * @param string|array $message
      * @param array        $content
      * @param string       $module
+     *
+     * @return bool
      */
     static public function critical($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_CRITICAL
+        return true;
     }
 
     /**
@@ -286,10 +304,13 @@ class SeasLog
      * @param string|array $message
      * @param array        $content
      * @param string       $module
+     *
+     * @return bool
      */
     static public function alert($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_ALERT
+        return true;
     }
 
     /**
@@ -298,10 +319,13 @@ class SeasLog
      * @param string|array $message
      * @param array        $content
      * @param string       $module
+     *
+     * @return bool
      */
     static public function emergency($message, array $content = array(), $module = '')
     {
         #$level = SEASLOG_EMERGENCY
+        return true;
     }
 
     /**
@@ -311,10 +335,12 @@ class SeasLog
      * @param string|array $message
      * @param array        $content
      * @param string       $module
+     *
+     * @return bool
      */
     static public function log($level, $message, array $content = array(), $module = '')
     {
-
+        return true;
     }
 
 }
