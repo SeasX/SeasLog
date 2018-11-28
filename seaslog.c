@@ -588,7 +588,7 @@ PHP_METHOD(SEASLOG_RES_NAME, setLogger)
 
     if (argc > 0 && (IS_STRING == Z_TYPE_P(_module) && Z_STRLEN_P(_module) > 0))
     {
-        if (strncmp(SEASLOG_G(last_logger)->logger,Z_STRVAL_P(_module),Z_STRLEN_P(_module)))
+        if (strncmp(SEASLOG_G(last_logger)->logger,Z_STRVAL_P(_module),Z_STRLEN_P(_module) + 1))
         {
             process_logger(Z_STRVAL_P(_module), Z_STRLEN_P(_module), SEASLOG_PROCESS_LOGGER_LAST TSRMLS_CC);
         }
