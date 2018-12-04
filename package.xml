@@ -23,11 +23,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2018-11-24</date>
-    <time>00:36:00</time>
+    <date>2018-12-04</date>
+    <time>11:55:00</time>
     <version>
-        <release>1.9.0</release>
-        <api>1.9.0</api>
+        <release>1.9.1</release>
+        <api>1.9.1</api>
     </version>
     <stability>
         <release>stable</release>
@@ -35,11 +35,8 @@
     </stability>
     <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
     <notes>
-        - New Feature #240 add SeasLog::setRequestVariable(key,value).
-        - New Feature #243 support first parameter use array, such as SeasLog::debug(array).
-        - Fixed issue #110 support New SeasLog().
-        - Fixed issue #234 #236 SeasLog::analyzerDetail function bug.
-        - Fixed issue #245 add unit test to analyzerCount and analyzerDetail.
+        - Fixed issue #249 add unit test and fixed setLogger bug.
+        - Fixed build error with mac osx.
     </notes>
     <contents>
         <dir name="/">
@@ -110,6 +107,7 @@
                 <file role="src" name="017.phpt" />
                 <file role="src" name="018.phpt" />
                 <file role="src" name="019.phpt" />
+                <file role="src" name="020.phpt" />
                 <file role="src" name="seaslog.test.php" />
                 <file role="src" name="SeasLogVSlog4php.png" />
             </dir>
@@ -620,6 +618,26 @@
                 - Fixed issue #210 add seaslog.remote_timeout to config, default 1 second.
                 - Fixed issue #215 analyzerCount error.
                 - Fixed issue #228 analyzerDetail error.
+            </notes>
+        </release>
+        <release>
+            <date>2018-11-24</date>
+            <time>00:36:00</time>
+            <version>
+                <release>1.9.0</release>
+                <api>1.9.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
+            <notes>
+                - New Feature #240 add SeasLog::setRequestVariable(key,value).
+                - New Feature #243 support first parameter use array, such as SeasLog::debug(array).
+                - Fixed issue #110 support New SeasLog().
+                - Fixed issue #234 #236 SeasLog::analyzerDetail function bug.
+                - Fixed issue #245 add unit test to analyzerCount and analyzerDetail.
             </notes>
         </release>
     </changelog>
