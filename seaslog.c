@@ -340,7 +340,7 @@ zend_module_entry seaslog_module_entry =
     STANDARD_MODULE_PROPERTIES_EX
 };
 
-inline int seaslog_log_content_ex(int argc, int check_argc, char *level, int level_int, char *message, int message_len, zval *content, char *module, int module_len, zend_class_entry *seaslog_ce TSRMLS_DC)
+static inline int seaslog_log_content_ex(int argc, int check_argc, char *level, int level_int, char *message, int message_len, zval *content, char *module, int module_len, zend_class_entry *seaslog_ce TSRMLS_DC)
 {
     if (argc > check_argc)
     {
@@ -434,7 +434,7 @@ static inline int seaslog_log_by_level_common_ex(int argc, int check_argc, char 
     return SUCCESS;
 }
 
-inline int seaslog_log_by_level_common_check_content(int argc, int check_argc, zval *content TSRMLS_DC)
+static inline int seaslog_log_by_level_common_check_content(int argc, int check_argc, zval *content TSRMLS_DC)
 {
     if (argc > check_argc && IS_ARRAY != Z_TYPE_P(content))
     {
