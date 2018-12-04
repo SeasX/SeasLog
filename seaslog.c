@@ -360,7 +360,7 @@ inline int seaslog_log_content_ex(int argc, int check_argc, char *level, int lev
     return SUCCESS;
 }
 
-inline int seaslog_log_by_level_common_ex(int argc, int check_argc, char *level, int level_int, zval *messages, zval *content, char *logger_str, int logger_len, zend_class_entry *seaslog_ce TSRMLS_DC)
+static inline int seaslog_log_by_level_common_ex(int argc, int check_argc, char *level, int level_int, zval *messages, zval *content, char *logger_str, int logger_len, zend_class_entry *seaslog_ce TSRMLS_DC)
 {
     HashTable *msght;
     zval *pzval;
