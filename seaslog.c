@@ -95,13 +95,13 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(seaslog_log_arginfo, 0, 0, 1)
 ZEND_ARG_INFO(0, level)
 ZEND_ARG_INFO(0, message)
-ZEND_ARG_INFO(0, content)
+ZEND_ARG_INFO(0, context)
 ZEND_ARG_INFO(0, logger)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(seaslog_log_common_arginfo, 0, 0, 1)
 ZEND_ARG_INFO(0, message)
-ZEND_ARG_INFO(0, content)
+ZEND_ARG_INFO(0, context)
 ZEND_ARG_INFO(0, logger)
 ZEND_END_ARG_INFO()
 
@@ -340,11 +340,11 @@ zend_module_entry seaslog_module_entry =
     STANDARD_MODULE_PROPERTIES_EX
 };
 
-static inline int seaslog_log_content_ex(int argc, int check_argc, char *level, int level_int, char *message, int message_len, zval *content, char *module, int module_len, zend_class_entry *seaslog_ce TSRMLS_DC)
+static inline int seaslog_log_context_ex(int argc, int check_argc, char *level, int level_int, char *message, int message_len, zval *context, char *module, int module_len, zend_class_entry *seaslog_ce TSRMLS_DC)
 {
     if (argc > check_argc)
     {
-        if (seaslog_log_content(argc, level, level_int, message, message_len, HASH_OF(content), module, module_len, seaslog_ce TSRMLS_CC) == FAILURE)
+        if (seaslog_log_context(argc, level, level_int, message, message_len, HASH_OF(context), module, module_len, seaslog_ce TSRMLS_CC) == FAILURE)
         {
             return FAILURE;
         }
@@ -360,7 +360,7 @@ static inline int seaslog_log_content_ex(int argc, int check_argc, char *level, 
     return SUCCESS;
 }
 
-static inline int seaslog_log_by_level_common_ex(int argc, int check_argc, char *level, int level_int, zval *messages, zval *content, char *logger_str, int logger_len, zend_class_entry *seaslog_ce TSRMLS_DC)
+static inline int seaslog_log_by_level_common_ex(int argc, int check_argc, char *level, int level_int, zval *messages, zval *context, char *logger_str, int logger_len, zend_class_entry *seaslog_ce TSRMLS_DC)
 {
     HashTable *msght;
     zval *pzval;
@@ -378,7 +378,7 @@ static inline int seaslog_log_by_level_common_ex(int argc, int check_argc, char 
                 ZEND_HASH_FOREACH_KEY_VAL(msght, num_key, str_key, pzval)
                 {
                     zend_string *s = zval_get_string(pzval);
-                    if (FAILURE == seaslog_log_content_ex(argc, check_argc, level, level_int, ZSTR_VAL(s), ZSTR_LEN(s), content, logger_str, logger_len, seaslog_ce TSRMLS_CC))
+                    if (FAILURE == seaslog_log_context_ex(argc, check_argc, level, level_int, ZSTR_VAL(s), ZSTR_LEN(s), context, logger_str, logger_len, seaslog_ce TSRMLS_CC))
                     {
                         return FAILURE;
                     }
@@ -391,7 +391,7 @@ static inline int seaslog_log_by_level_common_ex(int argc, int check_argc, char 
         default:
             {
                 zend_string *s = zval_get_string(messages);
-                if (FAILURE == seaslog_log_content_ex(argc, check_argc, level, level_int, ZSTR_VAL(s), ZSTR_LEN(s), content, logger_str, logger_len, seaslog_ce TSRMLS_CC))
+                if (FAILURE == seaslog_log_context_ex(argc, check_argc, level, level_int, ZSTR_VAL(s), ZSTR_LEN(s), context, logger_str, logger_len, seaslog_ce TSRMLS_CC))
                 {
                     zend_string_release(s);
                     return FAILURE;
@@ -412,7 +412,7 @@ static inline int seaslog_log_by_level_common_ex(int argc, int check_argc, char 
                 while (zend_hash_get_current_data(msght, (void **)&ppzval) == SUCCESS)
                 {
                     convert_to_string_ex(ppzval);
-                    if (FAILURE == seaslog_log_content_ex(argc, check_argc, level, level_int, Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval), content, logger_str, logger_len, seaslog_ce TSRMLS_CC))
+                    if (FAILURE == seaslog_log_context_ex(argc, check_argc, level, level_int, Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval), context, logger_str, logger_len, seaslog_ce TSRMLS_CC))
                     {
                         return FAILURE;
                     }
@@ -423,7 +423,7 @@ static inline int seaslog_log_by_level_common_ex(int argc, int check_argc, char 
         case IS_STRING:
         default:
             convert_to_string_ex(&messages);
-            if (FAILURE == seaslog_log_content_ex(argc, check_argc, level, level_int, Z_STRVAL_P(messages), Z_STRLEN_P(messages), content, logger_str, logger_len, seaslog_ce TSRMLS_CC))
+            if (FAILURE == seaslog_log_context_ex(argc, check_argc, level, level_int, Z_STRVAL_P(messages), Z_STRLEN_P(messages), context, logger_str, logger_len, seaslog_ce TSRMLS_CC))
             {
                 return FAILURE;
             }
@@ -434,9 +434,9 @@ static inline int seaslog_log_by_level_common_ex(int argc, int check_argc, char 
     return SUCCESS;
 }
 
-static inline int seaslog_log_by_level_common_check_content(int argc, int check_argc, zval *content TSRMLS_DC)
+static inline int seaslog_log_by_level_common_check_context(int argc, int check_argc, zval *context TSRMLS_DC)
 {
-    if (argc > check_argc && IS_ARRAY != Z_TYPE_P(content))
+    if (argc > check_argc && IS_ARRAY != Z_TYPE_P(context))
     {
         switch(check_argc)
         {
@@ -459,19 +459,19 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
     int argc = ZEND_NUM_ARGS();
 
     zval *messages = NULL;
-    zval *content = NULL;
+    zval *context = NULL;
     char *logger_str = "";
     int logger_len = 0;
 
 #if PHP_VERSION_ID >= 70000
     zend_string *logger = NULL;
 
-    if (zend_parse_parameters(argc TSRMLS_CC, "z|zS", &messages, &content, &logger) == FAILURE)
+    if (zend_parse_parameters(argc TSRMLS_CC, "z|zS", &messages, &context, &logger) == FAILURE)
     {
         return;
     }
 
-    if (FAILURE == seaslog_log_by_level_common_check_content(argc, SEASLOG_LOG_FUNCTION_ARGC_USUAL, content TSRMLS_CC))
+    if (FAILURE == seaslog_log_by_level_common_check_context(argc, SEASLOG_LOG_FUNCTION_ARGC_USUAL, context TSRMLS_CC))
     {
         RETURN_FALSE;
     }
@@ -482,24 +482,24 @@ static void seaslog_log_by_level_common(INTERNAL_FUNCTION_PARAMETERS, char *leve
         logger_len = ZSTR_LEN(logger);
     }
 
-    if (FAILURE == seaslog_log_by_level_common_ex(argc, SEASLOG_LOG_FUNCTION_ARGC_USUAL, level, level_int, messages, content, logger_str, logger_len, seaslog_ce TSRMLS_CC))
+    if (FAILURE == seaslog_log_by_level_common_ex(argc, SEASLOG_LOG_FUNCTION_ARGC_USUAL, level, level_int, messages, context, logger_str, logger_len, seaslog_ce TSRMLS_CC))
     {
         RETURN_FALSE;
     }
 
 #else
 
-    if (zend_parse_parameters(argc TSRMLS_CC, "z|zs", &messages, &content, &logger_str, &logger_len) == FAILURE)
+    if (zend_parse_parameters(argc TSRMLS_CC, "z|zs", &messages, &context, &logger_str, &logger_len) == FAILURE)
     {
         return;
     }
 
-    if (FAILURE == seaslog_log_by_level_common_check_content(argc, SEASLOG_LOG_FUNCTION_ARGC_USUAL, content TSRMLS_CC))
+    if (FAILURE == seaslog_log_by_level_common_check_context(argc, SEASLOG_LOG_FUNCTION_ARGC_USUAL, context TSRMLS_CC))
     {
         RETURN_FALSE;
     }
 
-    if (FAILURE == seaslog_log_by_level_common_ex(argc, SEASLOG_LOG_FUNCTION_ARGC_USUAL, level, level_int, messages, content, logger_str, logger_len, seaslog_ce TSRMLS_CC))
+    if (FAILURE == seaslog_log_by_level_common_ex(argc, SEASLOG_LOG_FUNCTION_ARGC_USUAL, level, level_int, messages, context, logger_str, logger_len, seaslog_ce TSRMLS_CC))
     {
         RETURN_FALSE;
     }
@@ -1061,7 +1061,7 @@ PHP_METHOD(SEASLOG_RES_NAME, flushBuffer)
 }
 /* }}} */
 
-/* {{{ proto bool log(string level, string message [, array content, string logger])
+/* {{{ proto bool log(string level, string message [, array context, string logger])
    The Common Record Log Function  */
 PHP_METHOD(SEASLOG_RES_NAME, log)
 {
@@ -1069,7 +1069,7 @@ PHP_METHOD(SEASLOG_RES_NAME, log)
     int level_int;
 
     zval *messages = NULL;
-    zval *content = NULL;
+    zval *context = NULL;
     char *logger_str = "";
     int logger_len = 0;
     HashTable *msght;
@@ -1080,12 +1080,12 @@ PHP_METHOD(SEASLOG_RES_NAME, log)
     zend_string *level;
     zend_string *logger = NULL;
 
-    if (zend_parse_parameters(argc TSRMLS_CC, "Sz|zS", &level, &messages, &content, &logger) == FAILURE)
+    if (zend_parse_parameters(argc TSRMLS_CC, "Sz|zS", &level, &messages, &context, &logger) == FAILURE)
     {
         return;
     }
 
-    if (FAILURE == seaslog_log_by_level_common_check_content(argc, SEASLOG_LOG_FUNCTION_ARGC_UNUSUAL, content TSRMLS_CC))
+    if (FAILURE == seaslog_log_by_level_common_check_context(argc, SEASLOG_LOG_FUNCTION_ARGC_UNUSUAL, context TSRMLS_CC))
     {
         RETURN_FALSE;
     }
@@ -1098,7 +1098,7 @@ PHP_METHOD(SEASLOG_RES_NAME, log)
         logger_len = ZSTR_LEN(logger);
     }
 
-    if (FAILURE == seaslog_log_by_level_common_ex(argc, SEASLOG_LOG_FUNCTION_ARGC_UNUSUAL, ZSTR_VAL(level), level_int, messages, content, logger_str, logger_len, seaslog_ce TSRMLS_CC))
+    if (FAILURE == seaslog_log_by_level_common_ex(argc, SEASLOG_LOG_FUNCTION_ARGC_UNUSUAL, ZSTR_VAL(level), level_int, messages, context, logger_str, logger_len, seaslog_ce TSRMLS_CC))
     {
         RETURN_FALSE;
     }
@@ -1107,19 +1107,19 @@ PHP_METHOD(SEASLOG_RES_NAME, log)
     char *level;
     int level_len = 0;
 
-    if (zend_parse_parameters(argc TSRMLS_CC, "sz|zs", &level, &level_len, &messages, &content, &logger_str, &logger_len) == FAILURE)
+    if (zend_parse_parameters(argc TSRMLS_CC, "sz|zs", &level, &level_len, &messages, &context, &logger_str, &logger_len) == FAILURE)
     {
         return;
     }
 
-    if (FAILURE == seaslog_log_by_level_common_check_content(argc, SEASLOG_LOG_FUNCTION_ARGC_UNUSUAL, content TSRMLS_CC))
+    if (FAILURE == seaslog_log_by_level_common_check_context(argc, SEASLOG_LOG_FUNCTION_ARGC_UNUSUAL, context TSRMLS_CC))
     {
         RETURN_FALSE;
     }
 
     level_int = seaslog_get_level_int(level);
 
-    if (FAILURE == seaslog_log_by_level_common_ex(argc, SEASLOG_LOG_FUNCTION_ARGC_UNUSUAL, level, level_int, messages, content, logger_str, logger_len, seaslog_ce TSRMLS_CC))
+    if (FAILURE == seaslog_log_by_level_common_ex(argc, SEASLOG_LOG_FUNCTION_ARGC_UNUSUAL, level, level_int, messages, context, logger_str, logger_len, seaslog_ce TSRMLS_CC))
     {
         RETURN_FALSE;
     }
@@ -1131,7 +1131,7 @@ PHP_METHOD(SEASLOG_RES_NAME, log)
 }
 /* }}} */
 
-/* {{{ proto bool debug(string message [, array content, string logger])
+/* {{{ proto bool debug(string message [, array context, string logger])
    Record debug log information */
 PHP_METHOD(SEASLOG_RES_NAME, debug)
 {
@@ -1139,7 +1139,7 @@ PHP_METHOD(SEASLOG_RES_NAME, debug)
 }
 /* }}} */
 
-/* {{{ proto bool info(string message [, array content, string logger])
+/* {{{ proto bool info(string message [, array context, string logger])
    Record info log information */
 PHP_METHOD(SEASLOG_RES_NAME, info)
 {
@@ -1147,7 +1147,7 @@ PHP_METHOD(SEASLOG_RES_NAME, info)
 }
 /* }}} */
 
-/* {{{ proto bool notice(string message [, array content, string logger])
+/* {{{ proto bool notice(string message [, array context, string logger])
    Record notice log information */
 PHP_METHOD(SEASLOG_RES_NAME, notice)
 {
@@ -1155,7 +1155,7 @@ PHP_METHOD(SEASLOG_RES_NAME, notice)
 }
 /* }}} */
 
-/* {{{ proto bool warning(string message [, array content, string logger])
+/* {{{ proto bool warning(string message [, array context, string logger])
    Record warning log information */
 PHP_METHOD(SEASLOG_RES_NAME, warning)
 {
@@ -1163,7 +1163,7 @@ PHP_METHOD(SEASLOG_RES_NAME, warning)
 }
 /* }}} */
 
-/* {{{ proto bool error(string message [, array content, string logger])
+/* {{{ proto bool error(string message [, array context, string logger])
    Record error log information */
 PHP_METHOD(SEASLOG_RES_NAME, error)
 {
@@ -1171,7 +1171,7 @@ PHP_METHOD(SEASLOG_RES_NAME, error)
 }
 /* }}} */
 
-/* {{{ proto bool critical(string message [, array content, string logger])
+/* {{{ proto bool critical(string message [, array context, string logger])
    Record critical log information */
 PHP_METHOD(SEASLOG_RES_NAME, critical)
 {
@@ -1179,7 +1179,7 @@ PHP_METHOD(SEASLOG_RES_NAME, critical)
 }
 /* }}} */
 
-/* {{{ proto bool alert(string message [, array content, string logger])
+/* {{{ proto bool alert(string message [, array context, string logger])
    Record alert log information */
 PHP_METHOD(SEASLOG_RES_NAME, alert)
 {
@@ -1187,7 +1187,7 @@ PHP_METHOD(SEASLOG_RES_NAME, alert)
 }
 /* }}} */
 
-/* {{{ proto bool emergency(string message [, array content, string logger])
+/* {{{ proto bool emergency(string message [, array context, string logger])
    Record emergency log information */
 PHP_METHOD(SEASLOG_RES_NAME, emergency)
 {

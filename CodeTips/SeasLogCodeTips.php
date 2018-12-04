@@ -212,12 +212,12 @@ class SeasLog
      * 记录debug日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      *
      * @return bool
      */
-    static public function debug($message, array $content = array(), $module = '')
+    static public function debug($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_DEBUG
         return true;
@@ -227,12 +227,12 @@ class SeasLog
      * 记录info日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      *
      * @return bool
      */
-    static public function info($message, array $content = array(), $module = '')
+    static public function info($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_INFO
         return true;
@@ -242,12 +242,12 @@ class SeasLog
      * 记录notice日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      *
      * @return bool
      */
-    static public function notice($message, array $content = array(), $module = '')
+    static public function notice($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_NOTICE
         return true;
@@ -257,12 +257,12 @@ class SeasLog
      * 记录warning日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      *
      * @return bool
      */
-    static public function warning($message, array $content = array(), $module = '')
+    static public function warning($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_WARNING
         return true;
@@ -272,12 +272,12 @@ class SeasLog
      * 记录error日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      *
      * @return bool
      */
-    static public function error($message, array $content = array(), $module = '')
+    static public function error($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_ERROR
         return true;
@@ -287,12 +287,12 @@ class SeasLog
      * 记录critical日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      *
      * @return bool
      */
-    static public function critical($message, array $content = array(), $module = '')
+    static public function critical($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_CRITICAL
         return true;
@@ -302,12 +302,12 @@ class SeasLog
      * 记录alert日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      *
      * @return bool
      */
-    static public function alert($message, array $content = array(), $module = '')
+    static public function alert($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_ALERT
         return true;
@@ -317,12 +317,12 @@ class SeasLog
      * 记录emergency日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      *
      * @return bool
      */
-    static public function emergency($message, array $content = array(), $module = '')
+    static public function emergency($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_EMERGENCY
         return true;
@@ -333,12 +333,12 @@ class SeasLog
      *
      * @param              $level
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      *
      * @return bool
      */
-    static public function log($level, $message, array $content = array(), $module = '')
+    static public function log($level, $message, array $context = array(), $module = '')
     {
         return true;
     }

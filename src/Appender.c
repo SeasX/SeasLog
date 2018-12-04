@@ -74,10 +74,10 @@ static int seaslog_real_log_ex(char *message, int message_len, char *opt, int op
     return SUCCESS;
 }
 
-int seaslog_log_content(int argc, char *level, int level_int, char *message, int message_len, HashTable *content, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
+int seaslog_log_context(int argc, char *level, int level_int, char *message, int message_len, HashTable *context, char *module, int module_len, zend_class_entry *ce TSRMLS_DC)
 {
     int ret;
-    char *result = php_strtr_array(message, message_len, content);
+    char *result = php_strtr_array(message, message_len, context);
 
     ret = seaslog_log_ex(argc, level, level_int, result, strlen(result), module, module_len, ce TSRMLS_CC);
 
@@ -101,19 +101,19 @@ static int seaslog_real_buffer_log_ex(char *message, int message_len, char *log_
 
 static int appender_handle_tcp_udp(char *message, int message_len, char *level, int level_int, logger_entry_t *logger, zend_class_entry *ce TSRMLS_DC)
 {
-    char *log_info, *log_content, *time_RFC3339;
-    int log_len, log_content_len, PRI;
+    char *log_info, *log_context, *time_RFC3339;
+    int log_len, log_context_len, PRI;
 
     time_RFC3339 = make_time_RFC3339(TSRMLS_C);
 
     PRI = SEASLOG_SYSLOG_FACILITY + level_int;
 
-    log_content_len = seaslog_spprintf(&log_content TSRMLS_CC, SEASLOG_GENERATE_SYSLOG_INFO, level, 0, message);
+    log_context_len = seaslog_spprintf(&log_context TSRMLS_CC, SEASLOG_GENERATE_SYSLOG_INFO, level, 0, message);
 
-    log_len = spprintf(&log_info, 0, "<%d>1 %s %s %s %s %s %s", PRI, time_RFC3339, SEASLOG_G(host_name), SEASLOG_G(request_variable)->domain_port, SEASLOG_G(process_id), logger->logger, log_content);
+    log_len = spprintf(&log_info, 0, "<%d>1 %s %s %s %s %s %s", PRI, time_RFC3339, SEASLOG_G(host_name), SEASLOG_G(request_variable)->domain_port, SEASLOG_G(process_id), logger->logger, log_context);
 
     efree(time_RFC3339);
-    efree(log_content);
+    efree(log_context);
 
     if (seaslog_real_buffer_log_ex(log_info, log_len, logger->logger, logger->logger_len, ce TSRMLS_CC) == FAILURE)
     {

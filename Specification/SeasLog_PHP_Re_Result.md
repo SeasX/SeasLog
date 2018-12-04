@@ -223,7 +223,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.9.0 ] {
           - Parameters [4] {
             Parameter #0 [ <required> $level ]
             Parameter #1 [ <optional> $message ]
-            Parameter #2 [ <optional> $content ]
+            Parameter #2 [ <optional> $context ]
             Parameter #3 [ <optional> $logger ]
           }
         }
@@ -232,7 +232,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.9.0 ] {
 
           - Parameters [3] {
             Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
+            Parameter #1 [ <optional> $context ]
             Parameter #2 [ <optional> $logger ]
           }
         }
@@ -241,7 +241,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.9.0 ] {
 
           - Parameters [3] {
             Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
+            Parameter #1 [ <optional> $context ]
             Parameter #2 [ <optional> $logger ]
           }
         }
@@ -250,7 +250,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.9.0 ] {
 
           - Parameters [3] {
             Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
+            Parameter #1 [ <optional> $context ]
             Parameter #2 [ <optional> $logger ]
           }
         }
@@ -259,7 +259,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.9.0 ] {
 
           - Parameters [3] {
             Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
+            Parameter #1 [ <optional> $context ]
             Parameter #2 [ <optional> $logger ]
           }
         }
@@ -268,7 +268,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.9.0 ] {
 
           - Parameters [3] {
             Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
+            Parameter #1 [ <optional> $context ]
             Parameter #2 [ <optional> $logger ]
           }
         }
@@ -277,7 +277,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.9.0 ] {
 
           - Parameters [3] {
             Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
+            Parameter #1 [ <optional> $context ]
             Parameter #2 [ <optional> $logger ]
           }
         }
@@ -286,7 +286,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.9.0 ] {
 
           - Parameters [3] {
             Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
+            Parameter #1 [ <optional> $context ]
             Parameter #2 [ <optional> $logger ]
           }
         }
@@ -295,7 +295,7 @@ Extension [ <persistent> extension #44 SeasLog version 1.9.0 ] {
 
           - Parameters [3] {
             Parameter #0 [ <required> $message ]
-            Parameter #1 [ <optional> $content ]
+            Parameter #1 [ <optional> $context ]
             Parameter #2 [ <optional> $logger ]
           }
         }
