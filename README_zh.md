@@ -505,10 +505,10 @@ class SeasLog
      * 记录debug日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function debug($message, array $content = array(), $module = '')
+    static public function debug($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_DEBUG
     }
@@ -517,10 +517,10 @@ class SeasLog
      * 记录info日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function info($message, array $content = array(), $module = '')
+    static public function info($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_INFO
     }
@@ -529,10 +529,10 @@ class SeasLog
      * 记录notice日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function notice($message, array $content = array(), $module = '')
+    static public function notice($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_NOTICE
     }
@@ -541,10 +541,10 @@ class SeasLog
      * 记录warning日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function warning($message, array $content = array(), $module = '')
+    static public function warning($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_WARNING
     }
@@ -553,10 +553,10 @@ class SeasLog
      * 记录error日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function error($message, array $content = array(), $module = '')
+    static public function error($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_ERROR
     }
@@ -565,10 +565,10 @@ class SeasLog
      * 记录critical日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function critical($message, array $content = array(), $module = '')
+    static public function critical($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_CRITICAL
     }
@@ -577,10 +577,10 @@ class SeasLog
      * 记录alert日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function alert($message, array $content = array(), $module = '')
+    static public function alert($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_ALERT
     }
@@ -589,10 +589,10 @@ class SeasLog
      * 记录emergency日志
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function emergency($message, array $content = array(), $module = '')
+    static public function emergency($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_EMERGENCY
     }
@@ -602,10 +602,10 @@ class SeasLog
      *
      * @param              $level
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function log($level, $message, array $content = array(), $module = '')
+    static public function log($level, $message, array $context = array(), $module = '')
     {
 
     }
@@ -676,15 +676,15 @@ log文件名，以 `年月日` 分文件，如今天是2014年02月18日期，�
 * erroLogFile = basePath / logger / 20140218.ERROR.log
 
 用于记录日志的函数原型有两个：
-* SeasLog::log($level, $messages[, $content, $logger])
+* SeasLog::log($level, $messages[, $context, $logger])
 
-* SeasLog::$level($messages[, $content, $logger])
+* SeasLog::$level($messages[, $context, $logger])
 
 > $level - 参见上文所列的8个级别
 
 > $messages - 可以使用`string`或`array`两种类型, `array`仅接受一维数组
 
-> $content - 仅接受一维数组，用于替换$messages中log的占位符
+> $context - 仅接受一维数组，用于替换$messages中log的占位符
 
 > $logger - 可以临时为当前操作指定一个logger，而不改变getLastLogger方法的取值
 

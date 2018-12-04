@@ -511,10 +511,10 @@ class SeasLog
      * Record Debug Log
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function debug($message, array $content = array(), $module = '')
+    static public function debug($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_DEBUG
     }
@@ -523,10 +523,10 @@ class SeasLog
      * Record Info Log
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function info($message, array $content = array(), $module = '')
+    static public function info($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_INFO
     }
@@ -535,10 +535,10 @@ class SeasLog
      * Record Notice Log
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function notice($message, array $content = array(), $module = '')
+    static public function notice($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_NOTICE
     }
@@ -547,10 +547,10 @@ class SeasLog
      * Record Warning Log
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function warning($message, array $content = array(), $module = '')
+    static public function warning($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_WARNING
     }
@@ -559,10 +559,10 @@ class SeasLog
      * Record Error Log
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function error($message, array $content = array(), $module = '')
+    static public function error($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_ERROR
     }
@@ -571,10 +571,10 @@ class SeasLog
      * Record Critical Log
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function critical($message, array $content = array(), $module = '')
+    static public function critical($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_CRITICAL
     }
@@ -583,10 +583,10 @@ class SeasLog
      * Record Alert Log
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function alert($message, array $content = array(), $module = '')
+    static public function alert($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_ALERT
     }
@@ -595,10 +595,10 @@ class SeasLog
      * Record Emergency Log
      *
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function emergency($message, array $content = array(), $module = '')
+    static public function emergency($message, array $context = array(), $module = '')
     {
         #$level = SEASLOG_EMERGENCY
     }
@@ -607,10 +607,10 @@ class SeasLog
      * The Common Record Log Function
      * @param              $level
      * @param string|array $message
-     * @param array        $content
+     * @param array        $context
      * @param string       $module
      */
-    static public function log($level, $message, array $content = array(), $module = '')
+    static public function log($level, $message, array $context = array(), $module = '')
     {
 
     }
@@ -682,15 +682,15 @@ If `seaslog.disting_type = 1`, the log file would be looks like
 * erroLogFile = basePath / logger / 20140218.ERROR.log
 
 There are two prototypes of functions for logging：
-* SeasLog::log($level, $messages[, $content, $logger])
+* SeasLog::log($level, $messages[, $context, $logger])
 
-* SeasLog::$level($messages[, $content, $logger])
+* SeasLog::$level($messages[, $context, $logger])
 
 > $level - See the 8 levels listed above
 
 > $messages - You can use two types of `string` or `array`, and `array` accepts only one dimensional array.
 
-> $content - Only accept one-dimensional array to replace placeholder of log in $messages.
+> $context - Only accept one-dimensional array to replace placeholder of log in $messages.
 
 > $logger - You can temporarily specify a logger for the current operation without changing the value of the getLastLogger method.
 
