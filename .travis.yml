@@ -15,6 +15,7 @@ php:
   - 7.0
   - 7.1
   - 7.2
+  - nightly
 
 notifications:
   email: neeke@php.net
@@ -26,5 +27,6 @@ env:
 before_script:
     - ./travis/compile.sh
 
+# Run PHPs run-tests.php
 script:
-    - exit 0
+    - ./travis/run-tests.sh
