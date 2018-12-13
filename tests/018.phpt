@@ -9,6 +9,7 @@ if (!extension_loaded('seaslog'))
 ?>
 --FILE--
 <?php
+SeasLog::setBasePath('base_path');
 $oSeasLogOne = new SeasLog();
 $oSeasLogTwo = new SeasLog();
 

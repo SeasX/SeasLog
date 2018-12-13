@@ -10,6 +10,7 @@ if (!extension_loaded('seaslog')
 ?>
 --FILE--
 <?php
+SeasLog::setBasePath('base_path');
 var_dump(SeasLog::debug('this is a debug log {test}.',array('test' => 'replace')));
 var_dump(SeasLog::info('this is a info log {test}.',array('test' => 'replace')));
 var_dump(SeasLog::notice('this is a notice log 1 {test}.',array('test' => 'replace')));

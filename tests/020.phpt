@@ -10,6 +10,7 @@ if (!extension_loaded('seaslog')
 ?>
 --FILE--
 <?php
+SeasLog::setBasePath('base_path');
 var_dump(SeasLog::getLastLogger());
 SeasLog::setLogger('aaa');
 var_dump(SeasLog::getLastLogger());

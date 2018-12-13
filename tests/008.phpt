@@ -4,6 +4,7 @@ Check for SeasLog log functions with one parameter.
 <?php if (!extension_loaded("seaslog")) print "skip"; ?>
 --FILE--
 <?php
+SeasLog::setBasePath('base_path');
 var_dump(SeasLog::debug('this is a debug log test.'));
 var_dump(SeasLog::info('this is a info log test.'));
 var_dump(SeasLog::notice('this is a notice log test.'));
