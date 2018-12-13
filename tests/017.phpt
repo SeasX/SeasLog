@@ -3,7 +3,8 @@ Check for SeasLog::analyzerDetail() function.
 --SKIPIF--
 <?php
 if (!extension_loaded('seaslog')
-    || !method_exists('SeasLog','analyzerDetail'))
+    || !method_exists('SeasLog','analyzerDetail')
+    || strtoupper(substr(PHP_OS,0,3)) === 'WIN')
 {
     print 'skip';
 }
@@ -31,16 +32,12 @@ var_dump(is_array($aLogsWithLogger) && count($aLogsWithLogger) > 1);
 $aLogsWithKeyWord = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace');
 var_dump(is_array($aLogsWithKeyWord) && count($aLogsWithKeyWord) > 1);
 
-if (strtoupper(substr(PHP_OS,0,3)) === 'WIN') {
-    var_dump(true);
-    var_dump(true);
-} else {
-    $aLogsWithLimit = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace',1,3);
-    var_dump(is_array($aLogsWithLimit) && count($aLogsWithLimit) == 3);
+$aLogsWithLimit = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace',1,3);
+var_dump(is_array($aLogsWithLimit) && count($aLogsWithLimit) == 3);
 
-    $aLogsWithOrder = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace',1,3,SEASLOG_DETAIL_ORDER_DESC);
-    var_dump(is_array($aLogsWithOrder) && count($aLogsWithOrder) == 3);
-}
+$aLogsWithOrder = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace',1,3,SEASLOG_DETAIL_ORDER_DESC);
+var_dump(is_array($aLogsWithOrder) && count($aLogsWithOrder) == 3);
+
 ?>
 --EXPECT--
 bool(true)
