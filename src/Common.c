@@ -66,7 +66,8 @@ int seaslog_get_level_int(char *level)
 
 int check_log_level(int level TSRMLS_DC)
 {
-    if (level < SEASLOG_EMERGENCY_INT || level > SEASLOG_G(level)) {
+    if (level < SEASLOG_EMERGENCY_INT || level > SEASLOG_G(level))
+    {
         return FAILURE;
     }
 

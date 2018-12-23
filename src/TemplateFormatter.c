@@ -74,26 +74,26 @@ int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size
 
     switch (generate_type)
     {
-        case SEASLOG_GENERATE_CURRENT_TEMPLATE:
-        case SEASLOG_GENERATE_RE_CURRENT_TEMPLATE:
-            seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(default_template), level, ap);
-            break;
-        case SEASLOG_GENERATE_LEVEL_TEMPLATE:
-            if (strlen(SEASLOG_G(level_template)) == 0 || (level && !strcmp(level, SEASLOG_ALL)))
-            {
-                INS_STRING(&xbuf, SEASLOG_ALL, strlen(SEASLOG_ALL));
-            }
-            else
-            {
-                seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(level_template), level, ap);
-            }
-            break;
-        case SEASLOG_GENERATE_SYSLOG_INFO:
-        case SEASLOG_GENERATE_LOG_INFO:
-            seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(current_template), level, ap);
-            break;
-        default:
-            break;
+    case SEASLOG_GENERATE_CURRENT_TEMPLATE:
+    case SEASLOG_GENERATE_RE_CURRENT_TEMPLATE:
+        seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(default_template), level, ap);
+        break;
+    case SEASLOG_GENERATE_LEVEL_TEMPLATE:
+        if (strlen(SEASLOG_G(level_template)) == 0 || (level && !strcmp(level, SEASLOG_ALL)))
+        {
+            INS_STRING(&xbuf, SEASLOG_ALL, strlen(SEASLOG_ALL));
+        }
+        else
+        {
+            seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(level_template), level, ap);
+        }
+        break;
+    case SEASLOG_GENERATE_SYSLOG_INFO:
+    case SEASLOG_GENERATE_LOG_INFO:
+        seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(current_template), level, ap);
+        break;
+    default:
+        break;
     }
     va_end(ap);
 
@@ -307,23 +307,23 @@ skip_output:
 
     switch(generate_type)
     {
-        case SEASLOG_GENERATE_LOG_INFO:
-        case SEASLOG_GENERATE_SYSLOG_INFO:
-            INS_STRING(xbuf, SEASLOG_LOG_LINE_FEED_STR, SEASLOG_LOG_LINE_FEED_LEN);
-            break;
-        case SEASLOG_GENERATE_CURRENT_TEMPLATE:
+    case SEASLOG_GENERATE_LOG_INFO:
+    case SEASLOG_GENERATE_SYSLOG_INFO:
+        INS_STRING(xbuf, SEASLOG_LOG_LINE_FEED_STR, SEASLOG_LOG_LINE_FEED_LEN);
+        break;
+    case SEASLOG_GENERATE_CURRENT_TEMPLATE:
+    {
+        if (!level_format_start)
         {
-            if (!level_format_start)
-            {
-                level_format_index = 0;
-            }
-            if (!level_format_over)
-            {
-                level_template[level_format_index] = '\0';
-            }
-            SEASLOG_G(level_template) = estrdup(level_template);
-            break;
+            level_format_index = 0;
         }
+        if (!level_format_over)
+        {
+            level_template[level_format_index] = '\0';
+        }
+        SEASLOG_G(level_template) = estrdup(level_template);
+        break;
+    }
     }
 
     if (!EXIST_CHAR(xbuf))

@@ -33,11 +33,11 @@ static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_
 void initRemoteTimeout(TSRMLS_D)
 {
 #ifndef PHP_WIN32
-	time_t conv;
+    time_t conv;
 #else
-	long conv;
+    long conv;
 #endif
-	struct timeval tv;
+    struct timeval tv;
 
 #ifndef PHP_WIN32
     conv = (time_t) (SEASLOG_G(remote_timeout) * 1000000.0);
