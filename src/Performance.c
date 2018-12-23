@@ -63,32 +63,23 @@ void recoveryZendHooks(TSRMLS_D)
     }
 }
 
-#if PHP_VERSION_ID < 50500
-ZEND_DLEXPORT void seaslog_execute (zend_op_array *ops TSRMLS_DC)
-{
-#else
+#if PHP_VERSION_ID >= 70000
 ZEND_DLEXPORT void seaslog_execute_ex (zend_execute_data *execute_data TSRMLS_DC)
+#elif PHP_VERSION_ID >= 50500
+ZEND_DLEXPORT void seaslog_execute_ex (zend_execute_data *execute_data TSRMLS_DC)
+#else
+ZEND_DLEXPORT void seaslog_execute (zend_op_array *ops TSRMLS_DC)
+#endif
 {
-    zend_op_array *ops = execute_data->op_array;
-#endif
-
 // get function name , line no , start time
-    if (SUCCESS) {
 
-#if PHP_VERSION_ID < 50500
-        _clone_zend_execute(ops TSRMLS_CC);
+#if PHP_VERSION_ID >= 50500
+    _clone_zend_execute_ex(execute_data TSRMLS_CC);
 #else
-        _clone_zend_execute_ex(execute_data TSRMLS_CC);
+	_clone_zend_execute(ops TSRMLS_CC);
 #endif
+
 // get end time
-    } else {
-
-#if PHP_VERSION_ID < 50500
-        _clone_zend_execute(ops TSRMLS_CC);
-#else
-        _clone_zend_execute_ex(execute_data TSRMLS_CC);
-#endif
-    }
 }
 
 
