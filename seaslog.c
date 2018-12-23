@@ -192,6 +192,7 @@ STD_PHP_INI_BOOLEAN("seaslog.throw_exception", "1", PHP_INI_ALL, OnUpdateBool, t
 
 STD_PHP_INI_BOOLEAN("seaslog.ignore_warning", "1", PHP_INI_ALL, OnUpdateBool, ignore_warning, zend_seaslog_globals, seaslog_globals)
 
+STD_PHP_INI_BOOLEAN("seaslog.trace_stack", "0", PHP_INI_SYSTEM, OnUpdateBool, trace_stack, zend_seaslog_globals, seaslog_globals)
 
 PHP_INI_END()
 
@@ -254,6 +255,7 @@ PHP_MINIT_FUNCTION(seaslog)
     initExceptionHooks(TSRMLS_C);
     initBufferSwitch(TSRMLS_C);
     initRemoteTimeout(TSRMLS_C);
+    initZendHooks(TSRMLS_C);
 
     return SUCCESS;
 }
@@ -262,6 +264,7 @@ PHP_MSHUTDOWN_FUNCTION(seaslog)
 {
     recoveryErrorHooks(TSRMLS_C);
     recoveryExceptionHooks(TSRMLS_C);
+    recoveryZendHooks(TSRMLS_C);
 
     UNREGISTER_INI_ENTRIES();
 
