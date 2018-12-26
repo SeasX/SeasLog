@@ -63,15 +63,20 @@ void recoveryZendHooks(TSRMLS_D)
     }
 }
 
-#if PHP_VERSION_ID >= 70000
-ZEND_DLEXPORT void seaslog_execute_ex (zend_execute_data *execute_data TSRMLS_DC)
-#elif PHP_VERSION_ID >= 50500
+#if PHP_VERSION_ID >= 50500
 ZEND_DLEXPORT void seaslog_execute_ex (zend_execute_data *execute_data TSRMLS_DC)
 #else
 ZEND_DLEXPORT void seaslog_execute (zend_op_array *ops TSRMLS_DC)
 #endif
 {
-// get function name , line no , start time
+    int is_tracing = FAILURE;
+
+#if PHP_VERSION_ID < 50500
+    zend_execute_data  *execute_data = EG(current_execute_data);
+#endif
+
+    zend_execute_data *real_execute_data = execute_data;
+    is_tracing = performance_frame_begin(real_execute_data TSRMLS_CC);
 
 #if PHP_VERSION_ID >= 50500
     _clone_zend_execute_ex(execute_data TSRMLS_CC);
@@ -79,7 +84,10 @@ ZEND_DLEXPORT void seaslog_execute (zend_op_array *ops TSRMLS_DC)
     _clone_zend_execute(ops TSRMLS_CC);
 #endif
 
-// get end time
+    if (SUCCESS == is_tracing)
+    {
+        performance_frame_end(TSRMLS_C);
+    }
 }
 
 
@@ -92,7 +100,11 @@ ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int
 #endif
 {
 
-// get function name , line no , start time
+    int is_tracing = FAILURE;
+
+    zend_execute_data *real_execute_data = execute_data;
+    is_tracing = performance_frame_begin(real_execute_data TSRMLS_CC);
+
 
 #if PHP_VERSION_ID >= 70000
     if (_clone_zend_execute_internal)
@@ -123,6 +135,19 @@ ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int
     }
 #endif
 
-// get end time
+    if (SUCCESS == is_tracing)
+    {
+        performance_frame_end(TSRMLS_C);
+    }
+}
+
+int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
+{
+    return SUCCESS;
+}
+
+void performance_frame_end(TSRMLS_D)
+{
+
 }
 
