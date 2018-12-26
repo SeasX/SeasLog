@@ -63,6 +63,16 @@ void recoveryZendHooks(TSRMLS_D)
     }
 }
 
+void seaslog_init_performance(TSRMLS_D)
+{
+    SEASLOG_G(stack_level) = 0;
+}
+
+void seaslog_clear_performance(TSRMLS_D)
+{
+    SEASLOG_G(stack_level) = 0;
+}
+
 #if PHP_VERSION_ID >= 50500
 ZEND_DLEXPORT void seaslog_execute_ex (zend_execute_data *execute_data TSRMLS_DC)
 #else

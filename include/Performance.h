@@ -25,6 +25,9 @@ void seaslog_peak_memory_usage(smart_str *buf TSRMLS_DC);
 void initZendHooks(TSRMLS_D);
 void recoveryZendHooks(TSRMLS_D);
 
+void seaslog_init_performance(TSRMLS_D);
+void seaslog_clear_performance(TSRMLS_D);
+
 #if PHP_VERSION_ID >= 70000
 void (*_clone_zend_execute_ex) (zend_execute_data *execute_data TSRMLS_DC);
 static void (*_clone_zend_execute_internal) (zend_execute_data *execute_data, zval *return_value);

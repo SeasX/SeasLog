@@ -88,6 +88,9 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool trace_exception;
 
     zend_bool trace_stack;
+    int trace_stack_max_depth;
+    int trace_stack_max_functions_per_depth;
+    long stack_level;
 
     int buffer_size;
     int level;

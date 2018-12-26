@@ -38,6 +38,9 @@
 
 # define SEASLOG_EXPAND_FILE_PATH(dir, buf) expand_filepath_with_mode(dir, buf, NULL, 0, CWD_EXPAND)
 
+# define STR_NAME_VAL(k) (k)->val
+# define STR_NAME_LEN(k) (k)->len
+
 #else
 
 # define SEASLOG_MAKE_ZVAL(z) MAKE_STD_ZVAL(z)
@@ -64,6 +67,9 @@
 # else
 # define SEASLOG_EXPAND_FILE_PATH(dir, buf) expand_filepath_ex(dir, buf, NULL, 0 TSRMLS_CC)
 # endif
+
+# define STR_NAME_VAL(k) (k)
+# define STR_NAME_LEN(k) (k ## _length)
 
 #endif
 
