@@ -53,15 +53,10 @@ ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int
 int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC);
 void performance_frame_end(TSRMLS_D);
 
-struct seaslog_frame_t
-{
-    struct seaslog_frame_t  *previous_frame;
-    char                    *function_name;
-    char                    *class_name;
-    long                    wt_start;
-    int                     recurse_level;
-    zend_ulong              hash_code;
-};
+seaslog_frame_t* seaslog_performance_fast_alloc_frame(TSRMLS_D);
+void seaslog_performance_fast_free_frame(seaslog_frame_t *p TSRMLS_DC);
+char* seaslog_performance_get_class_name(zend_execute_data *data TSRMLS_DC);
+char* seaslog_performance_get_function_name(zend_execute_data *data TSRMLS_DC);
 
 #endif /* _SEASLOG_PERFORMANCE_H_ */
 

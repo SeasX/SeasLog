@@ -161,3 +161,71 @@ void performance_frame_end(TSRMLS_D)
 
 }
 
+seaslog_frame_t* seaslog_performance_fast_alloc_frame(TSRMLS_D)
+{
+    seaslog_frame_t *p;
+
+    p = SEASLOG_G(frame_free_list);
+
+    if (p) {
+        SEASLOG_G(frame_free_list) = p->previous_frame;
+        return p;
+    } else {
+        return (seaslog_frame_t *)emalloc(sizeof(seaslog_frame_t));
+    }
+}
+
+void seaslog_performance_fast_free_frame(seaslog_frame_t *p TSRMLS_DC)
+{
+    if (p->function_name != NULL) {
+        efree(p->function_name);
+    }
+    if (p->class_name != NULL) {
+        efree(p->class_name);
+    }
+
+    p->previous_frame = SEASLOG_G(frame_free_list);
+    SEASLOG_G(frame_free_list) = p;
+}
+
+char* seaslog_performance_get_class_name(zend_execute_data *data TSRMLS_DC)
+{
+    zend_function *curr_func;
+
+    if (!data) {
+        return NULL;
+    }
+
+#if PHP_VERSION_ID >= 70000
+    curr_func = data->func;
+#else
+    curr_func = data->function_state.function;
+#endif
+
+    if (curr_func->common.scope != NULL) {
+        return STR_NAME_VAL(curr_func->common.scope->name);
+    }
+
+    return NULL;
+}
+
+char* seaslog_performance_get_function_name(zend_execute_data *data TSRMLS_DC)
+{
+    zend_function *curr_func;
+
+    if (!data) {
+        return NULL;
+    }
+
+#if PHP_VERSION_ID >= 70000
+    curr_func = data->func;
+#else
+    curr_func = data->function_state.function;
+#endif
+
+    if (!curr_func->common.function_name) {
+        return NULL;
+    }
+
+    return STR_NAME_VAL(curr_func->common.function_name);
+}

@@ -91,6 +91,8 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     int trace_stack_max_depth;
     int trace_stack_max_functions_per_depth;
     long stack_level;
+    seaslog_frame_t *performance_frames;
+    seaslog_frame_t *frame_free_list;
 
     int buffer_size;
     int level;
