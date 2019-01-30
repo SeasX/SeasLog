@@ -430,13 +430,10 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
 
     result_array =(seaslog_performance_result **) emalloc(SEASLOG_G(trace_performance_max_depth) * sizeof(seaslog_performance_result *) );
 
-    for(i = 0 ; i < SEASLOG_G(trace_performance_max_depth) ; i++)
-    {
-        result_array[i] = (seaslog_performance_result *)emalloc(SEASLOG_G(trace_performance_max_functions_per_depth) * sizeof(seaslog_performance_result));
-    }
-
     for (m = 0; m < SEASLOG_G(trace_performance_max_depth); m++)
     {
+        result_array[m] = (seaslog_performance_result *)emalloc(SEASLOG_G(trace_performance_max_functions_per_depth) * sizeof(seaslog_performance_result));
+
         for (n = 0; n < SEASLOG_G(trace_performance_max_functions_per_depth); n++)
         {
             result_array[m][n].hash_code = 0;
