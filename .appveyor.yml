@@ -4,6 +4,7 @@ skip_tags: true
 branches:
         only:
                 - master
+                - 2.x
                 - bug_fix
                 - /branch.*/
 
