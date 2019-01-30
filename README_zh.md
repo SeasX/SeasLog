@@ -246,6 +246,17 @@ seaslog.trace_performance_min_function_wall_time = 10
 
 > `seaslog.ignore_warning = 1` 开启忽略SeasLog自身的警告。当出现目录权限或接收服务器端口不通等情况时，将进行忽略；关闭时，将抛出警告。
 
+> `seaslog.trace_performance = 1` 开启性能追踪功能。性能日志如:
+```sh
+2019-01-30 11:46:53 | INFO | 91390 | 5c518ea46e010 | 1548848813.299 | {"main()":{"wt":8848,"mu":20712},"1":[{"cm":"Class0::Method0","ct":2,"wt":2007,"mu":192},{"cm":"Class1::Method1","ct":1,"wt":1002,"mu":192},{"cm":"Class2::Method2","ct":1,"wt":1001,"mu":192},{"cm":"Class3::Method3","ct":1,"wt":1000,"mu":192},{"cm":"Class4::Method4","ct":1,"wt":1000,"mu":192}],"2":[{"cm":"Class5::Method5","ct":1,"wt":1000,"mu":192}],"3":[{"cm":"Class5::Recursion","ct":1,"wt":1000,"mu":3248}],"4":[{"cm":"Class5::Recursion","ct":1,"wt":1000,"mu":2952}],"5":[{"cm":"Class5::Recursion","ct":1,"wt":1000,"mu":2656}]}
+
+cm => function_name (类名::方法名)
+wt => wall_time (ms)
+mu => memory_usage (byte)
+ct => call_times (方法调用计数)
+
+```
+
 ### 自定义日志模板
 很多朋友在使用过程中提到自定义日志模板的需求，于是`SeasLog`自1.7.2版本开始，拥有了这个能力，允许用户自定义日志的模板，
 同时在模板中可以使用`SeasLog`预置的诸多预设变量，参照[预设变量表](#预设变量表)。
