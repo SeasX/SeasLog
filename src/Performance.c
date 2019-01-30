@@ -426,10 +426,10 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
     zval *performance_log_level_item;
 #endif
 
-    m = SEASLOG_G(trace_performance_max_depth);
-    n = SEASLOG_G(trace_performance_max_functions_per_depth);
+    const int max_depth = SEASLOG_G(trace_performance_max_depth);
+    const int max_functions_per_depth = SEASLOG_G(trace_performance_max_functions_per_depth);
 
-    seaslog_performance_result* result_array[m][n];
+    seaslog_performance_result* result_array[max_depth][max_functions_per_depth];
 
     trace_performance_min_function_wall_time = SEASLOG_G(trace_performance_min_function_wall_time) * 1000;
 
