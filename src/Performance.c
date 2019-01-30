@@ -414,6 +414,7 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
     seaslog_performance_result* result_forward;
     seaslog_performance_result* result_new;
     smart_str performance_log = {0};
+    int trace_performance_min_function_wall_time = 0;
 
 #if PHP_VERSION_ID >= 70000
     zval performance_log_array;
@@ -425,9 +426,12 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
     zval *performance_log_level_item;
 #endif
 
-    int trace_performance_min_function_wall_time = SEASLOG_G(trace_performance_min_function_wall_time) * 1000;
+    m = SEASLOG_G(trace_performance_max_depth);
+    n = SEASLOG_G(trace_performance_max_functions_per_depth);
 
-    seaslog_performance_result* result_array[SEASLOG_G(trace_performance_max_depth)][SEASLOG_G(trace_performance_max_functions_per_depth)];
+    seaslog_performance_result* result_array[m][n];
+
+    trace_performance_min_function_wall_time = SEASLOG_G(trace_performance_min_function_wall_time) * 1000;
 
     for (m = 0; m < SEASLOG_G(trace_performance_max_depth); m++)
     {
