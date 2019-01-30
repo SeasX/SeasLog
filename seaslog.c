@@ -319,11 +319,14 @@ PHP_MINFO_FUNCTION(seaslog)
 {
     php_info_print_table_start();
 
-   	if (PG(expose_php) && !sapi_module.phpinfo_as_text) {
-   		php_info_print_table_header(2, "SeasLog support", SEASLOG_LOGO_IMG"enabled");
-   	} else {
-   		php_info_print_table_header(2, "SeasLog support", "Enabled");
-   	}
+    if (PG(expose_php) && !sapi_module.phpinfo_as_text)
+    {
+        php_info_print_table_header(2, "SeasLog support", SEASLOG_LOGO_IMG"enabled");
+    }
+    else
+    {
+        php_info_print_table_header(2, "SeasLog support", "Enabled");
+    }
 
     php_info_print_table_row(2, "SeasLog Version", SEASLOG_VERSION);
     php_info_print_table_row(2, "SeasLog Author", SEASLOG_AUTHOR);

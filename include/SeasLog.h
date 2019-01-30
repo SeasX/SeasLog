@@ -219,7 +219,8 @@ typedef struct seaslog_frame
     struct seaslog_frame    *previous_frame;
 } seaslog_frame;
 
-typedef struct seaslog_performance_bucket_t {
+typedef struct seaslog_performance_bucket_t
+{
     zend_ulong      bucket_key;
     zend_ulong      hash_code;
     char            *function_name;
@@ -232,7 +233,8 @@ typedef struct seaslog_performance_bucket_t {
     struct seaslog_performance_bucket_t *next;
 } seaslog_performance_bucket;
 
-typedef struct seaslog_performance_result_t {
+typedef struct seaslog_performance_result_t
+{
     zend_ulong      hash_code;
     char            *function;
     long            count;
