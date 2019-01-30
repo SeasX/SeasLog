@@ -139,7 +139,7 @@ int seaslog_clear_stream(int destroy, int model, char *opt TSRMLS_DC)
 
         if (SEASLOG_STREAM_LIST_DESTROY_YES == destroy)
         {
-            EX_ARRAY_DESTROY(&SEASLOG_G(stream_list));
+            SEASLOG_ARRAY_DESTROY(SEASLOG_G(stream_list));
         }
     }
 #else
@@ -177,7 +177,7 @@ int seaslog_clear_stream(int destroy, int model, char *opt TSRMLS_DC)
 
         if (SEASLOG_STREAM_LIST_DESTROY_YES == destroy)
         {
-            EX_ARRAY_DESTROY(&(SEASLOG_G(stream_list)));
+            SEASLOG_ARRAY_DESTROY(SEASLOG_G(stream_list));
         }
     }
 #endif

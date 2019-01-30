@@ -87,12 +87,18 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool trace_error;
     zend_bool trace_exception;
 
-    zend_bool trace_stack;
-    int trace_stack_max_depth;
-    int trace_stack_max_functions_per_depth;
+    zend_bool trace_performance;
+    int trace_performance_max_depth;
+    int trace_performance_max_functions_per_depth;
+    int trace_performance_min_wall_time;
+    int trace_performance_min_function_wall_time;
+
     long stack_level;
-    seaslog_frame_t *performance_frames;
-    seaslog_frame_t *frame_free_list;
+    seaslog_performance_main *performance_main;
+    seaslog_frame *performance_frames;
+    seaslog_frame *frame_free_list;
+    zend_ulong function_hash_counters[SEASLOG_PERFORMANCE_COUNTER_SIZE];
+    seaslog_performance_bucket* performance_buckets[SEASLOG_PERFORMANCE_BUCKET_SLOTS];
 
     int buffer_size;
     int level;

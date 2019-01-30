@@ -16,6 +16,15 @@
 
 #include "Common.h"
 
+int seaslog_info_print(const char *str TSRMLS_DC)
+{
+#if PHP_VERSION_ID >= 70000
+    return php_output_write(str, strlen(str));
+#else
+    return php_output_write(str, strlen(str) TSRMLS_CC);
+#endif
+}
+
 int check_sapi_is_cli(TSRMLS_D)
 {
     if (!strncmp(sapi_module.name , SEASLOG_CLI_KEY, sizeof(SEASLOG_CLI_KEY) - 1))

@@ -172,17 +172,7 @@ void seaslog_init_logger_list(TSRMLS_D)
 
 void seaslog_clear_logger_list(TSRMLS_D)
 {
-#if PHP_VERSION_ID >= 70000
-    if (IS_ARRAY == Z_TYPE(SEASLOG_G(logger_list)))
-    {
-        EX_ARRAY_DESTROY(&SEASLOG_G(logger_list));
-    }
-#else
-    if (SEASLOG_G(logger_list) && IS_ARRAY == Z_TYPE_P(SEASLOG_G(logger_list)))
-    {
-        EX_ARRAY_DESTROY(&(SEASLOG_G(logger_list)));
-    }
-#endif
+    SEASLOG_ARRAY_DESTROY(SEASLOG_G(logger_list));
 }
 
 logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSRMLS_DC)

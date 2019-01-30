@@ -192,9 +192,11 @@ STD_PHP_INI_BOOLEAN("seaslog.throw_exception", "1", PHP_INI_ALL, OnUpdateBool, t
 
 STD_PHP_INI_BOOLEAN("seaslog.ignore_warning", "1", PHP_INI_ALL, OnUpdateBool, ignore_warning, zend_seaslog_globals, seaslog_globals)
 
-STD_PHP_INI_BOOLEAN("seaslog.trace_stack", "0", PHP_INI_SYSTEM, OnUpdateBool, trace_stack, zend_seaslog_globals, seaslog_globals)
-STD_PHP_INI_ENTRY("seaslog.trace_stack_max_depth", "5", PHP_INI_ALL, OnUpdateLongGEZero, trace_stack_max_depth, zend_seaslog_globals, seaslog_globals)
-STD_PHP_INI_ENTRY("seaslog.trace_stack_max_functions_per_depth", "5", PHP_INI_ALL, OnUpdateLongGEZero, trace_stack_max_functions_per_depth, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_BOOLEAN("seaslog.trace_performance", "0", PHP_INI_SYSTEM, OnUpdateBool, trace_performance, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.trace_performance_max_depth", "5", PHP_INI_ALL, OnUpdateLongGEZero, trace_performance_max_depth, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.trace_performance_max_functions_per_depth", "5", PHP_INI_ALL, OnUpdateLongGEZero, trace_performance_max_functions_per_depth, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.trace_performance_min_wall_time", "500", PHP_INI_ALL, OnUpdateLongGEZero, trace_performance_min_wall_time, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.trace_performance_min_function_wall_time", "10", PHP_INI_ALL, OnUpdateLongGEZero, trace_performance_min_function_wall_time, zend_seaslog_globals, seaslog_globals)
 
 PHP_INI_END()
 
@@ -298,7 +300,7 @@ PHP_RINIT_FUNCTION(seaslog)
 
 PHP_RSHUTDOWN_FUNCTION(seaslog)
 {
-    seaslog_clear_performance(TSRMLS_C);
+    seaslog_clear_performance(seaslog_ce TSRMLS_CC);
     seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_NO TSRMLS_CC);
     seaslog_clear_buffer(TSRMLS_C);
     seaslog_clear_logger(TSRMLS_C);
@@ -316,7 +318,13 @@ PHP_RSHUTDOWN_FUNCTION(seaslog)
 PHP_MINFO_FUNCTION(seaslog)
 {
     php_info_print_table_start();
-    php_info_print_table_header(2, "SeasLog support", "Enabled");
+
+   	if (PG(expose_php) && !sapi_module.phpinfo_as_text) {
+   		php_info_print_table_header(2, "SeasLog support", SEASLOG_LOGO_IMG"enabled");
+   	} else {
+   		php_info_print_table_header(2, "SeasLog support", "Enabled");
+   	}
+
     php_info_print_table_row(2, "SeasLog Version", SEASLOG_VERSION);
     php_info_print_table_row(2, "SeasLog Author", SEASLOG_AUTHOR);
     php_info_print_table_row(2, "SeasLog Supports", SEASLOG_SUPPORTS);

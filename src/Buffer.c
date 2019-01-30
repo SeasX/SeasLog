@@ -127,7 +127,7 @@ int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_le
     {
         array_init(&new_array);
         SEASLOG_ADD_NEXT_INDEX_STRINGL(&new_array, log_info, log_info_len);
-        SEASLOG_ADD_ASSOC_ZVAL_EX(&SEASLOG_G(buffer),path,path_len,&new_array);
+        SEASLOG_ADD_ASSOC_ZVAL_EX(SEASLOG_G(buffer),path,path_len,new_array);
     }
     else
     {
@@ -139,7 +139,7 @@ int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_le
         {
             array_init(&new_array);
             SEASLOG_ADD_NEXT_INDEX_STRINGL(&new_array, log_info, log_info_len);
-            SEASLOG_ADD_ASSOC_ZVAL_EX(&SEASLOG_G(buffer),path,path_len,&new_array);
+            SEASLOG_ADD_ASSOC_ZVAL_EX(SEASLOG_G(buffer),path,path_len,new_array);
         }
     }
 
@@ -250,22 +250,7 @@ void seaslog_clear_buffer(TSRMLS_D)
     {
         SEASLOG_G(buffer_count) = 0;
 
-#if PHP_VERSION_ID >= 70000
-
-        if (IS_ARRAY == Z_TYPE(SEASLOG_G(buffer)))
-        {
-            EX_ARRAY_DESTROY(&SEASLOG_G(buffer));
-        }
-
-#else
-
-        if (SEASLOG_G(buffer) && IS_ARRAY == Z_TYPE_P(SEASLOG_G(buffer)))
-        {
-            EX_ARRAY_DESTROY(&(SEASLOG_G(buffer)));
-        }
-
-#endif
-
+        SEASLOG_ARRAY_DESTROY(SEASLOG_G(buffer));
     }
 }
 

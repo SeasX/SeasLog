@@ -206,6 +206,26 @@ seaslog.throw_exception = 1
 ;Switch ignore SeasLog warning.
 ;1-On(Default) 0-Off
 seaslog.ignore_warning = 1
+
+;Switch Performance Tracking 1-On 0-Off(Default)
+seaslog.trace_performance = 0
+
+;Performance Tracking Depth Level. 5(Default)
+seaslog.trace_performance_max_depth = 5
+
+;Maximum number of functions per layer in descending order of wall_time for performance tracking.
+;Top default top5
+seaslog.trace_performance_max_functions_per_depth = 5
+
+;The record threshold of the current request execution time for performance tracking.
+;Only when the request execution time is greater than that value.
+;500(ms Default)
+seaslog.trace_performance_min_wall_time = 500
+
+;The record threshold of execution time of each method in performance tracking.
+;Only when the execution time of each method is greater than that value.
+;10(ms Default)
+seaslog.trace_performance_min_function_wall_time = 10
 ```
 > `seaslog.disting_folder = 1` Switch use Logger DisTing by folder, it’s meaning SeasLog will create the file deistic by folder, and when this configure close SeasLog will create file use underline connect Logger and Time like default_20180211.log.
 
@@ -240,6 +260,17 @@ seaslog.ignore_warning = 1
 > `seaslog.throw_exception = 1` Open an exception that throws the SeasLog to throw itself. When the directory authority or the receive server port is blocked, throw an exception; do not throw an exception when closed.
 
 > `seaslog.ignore_warning = 1` Open a warning to ignore SeasLog itself. When directory permissions or receive server ports are blocked, they are ignored; when closed, a warning is thrown.
+
+> `seaslog.trace_performance = 1` Open the performance tracing. Performance log such as:
+```sh
+2019-01-30 11:46:53 | INFO | 91390 | 5c518ea46e010 | 1548848813.299 | {"main()":{"wt":8848,"mu":20712},"1":[{"cm":"Class0::Method0","ct":2,"wt":2007,"mu":192},{"cm":"Class1::Method1","ct":1,"wt":1002,"mu":192},{"cm":"Class2::Method2","ct":1,"wt":1001,"mu":192},{"cm":"Class3::Method3","ct":1,"wt":1000,"mu":192},{"cm":"Class4::Method4","ct":1,"wt":1000,"mu":192}],"2":[{"cm":"Class5::Method5","ct":1,"wt":1000,"mu":192}],"3":[{"cm":"Class5::Recursion","ct":1,"wt":1000,"mu":3248}],"4":[{"cm":"Class5::Recursion","ct":1,"wt":1000,"mu":2952}],"5":[{"cm":"Class5::Recursion","ct":1,"wt":1000,"mu":2656}]}
+
+cm => function_name (ClassName::MethodName)
+wt => wall_time (ms)
+mu => memory_usage (byte)
+ct => call_times (function call times)
+
+```
 
 ### Custom log template
 Many friends mentioned the need for custom log templates during their use, 
