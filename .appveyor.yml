@@ -33,43 +33,53 @@ environment:
         BIN_SDK_VER: 2.1.8
         matrix:
                 - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-                  ARCH: x64
-                  VC: vc14
+                  ARCH: x86
+                  VC: vc9
                   PHP_VER: 5.3.28
                   TS: 0
                 - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-                  ARCH: x64
-                  VC: vc14
+                  ARCH: x86
+                  VC: vc9
                   PHP_VER: 5.3.28
                   TS: 1
                 - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-                  ARCH: x64
-                  VC: vc14
+                  ARCH: x86
+                  VC: vc9
                   PHP_VER: 5.4.28
                   TS: 0
                 - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-                  ARCH: x64
-                  VC: vc14
+                  ARCH: x86
+                  VC: vc9
                   PHP_VER: 5.4.28
                   TS: 1
                 - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
                   ARCH: x64
-                  VC: vc14
+                  VC: vc11
                   PHP_VER: 5.5.28
                   TS: 0
                 - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
                   ARCH: x64
-                  VC: vc14
+                  VC: vc11
                   PHP_VER: 5.5.28
                   TS: 1
                 - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
                   ARCH: x64
-                  VC: vc14
+                  VC: vc11
                   PHP_VER: 5.6.28
                   TS: 0
                 - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
                   ARCH: x64
-                  VC: vc14
+                  VC: vc11
+                  PHP_VER: 5.6.28
+                  TS: 1
+                - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+                  ARCH: x86
+                  VC: vc11
+                  PHP_VER: 5.6.28
+                  TS: 0
+                - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+                  ARCH: x86
+                  VC: vc11
                   PHP_VER: 5.6.28
                   TS: 1
                 - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
