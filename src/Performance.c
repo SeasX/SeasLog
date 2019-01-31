@@ -16,6 +16,7 @@
 
 #include "Performance.h"
 #include "Appender.h"
+#include "ext/json/php_json.h"
 
 static inline long hash_data(long hash, char *data, size_t size)
 {
