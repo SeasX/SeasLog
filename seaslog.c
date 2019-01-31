@@ -34,6 +34,7 @@ ZEND_GET_MODULE(seaslog)
 #include "StreamWrapper.h"
 #include "Appender.h"
 #include "Analyzer.h"
+#include "Performance.h"
 #include "Common.h"
 
 zend_class_entry *seaslog_ce;
