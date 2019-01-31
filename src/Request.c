@@ -235,7 +235,7 @@ void seaslog_clear_request_variable(TSRMLS_D)
 
 void get_code_filename_line(smart_str *result TSRMLS_DC)
 {
-    char *ret;
+    const char *ret;
     long code_line = 0;
     size_t filename_len;
     int recall_depth = SEASLOG_G(recall_depth);
