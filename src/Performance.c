@@ -19,6 +19,28 @@
 #include "Appender.h"
 #include "ext/json/php_json.h"
 
+#if PHP_VERSION_ID >= 70000
+ZEND_DLEXPORT void (*_clone_zend_execute_ex) (zend_execute_data *execute_data TSRMLS_DC);
+ZEND_DLEXPORT void (*_clone_zend_execute_internal) (zend_execute_data *execute_data, zval *return_value);
+
+ZEND_DLEXPORT void seaslog_execute_ex (zend_execute_data *execute_data TSRMLS_DC);
+ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, zval *return_value);
+
+#elif PHP_VERSION_ID >= 50500
+ZEND_DLEXPORT void (*_clone_zend_execute_ex) (zend_execute_data *execute_data TSRMLS_DC);
+ZEND_DLEXPORT void (*_clone_zend_execute_internal) (zend_execute_data *data, struct _zend_fcall_info *fci, int ret TSRMLS_DC);
+
+ZEND_DLEXPORT void seaslog_execute_ex (zend_execute_data *execute_data TSRMLS_DC);
+ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, struct _zend_fcall_info *fci, int ret TSRMLS_DC);
+
+#else
+ZEND_DLEXPORT void (*_clone_zend_execute) (zend_op_array *ops TSRMLS_DC);
+ZEND_DLEXPORT void (*_clone_zend_execute_internal) (zend_execute_data *data, int ret TSRMLS_DC);
+
+ZEND_DLEXPORT void seaslog_execute (zend_op_array *ops TSRMLS_DC);
+ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int ret TSRMLS_DC);
+#endif
+
 static inline long hash_data(long hash, char *data, size_t size)
 {
     size_t i;
