@@ -41,6 +41,14 @@ ZEND_DLEXPORT void seaslog_execute (zend_op_array *ops TSRMLS_DC);
 ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int ret TSRMLS_DC);
 #endif
 
+#define SEASLOG_PERFORMANCE_BUCKET_FOREACH(bucket, _i) do { \
+		for (_i = 0; _i < SEASLOG_PERFORMANCE_BUCKET_SLOTS; _i++) { \
+            bucket = SEASLOG_G(performance_buckets)[_i];
+
+#define SEASLOG_PERFORMANCE_BUCKET_FOREACH_END \
+		} \
+	} while (0)
+
 static inline long hash_data(long hash, char *data, size_t size)
 {
     size_t i;
@@ -479,10 +487,7 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
         }
     }
 
-    for (i = 0; i < SEASLOG_PERFORMANCE_BUCKET_SLOTS; i++)
-    {
-        bucket = SEASLOG_G(performance_buckets)[i];
-
+    SEASLOG_PERFORMANCE_BUCKET_FOREACH(bucket, i)
         while (bucket)
         {
             SEASLOG_G(performance_buckets)[i] = bucket->next;
@@ -555,7 +560,7 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
             seaslog_performance_bucket_free(bucket TSRMLS_CC);
             bucket = SEASLOG_G(performance_buckets)[i];
         }
-    }
+    SEASLOG_PERFORMANCE_BUCKET_FOREACH_END;
 
     SEASLOG_ARRAY_INIT(performance_log_array);
     SEASLOG_ARRAY_INIT(performance_log_level_item);
@@ -601,20 +606,17 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
 
 int process_seaslog_performance_clear(TSRMLS_D)
 {
-    int i = 0;
+    int i;
     seaslog_performance_bucket *bucket;
 
-    for (i = 0; i < SEASLOG_PERFORMANCE_BUCKET_SLOTS; i++)
-    {
-        bucket = SEASLOG_G(performance_buckets)[i];
-
+    SEASLOG_PERFORMANCE_BUCKET_FOREACH(bucket, i)
         while (bucket)
         {
             SEASLOG_G(performance_buckets)[i] = bucket->next;
             seaslog_performance_bucket_free(bucket TSRMLS_CC);
             bucket = SEASLOG_G(performance_buckets)[i];
         }
-    }
+    SEASLOG_PERFORMANCE_BUCKET_FOREACH_END;
 
     return SUCCESS;
 }
