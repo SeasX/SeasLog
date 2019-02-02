@@ -28,28 +28,6 @@ void recoveryZendHooks(TSRMLS_D);
 void seaslog_init_performance(TSRMLS_D);
 void seaslog_clear_performance(zend_class_entry *ce TSRMLS_DC);
 
-#if PHP_VERSION_ID >= 70000
-void (*_clone_zend_execute_ex) (zend_execute_data *execute_data TSRMLS_DC);
-static void (*_clone_zend_execute_internal) (zend_execute_data *execute_data, zval *return_value);
-
-ZEND_DLEXPORT void seaslog_execute_ex (zend_execute_data *execute_data TSRMLS_DC);
-ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, zval *return_value);
-
-#elif PHP_VERSION_ID >= 50500
-static void (*_clone_zend_execute_ex) (zend_execute_data *execute_data TSRMLS_DC);
-static void (*_clone_zend_execute_internal) (zend_execute_data *data, struct _zend_fcall_info *fci, int ret TSRMLS_DC);
-
-ZEND_DLEXPORT void seaslog_execute_ex (zend_execute_data *execute_data TSRMLS_DC);
-ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, struct _zend_fcall_info *fci, int ret TSRMLS_DC);
-
-#else
-ZEND_DLEXPORT void (*_clone_zend_execute) (zend_op_array *ops TSRMLS_DC);
-ZEND_DLEXPORT void (*_clone_zend_execute_internal) (zend_execute_data *data, int ret TSRMLS_DC);
-
-ZEND_DLEXPORT void seaslog_execute (zend_op_array *ops TSRMLS_DC);
-ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int ret TSRMLS_DC);
-#endif
-
 int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC);
 void performance_frame_end(TSRMLS_D);
 
