@@ -36,7 +36,6 @@
 # define SEASLOG_ZEND_HASH_INDEX_UPDATE(ht, h, pData, nDataSize, pDest)  zend_hash_index_update_ptr(ht, h, pData)
 # define SEASLOG_SMART_STR_C(str) ZSTR_VAL(str.s)
 # define SEASLOG_SMART_STR_L(str) ZSTR_LEN(str.s)
-# define SEASLOG_SMART_STR_GET_LEN(str) (str.s ? ZSTR_LEN(str.s) : 0)
 # define SEASLOG_AUTO_GLOBAL(n) zend_is_auto_global_str(ZEND_STRL(n) TSRMLS_CC)
 # define SEASLOG_ZVAL_PTR_DTOR(z) zval_ptr_dtor(z)
 

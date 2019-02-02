@@ -114,7 +114,7 @@ int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size
 void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, char *level, va_list ap)
 {
     char *s = NULL;
-    int s_len = 0;
+    int s_len;
 
     char char_buf[2];
     smart_str tmp_buf = {0};
@@ -264,12 +264,8 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
                         smart_str_free(&tmp_buf);
                     }
                     get_code_filename_line(&tmp_buf TSRMLS_CC);
-
-                    if (SEASLOG_SMART_STR_GET_LEN(tmp_buf) > 0) {
-                        s = SEASLOG_SMART_STR_C(tmp_buf);
-                        s_len  = SEASLOG_SMART_STR_L(tmp_buf);
-                    }
-
+                    s = SEASLOG_SMART_STR_C(tmp_buf);
+                    s_len  = SEASLOG_SMART_STR_L(tmp_buf);
                     break;
                 case 'U': //zend_memory_usage
                     if (SEASLOG_SMART_STR_C(tmp_buf))
@@ -303,9 +299,7 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
             break;
             }
 
-            if (s_len > 0) {
-                INS_STRING(xbuf, s, s_len);
-            }
+            INS_STRING(xbuf, s, s_len);
         }
 skip_output:
         fmt++;
