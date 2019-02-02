@@ -15,8 +15,31 @@
 */
 
 #include "Performance.h"
+#include "Common.h"
 #include "Appender.h"
 #include "ext/json/php_json.h"
+
+#if PHP_VERSION_ID >= 70000
+ZEND_DLEXPORT void (*_clone_zend_execute_ex) (zend_execute_data *execute_data TSRMLS_DC);
+ZEND_DLEXPORT void (*_clone_zend_execute_internal) (zend_execute_data *execute_data, zval *return_value);
+
+ZEND_DLEXPORT void seaslog_execute_ex (zend_execute_data *execute_data TSRMLS_DC);
+ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, zval *return_value);
+
+#elif PHP_VERSION_ID >= 50500
+ZEND_DLEXPORT void (*_clone_zend_execute_ex) (zend_execute_data *execute_data TSRMLS_DC);
+ZEND_DLEXPORT void (*_clone_zend_execute_internal) (zend_execute_data *data, struct _zend_fcall_info *fci, int ret TSRMLS_DC);
+
+ZEND_DLEXPORT void seaslog_execute_ex (zend_execute_data *execute_data TSRMLS_DC);
+ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, struct _zend_fcall_info *fci, int ret TSRMLS_DC);
+
+#else
+ZEND_DLEXPORT void (*_clone_zend_execute) (zend_op_array *ops TSRMLS_DC);
+ZEND_DLEXPORT void (*_clone_zend_execute_internal) (zend_execute_data *data, int ret TSRMLS_DC);
+
+ZEND_DLEXPORT void seaslog_execute (zend_op_array *ops TSRMLS_DC);
+ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int ret TSRMLS_DC);
+#endif
 
 static inline long hash_data(long hash, char *data, size_t size)
 {
@@ -563,7 +586,7 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
     SEASLOG_JSON_ENCODE(&performance_log, performance_log_array, 0);
     smart_str_0(&performance_log);
 
-    seaslog_log_ex(3, SEASLOG_INFO, SEASLOG_INFO_INT, SEASLOG_SMART_STR_C(performance_log), SEASLOG_SMART_STR_L(performance_log), SEASLOG_PERFORMANCE_LOGGER, strlen(SEASLOG_PERFORMANCE_LOGGER)+1, ce TSRMLS_CC);
+    seaslog_log_ex(3, SEASLOG_INFO, SEASLOG_INFO_INT, SEASLOG_SMART_STR_C(performance_log), seaslog_smart_str_get_len(performance_log), SEASLOG_PERFORMANCE_LOGGER, strlen(SEASLOG_PERFORMANCE_LOGGER)+1, ce TSRMLS_CC);
     smart_str_free(&performance_log);
 
     SEASLOG_ARRAY_DESTROY(performance_log_array);
