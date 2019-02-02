@@ -15,6 +15,7 @@
 */
 
 #include "Performance.h"
+#include "Common.h"
 #include "Appender.h"
 #include "ext/json/php_json.h"
 
@@ -563,7 +564,7 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
     SEASLOG_JSON_ENCODE(&performance_log, performance_log_array, 0);
     smart_str_0(&performance_log);
 
-    seaslog_log_ex(3, SEASLOG_INFO, SEASLOG_INFO_INT, SEASLOG_SMART_STR_C(performance_log), SEASLOG_SMART_STR_L(performance_log), SEASLOG_PERFORMANCE_LOGGER, strlen(SEASLOG_PERFORMANCE_LOGGER)+1, ce TSRMLS_CC);
+    seaslog_log_ex(3, SEASLOG_INFO, SEASLOG_INFO_INT, SEASLOG_SMART_STR_C(performance_log), seaslog_smart_str_get_len(performance_log), SEASLOG_PERFORMANCE_LOGGER, strlen(SEASLOG_PERFORMANCE_LOGGER)+1, ce TSRMLS_CC);
     smart_str_free(&performance_log);
 
     SEASLOG_ARRAY_DESTROY(performance_log_array);
