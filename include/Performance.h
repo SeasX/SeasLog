@@ -42,5 +42,6 @@ char* seaslog_performance_get_class_name(zend_execute_data *data TSRMLS_DC);
 char* seaslog_performance_get_function_name(zend_execute_data *data TSRMLS_DC);
 
 int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC);
+int process_seaslog_performance_clear(TSRMLS_D);
 #endif /* _SEASLOG_PERFORMANCE_H_ */
 

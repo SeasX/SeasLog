@@ -135,9 +135,14 @@ void seaslog_clear_performance(zend_class_entry *ce TSRMLS_DC)
 
         SEASLOG_G(performance_main)->wall_time = performance_microsecond(TSRMLS_C) - SEASLOG_G(performance_main)->wt_start;
         SEASLOG_G(performance_main)->memory = zend_memory_usage(0 TSRMLS_CC) - SEASLOG_G(performance_main)->mu_start;
+
         if (SEASLOG_G(performance_main)->wall_time >= SEASLOG_G(trace_performance_min_wall_time) * 1000)
         {
             process_seaslog_performance_log(ce TSRMLS_CC);
+        }
+        else
+        {
+            process_seaslog_performance_clear();
         }
 
         efree(SEASLOG_G(performance_main));
@@ -594,3 +599,22 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
     return SUCCESS;
 }
 
+int process_seaslog_performance_clear(TSRMLS_D)
+{
+    int i = 0;
+    seaslog_performance_bucket *bucket;
+
+    for (i = 0; i < SEASLOG_PERFORMANCE_BUCKET_SLOTS; i++)
+    {
+        bucket = SEASLOG_G(performance_buckets)[i];
+
+        while (bucket)
+        {
+            SEASLOG_G(performance_buckets)[i] = bucket->next;
+            seaslog_performance_bucket_free(bucket TSRMLS_CC);
+            bucket = SEASLOG_G(performance_buckets)[i];
+        }
+    }
+
+    return SUCCESS;
+}
