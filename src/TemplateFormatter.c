@@ -15,6 +15,7 @@
 */
 
 #include "TemplateFormatter.h"
+#include "Common.h"
 #include "Performance.h"
 #include "Datetime.h"
 #include "Request.h"
@@ -97,14 +98,14 @@ int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size
     }
     va_end(ap);
 
-    if (max_len && SEASLOG_SMART_STR_L(xbuf) > max_len)
+    if (max_len && seaslog_smart_str_get_len(xbuf) > max_len)
     {
         SEASLOG_SMART_STR_L(xbuf) = max_len;
     }
     smart_str_0(&xbuf);
 
     *pbuf = estrdup(SEASLOG_SMART_STR_C(xbuf));
-    len = SEASLOG_SMART_STR_L(xbuf);
+    len = seaslog_smart_str_get_len(xbuf);
 
     smart_str_free(&xbuf);
 
@@ -235,7 +236,7 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
                     }
                     mic_time(&tmp_buf);
                     s = SEASLOG_SMART_STR_C(tmp_buf);
-                    s_len  = SEASLOG_SMART_STR_L(tmp_buf);
+                    s_len  = seaslog_smart_str_get_len(tmp_buf);
                 }
                 break;
                 case 'Q': //Request uniqid
@@ -264,8 +265,9 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
                         smart_str_free(&tmp_buf);
                     }
                     get_code_filename_line(&tmp_buf TSRMLS_CC);
+
                     s = SEASLOG_SMART_STR_C(tmp_buf);
-                    s_len  = SEASLOG_SMART_STR_L(tmp_buf);
+                    s_len = seaslog_smart_str_get_len(tmp_buf);
                     break;
                 case 'U': //zend_memory_usage
                     if (SEASLOG_SMART_STR_C(tmp_buf))
@@ -274,7 +276,7 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
                     }
                     seaslog_memory_usage(&tmp_buf TSRMLS_CC);
                     s = SEASLOG_SMART_STR_C(tmp_buf);
-                    s_len  = SEASLOG_SMART_STR_L(tmp_buf);
+                    s_len = seaslog_smart_str_get_len(tmp_buf);
                     break;
                 case 'u': //peak_memory_usage
                     if (SEASLOG_SMART_STR_C(tmp_buf))
@@ -283,7 +285,7 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
                     }
                     seaslog_peak_memory_usage(&tmp_buf TSRMLS_CC);
                     s = SEASLOG_SMART_STR_C(tmp_buf);
-                    s_len  = SEASLOG_SMART_STR_L(tmp_buf);
+                    s_len  = seaslog_smart_str_get_len(tmp_buf);
                     break;
                 case 'C': //TODO Class::Action
                 case NUL:

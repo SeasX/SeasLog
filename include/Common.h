@@ -19,6 +19,8 @@
 
 #include "php_seaslog.h"
 
+int seaslog_smart_str_get_len(smart_str str);
+
 int check_sapi_is_cli(TSRMLS_D);
 int check_log_level(int level TSRMLS_DC);
 int seaslog_get_level_int(char *level);

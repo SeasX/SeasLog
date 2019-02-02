@@ -16,6 +16,14 @@
 
 #include "Common.h"
 
+int seaslog_smart_str_get_len(smart_str str) {
+#if PHP_VERSION_ID >= 70000
+    return str.s ? ZSTR_LEN(str.s) : 0;
+#else
+    return str.c ? str.len : 0;
+#endif
+}
+
 int check_sapi_is_cli(TSRMLS_D)
 {
     if (!strncmp(sapi_module.name , SEASLOG_CLI_KEY, sizeof(SEASLOG_CLI_KEY) - 1))
@@ -118,7 +126,7 @@ static char *str_appender(char *str, int str_len)
     smart_str_appendl(&tmp_key, str, str_len);
     smart_str_appendc(&tmp_key, '}');
     smart_str_0(&tmp_key);
-    string_key_tmp = estrndup(SEASLOG_SMART_STR_C(tmp_key), SEASLOG_SMART_STR_L(tmp_key));
+    string_key_tmp = estrndup(SEASLOG_SMART_STR_C(tmp_key), seaslog_smart_str_get_len(tmp_key));
 
     smart_str_free(&tmp_key);
 
