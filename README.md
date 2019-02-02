@@ -301,7 +301,7 @@ At the same time, many preset variables that are preset by `SeasLog` can be used
 * `%F` - FileName:LineNo. Such as `UserService.php:118`.
 * `%U` - MemoryUsage. byte. Call `zend_memory_usage`.
 * `%u` - PeakMemoryUsage. byte. Call `zend_memory_peak_usage`.
-* `%C` - `TODO` Class::Action. Such as `UserService::getUserInfo`.
+* `%C` - Class::Action. Such as `UserService::getUserInfo`. in procedural programming, it falls back to function name.
 
 ## Use age
 
