@@ -152,7 +152,7 @@ void seaslog_clear_performance(zend_class_entry *ce TSRMLS_DC)
         }
         else
         {
-            process_seaslog_performance_clear();
+            process_seaslog_performance_clear(TSRMLS_C);
         }
 
         efree(SEASLOG_G(performance_main));
