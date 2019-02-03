@@ -50,10 +50,6 @@ static smart_str* get_class_and_action(smart_str *result  TSRMLS_DC)
 		return NULL;
 	}
 
-	if (!execute_data) {
-		return NULL;
-	}
-
 	func = seaslog_performance_get_function_name(execute_data TSRMLS_CC);
 	if (!func) {
 		return NULL;
