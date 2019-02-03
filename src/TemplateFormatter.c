@@ -42,31 +42,34 @@
 
 static smart_str* get_class_and_action(smart_str *result  TSRMLS_DC)
 {
-	char *func;
-	char *cls;
-	zend_execute_data *execute_data = EG(current_execute_data);
+    char *func;
+    char *cls;
+    zend_execute_data *execute_data = EG(current_execute_data);
 
-	if (!execute_data || !(execute_data = execute_data->prev_execute_data)) {
-		return NULL;
-	}
+    if (!execute_data || !(execute_data = execute_data->prev_execute_data))
+    {
+        return NULL;
+    }
 
-	func = seaslog_performance_get_function_name(execute_data TSRMLS_CC);
-	if (!func) {
-		return NULL;
-	}
+    func = seaslog_performance_get_function_name(execute_data TSRMLS_CC);
+    if (!func)
+    {
+        return NULL;
+    }
 
-	cls = seaslog_performance_get_class_name(execute_data TSRMLS_CC);
-	if (cls) {
-		INS_STRING(result, cls, strlen(cls));
-		INS_STRING(result, "::", 2);
-	}
+    cls = seaslog_performance_get_class_name(execute_data TSRMLS_CC);
+    if (cls)
+    {
+        INS_STRING(result, cls, strlen(cls));
+        INS_STRING(result, "::", 2);
+    }
 
-	INS_STRING(result, func, strlen(func));
+    INS_STRING(result, func, strlen(func));
 
-	efree(cls);
-	efree(func);
+    efree(cls);
+    efree(func);
 
-	return result;
+    return result;
 }
 
 void seaslog_init_template(TSRMLS_D)
@@ -321,10 +324,13 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
                         smart_str_free(&tmp_buf);
                     }
 
-                    if (get_class_and_action(&tmp_buf TSRMLS_CC)) {
+                    if (get_class_and_action(&tmp_buf TSRMLS_CC))
+                    {
                         s = SEASLOG_SMART_STR_C(tmp_buf);
                         s_len  = seaslog_smart_str_get_len(tmp_buf);
-                    } else {
+                    }
+                    else
+                    {
                         s = S_NULL;
                         s_len = S_NULL_LEN;
                     }
