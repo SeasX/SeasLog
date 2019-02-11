@@ -196,7 +196,7 @@ STD_PHP_INI_BOOLEAN("seaslog.ignore_warning", "1", PHP_INI_ALL, OnUpdateBool, ig
 STD_PHP_INI_BOOLEAN("seaslog.trace_performance", "0", PHP_INI_SYSTEM, OnUpdateBool, trace_performance, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.trace_performance_max_depth", "5", PHP_INI_ALL, OnUpdateLongGEZero, trace_performance_max_depth, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.trace_performance_max_functions_per_depth", "5", PHP_INI_ALL, OnUpdateLongGEZero, trace_performance_max_functions_per_depth, zend_seaslog_globals, seaslog_globals)
-STD_PHP_INI_ENTRY("seaslog.trace_performance_min_wall_time", "500", PHP_INI_ALL, OnUpdateLongGEZero, trace_performance_min_wall_time, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.trace_performance_min_wall_time", "1000", PHP_INI_ALL, OnUpdateLongGEZero, trace_performance_min_wall_time, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.trace_performance_min_function_wall_time", "10", PHP_INI_ALL, OnUpdateLongGEZero, trace_performance_min_function_wall_time, zend_seaslog_globals, seaslog_globals)
 
 PHP_INI_END()

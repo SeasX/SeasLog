@@ -219,8 +219,8 @@ seaslog.trace_performance_max_functions_per_depth = 5
 
 ;The record threshold of the current request execution time for performance tracking.
 ;Only when the request execution time is greater than that value.
-;500(ms Default)
-seaslog.trace_performance_min_wall_time = 500
+;1000(ms Default)
+seaslog.trace_performance_min_wall_time = 1000
 
 ;The record threshold of execution time of each method in performance tracking.
 ;Only when the execution time of each method is greater than that value.

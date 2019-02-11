@@ -206,8 +206,8 @@ seaslog.trace_performance_max_depth = 5
 ;性能追踪时每层的函数最大数 按wall_time降序排列top 默认top5
 seaslog.trace_performance_max_functions_per_depth = 5
 
-;性能追踪时当前请求执行时间的记录阈值 只有当请求执行时间大于该值时，才记录性能日志 默认500ms
-seaslog.trace_performance_min_wall_time = 500
+;性能追踪时当前请求执行时间的记录阈值 只有当请求执行时间大于该值时，才记录性能日志 默认1000ms
+seaslog.trace_performance_min_wall_time = 1000
 
 ;性能追踪时每个方法执行时间的记录阈值 只有当方法执行时间大于该值时，才参与计算 默认10ms
 seaslog.trace_performance_min_function_wall_time = 10
