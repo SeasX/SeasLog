@@ -257,6 +257,7 @@ int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
     seaslog_frame *current_frame;
     seaslog_frame *p;
     int recurse_level = 0;
+    int stack_level = 0;
 
     if (FAILURE == seaslog_check_performance_active(TSRMLS_C))
     {
@@ -278,7 +279,7 @@ int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
     current_frame->recurse_level = 0;
     current_frame->wt_start = performance_microsecond(TSRMLS_C);
     current_frame->mu_start = zend_memory_usage(0 TSRMLS_CC);
-    current_frame->stack_level = SEASLOG_G(stack_level);
+    stack_level = SEASLOG_G(stack_level);
 
     current_frame->hash_code = zend_inline_hash_func(function,strlen(function)+1) % SEASLOG_PERFORMANCE_COUNTER_SIZE;
 
@@ -299,6 +300,7 @@ int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
                )
             {
                 recurse_level = (p->recurse_level) + 1;
+                stack_level = p->stack_level;
                 break;
             }
         }
@@ -306,6 +308,7 @@ int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
     SEASLOG_G(function_hash_counters)[current_frame->hash_code]++;
 
     current_frame->recurse_level = recurse_level;
+    current_frame->stack_level = stack_level;
 
     return SUCCESS;
 }
@@ -489,6 +492,7 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
     smart_str performance_log = {0};
     int trace_performance_min_function_wall_time = 0;
     seaslog_performance_result*** result_array;
+    int have_performance_log_item = FAILURE;
 
 #if PHP_VERSION_ID >= 70000
     zval performance_log_array;
@@ -592,15 +596,17 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
     SEASLOG_ARRAY_INIT(performance_log_level_item);
     SEASLOG_ADD_ASSOC_DOUBLE_EX(performance_log_level_item, SEASLOG_STRS("wt"), SEASLOG_G(performance_main)->wall_time / 1000);
     SEASLOG_ADD_ASSOC_LONG_EX(performance_log_level_item, SEASLOG_STRS("mu"), SEASLOG_G(performance_main)->memory);
-    SEASLOG_ADD_ASSOC_ZVAL_EX(performance_log_array, SEASLOG_PERFORMANCE_ROOT_SYMBOL, SEASLOG_PERFORMANCE_ROOT_SYMBOL_LEN, performance_log_level_item);
+    SEASLOG_ADD_ASSOC_ZVAL_EX_EX(performance_log_array, SEASLOG_STRS(SEASLOG_PERFORMANCE_ROOT_SYMBOL), performance_log_level_item);
 
     for (m = 0; m < SEASLOG_G(trace_performance_max_depth); m++)
     {
+        have_performance_log_item = FAILURE;
         SEASLOG_ARRAY_INIT(performance_log_level_item);
         for (n = 0; n < SEASLOG_G(trace_performance_max_functions_per_depth); n++)
         {
             if (result_array[m][n]->hash_code > 0)
             {
+                have_performance_log_item = SUCCESS;
                 SEASLOG_ARRAY_INIT(performance_log_item);
                 SEASLOG_ADD_ASSOC_STRING_EX(performance_log_item, SEASLOG_STRS("cm"), result_array[m][n]->function);
                 SEASLOG_ADD_ASSOC_LONG_EX(performance_log_item, SEASLOG_STRS("ct"), result_array[m][n]->count);
@@ -613,7 +619,14 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
         }
 
         efree(result_array[m]);
-        SEASLOG_ADD_INDEX_ZVAL(performance_log_array, m+1, performance_log_level_item);
+        if (SUCCESS == have_performance_log_item)
+        {
+            SEASLOG_ADD_INDEX_ZVAL(performance_log_array, m+1, performance_log_level_item);
+        }
+        else
+        {
+            SEASLOG_ARRAY_DESTROY(performance_log_level_item);
+        }
     }
     efree(result_array);
 
