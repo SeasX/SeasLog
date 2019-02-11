@@ -87,6 +87,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool trace_error;
     zend_bool trace_exception;
 
+    int trace_performance_active;
     zend_bool trace_performance;
     int trace_performance_max_depth;
     int trace_performance_max_functions_per_depth;

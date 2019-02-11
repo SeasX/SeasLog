@@ -204,6 +204,7 @@ PHP_INI_END()
 static PHP_GINIT_FUNCTION(seaslog)
 {
     memset(seaslog_globals, 0, sizeof(zend_seaslog_globals));
+    seaslog_globals->frame_free_list = NULL;
 }
 
 static PHP_GSHUTDOWN_FUNCTION(seaslog)
@@ -293,7 +294,8 @@ PHP_RINIT_FUNCTION(seaslog)
     seaslog_init_logger(TSRMLS_C);
     seaslog_init_buffer(TSRMLS_C);
     seaslog_init_stream_list(TSRMLS_C);
-    seaslog_init_performance(TSRMLS_C);
+
+    seaslog_rinit_performance(TSRMLS_C);
 
     SEASLOG_G(initRComplete) = SEASLOG_INITR_COMPLETE_YES;
     return SUCCESS;

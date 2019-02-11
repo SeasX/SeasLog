@@ -121,11 +121,13 @@ void recoveryZendHooks(TSRMLS_D)
     }
 }
 
-void seaslog_init_performance(TSRMLS_D)
+void seaslog_rinit_performance(TSRMLS_D)
 {
     if (SEASLOG_G(trace_performance))
     {
         SEASLOG_G(stack_level) = 0;
+        SEASLOG_G(trace_performance_active) = SUCCESS;
+        SEASLOG_G(frame_free_list) = NULL;
 
         SEASLOG_G(performance_main) = (seaslog_performance_main *)emalloc(sizeof(seaslog_performance_main));
         SEASLOG_G(performance_main)->wt_start = performance_microsecond(TSRMLS_C);
@@ -156,7 +158,19 @@ void seaslog_clear_performance(zend_class_entry *ce TSRMLS_DC)
         }
 
         efree(SEASLOG_G(performance_main));
+
+        SEASLOG_G(trace_performance_active) = FAILURE;
     }
+}
+
+int seaslog_check_performance_active(TSRMLS_D)
+{
+    if (SEASLOG_G(trace_performance) && SUCCESS == SEASLOG_G(trace_performance_active))
+    {
+        return SUCCESS;
+    }
+
+    return FAILURE;
 }
 
 #if PHP_VERSION_ID >= 50500
@@ -239,12 +253,17 @@ ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int
 
 int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
 {
-    char *function = seaslog_performance_get_function_name(execute_data TSRMLS_CC);
-
+    char *function;
     seaslog_frame *current_frame;
     seaslog_frame *p;
     int recurse_level = 0;
 
+    if (FAILURE == seaslog_check_performance_active(TSRMLS_C))
+    {
+        return FAILURE;
+    }
+
+    function = seaslog_performance_get_function_name(execute_data TSRMLS_CC);
     if (NULL == function)
     {
         return FAILURE;
@@ -269,7 +288,15 @@ int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
     {
         for(p = current_frame->previous_frame; p; p = p->previous_frame)
         {
-            if (!strcmp(current_frame->function_name,p->function_name) && (!current_frame->class_name || !strcmp(current_frame->class_name,p->class_name)))
+            if (!strcmp(current_frame->function_name,p->function_name) &&
+                    ((current_frame->class_name
+                      && p->class_name
+                      && !strcmp(current_frame->class_name,p->class_name)
+                     ) || (
+                         NULL == current_frame->class_name
+                         && NULL == p->class_name
+                     ))
+               )
             {
                 recurse_level = (p->recurse_level) + 1;
                 break;
