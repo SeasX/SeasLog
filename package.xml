@@ -16,6 +16,7 @@
         - Send to Rsyslog(TCP/UDP) with RFC5424.
         - Support RequestId differentiated requests.
         - Support for log template customizations.
+        - Support trace performance automatic logging.
     </description>
     <lead>
         <name>Chitao Gao</name>
@@ -23,11 +24,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2018-12-17</date>
-    <time>19:52:00</time>
+    <date>2019-02-11</date>
+    <time>17:34:00</time>
     <version>
-        <release>1.9.1</release>
-        <api>1.9.1</api>
+        <release>2.0.2</release>
+        <api>2.0.2</api>
     </version>
     <stability>
         <release>stable</release>
@@ -35,8 +36,8 @@
     </stability>
     <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
     <notes>
-        - Fixed issue #249 add unit test and fixed setLogger bug.
-        - Fixed build error with mac osx.
+        - Fixed issue #175 support trace_performance automatic logging.
+        - Fixed `%C` in log template, support Class::Action.
     </notes>
     <contents>
         <dir name="/">
@@ -639,6 +640,24 @@
                 - Fixed issue #234 #236 SeasLog::analyzerDetail function bug.
                 - Fixed issue #245 add unit test to analyzerCount and analyzerDetail.
             </notes>
+        </release>
+        <release>
+            <date>2018-12-17</date>
+            <time>19:52:00</time>
+            <version>
+                <release>1.9.1</release>
+                <api>1.9.1</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
+            <notes>
+                - Fixed issue #249 add unit test and fixed setLogger bug.
+                - Fixed build error with mac osx.
+            </notes>
+
         </release>
     </changelog>
 </package>

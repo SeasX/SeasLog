@@ -200,6 +200,9 @@ seaslog.ignore_warning = 1
 ;是否开启性能追踪 1开启 0关闭(默认)
 seaslog.trace_performance = 0
 
+;性能追踪时的开始层级 默认从第1层开始
+seaslog.trace_performance_start_depth = 1
+
 ;性能追踪时深度层级 默认5层
 seaslog.trace_performance_max_depth = 5
 

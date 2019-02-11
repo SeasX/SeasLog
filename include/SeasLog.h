@@ -147,6 +147,8 @@
 #define SEASLOG_PERFORMANCE_COUNTER_SIZE        1024
 #define SEASLOG_PERFORMANCE_BUCKET_SLOTS        8192
 
+#define SEASLOG_CONTINUE                        3
+
 #ifndef PHP_STREAM_URL_STAT_NOCACHE
 #define PHP_STREAM_URL_STAT_NOCACHE	            4
 #endif

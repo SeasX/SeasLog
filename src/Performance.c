@@ -198,6 +198,10 @@ ZEND_DLEXPORT void seaslog_execute (zend_op_array *ops TSRMLS_DC)
     {
         performance_frame_end(TSRMLS_C);
     }
+    else if (SEASLOG_CONTINUE == is_tracing)
+    {
+        SEASLOG_G(stack_level) -= 1;
+    }
 }
 
 
@@ -249,6 +253,10 @@ ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int
     {
         performance_frame_end(TSRMLS_C);
     }
+    else if (SEASLOG_CONTINUE == is_tracing)
+    {
+        SEASLOG_G(stack_level) -= 1;
+    }
 }
 
 int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
@@ -272,19 +280,21 @@ int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
 
     SEASLOG_G(stack_level) += 1;
 
+    if (SEASLOG_G(stack_level) - SEASLOG_G(trace_performance_start_depth) < 0)
+    {
+        efree(function);
+        return SEASLOG_CONTINUE;
+    }
+
     current_frame = seaslog_performance_fast_alloc_frame(TSRMLS_C);
     current_frame->class_name = seaslog_performance_get_class_name(execute_data TSRMLS_CC);
     current_frame->function_name = function;
     current_frame->previous_frame = SEASLOG_G(performance_frames);
-    current_frame->recurse_level = 0;
     current_frame->wt_start = performance_microsecond(TSRMLS_C);
     current_frame->mu_start = zend_memory_usage(0 TSRMLS_CC);
-    stack_level = SEASLOG_G(stack_level);
-
     current_frame->hash_code = zend_inline_hash_func(function,strlen(function)+1) % SEASLOG_PERFORMANCE_COUNTER_SIZE;
 
-    SEASLOG_G(performance_frames) = current_frame;
-
+    stack_level = SEASLOG_G(stack_level) - SEASLOG_G(trace_performance_start_depth) + 1;
     if (SEASLOG_G(function_hash_counters)[current_frame->hash_code] > 0)
     {
         for(p = current_frame->previous_frame; p; p = p->previous_frame)
@@ -309,6 +319,8 @@ int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
 
     current_frame->recurse_level = recurse_level;
     current_frame->stack_level = stack_level;
+
+    SEASLOG_G(performance_frames) = current_frame;
 
     return SUCCESS;
 }
@@ -621,7 +633,7 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
         efree(result_array[m]);
         if (SUCCESS == have_performance_log_item)
         {
-            SEASLOG_ADD_INDEX_ZVAL(performance_log_array, m+1, performance_log_level_item);
+            SEASLOG_ADD_INDEX_ZVAL(performance_log_array, m + SEASLOG_G(trace_performance_start_depth), performance_log_level_item);
         }
         else
         {

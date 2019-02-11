@@ -210,6 +210,9 @@ seaslog.ignore_warning = 1
 ;Switch Performance Tracking 1-On 0-Off(Default)
 seaslog.trace_performance = 0
 
+;Performance Tracking Start With Depth Level. 1(Default)
+seaslog.trace_performance_start_depth = 1
+
 ;Performance Tracking Depth Level. 5(Default)
 seaslog.trace_performance_max_depth = 5
 
