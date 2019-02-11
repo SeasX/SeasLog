@@ -39,8 +39,8 @@
 
 #define SEASLOG_RES_NAME                        "SeasLog"
 #define SEASLOG_AUTHOR                          "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                         "2.0.1"
-#define SEASLOG_VERSION_ID                      20001
+#define SEASLOG_VERSION                         "2.0.2"
+#define SEASLOG_VERSION_ID                      20002
 #define SEASLOG_SUPPORTS                        "https://github.com/SeasX/SeasLog"
 
 #define SEASLOG_ALL                             "ALL"
