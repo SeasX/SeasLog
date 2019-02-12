@@ -44,12 +44,44 @@ static smart_str* get_class_and_action(smart_str *result  TSRMLS_DC)
 {
     char *func;
     char *cls;
+    int recall_depth = SEASLOG_G(recall_depth);
     zend_execute_data *execute_data = EG(current_execute_data);
 
     if (!execute_data || !(execute_data = execute_data->prev_execute_data))
     {
         return NULL;
     }
+
+#if PHP_VERSION_ID >= 70000
+
+    while(recall_depth > 0)
+    {
+        if (execute_data->prev_execute_data != NULL && execute_data->prev_execute_data->func &&
+                ZEND_USER_CODE(execute_data->prev_execute_data->func->common.type)
+           )
+        {
+            execute_data = execute_data->prev_execute_data;
+        }
+        else
+        {
+            break;
+        }
+        recall_depth--;
+    }
+#else
+    while(recall_depth > 0)
+    {
+        if (execute_data->prev_execute_data && execute_data->prev_execute_data->opline)
+        {
+            execute_data = execute_data->prev_execute_data;
+        }
+        else
+        {
+            break;
+        }
+        recall_depth--;
+    }
+#endif
 
     func = seaslog_performance_get_function_name(execute_data TSRMLS_CC);
     if (!func)
