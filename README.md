@@ -210,6 +210,10 @@ seaslog.ignore_warning = 1
 ;Switch Performance Tracking 1-On 0-Off(Default)
 seaslog.trace_performance = 0
 
+;Performance Tracking Sample Rate Per Thousand. 
+;10(Default). 10 conceptions per thousand
+seaslog.trace_performance_sample_rate = 10
+
 ;Performance Tracking Start With Depth Level. 1(Default)
 seaslog.trace_performance_start_depth = 1
 

@@ -51,6 +51,31 @@ ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int
 		} \
 	} while (0)
 
+
+static inline int seaslog_check_performance_sample(TSRMLS_D)
+{
+    if (SUCCESS == SEASLOG_G(trace_performance_sample_active))
+    {
+        return SUCCESS;
+    }
+
+    return FAILURE;
+}
+
+static inline int seaslog_process_performance_sample(TSRMLS_D)
+{
+    SEASLOG_G(trace_performance_sample_active) = FAILURE;
+
+    srand(time(NULL));
+    if (rand() % 1001 <= SEASLOG_G(trace_performance_sample_rate))
+    {
+        SEASLOG_G(trace_performance_sample_active) = SUCCESS;
+        return SUCCESS;
+    }
+
+    return FAILURE;
+}
+
 static inline long hash_data(long hash, char *data, size_t size)
 {
     size_t i;
@@ -129,6 +154,12 @@ void seaslog_rinit_performance(TSRMLS_D)
         SEASLOG_G(trace_performance_active) = SUCCESS;
         SEASLOG_G(frame_free_list) = NULL;
 
+        seaslog_process_performance_sample(TSRMLS_C);
+        if (FAILURE == seaslog_check_performance_sample(TSRMLS_C))
+        {
+            return;
+        }
+
         SEASLOG_G(performance_main) = (seaslog_performance_main *)emalloc(sizeof(seaslog_performance_main));
         SEASLOG_G(performance_main)->wt_start = performance_microsecond(TSRMLS_C);
         SEASLOG_G(performance_main)->mu_start = zend_memory_usage(0 TSRMLS_CC);
@@ -141,6 +172,10 @@ void seaslog_clear_performance(zend_class_entry *ce TSRMLS_DC)
 
     if (SEASLOG_G(trace_performance))
     {
+        if (FAILURE == seaslog_check_performance_sample(TSRMLS_C))
+        {
+            return;
+        }
 
         SEASLOG_G(stack_level) = 0;
         seaslog_performance_free_the_free_list(TSRMLS_C);
@@ -266,6 +301,11 @@ int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
     seaslog_frame *p;
     int recurse_level = 0;
     int stack_level = 0;
+
+    if (FAILURE == seaslog_check_performance_sample(TSRMLS_C))
+    {
+        return FAILURE;
+    }
 
     if (FAILURE == seaslog_check_performance_active(TSRMLS_C))
     {
