@@ -18,7 +18,7 @@ An effective,fast,stable log extension for PHP
     - **[What is the target](#what-is-the-target)**
 - **[Install](#install)**
     - **[Make Install SeasLog](#make-Install-SeasLog)**
-    - **[seaslog.ini](#seaslog.ini)**
+    - **[seaslog.ini](#seaslogini)**
     - **[Custom log template](#custom-log-template)**
         - [Log template overview](#log-template-overview)
         - [Default variable table](#default-variable-table)
