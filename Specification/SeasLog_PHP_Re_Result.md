@@ -3,7 +3,7 @@
 ```php
 /path/to/php --re seaslog
 
-Extension [ <persistent> extension #44 SeasLog version 1.9.0 ] {
+Extension [ <persistent> extension #44 SeasLog version 2.0.2 ] {
 
   - Dependencies {
   }
@@ -81,10 +81,31 @@ Extension [ <persistent> extension #44 SeasLog version 1.9.0 ] {
     Entry [ seaslog.ignore_warning <ALL> ]
       Current = '1'
     }
+    Entry [ seaslog.trace_performance <SYSTEM> ]
+      Current = '1'
+    }
+    Entry [ seaslog.trace_performance_sample_rate <ALL> ]
+      Current = '10'
+    }
+    Entry [ seaslog.trace_performance_start_depth <ALL> ]
+      Current = '1'
+    }
+    Entry [ seaslog.trace_performance_max_depth <ALL> ]
+      Current = '5'
+    }
+    Entry [ seaslog.trace_performance_max_functions_per_depth <ALL> ]
+      Current = '5'
+    }
+    Entry [ seaslog.trace_performance_min_wall_time <ALL> ]
+      Current = '1000'
+    }
+    Entry [ seaslog.trace_performance_min_function_wall_time <ALL> ]
+      Current = '10'
+    }
   }
 
   - Constants [22] {
-    Constant [ string SEASLOG_VERSION ] { 1.9.0 }
+    Constant [ string SEASLOG_VERSION ] { 2.0.2 }
     Constant [ string SEASLOG_AUTHOR ] { Chitao.Gao  [ neeke@php.net ] }
     Constant [ string SEASLOG_ALL ] { ALL }
     Constant [ string SEASLOG_DEBUG ] { DEBUG }
