@@ -567,7 +567,8 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
 
         for (n = 0; n < SEASLOG_G(trace_performance_max_functions_per_depth); n++)
         {
-            result_array[m][n] =  chunk_result + m * n; 
+	    result_array_size--;
+            result_array[m][n] =  chunk_result + result_array_size; 
             result_array[m][n]->hash_code = 0;
             result_array[m][n]->wall_time = 0;
         }
