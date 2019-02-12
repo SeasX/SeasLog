@@ -559,14 +559,15 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
     trace_performance_min_function_wall_time = SEASLOG_G(trace_performance_min_function_wall_time) * 1000;
 
     result_array =(seaslog_performance_result ***) emalloc(SEASLOG_G(trace_performance_max_depth) * sizeof(seaslog_performance_result *) );
-
+    int result_array_size = SEASLOG_G(trace_performance_max_depth) *  SEASLOG_G(trace_performance_max_functions_per_depth);
+    seaslog_performance_result *  chunk_result = (seaslog_performance_result *)emalloc(sizeof(seaslog_performance_result));
     for (m = 0; m < SEASLOG_G(trace_performance_max_depth); m++)
     {
-        result_array[m] = (seaslog_performance_result **)emalloc(SEASLOG_G(trace_performance_max_functions_per_depth) * sizeof(seaslog_performance_result));
+        result_array[m] = (seaslog_performance_result **)emalloc(SEASLOG_G(trace_performance_max_functions_per_depth) * sizeof(seaslog_performance_result*));
 
         for (n = 0; n < SEASLOG_G(trace_performance_max_functions_per_depth); n++)
         {
-            result_array[m][n] = (seaslog_performance_result *)emalloc(sizeof(seaslog_performance_result));
+            result_array[m][n] =  chunk_result + m * n; 
             result_array[m][n]->hash_code = 0;
             result_array[m][n]->wall_time = 0;
         }
@@ -667,7 +668,7 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
                 SEASLOG_ADD_NEXT_ZVAL(performance_log_level_item, performance_log_item);
                 efree(result_array[m][n]->function);
             }
-            efree(result_array[m][n]);
+            //efree(result_array[m][n]);
         }
 
         efree(result_array[m]);
@@ -680,6 +681,7 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
             SEASLOG_ARRAY_DESTROY(performance_log_level_item);
         }
     }
+    efree(chunk_result);
     efree(result_array);
 
 //    php_var_dump(&performance_log_array,1 TSRMLS_CC);
