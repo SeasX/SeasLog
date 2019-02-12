@@ -16,7 +16,8 @@
 
 #include "Common.h"
 
-int seaslog_smart_str_get_len(smart_str str) {
+int seaslog_smart_str_get_len(smart_str str)
+{
 #if PHP_VERSION_ID >= 70000
     return str.s ? ZSTR_LEN(str.s) : 0;
 #else

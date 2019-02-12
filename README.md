@@ -210,6 +210,13 @@ seaslog.ignore_warning = 1
 ;Switch Performance Tracking 1-On 0-Off(Default)
 seaslog.trace_performance = 0
 
+;Performance Tracking Sample Rate Per Thousand. 
+;10(Default). 10 conceptions per thousand
+seaslog.trace_performance_sample_rate = 10
+
+;Performance Tracking Start With Depth Level. 1(Default)
+seaslog.trace_performance_start_depth = 1
+
 ;Performance Tracking Depth Level. 5(Default)
 seaslog.trace_performance_max_depth = 5
 
@@ -219,8 +226,8 @@ seaslog.trace_performance_max_functions_per_depth = 5
 
 ;The record threshold of the current request execution time for performance tracking.
 ;Only when the request execution time is greater than that value.
-;500(ms Default)
-seaslog.trace_performance_min_wall_time = 500
+;1000(ms Default)
+seaslog.trace_performance_min_wall_time = 1000
 
 ;The record threshold of execution time of each method in performance tracking.
 ;Only when the execution time of each method is greater than that value.

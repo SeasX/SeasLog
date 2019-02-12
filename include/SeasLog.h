@@ -39,8 +39,8 @@
 
 #define SEASLOG_RES_NAME                        "SeasLog"
 #define SEASLOG_AUTHOR                          "Chitao.Gao  [ neeke@php.net ]"
-#define SEASLOG_VERSION                         "2.0.1"
-#define SEASLOG_VERSION_ID                      20001
+#define SEASLOG_VERSION                         "2.0.2"
+#define SEASLOG_VERSION_ID                      20002
 #define SEASLOG_SUPPORTS                        "https://github.com/SeasX/SeasLog"
 
 #define SEASLOG_ALL                             "ALL"
@@ -144,9 +144,10 @@
 
 #define SEASLOG_PERFORMANCE_LOGGER              "performance"
 #define SEASLOG_PERFORMANCE_ROOT_SYMBOL         "main()"
-#define SEASLOG_PERFORMANCE_ROOT_SYMBOL_LEN     6
 #define SEASLOG_PERFORMANCE_COUNTER_SIZE        1024
 #define SEASLOG_PERFORMANCE_BUCKET_SLOTS        8192
+
+#define SEASLOG_CONTINUE                        3
 
 #ifndef PHP_STREAM_URL_STAT_NOCACHE
 #define PHP_STREAM_URL_STAT_NOCACHE	            4
