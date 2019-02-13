@@ -575,7 +575,7 @@ static int single_entity_process(seaslog_performance_result* result_entity,seasl
                 result_array_level[r-1] = result_forward;
             }
             
-            if (result_array[stack_level][n]->hash_code > 0)
+            if (result_entity->hash_code > 0)
             {
                 efree(result_entity->function);
             }
