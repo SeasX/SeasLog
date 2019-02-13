@@ -536,7 +536,7 @@ char* seaslog_performance_get_function_name(zend_execute_data *data TSRMLS_DC)
     return STR_NAME_VAL(curr_func->common.function_name);
 }
 //process the single seaslog_performance_result
-static int single_entity_process(seaslog_performance_result* result_entity,seaslog_performance_result** result_array_level,int n){
+static int single_entity_process(seaslog_performance_result* result_entity,seaslog_performance_result** result_array_level,seaslog_performance_bucket *bucket,int n){
     seaslog_performance_result *result_forward = NULL;
     if (result_entity->hash_code == 0 && n == 0)
     {
@@ -644,7 +644,7 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
         
         for (n = 0; n < SEASLOG_G(trace_performance_max_functions_per_depth); n++)
         {
-            int res = single_entity_process(result_array[stack_level][n],*result_array,n);
+            int res = single_entity_process(result_array[stack_level][n],*result_array,bucket,n);
             if(res){
                 break;
             }
