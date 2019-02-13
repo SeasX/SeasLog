@@ -699,7 +699,7 @@ static int single_entity_process(seaslog_performance_result * result_entity,easl
             }
             else
             {
-                spprintf(&result_array[stack_level][n]->function,0,"%s::%s",bucket->class_name,bucket->function_name);
+                spprintf(&result_array->function,0,"%s::%s",bucket->class_name,bucket->function_name);
             }
             return 1;
         }
