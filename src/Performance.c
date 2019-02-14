@@ -563,7 +563,8 @@ static int single_entity_process(seaslog_performance_result* result_entity,seasl
         }
         else
         {
-            for (int r = SEASLOG_G(trace_performance_max_functions_per_depth) - 1; r > n; r--)
+	    int r = 0;
+            for ( r = SEASLOG_G(trace_performance_max_functions_per_depth) - 1; r > n; r--)
             {
                 if (result_array_level[r-1]->hash_code == 0 && result_array_level[r-1]->wall_time == 0)
                 {
