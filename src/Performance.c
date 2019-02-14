@@ -536,7 +536,7 @@ char* seaslog_performance_get_function_name(zend_execute_data *data TSRMLS_DC)
     return STR_NAME_VAL(curr_func->common.function_name);
 }
 //process the single seaslog_performance_result
-static int single_entity_process(seaslog_performance_result* result_entity,seaslog_performance_result** result_array_level,seaslog_performance_bucket *bucket,int n){
+static int single_entity_process(seaslog_performance_result* result_entity,seaslog_performance_result** result_array_level,seaslog_performance_bucket *bucket,int n,int max_deep_len){
     seaslog_performance_result *result_forward = NULL;
     if (result_entity->hash_code == 0 && n == 0)
     {
@@ -600,7 +600,7 @@ static int single_entity_process(seaslog_performance_result* result_entity,seasl
 }
 int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
 {
-    int i,j,m,n,r,stack_level = 0;
+    int i,j,m,n,r,max_deep_len = 0,stack_level = 0;
     seaslog_performance_bucket *bucket;
     seaslog_performance_result *result_forward;
     smart_str performance_log = {0};
@@ -619,7 +619,7 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
 #endif
 
     trace_performance_min_function_wall_time = SEASLOG_G(trace_performance_min_function_wall_time) * 1000;
-
+    max_deep_len = SEASLOG_G(trace_performance_max_functions_per_depth);
     result_array =(seaslog_performance_result ***) emalloc(SEASLOG_G(trace_performance_max_depth) * sizeof(seaslog_performance_result *) );
     int result_array_size = SEASLOG_G(trace_performance_max_depth) *  SEASLOG_G(trace_performance_max_functions_per_depth);
     seaslog_performance_result *  chunk_result = (seaslog_performance_result *)emalloc(sizeof(seaslog_performance_result) * result_array_size);
@@ -645,7 +645,7 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
         
         for (n = 0; n < SEASLOG_G(trace_performance_max_functions_per_depth); n++)
         {
-            int res = single_entity_process(result_array[stack_level][n],*result_array,bucket,n);
+            int res = single_entity_process(result_array[stack_level][n],*result_array,bucket,n,max_deep_len);
             if(res){
                 break;
             }
