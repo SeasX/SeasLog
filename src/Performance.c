@@ -45,7 +45,7 @@ ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int
 		for (_i = 0; _i < SEASLOG_PERFORMANCE_BUCKET_SLOTS; _i++) { \
             bucket = SEASLOG_G(performance_buckets)[_i]; \
             while (bucket) { \
- 
+
 #define SEASLOG_PERFORMANCE_BUCKET_FOREACH_END \
             }\
 		} \
@@ -153,6 +153,7 @@ void seaslog_rinit_performance(TSRMLS_D)
         SEASLOG_G(stack_level) = 0;
         SEASLOG_G(trace_performance_active) = SUCCESS;
         SEASLOG_G(frame_free_list) = NULL;
+        SEASLOG_G(performance_frames) = NULL;
 
         seaslog_process_performance_sample(TSRMLS_C);
         if (FAILURE == seaslog_check_performance_sample(TSRMLS_C))
@@ -193,6 +194,7 @@ void seaslog_clear_performance(zend_class_entry *ce TSRMLS_DC)
         }
 
         efree(SEASLOG_G(performance_main));
+        SEASLOG_G(performance_frames) = NULL;
 
         SEASLOG_G(trace_performance_active) = FAILURE;
     }
