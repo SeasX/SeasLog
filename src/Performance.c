@@ -339,6 +339,11 @@ int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
     {
         for(p = current_frame->previous_frame; p; p = p->previous_frame)
         {
+            if (NULL == p->function_name)
+            {
+                break;
+            }
+
             if (!strcmp(current_frame->function_name,p->function_name) &&
                     ((current_frame->class_name
                       && p->class_name
@@ -454,11 +459,16 @@ seaslog_frame* seaslog_performance_fast_alloc_frame(TSRMLS_D)
     if (p)
     {
         SEASLOG_G(frame_free_list) = p->previous_frame;
+        p->function_name = NULL;
+        p->class_name = NULL;
         return p;
     }
     else
     {
-        return (seaslog_frame *)emalloc(sizeof(seaslog_frame));
+        p = (seaslog_frame *)emalloc(sizeof(seaslog_frame));
+        p->function_name = NULL;
+        p->class_name = NULL;
+        return p;
     }
 }
 
