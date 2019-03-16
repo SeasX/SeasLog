@@ -30,7 +30,7 @@ static char *seaslog_format_date(char *format, int format_len, time_t ts TSRMLS_
 #endif
 }
 
-void initRemoteTimeout(TSRMLS_D)
+void init_remote_timeout(TSRMLS_D)
 {
 #ifndef PHP_WIN32
     time_t conv;
@@ -95,8 +95,6 @@ char *seaslog_process_last_min(int now, int if_first TSRMLS_DC)
 
 char *make_real_date(TSRMLS_D)
 {
-    char *_date = NULL;
-
     int now = (long)time(NULL);
     if (now > SEASLOG_G(last_min)->sec + 60)
     {

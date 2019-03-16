@@ -18,7 +18,7 @@
 #include "Common.h"
 #include "StreamWrapper.h"
 
-void initBufferSwitch(TSRMLS_D)
+void init_buffer_switch(TSRMLS_D)
 {
     SEASLOG_G(enable_buffer_real) = FAILURE;
 

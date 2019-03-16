@@ -76,13 +76,13 @@ void seaslog_error_cb(int type, const char *error_filename, const uint error_lin
     old_error_cb(type, error_filename, error_lineno, format, args);
 }
 
-void initErrorHooks(TSRMLS_D)
+void init_error_hooks(TSRMLS_D)
 {
     old_error_cb = zend_error_cb;
     zend_error_cb = seaslog_error_cb;
 }
 
-void recoveryErrorHooks(TSRMLS_D)
+void recovery_error_hooks(TSRMLS_D)
 {
     if (old_error_cb)
     {

@@ -22,11 +22,9 @@
 void seaslog_memory_usage(smart_str *buf TSRMLS_DC);
 void seaslog_peak_memory_usage(smart_str *buf TSRMLS_DC);
 
-void initZendHooks(TSRMLS_D);
-void recoveryZendHooks(TSRMLS_D);
+void init_zend_hooks(TSRMLS_D);
+void recovery_zend_hooks(TSRMLS_D);
 
-static inline int seaslog_process_performance_sample(TSRMLS_D);
-static inline int seaslog_check_performance_sample(TSRMLS_D);
 void seaslog_rinit_performance(TSRMLS_D);
 void seaslog_clear_performance(zend_class_entry *ce TSRMLS_DC);
 int seaslog_check_performance_active(TSRMLS_D);
@@ -38,7 +36,6 @@ seaslog_frame* seaslog_performance_fast_alloc_frame(TSRMLS_D);
 void seaslog_performance_fast_free_frame(seaslog_frame *p TSRMLS_DC);
 void seaslog_performance_free_the_free_list(TSRMLS_D);
 
-static inline void seaslog_performance_bucket_process(seaslog_frame* current_frame TSRMLS_DC);
 void seaslog_performance_bucket_free(seaslog_performance_bucket *bucket TSRMLS_DC);
 
 char* seaslog_performance_get_class_name(zend_execute_data *data TSRMLS_DC);

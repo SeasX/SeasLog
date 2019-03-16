@@ -115,7 +115,7 @@ void seaslog_peak_memory_usage(smart_str *buf TSRMLS_DC)
     smart_str_0(buf);
 }
 
-void initZendHooks(TSRMLS_D)
+void init_zend_hooks(TSRMLS_D)
 {
     if (SEASLOG_G(trace_performance))
     {
@@ -132,7 +132,7 @@ void initZendHooks(TSRMLS_D)
     }
 }
 
-void recoveryZendHooks(TSRMLS_D)
+void recovery_zend_hooks(TSRMLS_D)
 {
     if (SEASLOG_G(trace_performance))
     {
@@ -169,8 +169,6 @@ void seaslog_rinit_performance(TSRMLS_D)
 
 void seaslog_clear_performance(zend_class_entry *ce TSRMLS_DC)
 {
-    int i = 0;
-
     if (SEASLOG_G(trace_performance))
     {
         if (FAILURE == seaslog_check_performance_sample(TSRMLS_C))
@@ -372,20 +370,6 @@ int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
     return SUCCESS;
 }
 
-void performance_frame_end(TSRMLS_D)
-{
-    seaslog_frame *current_frame = SEASLOG_G(performance_frames);
-    seaslog_frame *previous_frame = current_frame->previous_frame;
-
-    seaslog_performance_bucket_process(current_frame TSRMLS_CC);
-
-    SEASLOG_G(stack_level) -= 1;
-    SEASLOG_G(function_hash_counters)[current_frame->hash_code]--;
-
-    SEASLOG_G(performance_frames) = SEASLOG_G(performance_frames)->previous_frame;
-    seaslog_performance_fast_free_frame(current_frame TSRMLS_CC);
-}
-
 static inline void seaslog_performance_bucket_process(seaslog_frame* current_frame TSRMLS_DC)
 {
     zend_ulong bucket_key = current_frame->hash_code + current_frame->stack_level;
@@ -435,6 +419,20 @@ static inline void seaslog_performance_bucket_process(seaslog_frame* current_fra
     bucket->count++;
     bucket->wall_time += duration;
     bucket->memory += (zend_memory_usage(0 TSRMLS_CC) - current_frame->mu_start);
+}
+
+void performance_frame_end(TSRMLS_D)
+{
+    seaslog_frame *current_frame = SEASLOG_G(performance_frames);
+    seaslog_frame *previous_frame = current_frame->previous_frame;
+
+    seaslog_performance_bucket_process(current_frame TSRMLS_CC);
+
+    SEASLOG_G(stack_level) -= 1;
+    SEASLOG_G(function_hash_counters)[current_frame->hash_code]--;
+
+    SEASLOG_G(performance_frames) = SEASLOG_G(performance_frames)->previous_frame;
+    seaslog_performance_fast_free_frame(current_frame TSRMLS_CC);
 }
 
 void seaslog_performance_bucket_free(seaslog_performance_bucket *bucket TSRMLS_DC)
