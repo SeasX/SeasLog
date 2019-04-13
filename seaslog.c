@@ -207,6 +207,7 @@ static PHP_GINIT_FUNCTION(seaslog)
 {
     memset(seaslog_globals, 0, sizeof(zend_seaslog_globals));
     seaslog_globals->frame_free_list = NULL;
+    seaslog_globals->performance_frames = NULL;
 }
 
 static PHP_GSHUTDOWN_FUNCTION(seaslog)

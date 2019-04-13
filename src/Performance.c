@@ -45,7 +45,7 @@ ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int
 		for (_i = 0; _i < SEASLOG_PERFORMANCE_BUCKET_SLOTS; _i++) { \
             bucket = SEASLOG_G(performance_buckets)[_i]; \
             while (bucket) { \
- 
+
 #define SEASLOG_PERFORMANCE_BUCKET_FOREACH_END \
             }\
 		} \
@@ -153,6 +153,7 @@ void seaslog_rinit_performance(TSRMLS_D)
         SEASLOG_G(stack_level) = 0;
         SEASLOG_G(trace_performance_active) = SUCCESS;
         SEASLOG_G(frame_free_list) = NULL;
+        SEASLOG_G(performance_frames) = NULL;
 
         seaslog_process_performance_sample(TSRMLS_C);
         if (FAILURE == seaslog_check_performance_sample(TSRMLS_C))
@@ -193,6 +194,7 @@ void seaslog_clear_performance(zend_class_entry *ce TSRMLS_DC)
         }
 
         efree(SEASLOG_G(performance_main));
+        SEASLOG_G(performance_frames) = NULL;
 
         SEASLOG_G(trace_performance_active) = FAILURE;
     }
@@ -339,6 +341,11 @@ int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
     {
         for(p = current_frame->previous_frame; p; p = p->previous_frame)
         {
+            if (NULL == p->function_name)
+            {
+                break;
+            }
+
             if (!strcmp(current_frame->function_name,p->function_name) &&
                     ((current_frame->class_name
                       && p->class_name
@@ -454,11 +461,16 @@ seaslog_frame* seaslog_performance_fast_alloc_frame(TSRMLS_D)
     if (p)
     {
         SEASLOG_G(frame_free_list) = p->previous_frame;
+        p->function_name = NULL;
+        p->class_name = NULL;
         return p;
     }
     else
     {
-        return (seaslog_frame *)emalloc(sizeof(seaslog_frame));
+        p = (seaslog_frame *)emalloc(sizeof(seaslog_frame));
+        p->function_name = NULL;
+        p->class_name = NULL;
+        return p;
     }
 }
 
