@@ -163,7 +163,7 @@ seaslog.recall_depth = 0
 ;自动记录notice 默认0(关闭)
 seaslog.trace_notice = 0
 
-;自动记录warning 默认0(开启)
+;自动记录warning 默认0(关闭)
 seaslog.trace_warning = 0
 
 ;自动记录错误 默认1(开启)
@@ -191,10 +191,10 @@ seaslog.remote_timeout = 1
 ;过滤日志中的回车和换行符 (默认为0)
 seaslog.trim_wrap = 0
 
-;是否开启抛出SeasLog自身异常  1开启(默认) 0否
+;是否开启抛出SeasLog自身异常  1开启(默认) 0关闭
 seaslog.throw_exception = 1
 
-;是否开启忽略SeasLog自身warning  1开启(默认) 0否
+;是否开启忽略SeasLog自身warning  1开启(默认) 0关闭
 seaslog.ignore_warning = 1
 
 ;是否开启性能追踪 1开启 0关闭(默认)
