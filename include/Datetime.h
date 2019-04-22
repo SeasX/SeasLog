@@ -20,7 +20,7 @@
 #include "php_seaslog.h"
 
 char *make_real_time(TSRMLS_D);
-void initRemoteTimeout(TSRMLS_D);
+void init_remote_timeout(TSRMLS_D);
 char *seaslog_process_last_sec(int now, int if_first TSRMLS_DC);
 void mic_time(smart_str *buf);
 char *make_time_RFC3339(TSRMLS_D);

@@ -192,6 +192,7 @@ php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     HashTable *ht_list;
     php_stream_statbuf dest_s;
     stream_entry_t *stream_entry;
+    int flag = HASH_ADD;
 
     switch SEASLOG_G(appender)
     {
@@ -227,6 +228,7 @@ php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
             default:
                 if (php_stream_stat_path_ex(opt, PHP_STREAM_URL_STAT_QUIET | PHP_STREAM_URL_STAT_NOCACHE, &dest_s, NULL) < 0)
                 {
+                    flag = HASH_UPDATE;
                     goto create_stream;
                 }
             }
@@ -256,6 +258,7 @@ php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
             default:
                 if (php_stream_stat_path_ex(opt, PHP_STREAM_URL_STAT_QUIET | PHP_STREAM_URL_STAT_NOCACHE, &dest_s, NULL) < 0)
                 {
+                    flag = HASH_UPDATE;
                     goto create_stream;
                 }
             }
@@ -288,7 +291,25 @@ create_stream:
             stream_entry->stream = stream;
             stream_entry->can_delete = SEASLOG_CLOSE_LOGGER_STREAM_CAN_DELETE;
 
-            SEASLOG_ZEND_HASH_INDEX_ADD(ht_list, stream_entry_hash, stream_entry, sizeof(stream_entry_t));
+            if (flag == HASH_ADD)
+            {
+                SEASLOG_ZEND_HASH_INDEX_ADD(
+                    ht_list,
+                    stream_entry_hash,
+                    stream_entry,
+                    sizeof(stream_entry_t)
+                );
+            }
+            else
+            {
+                SEASLOG_ZEND_HASH_INDEX_UPDATE(
+                    ht_list,
+                    stream_entry_hash,
+                    stream_entry,
+                    sizeof(stream_entry_t),
+                    NULL
+                );
+            }
 
             return stream;
         }
