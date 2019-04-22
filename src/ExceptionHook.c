@@ -69,7 +69,7 @@ void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
     }
 }
 
-void initExceptionHooks(TSRMLS_D)
+void init_exception_hooks(TSRMLS_D)
 {
     if (SEASLOG_G(trace_exception))
     {
@@ -82,7 +82,7 @@ void initExceptionHooks(TSRMLS_D)
     }
 }
 
-void recoveryExceptionHooks(TSRMLS_D)
+void recovery_exception_hooks(TSRMLS_D)
 {
     if (SEASLOG_G(trace_exception))
     {

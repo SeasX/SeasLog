@@ -260,20 +260,20 @@ PHP_MINIT_FUNCTION(seaslog)
 
     seaslog_ce->ce_flags = ZEND_ACC_IMPLICIT_PUBLIC;
 
-    initErrorHooks(TSRMLS_C);
-    initExceptionHooks(TSRMLS_C);
-    initBufferSwitch(TSRMLS_C);
-    initRemoteTimeout(TSRMLS_C);
-    initZendHooks(TSRMLS_C);
+    init_error_hooks(TSRMLS_C);
+    init_exception_hooks(TSRMLS_C);
+    init_buffer_switch(TSRMLS_C);
+    init_remote_timeout(TSRMLS_C);
+    init_zend_hooks(TSRMLS_C);
 
     return SUCCESS;
 }
 
 PHP_MSHUTDOWN_FUNCTION(seaslog)
 {
-    recoveryErrorHooks(TSRMLS_C);
-    recoveryExceptionHooks(TSRMLS_C);
-    recoveryZendHooks(TSRMLS_C);
+    recovery_error_hooks(TSRMLS_C);
+    recovery_exception_hooks(TSRMLS_C);
+    recovery_zend_hooks(TSRMLS_C);
 
     UNREGISTER_INI_ENTRIES();
 
