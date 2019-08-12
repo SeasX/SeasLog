@@ -115,6 +115,10 @@ ZEND_BEGIN_ARG_INFO_EX(seaslog_getRequestVariable_arginfo, 0, 0, 1)
 ZEND_ARG_INFO(0, key)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(seaslog_flushbuffer_arginfo, 0, 0, 0)
+ZEND_ARG_INFO(0, type)
+ZEND_END_ARG_INFO()
+
 const zend_function_entry seaslog_methods[] =
 {
     PHP_ME(SEASLOG_RES_NAME, __construct,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
@@ -138,8 +142,9 @@ const zend_function_entry seaslog_methods[] =
     PHP_ME(SEASLOG_RES_NAME, analyzerCount, seaslog_analyzerCount_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, analyzerDetail,seaslog_analyzerDetail_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getBuffer,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getBufferCount, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getBufferEnabled,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, flushBuffer,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, flushBuffer,   seaslog_flushbuffer_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
     PHP_ME(SEASLOG_RES_NAME, log,           seaslog_log_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, debug,         seaslog_log_common_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
@@ -1076,11 +1081,33 @@ PHP_METHOD(SEASLOG_RES_NAME, getBufferEnabled)
 }
 /* }}} */
 
-/* {{{ proto bool flushBuffer()
-   Flush logs buffer, dump to appender file, or send to remote api with tcp/udp */
+/* {{{ proto int getBufferCount()
+   Get buffer count by use_buffer & buffer_disabled_in_cli & buffer_count as int */
+PHP_METHOD(SEASLOG_RES_NAME, getBufferCount)
+{
+    RETURN_LONG(SEASLOG_G(buffer_count));
+}
+/* }}} */
+
+/* {{{ proto bool flushBuffer([int type])
+   Flush logs buffer, default is appender, if type = 0 then only clear buffer else dump to appender file, or send to remote api with tcp/udp */
 PHP_METHOD(SEASLOG_RES_NAME, flushBuffer)
 {
-    seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_CC);
+    long type = 1;
+    int argc = ZEND_NUM_ARGS();
+
+    if (zend_parse_parameters(argc TSRMLS_CC, "|l", &type) == FAILURE)
+    {
+        return;
+    }
+
+    if(type == 0){
+        seaslog_clear_buffer(TSRMLS_C);
+        seaslog_init_buffer(TSRMLS_C);
+    }else{
+        seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_CC);
+    }
+    
 
     RETURN_TRUE;
 }
