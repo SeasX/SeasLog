@@ -3,6 +3,9 @@ Check for SeasLog::getBufferCount() function.
 --SKIPIF--
 <?php
 if (!extension_loaded('seaslog')
+    || !ini_get('seaslog.use_buffer')
+    || intval(ini_get('seaslog.buffer_size')) < 20
+    || !SeasLog::getBufferEnabled()
     || !method_exists('SeasLog','getBufferCount'))
 {
     print 'skip';
