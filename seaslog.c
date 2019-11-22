@@ -1085,7 +1085,13 @@ PHP_METHOD(SEASLOG_RES_NAME, getBufferEnabled)
    Get buffer count by use_buffer & buffer_disabled_in_cli & buffer_count as int */
 PHP_METHOD(SEASLOG_RES_NAME, getBufferCount)
 {
-    RETURN_LONG(SEASLOG_G(buffer_count));
+    if(seaslog_check_buffer_enable(TSRMLS_C))
+    {
+        RETURN_LONG(SEASLOG_G(buffer_count));
+    }
+    else{
+        RETURN_LONG(0);
+    }
 }
 /* }}} */
 
