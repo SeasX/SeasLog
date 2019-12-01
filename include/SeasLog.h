@@ -98,7 +98,7 @@
 
 #define SEASLOG_BUFFER_MAX_SIZE                 65535
 
-#define SEASLOG_TRIM_WRAP                       26
+#define SEASLOG_TRIM_WRAP                       32
 
 #define SEASLOG_EXCEPTION_LOGGER_ERROR          4403
 #define SEASLOG_EXCEPTION_CONTENT_ERROR         4406
