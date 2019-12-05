@@ -116,7 +116,7 @@ environment:
                   PHP_VER: 7.3.1
                   ZLIB_VER: 1.2.11
                   TS: 1
-                  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+                - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
                   ARCH: x64
                   VC: vc15
                   PHP_VER: 7.4.0
