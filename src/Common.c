@@ -255,7 +255,7 @@ char* php_strtr_array(char *str, int slen, HashTable *hash)
 int message_trim_wrap(char *message,int message_len TSRMLS_DC)
 {
     int i;
-    for (i=0; i<=message_len; i++)
+    for (i=0; i<message_len; i++)
     {
         if(message[i] == '\r' || message[i] == '\n')
         {
