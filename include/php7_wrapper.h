@@ -18,8 +18,10 @@
 
 #if PHP_VERSION_ID >= 70000
 
+#ifndef PHP_WIN32
 #ifndef ulong
 typedef zend_ulong ulong;
+#endif
 #endif
 
 # define SEASLOG_MAKE_ZVAL(z) zval _stack_zval_##z; z = &(_stack_zval_##z)
