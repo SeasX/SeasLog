@@ -18,7 +18,7 @@
 
 #if PHP_VERSION_ID >= 70000
 
-#ifndef PHP_WIN32
+#if PHP_VERSION_ID >= 70400
 #ifndef ulong
 typedef zend_ulong ulong;
 #endif

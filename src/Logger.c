@@ -95,22 +95,22 @@ void seaslog_init_default_last_logger(TSRMLS_D)
     {
         if (make_log_dir(SEASLOG_G(last_logger)->logger_path TSRMLS_CC) == SUCCESS)
         {
-            SEASLOG_G(last_logger)->access = SUCCESS;
+            SEASLOG_G(last_logger)->logger_access = SUCCESS;
         }
         else
         {
-            SEASLOG_G(last_logger)->access = FAILURE;
+            SEASLOG_G(last_logger)->logger_access = FAILURE;
         }
     }
     else
     {
         if (make_log_dir(SEASLOG_G(base_path) TSRMLS_CC) == SUCCESS)
         {
-            SEASLOG_G(last_logger)->access = SUCCESS;
+            SEASLOG_G(last_logger)->logger_access = SUCCESS;
         }
         else
         {
-            SEASLOG_G(last_logger)->access = FAILURE;
+            SEASLOG_G(last_logger)->logger_access = FAILURE;
         }
     }
 }
@@ -233,7 +233,7 @@ logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSR
 
         logger_entry->logger_len = spprintf(&logger_entry->logger, 0, "%s",Z_STRVAL_P(logger_tmp_find));
         logger_entry->logger_path_len = spprintf(&logger_entry->logger_path, 0, "%s",Z_STRVAL_P(logger_path_tmp_find));
-        logger_entry->access = Z_LVAL_P(logger_access_find);
+        logger_entry->logger_access = Z_LVAL_P(logger_access_find);
 #else
     ht_list = HASH_OF(SEASLOG_G(logger_list));
 
@@ -247,7 +247,7 @@ logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSR
 
         logger_entry->logger_len = spprintf(&logger_entry->logger, 0, "%s",Z_STRVAL_PP(logger_tmp_find));
         logger_entry->logger_path_len = spprintf(&logger_entry->logger_path, 0, "%s",Z_STRVAL_PP(logger_path_tmp_find));
-        logger_entry->access = Z_LVAL_PP(logger_access_find);
+        logger_entry->logger_access = Z_LVAL_PP(logger_access_find);
 
 #endif
     }
@@ -255,17 +255,17 @@ logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSR
     {
         logger_entry->logger_len = spprintf(&logger_entry->logger, 0, "%s", logger);
         logger_entry->logger_path_len = spprintf(&logger_entry->logger_path, 0, "%s/%s", SEASLOG_G(base_path), logger_entry->logger);
-        logger_entry->access = SUCCESS;
+        logger_entry->logger_access = SUCCESS;
 
         if (SEASLOG_G(disting_folder))
         {
             if (make_log_dir(logger_entry->logger_path TSRMLS_CC) == SUCCESS)
             {
-                logger_entry->access = SUCCESS;
+                logger_entry->logger_access = SUCCESS;
             }
             else
             {
-                logger_entry->access = FAILURE;
+                logger_entry->logger_access = FAILURE;
             }
         }
         else
@@ -280,11 +280,11 @@ logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSR
 
                 if (make_log_dir(logger_entry->folder TSRMLS_CC) == SUCCESS)
                 {
-                    logger_entry->access = SUCCESS;
+                    logger_entry->logger_access = SUCCESS;
                 }
                 else
                 {
-                    logger_entry->access = FAILURE;
+                    logger_entry->logger_access = FAILURE;
                 }
             }
         }
@@ -298,7 +298,7 @@ logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSR
 
         SEASLOG_ADD_INDEX_STRINGL(logger_array,SEASLOG_HASH_VALUE_LOGGER,logger_entry->logger,logger_entry->logger_len);
         SEASLOG_ADD_INDEX_STRINGL(logger_array,SEASLOG_HASH_VALUE_PATH,logger_entry->logger_path,logger_entry->logger_path_len);
-        SEASLOG_ADD_INDEX_LONG(logger_array,SEASLOG_HASH_VALUE_ACCESS,logger_entry->access);
+        SEASLOG_ADD_INDEX_LONG(logger_array,SEASLOG_HASH_VALUE_ACCESS,logger_entry->logger_access);
 
         SEASLOG_ADD_INDEX_ZVAL(SEASLOG_G(logger_list),logger_entry_hash,logger_array);
     }
