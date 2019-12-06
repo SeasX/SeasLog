@@ -288,7 +288,7 @@ create_stream:
             stream_entry->stream = stream;
             stream_entry->can_delete = SEASLOG_CLOSE_LOGGER_STREAM_CAN_DELETE;
 
-            SEASLOG_ZEND_HASH_INDEX_ADD(ht_list, stream_entry_hash, stream_entry, sizeof(stream_entry_t));
+            SEASLOG_ZEND_HASH_INDEX_UPDATE(ht_list, stream_entry_hash, stream_entry, sizeof(stream_entry_t), NULL);
 
             return stream;
         }

@@ -19,7 +19,7 @@
 
 #include "php_seaslog.h"
 
-void initBufferSwitch(TSRMLS_D);
+void init_buffer_switch(TSRMLS_D);
 void seaslog_init_buffer(TSRMLS_D);
 void seaslog_shutdown_buffer(int re_init TSRMLS_DC);
 void seaslog_clear_buffer(TSRMLS_D);
