@@ -13,10 +13,12 @@
   | Author: Chitao Gao  <neeke@php.net>                                  |
   +----------------------------------------------------------------------+
 */
+#ifndef _PHP_SEASLOG_PHP7_WRAPPER_H_
+#define _PHP_SEASLOG_PHP7_WRAPPER_H_
 
 #if PHP_VERSION_ID >= 70000
 
-#if !defined(ulong)
+#ifndef ulong
 typedef zend_ulong ulong;
 #endif
 
@@ -151,3 +153,4 @@ typedef zend_ulong ulong;
 
 #endif
 
+#endif
