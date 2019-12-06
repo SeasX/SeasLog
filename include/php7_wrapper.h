@@ -14,10 +14,6 @@
   +----------------------------------------------------------------------+
 */
 
-#if !defined(ZEND_ACC_IMPLICIT_PUBLIC)
-# define ZEND_ACC_IMPLICIT_PUBLIC ZEND_ACC_PUBLIC
-#endif
-
 #if PHP_VERSION_ID >= 70000
 
 # define SEASLOG_MAKE_ZVAL(z) zval _stack_zval_##z; z = &(_stack_zval_##z)

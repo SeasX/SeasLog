@@ -263,7 +263,7 @@ PHP_MINIT_FUNCTION(seaslog)
     seaslog_ce = zend_register_internal_class_ex(&seaslog, NULL, NULL TSRMLS_CC);
 #endif
 
-    seaslog_ce->ce_flags = ZEND_ACC_IMPLICIT_PUBLIC;
+    seaslog_ce->ce_flags |= ZEND_ACC_FINAL;
 
     init_error_hooks(TSRMLS_C);
     init_exception_hooks(TSRMLS_C);
