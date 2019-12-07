@@ -19,7 +19,7 @@
 
 static void (*old_throw_exception_hook)(zval *exception TSRMLS_DC);
 
-static void process_event_exception(int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC)
+static void process_event_exception(int type, char * error_filename, SEASLOG_UINT error_lineno, char * msg TSRMLS_DC)
 {
     char *event_str;
     int event_str_len;
