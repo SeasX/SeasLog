@@ -73,12 +73,12 @@ void seaslog_init_auto_globals(TSRMLS_D)
 }
 
 
-zval *seaslog_request_query(uint type, void *name, size_t len TSRMLS_DC)
+zval *seaslog_request_query(SEASLOG_UINT query_type, void *name, size_t len TSRMLS_DC)
 {
 #if PHP_VERSION_ID >= 70000
     zval *carrier = NULL, *ret;
 
-    switch (type)
+    switch (query_type)
     {
     case SEASLOG_GLOBAL_VARS_SERVER:
         carrier = zend_hash_str_find(&EG(symbol_table), ZEND_STRL("_SERVER"));
@@ -103,10 +103,10 @@ zval *seaslog_request_query(uint type, void *name, size_t len TSRMLS_DC)
 #else
     zval **carrier = NULL, **ret;
 
-    switch (type)
+    switch (query_type)
     {
     case SEASLOG_GLOBAL_VARS_SERVER:
-        carrier = &PG(http_globals)[type];
+        carrier = &PG(http_globals)[query_type];
         break;
     default:
         break;

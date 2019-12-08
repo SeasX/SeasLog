@@ -17,9 +17,9 @@
 #include "ErrorHook.h"
 #include "Appender.h"
 
-void (*old_error_cb)(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args);
+void (*old_error_cb)(int type, const char *error_filename, const SEASLOG_UINT error_lineno, const char *format, va_list args);
 
-static void process_event_error(const char *event_type, int type, char * error_filename, uint error_lineno, char * msg TSRMLS_DC)
+static void process_event_error(const char *event_type, int type, char * error_filename, SEASLOG_UINT error_lineno, char * msg TSRMLS_DC)
 {
     char *event_str;
     int event_str_len;
@@ -36,7 +36,7 @@ static void process_event_error(const char *event_type, int type, char * error_f
     SEASLOG_G(in_error) = 0;
 }
 
-void seaslog_error_cb(int type, const char *error_filename, const uint error_lineno, const char *format, va_list args)
+void seaslog_error_cb(int type, const char *error_filename, const SEASLOG_UINT error_lineno, const char *format, va_list args)
 {
     TSRMLS_FETCH();
     if (SEASLOG_G(initRComplete) != SEASLOG_INITR_COMPLETE_YES)

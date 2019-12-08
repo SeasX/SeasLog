@@ -27,7 +27,7 @@ long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
     long count;
     int is_level_all = 0;
 
-    if (SEASLOG_G(last_logger)->access == FAILURE)
+    if (SEASLOG_G(last_logger)->logger_access == FAILURE)
     {
         return (long)0;
     }

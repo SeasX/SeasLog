@@ -161,7 +161,7 @@ typedef struct _logger_entry_t
     int logger_len;
     char *logger_path;
     int logger_path_len;
-    int access;
+    int logger_access;
 } logger_entry_t;
 
 typedef struct _stream_entry_t

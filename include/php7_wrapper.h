@@ -13,12 +13,22 @@
   | Author: Chitao Gao  <neeke@php.net>                                  |
   +----------------------------------------------------------------------+
 */
-
-#if !defined(ZEND_ACC_IMPLICIT_PUBLIC)
-# define ZEND_ACC_IMPLICIT_PUBLIC ZEND_ACC_PUBLIC
-#endif
+#ifndef _PHP_SEASLOG_PHP7_WRAPPER_H_
+#define _PHP_SEASLOG_PHP7_WRAPPER_H_
 
 #if PHP_VERSION_ID >= 70000
+
+#if PHP_VERSION_ID >= 70400
+#ifndef ulong
+typedef zend_ulong ulong;
+#endif
+#endif
+
+#if PHP_VERSION_ID >= 70200
+typedef uint32_t SEASLOG_UINT;
+#else
+typedef uint SEASLOG_UINT;
+#endif
 
 # define SEASLOG_MAKE_ZVAL(z) zval _stack_zval_##z; z = &(_stack_zval_##z)
 
@@ -82,6 +92,8 @@
 # define SEASLOG_JSON_ENCODE(buf, zval, options) php_json_encode(buf, &zval, options TSRMLS_CC)
 
 #else
+
+typedef uint SEASLOG_UINT;
 
 # define SEASLOG_MAKE_ZVAL(z) MAKE_STD_ZVAL(z)
 # define SEASLOG_ZVAL_STRING(z, s) ZVAL_STRING(z, s, 0)
@@ -151,3 +163,4 @@
 
 #endif
 
+#endif
