@@ -309,6 +309,7 @@ At the same time, many preset variables that are preset by `SeasLog` can be used
 * `%U` - MemoryUsage. byte. Call `zend_memory_usage`.
 * `%u` - PeakMemoryUsage. byte. Call `zend_memory_peak_usage`.
 * `%C` - Class::Action. Such as `UserService::getUserInfo`. in procedural programming, it falls back to function name.
+* `%B` - BasePath. Such as `/var/log/www`, affected by `seaslog.default_basepath`and`setBasePath`.
 
 ## Use age
 
