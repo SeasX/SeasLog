@@ -326,7 +326,7 @@ void get_code_filename_line(smart_str *result TSRMLS_DC)
         }
         else if (ptr->prev_execute_data && ptr->prev_execute_data->opline)
         {
-            ret = ptr->op_array->filename;
+            ret = ptr->prev_execute_data->op_array->filename;
             retlen = strlen(ret);
             code_line = ptr->prev_execute_data->opline->lineno;
         }
