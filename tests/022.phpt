@@ -11,7 +11,7 @@ if (!extension_loaded('seaslog'))
 ?>
 --FILE--
 <?php
-
+SeasLog::setBasePath('base_path');
 class Log
 {
     public static function __callStatic($name, $arguments)
