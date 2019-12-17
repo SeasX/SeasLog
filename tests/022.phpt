@@ -2,6 +2,7 @@
 pr 284
 --INI--
 seaslog.default_template = "%M|%F"
+seaslog.default_basepath="base_path"
 --SKIPIF--
 <?php
 if (!extension_loaded('seaslog'))
