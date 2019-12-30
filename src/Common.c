@@ -25,7 +25,7 @@ int seaslog_smart_str_get_len(smart_str str)
 #endif
 }
 
-int check_sapi_is_cli(TSRMLS_D)
+int check_sapi_is_cli(void)
 {
     if (!strncmp(sapi_module.name , SEASLOG_CLI_KEY, sizeof(SEASLOG_CLI_KEY) - 1))
     {
@@ -73,7 +73,7 @@ int seaslog_get_level_int(char *level)
     return SEASLOG_DEBUG_INT;
 }
 
-int check_log_level(int level TSRMLS_DC)
+int check_log_level(int level )
 {
     if (level < SEASLOG_EMERGENCY_INT || level > SEASLOG_G(level))
     {
@@ -252,7 +252,7 @@ char* php_strtr_array(char *str, int slen, HashTable *hash)
 }
 #endif
 
-int message_trim_wrap(char *message,int message_len TSRMLS_DC)
+int message_trim_wrap(char *message,int message_len )
 {
     int i;
     for (i=0; i<message_len; i++)

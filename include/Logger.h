@@ -19,15 +19,15 @@
 
 #include "php_seaslog.h"
 
-void seaslog_init_slash_or_underline(TSRMLS_D);
-void seaslog_init_last_time(TSRMLS_D);
-void seaslog_init_logger_list(TSRMLS_D);
-void seaslog_init_logger(TSRMLS_D);
-void seaslog_clear_logger(TSRMLS_D);
-void seaslog_clear_logger_list(TSRMLS_D);
-void seaslog_clear_last_time(TSRMLS_D);
-void seaslog_init_default_last_logger(TSRMLS_D);
-logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSRMLS_DC);
+void seaslog_init_slash_or_underline(void);
+void seaslog_init_last_time(void);
+void seaslog_init_logger_list(void);
+void seaslog_init_logger(void);
+void seaslog_clear_logger(void);
+void seaslog_clear_logger_list(void);
+void seaslog_clear_last_time(void);
+void seaslog_init_default_last_logger(void);
+logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp );
 
 #endif /* _SEASLOG_LOGGER_H_ */
 

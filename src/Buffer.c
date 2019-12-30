@@ -18,11 +18,11 @@
 #include "Common.h"
 #include "StreamWrapper.h"
 
-void init_buffer_switch(TSRMLS_D)
+void init_buffer_switch(void)
 {
     SEASLOG_G(enable_buffer_real) = FAILURE;
 
-    if (SUCCESS == check_sapi_is_cli(TSRMLS_C) && SEASLOG_G(buffer_disabled_in_cli))
+    if (SUCCESS == check_sapi_is_cli() && SEASLOG_G(buffer_disabled_in_cli))
     {
         return;
     }
@@ -36,16 +36,16 @@ void init_buffer_switch(TSRMLS_D)
     return;
 }
 
-int seaslog_check_buffer_enable(TSRMLS_D)
+int seaslog_check_buffer_enable(void)
 {
     return SUCCESS == SEASLOG_G(enable_buffer_real);
 }
 
-void seaslog_init_buffer(TSRMLS_D)
+void seaslog_init_buffer(void)
 {
     zval *z_buffer;
 
-    if (seaslog_check_buffer_enable(TSRMLS_C))
+    if (seaslog_check_buffer_enable())
     {
         SEASLOG_G(buffer_count) = 0;
 
@@ -65,7 +65,7 @@ void seaslog_init_buffer(TSRMLS_D)
     }
 }
 
-static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_DC)
+static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len )
 {
     php_stream *stream = NULL;
     HashTable *ht;
@@ -78,7 +78,7 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_D
     zval **log;
 #endif
 
-    stream = process_stream(opt,opt_len TSRMLS_CC);
+    stream = process_stream(opt,opt_len );
 
     if (stream == NULL)
     {
@@ -111,7 +111,7 @@ static int real_php_log_buffer(zval *msg_buffer, char *opt, int opt_len TSRMLS_D
     return SUCCESS;
 }
 
-int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce TSRMLS_DC)
+int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce )
 {
 #if PHP_VERSION_ID >= 70000
 
@@ -184,14 +184,14 @@ int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_le
 
         if (SEASLOG_G(buffer_count) >= SEASLOG_G(buffer_size))
         {
-            seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_CC);
+            seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES );
         }
     }
 
     return SUCCESS;
 }
 
-void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
+void seaslog_shutdown_buffer(int re_init )
 {
     HashTable   *ht;
 
@@ -203,7 +203,7 @@ void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
     zval **ppzval;
 #endif
 
-    if (seaslog_check_buffer_enable(TSRMLS_C))
+    if (seaslog_check_buffer_enable())
     {
         if (SEASLOG_G(buffer_count) < 1)
         {
@@ -215,7 +215,7 @@ void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
         ht = Z_ARRVAL(SEASLOG_G(buffer));
         ZEND_HASH_FOREACH_KEY_VAL(ht, num_key, str_key, entry)
         {
-            real_php_log_buffer(entry, ZSTR_VAL(str_key), ZSTR_LEN(str_key) TSRMLS_CC);
+            real_php_log_buffer(entry, ZSTR_VAL(str_key), ZSTR_LEN(str_key) );
         }
         ZEND_HASH_FOREACH_END();
 
@@ -230,23 +230,23 @@ void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
 
             zend_hash_get_current_key(ht, &key, &idx, 0);
             convert_to_array_ex(ppzval);
-            real_php_log_buffer(*ppzval, key, strlen(key) TSRMLS_CC);
+            real_php_log_buffer(*ppzval, key, strlen(key) );
             zend_hash_move_forward(ht);
         }
 #endif
 
         if (re_init == SEASLOG_BUFFER_RE_INIT_YES)
         {
-            seaslog_clear_buffer(TSRMLS_C);
-            seaslog_init_buffer(TSRMLS_C);
+            seaslog_clear_buffer();
+            seaslog_init_buffer();
         }
     }
 }
 
 
-void seaslog_clear_buffer(TSRMLS_D)
+void seaslog_clear_buffer(void)
 {
-    if (seaslog_check_buffer_enable(TSRMLS_C))
+    if (seaslog_check_buffer_enable())
     {
         SEASLOG_G(buffer_count) = 0;
 

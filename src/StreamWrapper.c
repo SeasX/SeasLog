@@ -18,7 +18,7 @@
 #include "ErrorHook.h"
 #include "ExceptionHook.h"
 
-php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
+php_stream *seaslog_stream_open_wrapper(char *opt )
 {
     php_stream *stream = NULL;
     char *res = NULL;
@@ -38,7 +38,7 @@ php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
 
         if (stream == NULL)
         {
-            seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "SeasLog Can Not Create TCP Connect - %s", res);
+            seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR , "SeasLog Can Not Create TCP Connect - %s", res);
             efree(res);
             return NULL;
         }
@@ -52,7 +52,7 @@ php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
 
         if (stream == NULL)
         {
-            seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "SeasLog Can Not Create UDP Connect - %s", res);
+            seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR , "SeasLog Can Not Create UDP Connect - %s", res);
             efree(res);
             return NULL;
         }
@@ -70,7 +70,7 @@ php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
 
         if (stream == NULL)
         {
-            seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "SeasLog Invalid Log File - %s", opt);
+            seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR , "SeasLog Invalid Log File - %s", opt);
             return NULL;
         }
         else
@@ -85,7 +85,7 @@ php_stream *seaslog_stream_open_wrapper(char *opt TSRMLS_DC)
     return stream;
 }
 
-void seaslog_init_stream_list(TSRMLS_D)
+void seaslog_init_stream_list(void)
 {
     zval *z_stream_list;
 
@@ -101,7 +101,7 @@ void seaslog_init_stream_list(TSRMLS_D)
 
 }
 
-int seaslog_clear_stream(int destroy, int model, char *opt TSRMLS_DC)
+int seaslog_clear_stream(int destroy, int model, char *opt )
 {
     php_stream *stream = NULL;
     HashTable *ht;
@@ -185,7 +185,7 @@ int seaslog_clear_stream(int destroy, int model, char *opt TSRMLS_DC)
     return result;
 }
 
-php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
+php_stream *process_stream(char *opt, int opt_len )
 {
     ulong stream_entry_hash;
     php_stream *stream = NULL;
@@ -269,7 +269,7 @@ php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
     else
     {
 create_stream:
-        stream = seaslog_stream_open_wrapper(opt TSRMLS_CC);
+        stream = seaslog_stream_open_wrapper(opt );
         if (stream == NULL)
         {
             return NULL;

@@ -19,12 +19,12 @@
 
 #include "php_seaslog.h"
 
-void init_buffer_switch(TSRMLS_D);
-void seaslog_init_buffer(TSRMLS_D);
-void seaslog_shutdown_buffer(int re_init TSRMLS_DC);
-void seaslog_clear_buffer(TSRMLS_D);
-int seaslog_check_buffer_enable(TSRMLS_D);
-int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce TSRMLS_DC);
+void init_buffer_switch(void);
+void seaslog_init_buffer(void);
+void seaslog_shutdown_buffer(int re_init );
+void seaslog_clear_buffer(void);
+int seaslog_check_buffer_enable(void);
+int seaslog_buffer_set(char *log_info, int log_info_len, char *path, int path_len, zend_class_entry *ce );
 
 #endif /* _SEASLOG_BUFFER_H_ */
 

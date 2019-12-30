@@ -19,9 +19,9 @@
 
 #include "php_seaslog.h"
 
-void seaslog_init_stream_list(TSRMLS_D);
-int seaslog_clear_stream(int destroy, int model, char *opt TSRMLS_DC);
-php_stream *process_stream(char *opt, int opt_len TSRMLS_DC);
+void seaslog_init_stream_list(void);
+int seaslog_clear_stream(int destroy, int model, char *opt );
+php_stream *process_stream(char *opt, int opt_len );
 
 #endif /* _SEASLOG_STREAMWRAPPER_H_ */
 

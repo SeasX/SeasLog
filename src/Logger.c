@@ -18,7 +18,7 @@
 #include "Datetime.h"
 #include "Appender.h"
 
-void seaslog_init_slash_or_underline(TSRMLS_D)
+void seaslog_init_slash_or_underline(void)
 {
     if (SEASLOG_G(disting_folder))
     {
@@ -30,7 +30,7 @@ void seaslog_init_slash_or_underline(TSRMLS_D)
     }
 }
 
-void seaslog_init_last_time(TSRMLS_D)
+void seaslog_init_last_time(void)
 {
     int now;
 
@@ -38,11 +38,11 @@ void seaslog_init_last_time(TSRMLS_D)
     SEASLOG_G(current_datetime_format_len)  = strlen(SEASLOG_G(current_datetime_format));
 
     now = (int)time(NULL);
-    seaslog_process_last_sec(now, SEASLOG_INIT_FIRST_YES TSRMLS_CC);
-    seaslog_process_last_min(now, SEASLOG_INIT_FIRST_YES TSRMLS_CC);
+    seaslog_process_last_sec(now, SEASLOG_INIT_FIRST_YES );
+    seaslog_process_last_min(now, SEASLOG_INIT_FIRST_YES );
 }
 
-void seaslog_clear_last_time(TSRMLS_D)
+void seaslog_clear_last_time(void)
 {
     if (SEASLOG_G(last_sec))
     {
@@ -62,18 +62,18 @@ void seaslog_clear_last_time(TSRMLS_D)
     }
 }
 
-void seaslog_init_logger(TSRMLS_D)
+void seaslog_init_logger(void)
 {
     SEASLOG_G(base_path) = estrdup(SEASLOG_G(default_basepath));
 
     SEASLOG_G(last_logger) = ecalloc(1,sizeof(logger_entry_t));
     SEASLOG_G(tmp_logger) = ecalloc(1,sizeof(logger_entry_t));
 
-    seaslog_init_default_last_logger(TSRMLS_C);
+    seaslog_init_default_last_logger();
 }
 
 
-void seaslog_init_default_last_logger(TSRMLS_D)
+void seaslog_init_default_last_logger(void)
 {
     if (SEASLOG_G(last_logger)->logger)
     {
@@ -93,7 +93,7 @@ void seaslog_init_default_last_logger(TSRMLS_D)
 
     if (SEASLOG_G(disting_folder))
     {
-        if (make_log_dir(SEASLOG_G(last_logger)->logger_path TSRMLS_CC) == SUCCESS)
+        if (make_log_dir(SEASLOG_G(last_logger)->logger_path ) == SUCCESS)
         {
             SEASLOG_G(last_logger)->logger_access = SUCCESS;
         }
@@ -104,7 +104,7 @@ void seaslog_init_default_last_logger(TSRMLS_D)
     }
     else
     {
-        if (make_log_dir(SEASLOG_G(base_path) TSRMLS_CC) == SUCCESS)
+        if (make_log_dir(SEASLOG_G(base_path) ) == SUCCESS)
         {
             SEASLOG_G(last_logger)->logger_access = SUCCESS;
         }
@@ -116,7 +116,7 @@ void seaslog_init_default_last_logger(TSRMLS_D)
 }
 
 
-void seaslog_clear_logger(TSRMLS_D)
+void seaslog_clear_logger(void)
 {
     if (SEASLOG_G(base_path))
     {
@@ -154,7 +154,7 @@ void seaslog_clear_logger(TSRMLS_D)
     }
 }
 
-void seaslog_init_logger_list(TSRMLS_D)
+void seaslog_init_logger_list(void)
 {
     zval *z_logger_list;
 
@@ -170,12 +170,12 @@ void seaslog_init_logger_list(TSRMLS_D)
 #endif
 }
 
-void seaslog_clear_logger_list(TSRMLS_D)
+void seaslog_clear_logger_list(void)
 {
     SEASLOG_ARRAY_DESTROY(SEASLOG_G(logger_list));
 }
 
-logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSRMLS_DC)
+logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp )
 {
     ulong logger_entry_hash = zend_inline_hash_func(logger, logger_len);
     logger_entry_t *logger_entry;
@@ -259,7 +259,7 @@ logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSR
 
         if (SEASLOG_G(disting_folder))
         {
-            if (make_log_dir(logger_entry->logger_path TSRMLS_CC) == SUCCESS)
+            if (make_log_dir(logger_entry->logger_path ) == SUCCESS)
             {
                 logger_entry->logger_access = SUCCESS;
             }
@@ -278,7 +278,7 @@ logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSR
                 folder_tmp[folder_len] = '\0';
                 logger_entry->folder = folder_tmp;
 
-                if (make_log_dir(logger_entry->folder TSRMLS_CC) == SUCCESS)
+                if (make_log_dir(logger_entry->folder ) == SUCCESS)
                 {
                     logger_entry->logger_access = SUCCESS;
                 }

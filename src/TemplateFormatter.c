@@ -40,7 +40,7 @@
 	smart_str_appendl(xbuf, s, slen);	\
 } while (0)
 
-static smart_str* get_class_and_action(smart_str *result  TSRMLS_DC)
+static smart_str* get_class_and_action(smart_str *result  )
 {
     char *func;
     char *cls;
@@ -83,13 +83,13 @@ static smart_str* get_class_and_action(smart_str *result  TSRMLS_DC)
     }
 #endif
 
-    func = seaslog_performance_get_function_name(execute_data TSRMLS_CC);
+    func = seaslog_performance_get_function_name(execute_data );
     if (!func)
     {
         return NULL;
     }
 
-    cls = seaslog_performance_get_class_name(execute_data TSRMLS_CC);
+    cls = seaslog_performance_get_class_name(execute_data );
     if (cls)
     {
         INS_STRING(result, cls, strlen(cls));
@@ -104,18 +104,18 @@ static smart_str* get_class_and_action(smart_str *result  TSRMLS_DC)
     return result;
 }
 
-void seaslog_init_template(TSRMLS_D)
+void seaslog_init_template(void)
 {
-    seaslog_spprintf(&SEASLOG_G(current_template) TSRMLS_CC, SEASLOG_GENERATE_CURRENT_TEMPLATE, NULL, 0);
+    seaslog_spprintf(&SEASLOG_G(current_template) , SEASLOG_GENERATE_CURRENT_TEMPLATE, NULL, 0);
 }
 
-void seaslog_re_init_template(TSRMLS_D)
+void seaslog_re_init_template(void)
 {
     efree(SEASLOG_G(current_template));
-    seaslog_spprintf(&SEASLOG_G(current_template) TSRMLS_CC, SEASLOG_GENERATE_RE_CURRENT_TEMPLATE, NULL, 0);
+    seaslog_spprintf(&SEASLOG_G(current_template) , SEASLOG_GENERATE_RE_CURRENT_TEMPLATE, NULL, 0);
 }
 
-void seaslog_clear_template(TSRMLS_D)
+void seaslog_clear_template(void)
 {
     if (SEASLOG_G(current_template))
     {
@@ -127,7 +127,7 @@ void seaslog_clear_template(TSRMLS_D)
     }
 }
 
-int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size_t max_len, ...)
+int seaslog_spprintf(char **pbuf , int generate_type, char *level, size_t max_len, ...)
 {
     int len;
     va_list ap;
@@ -140,7 +140,7 @@ int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size
     {
     case SEASLOG_GENERATE_CURRENT_TEMPLATE:
     case SEASLOG_GENERATE_RE_CURRENT_TEMPLATE:
-        seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(default_template), level, ap);
+        seaslog_template_formatter(&xbuf , generate_type, SEASLOG_G(default_template), level, ap);
         break;
     case SEASLOG_GENERATE_LEVEL_TEMPLATE:
         if (strlen(SEASLOG_G(level_template)) == 0 || (level && !strcmp(level, SEASLOG_ALL)))
@@ -149,12 +149,12 @@ int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size
         }
         else
         {
-            seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(level_template), level, ap);
+            seaslog_template_formatter(&xbuf , generate_type, SEASLOG_G(level_template), level, ap);
         }
         break;
     case SEASLOG_GENERATE_SYSLOG_INFO:
     case SEASLOG_GENERATE_LOG_INFO:
-        seaslog_template_formatter(&xbuf TSRMLS_CC, generate_type, SEASLOG_G(current_template), level, ap);
+        seaslog_template_formatter(&xbuf , generate_type, SEASLOG_G(current_template), level, ap);
         break;
     default:
         break;
@@ -175,7 +175,7 @@ int seaslog_spprintf(char **pbuf TSRMLS_DC, int generate_type, char *level, size
     return len;
 }
 
-void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, const char *fmt, char *level, va_list ap)
+void seaslog_template_formatter(smart_str *xbuf , int generate_type, const char *fmt, char *level, va_list ap)
 {
     char *s = NULL;
     int s_len;
@@ -288,7 +288,7 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
                 switch (*fmt)
                 {
                 case 'T': //Time  2017:08:16 19:15:02
-                    s = make_real_time(TSRMLS_C);
+                    s = make_real_time();
                     s_len  = strlen(s);
                     break;
                 case 't': //time  1502882102.862
@@ -327,7 +327,7 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
                     {
                         smart_str_free(&tmp_buf);
                     }
-                    get_code_filename_line(&tmp_buf TSRMLS_CC);
+                    get_code_filename_line(&tmp_buf );
 
                     s = SEASLOG_SMART_STR_C(tmp_buf);
                     s_len = seaslog_smart_str_get_len(tmp_buf);
@@ -337,7 +337,7 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
                     {
                         smart_str_free(&tmp_buf);
                     }
-                    seaslog_memory_usage(&tmp_buf TSRMLS_CC);
+                    seaslog_memory_usage(&tmp_buf );
                     s = SEASLOG_SMART_STR_C(tmp_buf);
                     s_len = seaslog_smart_str_get_len(tmp_buf);
                     break;
@@ -346,7 +346,7 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
                     {
                         smart_str_free(&tmp_buf);
                     }
-                    seaslog_peak_memory_usage(&tmp_buf TSRMLS_CC);
+                    seaslog_peak_memory_usage(&tmp_buf );
                     s = SEASLOG_SMART_STR_C(tmp_buf);
                     s_len  = seaslog_smart_str_get_len(tmp_buf);
                     break;
@@ -356,7 +356,7 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
                         smart_str_free(&tmp_buf);
                     }
 
-                    if (get_class_and_action(&tmp_buf TSRMLS_CC))
+                    if (get_class_and_action(&tmp_buf ))
                     {
                         s = SEASLOG_SMART_STR_C(tmp_buf);
                         s_len  = seaslog_smart_str_get_len(tmp_buf);

@@ -19,8 +19,8 @@
 
 #include "php_seaslog.h"
 
-void init_error_hooks(TSRMLS_D);
-void recovery_error_hooks(TSRMLS_D);
+void init_error_hooks(void);
+void recovery_error_hooks(void);
 
 #endif /* _SEASLOG_ERRORHOOK_H_ */
 

@@ -17,7 +17,7 @@
 #include "Request.h"
 #include "Common.h"
 
-void seaslog_init_host_name(TSRMLS_D)
+void seaslog_init_host_name(void)
 {
     char buf[255];
 
@@ -32,7 +32,7 @@ void seaslog_init_host_name(TSRMLS_D)
     }
 }
 
-void seaslog_clear_host_name(TSRMLS_D)
+void seaslog_clear_host_name(void)
 {
     if (SEASLOG_G(host_name))
     {
@@ -40,12 +40,12 @@ void seaslog_clear_host_name(TSRMLS_D)
     }
 }
 
-void seaslog_init_pid(TSRMLS_D)
+void seaslog_init_pid(void)
 {
     SEASLOG_G(process_id_len) = spprintf(&SEASLOG_G(process_id),0, "%d", getpid());
 }
 
-void seaslog_clear_pid(TSRMLS_D)
+void seaslog_clear_pid(void)
 {
     if (SEASLOG_G(process_id))
     {
@@ -53,13 +53,13 @@ void seaslog_clear_pid(TSRMLS_D)
     }
 }
 
-void seaslog_init_request_id(TSRMLS_D)
+void seaslog_init_request_id(void)
 {
     SEASLOG_G(request_id) = get_uniqid();
     SEASLOG_G(request_id_len) = strlen(SEASLOG_G(request_id));
 }
 
-void seaslog_clear_request_id(TSRMLS_D)
+void seaslog_clear_request_id(void)
 {
     if (SEASLOG_G(request_id))
     {
@@ -67,13 +67,13 @@ void seaslog_clear_request_id(TSRMLS_D)
     }
 }
 
-void seaslog_init_auto_globals(TSRMLS_D)
+void seaslog_init_auto_globals(void)
 {
     SEASLOG_AUTO_GLOBAL("_SERVER");
 }
 
 
-zval *seaslog_request_query(SEASLOG_UINT query_type, void *name, size_t len TSRMLS_DC)
+zval *seaslog_request_query(SEASLOG_UINT query_type, void *name, size_t len )
 {
 #if PHP_VERSION_ID >= 70000
     zval *carrier = NULL, *ret;
@@ -129,7 +129,7 @@ zval *seaslog_request_query(SEASLOG_UINT query_type, void *name, size_t len TSRM
 #endif
 }
 
-int seaslog_init_request_variable(TSRMLS_D)
+int seaslog_init_request_variable(void)
 {
     zval *client_ip;
     zval *domain;
@@ -140,14 +140,14 @@ int seaslog_init_request_variable(TSRMLS_D)
 
     if (!strncmp(sapi_module.name, SEASLOG_CLI_KEY, sizeof(SEASLOG_CLI_KEY) - 1) || !strncmp(sapi_module.name, SEASLOG_PHPDBG_KEY, sizeof(SEASLOG_PHPDBG_KEY) - 1))
     {
-        request_uri = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("SCRIPT_NAME") TSRMLS_CC);
+        request_uri = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("SCRIPT_NAME") );
         if (request_uri != NULL && IS_STRING == Z_TYPE_P(request_uri))
         {
             SEASLOG_G(request_variable)->request_uri_len = spprintf(&SEASLOG_G(request_variable)->request_uri, 0, "%s", Z_STRVAL_P(request_uri));
             SEASLOG_ZVAL_PTR_DTOR(request_uri);
         }
 
-        request_method = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("SHELL") TSRMLS_CC);
+        request_method = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("SHELL") );
         if (request_method != NULL && IS_STRING == Z_TYPE_P(request_method))
         {
             SEASLOG_G(request_variable)->request_method_len = spprintf(&SEASLOG_G(request_variable)->request_method, 0, "%s", Z_STRVAL_P(request_method));
@@ -159,28 +159,28 @@ int seaslog_init_request_variable(TSRMLS_D)
     }
     else
     {
-        domain = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_HOST") TSRMLS_CC);
+        domain = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_HOST") );
         if (domain != NULL && IS_STRING == Z_TYPE_P(domain))
         {
             SEASLOG_G(request_variable)->domain_port_len = spprintf(&SEASLOG_G(request_variable)->domain_port, 0, "%s", Z_STRVAL_P(domain));
             SEASLOG_ZVAL_PTR_DTOR(domain);
         }
 
-        request_uri = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("REQUEST_URI") TSRMLS_CC);
+        request_uri = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("REQUEST_URI") );
         if (request_uri != NULL && IS_STRING == Z_TYPE_P(request_uri))
         {
             SEASLOG_G(request_variable)->request_uri_len = spprintf(&SEASLOG_G(request_variable)->request_uri, 0, "%s", Z_STRVAL_P(request_uri));
             SEASLOG_ZVAL_PTR_DTOR(request_uri);
         }
 
-        request_method = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("REQUEST_METHOD") TSRMLS_CC);
+        request_method = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("REQUEST_METHOD") );
         if (request_method != NULL && IS_STRING == Z_TYPE_P(request_method))
         {
             SEASLOG_G(request_variable)->request_method_len = spprintf(&SEASLOG_G(request_variable)->request_method, 0, "%s", Z_STRVAL_P(request_method));
             SEASLOG_ZVAL_PTR_DTOR(request_method);
         }
 
-        client_ip = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_X_REAL_IP") TSRMLS_CC);
+        client_ip = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_X_REAL_IP") );
         if (client_ip != NULL && IS_STRING == Z_TYPE_P(client_ip))
         {
             SEASLOG_G(request_variable)->client_ip_len = spprintf(&SEASLOG_G(request_variable)->client_ip, 0, "%s", Z_STRVAL_P(client_ip));
@@ -188,7 +188,7 @@ int seaslog_init_request_variable(TSRMLS_D)
             return SUCCESS;
         }
 
-        client_ip = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_X_FORWARDED_FOR") TSRMLS_CC);
+        client_ip = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_X_FORWARDED_FOR") );
         if (client_ip != NULL && IS_STRING == Z_TYPE_P(client_ip))
         {
             SEASLOG_G(request_variable)->client_ip_len = spprintf(&SEASLOG_G(request_variable)->client_ip, 0, "%s", Z_STRVAL_P(client_ip));
@@ -196,7 +196,7 @@ int seaslog_init_request_variable(TSRMLS_D)
             return SUCCESS;
         }
 
-        client_ip = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("REMOTE_ADDR") TSRMLS_CC);
+        client_ip = seaslog_request_query(SEASLOG_GLOBAL_VARS_SERVER, ZEND_STRL("REMOTE_ADDR") );
         if (client_ip != NULL && IS_STRING == Z_TYPE_P(client_ip))
         {
             SEASLOG_G(request_variable)->client_ip_len = spprintf(&SEASLOG_G(request_variable)->client_ip, 0, "%s", Z_STRVAL_P(client_ip));
@@ -208,7 +208,7 @@ int seaslog_init_request_variable(TSRMLS_D)
     return SUCCESS;
 }
 
-void seaslog_clear_request_variable(TSRMLS_D)
+void seaslog_clear_request_variable(void)
 {
     if(SEASLOG_G(request_variable)->request_uri)
     {
@@ -233,7 +233,7 @@ void seaslog_clear_request_variable(TSRMLS_D)
     efree(SEASLOG_G(request_variable));
 }
 
-void get_code_filename_line(smart_str *result TSRMLS_DC)
+void get_code_filename_line(smart_str *result )
 {
     const char *ret;
     size_t retlen = 0;
@@ -333,9 +333,9 @@ void get_code_filename_line(smart_str *result TSRMLS_DC)
     }
 
 #if PHP_VERSION_ID >= 50400
-    php_basename(ret, retlen, NULL, 0, &filename, &filename_len TSRMLS_CC);
+    php_basename(ret, retlen, NULL, 0, &filename, &filename_len );
 #else
-    php_basename((char *)ret, retlen, NULL, 0, &filename, &filename_len TSRMLS_CC);
+    php_basename((char *)ret, retlen, NULL, 0, &filename, &filename_len );
 #endif
 
     smart_str_appendl(result,filename,filename_len);

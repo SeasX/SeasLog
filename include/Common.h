@@ -21,11 +21,11 @@
 
 int seaslog_smart_str_get_len(smart_str str);
 
-int check_sapi_is_cli(TSRMLS_D);
-int check_log_level(int level TSRMLS_DC);
+int check_sapi_is_cli(void);
+int check_log_level(int level );
 int seaslog_get_level_int(char *level);
 char *str_replace(char *src, const char *from, const char *to);
-int message_trim_wrap(char *message,int message_len TSRMLS_DC);
+int message_trim_wrap(char *message,int message_len );
 
 char* delN(char *a);
 char* get_uniqid();

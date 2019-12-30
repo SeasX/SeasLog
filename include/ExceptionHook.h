@@ -19,10 +19,10 @@
 
 #include "php_seaslog.h"
 
-void seaslog_throw_exception(int type TSRMLS_DC, const char *format, ...);
-void init_exception_hooks(TSRMLS_D);
-void recovery_exception_hooks(TSRMLS_D);
-void seaslog_throw_exception_hook(zval *exception TSRMLS_DC);
+void seaslog_throw_exception(int type , const char *format, ...);
+void init_exception_hooks(void);
+void recovery_exception_hooks(void);
+void seaslog_throw_exception_hook(zval *exception );
 
 #endif /* _SEASLOG_EXCEPTIONHOOK_H_ */
 

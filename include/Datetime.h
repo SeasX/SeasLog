@@ -19,14 +19,14 @@
 
 #include "php_seaslog.h"
 
-char *make_real_time(TSRMLS_D);
-void init_remote_timeout(TSRMLS_D);
-char *seaslog_process_last_sec(int now, int if_first TSRMLS_DC);
+char *make_real_time(void);
+void init_remote_timeout(void);
+char *seaslog_process_last_sec(int now, int if_first );
 void mic_time(smart_str *buf);
-char *make_time_RFC3339(TSRMLS_D);
-char *make_real_date(TSRMLS_D);
-char *make_real_time(TSRMLS_D);
-char *seaslog_process_last_min(int now, int if_first TSRMLS_DC);
+char *make_time_RFC3339(void);
+char *make_real_date(void);
+char *make_real_time(void);
+char *seaslog_process_last_min(int now, int if_first );
 
 #endif /* _SEASLOG_DATETIME_H_ */
 

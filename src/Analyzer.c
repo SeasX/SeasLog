@@ -19,7 +19,7 @@
 #include "ExceptionHook.h"
 #include "TemplateFormatter.h"
 
-long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
+long get_type_count(char *log_path, char *level, char *key_word )
 {
     FILE * fp;
     char buffer[BUFSIZ];
@@ -38,7 +38,7 @@ long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
     }
     else
     {
-        seaslog_spprintf(&level_template TSRMLS_CC, SEASLOG_GENERATE_LEVEL_TEMPLATE, level, 0);
+        seaslog_spprintf(&level_template , SEASLOG_GENERATE_LEVEL_TEMPLATE, level, 0);
     }
 
 
@@ -111,7 +111,7 @@ long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
 
     if (!fp)
     {
-        seaslog_throw_exception(SEASLOG_EXCEPTION_CONTENT_ERROR TSRMLS_CC, "Unable to fork [%s]", sh);
+        seaslog_throw_exception(SEASLOG_EXCEPTION_CONTENT_ERROR , "Unable to fork [%s]", sh);
         return -1;
     }
     else
@@ -131,7 +131,7 @@ long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
     return count;
 }
 
-int get_detail(char *log_path, char *level, char *key_word, long start, long end, long order, zval *return_value TSRMLS_DC)
+int get_detail(char *log_path, char *level, char *key_word, long start, long end, long order, zval *return_value )
 {
     FILE * fp;
     char buffer[SEASLOG_BUFFER_MAX_SIZE];
@@ -161,7 +161,7 @@ int get_detail(char *log_path, char *level, char *key_word, long start, long end
     }
     else
     {
-        seaslog_spprintf(&level_template TSRMLS_CC, SEASLOG_GENERATE_LEVEL_TEMPLATE, level, 0);
+        seaslog_spprintf(&level_template , SEASLOG_GENERATE_LEVEL_TEMPLATE, level, 0);
     }
 
     if (SEASLOG_G(disting_type))
@@ -244,7 +244,7 @@ int get_detail(char *log_path, char *level, char *key_word, long start, long end
 
     if (!fp)
     {
-        seaslog_throw_exception(SEASLOG_EXCEPTION_CONTENT_ERROR TSRMLS_CC, "Unable to fork [%s]", sh);
+        seaslog_throw_exception(SEASLOG_EXCEPTION_CONTENT_ERROR , "Unable to fork [%s]", sh);
 
         return FAILURE;
     }

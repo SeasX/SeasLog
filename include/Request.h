@@ -19,16 +19,16 @@
 
 #include "php_seaslog.h"
 
-void seaslog_init_pid(TSRMLS_D);
-void seaslog_init_host_name(TSRMLS_D);
-void seaslog_init_request_id(TSRMLS_D);
-void seaslog_init_auto_globals(TSRMLS_D);
-int seaslog_init_request_variable(TSRMLS_D);
-void seaslog_clear_request_id(TSRMLS_D);
-void seaslog_clear_pid(TSRMLS_D);
-void seaslog_clear_host_name(TSRMLS_D);
-void seaslog_clear_request_variable(TSRMLS_D);
-void get_code_filename_line(smart_str *result TSRMLS_DC);
+void seaslog_init_pid(void);
+void seaslog_init_host_name(void);
+void seaslog_init_request_id(void);
+void seaslog_init_auto_globals(void);
+int seaslog_init_request_variable(void);
+void seaslog_clear_request_id(void);
+void seaslog_clear_pid(void);
+void seaslog_clear_host_name(void);
+void seaslog_clear_request_variable(void);
+void get_code_filename_line(smart_str *result );
 
 #endif /* _SEASLOG_REQUEST_H_ */
 
