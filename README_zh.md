@@ -290,7 +290,8 @@ ct => call_times (方法调用计数)
 * `%F` - FileName:LineNo 文件名:行号，如`UserService.php:118`。
 * `%U` - MemoryUsage 当前内容使用量，单位byte。调用`zend_memory_usage`。
 * `%u` - PeakMemoryUsage 当前内容使用峰值量，单位byte。调用`zend_memory_peak_usage`。
-* `%C` - Class::Action 类名::方法名，如`UserService::getUserInfo`。不在类中使用时，记录函数名
+* `%C` - Class::Action 类名::方法名，如`UserService::getUserInfo`。不在类中使用时，记录函数名。
+* `%B` - BasePath路径,如`/var/log/www`。受`seaslog.default_basepath`和`setBasePath`影响。
 
 ## 使用
 

@@ -236,6 +236,7 @@ void seaslog_clear_request_variable(TSRMLS_D)
 void get_code_filename_line(smart_str *result TSRMLS_DC)
 {
     const char *ret;
+    size_t retlen = 0;
     long code_line = 0;
     size_t filename_len;
     int recall_depth = SEASLOG_G(recall_depth);
@@ -245,6 +246,7 @@ void get_code_filename_line(smart_str *result TSRMLS_DC)
     if (SEASLOG_G(in_error) == 1)
     {
         ret = SEASLOG_G(in_error_filename);
+        retlen = strlen(ret);
         code_line = SEASLOG_G(in_error_lineno);
     }
     else
@@ -273,11 +275,12 @@ void get_code_filename_line(smart_str *result TSRMLS_DC)
         if (ptr->func && ZEND_USER_CODE(ptr->func->type))
         {
             ret = ZSTR_VAL(ptr->func->op_array.filename);
+            retlen = strlen(ret);
             code_line = ptr->opline->lineno;
         }
     }
 
-    filename = php_basename(ret, strlen(ret), NULL, 0);
+    filename = php_basename(ret, retlen, NULL, 0);
 
     smart_str_appendl(result,ZSTR_VAL(filename),ZSTR_LEN(filename));
     smart_str_appendc(result,':');
@@ -291,6 +294,7 @@ void get_code_filename_line(smart_str *result TSRMLS_DC)
     if (SEASLOG_G(in_error) == 1)
     {
         ret = SEASLOG_G(in_error_filename);
+        retlen = strlen(ret);
         code_line = SEASLOG_G(in_error_lineno);
     }
     else
@@ -317,19 +321,21 @@ void get_code_filename_line(smart_str *result TSRMLS_DC)
         if (ptr->op_array)
         {
             ret = ptr->op_array->filename;
+            retlen = strlen(ret);
             code_line = ptr->opline->lineno;
         }
         else if (ptr->prev_execute_data && ptr->prev_execute_data->opline)
         {
-            ret = ptr->op_array->filename;
+            ret = ptr->prev_execute_data->op_array->filename;
+            retlen = strlen(ret);
             code_line = ptr->prev_execute_data->opline->lineno;
         }
     }
 
 #if PHP_VERSION_ID >= 50400
-    php_basename(ret, strlen(ret), NULL, 0, &filename, &filename_len TSRMLS_CC);
+    php_basename(ret, retlen, NULL, 0, &filename, &filename_len TSRMLS_CC);
 #else
-    php_basename((char *)ret, strlen(ret), NULL, 0, &filename, &filename_len TSRMLS_CC);
+    php_basename((char *)ret, retlen, NULL, 0, &filename, &filename_len TSRMLS_CC);
 #endif
 
     smart_str_appendl(result,filename,filename_len);
