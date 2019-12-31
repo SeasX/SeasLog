@@ -369,7 +369,8 @@ void seaslog_template_formatter(smart_str *xbuf TSRMLS_DC, int generate_type, co
                     break;
                 case 'B': //BasePath
                     s = SEASLOG_G(base_path);
-                    if(s == NULL){
+                    if(s == NULL)
+                    {
                         s = SEASLOG_G(default_basepath);
                     }
                     s_len = strlen(s);
