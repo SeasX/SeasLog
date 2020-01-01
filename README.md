@@ -537,6 +537,26 @@ class SeasLog
     }
 
     /**
+     * Get The Buffer Enabled Or Not
+     *
+     * @return bool
+     */
+    static public function getBufferEnabled()
+    {
+        return true;
+    }
+    
+    /**
+    * Get The Buffer Count
+    *
+    * @return int
+    */
+    static public function getBufferCount()
+    {
+        return 0;
+    }
+
+    /**
      * Flush The Buffer Dump To Writer Appender
      *
      * @return bool

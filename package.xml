@@ -24,11 +24,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2019-02-12</date>
-    <time>17:00:00</time>
+    <date>2020-01-01</date>
+    <time>21:28:00</time>
     <version>
-        <release>2.0.2</release>
-        <api>2.0.2</api>
+        <release>2.1.0</release>
+        <api>2.1.0</api>
     </version>
     <stability>
         <release>stable</release>
@@ -36,8 +36,15 @@
     </stability>
     <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
     <notes>
-        - Fixed issue #175 support trace_performance automatic logging.
-        - Fixed `%C` in log template, support Class::Action.
+        - Support PHP7.4
+        - Support getBufferCount function and modify flushBuffer function.
+        - Support `%B` in log template, support BasePath.
+        - Enhancement trim_wrap.
+        - Fixed issue #265.
+        - Fixed bug trace_performance core dump by performance_frames init.
+        - Fixed ignore php errors before module initialized.
+        - Fixed php-stream use update in php7.
+        - Fixed can`t append to file after stream changed in php7.
     </notes>
     <contents>
         <dir name="/">
@@ -109,6 +116,8 @@
                 <file role="src" name="018.phpt" />
                 <file role="src" name="019.phpt" />
                 <file role="src" name="020.phpt" />
+                <file role="src" name="021.phpt" />
+                <file role="src" name="022.phpt" />
                 <file role="src" name="seaslog.test.php" />
                 <file role="src" name="SeasLogVSlog4php.png" />
             </dir>
@@ -657,7 +666,23 @@
                 - Fixed issue #249 add unit test and fixed setLogger bug.
                 - Fixed build error with mac osx.
             </notes>
-
+        </release>
+        <release>
+            <date>2019-02-12</date>
+            <time>17:00:00</time>
+            <version>
+                <release>2.0.2</release>
+                <api>2.0.2</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
+            <notes>
+                - Fixed issue #175 support trace_performance automatic logging.
+                - Fixed `%C` in log template, support Class::Action.
+            </notes>
         </release>
     </changelog>
 </package>

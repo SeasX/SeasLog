@@ -3,7 +3,7 @@
 ```php
 /path/to/php --re seaslog
 
-Extension [ <persistent> extension #44 SeasLog version 2.0.2 ] {
+Extension [ <persistent> extension #40 SeasLog version 2.1.0 ] {
 
   - Dependencies {
   }
@@ -25,7 +25,7 @@ Extension [ <persistent> extension #44 SeasLog version 2.0.2 ] {
       Current = '1'
     }
     Entry [ seaslog.disting_type <SYSTEM> ]
-      Current = '0'
+      Current = '1'
     }
     Entry [ seaslog.disting_by_hour <SYSTEM> ]
       Current = '0'
@@ -49,7 +49,7 @@ Extension [ <persistent> extension #44 SeasLog version 2.0.2 ] {
       Current = '1'
     }
     Entry [ seaslog.trace_exception <SYSTEM> ]
-      Current = '0'
+      Current = '1'
     }
     Entry [ seaslog.level <ALL> ]
       Current = '8'
@@ -82,7 +82,7 @@ Extension [ <persistent> extension #44 SeasLog version 2.0.2 ] {
       Current = '1'
     }
     Entry [ seaslog.trace_performance <SYSTEM> ]
-      Current = '1'
+      Current = '0'
     }
     Entry [ seaslog.trace_performance_sample_rate <ALL> ]
       Current = '10'
@@ -105,7 +105,7 @@ Extension [ <persistent> extension #44 SeasLog version 2.0.2 ] {
   }
 
   - Constants [22] {
-    Constant [ string SEASLOG_VERSION ] { 2.0.2 }
+    Constant [ string SEASLOG_VERSION ] { 2.1.0 }
     Constant [ string SEASLOG_AUTHOR ] { Chitao.Gao  [ neeke@php.net ] }
     Constant [ string SEASLOG_ALL ] { ALL }
     Constant [ string SEASLOG_DEBUG ] { DEBUG }
@@ -145,7 +145,7 @@ Extension [ <persistent> extension #44 SeasLog version 2.0.2 ] {
       - Static properties [0] {
       }
 
-      - Static methods [23] {
+      - Static methods [26] {
         Method [ <internal:SeasLog> static public method setBasePath ] {
 
           - Parameters [1] {
@@ -233,10 +233,17 @@ Extension [ <persistent> extension #44 SeasLog version 2.0.2 ] {
         Method [ <internal:SeasLog> static public method getBuffer ] {
         }
 
+        Method [ <internal:SeasLog> static public method getBufferCount ] {
+        }
+
         Method [ <internal:SeasLog> static public method getBufferEnabled ] {
         }
 
         Method [ <internal:SeasLog> static public method flushBuffer ] {
+
+          - Parameters [1] {
+            Parameter #0 [ <optional> $type ]
+          }
         }
 
         Method [ <internal:SeasLog> static public method log ] {
