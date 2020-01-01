@@ -199,6 +199,26 @@ class SeasLog
     }
 
     /**
+     * 获取是否开启buffer
+     *
+     * @return bool
+     */
+    static public function getBufferEnabled()
+    {
+        return true;
+    }
+
+    /**
+     * 获取当前buffer count
+     *
+     * @return int
+     */
+    static public function getBufferCount()
+    {
+        return 0;
+    }
+
+    /**
      * 将buffer中的日志立刻刷到硬盘
      *
      * @return bool
