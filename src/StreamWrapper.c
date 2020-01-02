@@ -111,7 +111,7 @@ int seaslog_clear_stream(int destroy, int model, char *opt TSRMLS_DC)
 #if PHP_VERSION_ID >= 70000
     zend_ulong num_key;
 #else
-    ulong num_key;
+    SEASLOG_ULONG num_key;
 #endif
 
 #if PHP_VERSION_ID >= 70000
@@ -187,7 +187,7 @@ int seaslog_clear_stream(int destroy, int model, char *opt TSRMLS_DC)
 
 php_stream *process_stream(char *opt, int opt_len TSRMLS_DC)
 {
-    ulong stream_entry_hash;
+    SEASLOG_ULONG stream_entry_hash;
     php_stream *stream = NULL;
     HashTable *ht_list;
     php_stream_statbuf dest_s;
