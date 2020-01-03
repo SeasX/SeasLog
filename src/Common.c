@@ -192,7 +192,7 @@ char* php_strtr_array(char *str, int slen, HashTable *hash)
     zval **entry;
     char  *string_key, *string_key_tmp = NULL;
     uint   string_key_len;
-    SEASLOG_ULONG  num_key;
+    zend_ulong  num_key;
     HashPosition hpos;
 
     char *tmp = estrdup(str);

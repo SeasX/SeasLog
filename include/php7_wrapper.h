@@ -16,11 +16,7 @@
 #ifndef _PHP_SEASLOG_PHP7_WRAPPER_H_
 #define _PHP_SEASLOG_PHP7_WRAPPER_H_
 
-#if PHP_VERSION_ID >= 70400
-typedef zend_ulong SEASLOG_ULONG;
-#else
-typedef ulong SEASLOG_ULONG;
-#endif
+
 #if PHP_VERSION_ID >= 70000
 
 #if PHP_VERSION_ID >= 70200

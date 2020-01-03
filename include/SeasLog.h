@@ -155,7 +155,7 @@
 
 typedef struct _logger_entry_t
 {
-    SEASLOG_ULONG logger_hash;
+    zend_ulong logger_hash;
     char *folder;
     char *logger;
     int logger_len;
@@ -168,7 +168,7 @@ typedef struct _stream_entry_t
 {
     char *opt;
     int opt_len;
-    SEASLOG_ULONG stream_entry_hash;
+    zend_ulong stream_entry_hash;
     php_stream *stream;
     int can_delete;
 } stream_entry_t;
