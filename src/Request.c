@@ -280,6 +280,11 @@ void get_code_filename_line(smart_str *result TSRMLS_DC)
         }
     }
 
+    if (retlen == 0)
+    {
+        return;
+    }
+
     filename = php_basename(ret, retlen, NULL, 0);
 
     smart_str_appendl(result,ZSTR_VAL(filename),ZSTR_LEN(filename));
@@ -330,6 +335,11 @@ void get_code_filename_line(smart_str *result TSRMLS_DC)
             retlen = strlen(ret);
             code_line = ptr->prev_execute_data->opline->lineno;
         }
+    }
+
+    if (retlen == 0)
+    {
+        return;
     }
 
 #if PHP_VERSION_ID >= 50400
