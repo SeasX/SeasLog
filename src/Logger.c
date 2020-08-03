@@ -177,7 +177,7 @@ void seaslog_clear_logger_list(TSRMLS_D)
 
 logger_entry_t *process_logger(char *logger, int logger_len, int last_or_tmp TSRMLS_DC)
 {
-    ulong logger_entry_hash = zend_inline_hash_func(logger, logger_len);
+    zend_ulong logger_entry_hash = zend_inline_hash_func(logger, logger_len);
     logger_entry_t *logger_entry;
     HashTable *ht_list;
     HashTable *ht_logger;

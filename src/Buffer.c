@@ -226,7 +226,7 @@ void seaslog_shutdown_buffer(int re_init TSRMLS_DC)
         while (zend_hash_get_current_data(ht, (void **)&ppzval) == SUCCESS)
         {
             char *key = NULL;
-            ulong idx = 0;
+            zend_ulong idx = 0;
 
             zend_hash_get_current_key(ht, &key, &idx, 0);
             convert_to_array_ex(ppzval);
