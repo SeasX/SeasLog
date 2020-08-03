@@ -206,7 +206,7 @@ int make_log_dir(char *dir TSRMLS_DC)
 #endif
 
 
-    if (SEASLOG_G(appender) == SEASLOG_APPENDER_FILE)
+    if (SEASLOG_G(appender) <= SEASLOG_APPENDER_FILE)
     {
         if (strncasecmp(dir, "file://", sizeof("file://") - 1) == 0)
         {

@@ -45,6 +45,10 @@ extern zend_module_entry seaslog_module_entry;
 # define PHP_SEASLOG_API
 #endif
 
+#if PHP_VERSION_ID < 70000
+typedef long zend_long;
+#endif
+
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_basepath;
     char *default_logger;
@@ -90,12 +94,12 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     int trace_performance_active;
     int trace_performance_sample_active;
     zend_bool trace_performance;
-    int trace_performance_sample_rate;
-    int trace_performance_start_depth;
-    int trace_performance_max_depth;
-    int trace_performance_max_functions_per_depth;
-    int trace_performance_min_wall_time;
-    int trace_performance_min_function_wall_time;
+    zend_long trace_performance_sample_rate;
+    zend_long trace_performance_start_depth;
+    zend_long trace_performance_max_depth;
+    zend_long trace_performance_max_functions_per_depth;
+    zend_long trace_performance_min_wall_time;
+    zend_long trace_performance_min_function_wall_time;
 
     long stack_level;
     seaslog_performance_main *performance_main;
@@ -104,18 +108,18 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_ulong function_hash_counters[SEASLOG_PERFORMANCE_COUNTER_SIZE];
     seaslog_performance_bucket* performance_buckets[SEASLOG_PERFORMANCE_BUCKET_SLOTS];
 
-    int buffer_size;
-    int level;
+    zend_long buffer_size;
+    zend_long level;
     int buffer_count;
     int initRComplete;
     int error_loop;
-    int recall_depth;
+    zend_long recall_depth;
 
-    int appender;
-    int appender_retry;
+    zend_long appender;
+    zend_long appender_retry;
     char *remote_host;
-    int remote_port;
-    int remote_timeout;
+    zend_long remote_port;
+    zend_long remote_timeout;
     struct timeval remote_timeout_real;
 
     request_variable_t *request_variable;
