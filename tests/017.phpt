@@ -9,6 +9,8 @@ if (!extension_loaded('seaslog')
     print 'skip';
 }
 ?>
+--INI--
+seaslog.default_template = "%T | %L | %P | %Q | %t | %M"
 --FILE--
 <?php
 SeasLog::setBasePath('base_path');
