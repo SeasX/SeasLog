@@ -35,6 +35,16 @@
 #include "ext/standard/php_smart_str.h"
 #endif
 
+#if PHP_VERSION_ID >= 80000
+#define TSRMLS_D	void
+#define TSRMLS_DC
+#define TSRMLS_C
+#define TSRMLS_CC
+#define TSRMLS_FETCH()
+
+#define ZEND_ACC_DTOR 0
+#endif
+
 #include <stdlib.h>
 
 #define SEASLOG_RES_NAME                        "SeasLog"
