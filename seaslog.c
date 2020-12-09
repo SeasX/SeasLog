@@ -39,15 +39,6 @@ ZEND_GET_MODULE(seaslog)
 
 zend_class_entry *seaslog_ce;
 
-const zend_function_entry seaslog_functions[] =
-{
-    PHP_FE(seaslog_get_version, NULL)
-    PHP_FE(seaslog_get_author,  NULL)
-    {
-        NULL, NULL, NULL
-    }
-};
-
 #if ZEND_MODULE_API_NO >= 20050922
 zend_module_dep seaslog_deps[] =
 {
@@ -57,28 +48,52 @@ zend_module_dep seaslog_deps[] =
 };
 #endif
 
+ZEND_BEGIN_ARG_INFO_EX(seaslog_get_version_arginfo, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_get_auther_arginfo, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_contruct_arginfo, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_destruct_arginfo, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(seaslog_setBasePath_arginfo, 0, 0, 1)
 ZEND_ARG_INFO(0, base_path)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_getBasePath_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(seaslog_setRequestID_arginfo, 0, 0, 1)
 ZEND_ARG_INFO(0, request_id)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(seaslog_getRequestID_arginfo, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(seaslog_setLogger_arginfo, 0, 0, 1)
 ZEND_ARG_INFO(0, logger)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(seaslog_closeLoggerStream_arginfo, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(seaslog_closeLoggerStream_arginfo, 0, 0, 0)
 ZEND_ARG_INFO(0, model)
 ZEND_ARG_INFO(0, logger)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_getLastLogger_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(seaslog_setDatetimeFormat_arginfo, 0, 0, 1)
 ZEND_ARG_INFO(0, format)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(seaslog_analyzerCount_arginfo, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(seaslog_getDatetimeFormat_arginfo, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_analyzerCount_arginfo, 0, 0, 0)
 ZEND_ARG_INFO(0, level)
 ZEND_ARG_INFO(0, log_path)
 ZEND_ARG_INFO(0, key_word)
@@ -91,6 +106,15 @@ ZEND_ARG_INFO(0, key_word)
 ZEND_ARG_INFO(0, start)
 ZEND_ARG_INFO(0, limit)
 ZEND_ARG_INFO(0, order)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_getBuffer_arginfo, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_getBufferCount_arginfo, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_getBufferEnabled_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(seaslog_log_arginfo, 0, 0, 1)
@@ -119,32 +143,41 @@ ZEND_BEGIN_ARG_INFO_EX(seaslog_flushbuffer_arginfo, 0, 0, 0)
 ZEND_ARG_INFO(0, type)
 ZEND_END_ARG_INFO()
 
+const zend_function_entry seaslog_functions[] =
+{
+    PHP_FE(seaslog_get_version, seaslog_get_version_arginfo)
+    PHP_FE(seaslog_get_author,  seaslog_get_auther_arginfo)
+    {
+        NULL, NULL, NULL
+    }
+};
+
 const zend_function_entry seaslog_methods[] =
 {
-    PHP_ME(SEASLOG_RES_NAME, __construct,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
-    PHP_ME(SEASLOG_RES_NAME, __destruct,    NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
+    PHP_ME(SEASLOG_RES_NAME, __construct, seaslog_contruct_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+    PHP_ME(SEASLOG_RES_NAME, __destruct,  seaslog_destruct_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
 
-    PHP_ME(SEASLOG_RES_NAME, setBasePath,   seaslog_setBasePath_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, getBasePath,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, setLogger,     seaslog_setLogger_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, closeLoggerStream,     seaslog_closeLoggerStream_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, getLastLogger, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, setBasePath,       seaslog_setBasePath_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getBasePath,       seaslog_getBasePath_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, setLogger,         seaslog_setLogger_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, closeLoggerStream, seaslog_closeLoggerStream_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getLastLogger,     seaslog_getLastLogger_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
-    PHP_ME(SEASLOG_RES_NAME, setRequestID,  seaslog_setRequestID_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, getRequestID,  NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, setRequestID, seaslog_setRequestID_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getRequestID, seaslog_getRequestID_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
-    PHP_ME(SEASLOG_RES_NAME, setDatetimeFormat,     seaslog_setDatetimeFormat_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, getDatetimeFormat,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, setDatetimeFormat, seaslog_setDatetimeFormat_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getDatetimeFormat, seaslog_getDatetimeFormat_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
-    PHP_ME(SEASLOG_RES_NAME, setRequestVariable,   seaslog_setRequestVariable_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, getRequestVariable,   seaslog_getRequestVariable_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, setRequestVariable, seaslog_setRequestVariable_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getRequestVariable, seaslog_getRequestVariable_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
-    PHP_ME(SEASLOG_RES_NAME, analyzerCount, seaslog_analyzerCount_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, analyzerDetail,seaslog_analyzerDetail_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, getBuffer,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, getBufferCount, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, getBufferEnabled,     NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-    PHP_ME(SEASLOG_RES_NAME, flushBuffer,   seaslog_flushbuffer_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, analyzerCount,    seaslog_analyzerCount_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, analyzerDetail,   seaslog_analyzerDetail_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getBuffer,        seaslog_getBuffer_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getBufferCount,   seaslog_getBufferCount_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getBufferEnabled, seaslog_getBufferEnabled_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, flushBuffer,      seaslog_flushbuffer_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 
     PHP_ME(SEASLOG_RES_NAME, log,           seaslog_log_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, debug,         seaslog_log_common_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
