@@ -45,6 +45,10 @@
 #define ZEND_ACC_DTOR 0
 #endif
 
+#ifndef IGNORE_URL_WIN
+#define IGNORE_URL_WIN 0
+#endif
+
 #include <stdlib.h>
 
 #define SEASLOG_RES_NAME                        "SeasLog"
