@@ -24,11 +24,11 @@
         <email>neeke@php.net</email>
         <active>yes</active>
     </lead>
-    <date>2020-01-01</date>
-    <time>21:28:00</time>
+    <date>2021-01-19</date>
+    <time>15:45:00</time>
     <version>
-        <release>2.1.0</release>
-        <api>2.1.0</api>
+        <release>2.2.0</release>
+        <api>2.2.0</api>
     </version>
     <stability>
         <release>stable</release>
@@ -36,15 +36,11 @@
     </stability>
     <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
     <notes>
-        - Support PHP7.4
-        - Support getBufferCount function and modify flushBuffer function.
-        - Support `%B` in log template, support BasePath.
-        - Enhancement trim_wrap.
-        - Fixed issue #265.
-        - Fixed bug trace_performance core dump by performance_frames init.
-        - Fixed ignore php errors before module initialized.
-        - Fixed php-stream use update in php7.
-        - Fixed can`t append to file after stream changed in php7.
+        - Support PHP8
+        - Support s390x and mips64 platform
+        - Fixed ulong conflicting
+        - Fixed test case dependence on INI setting (seaslog.default_template)
+        - Fixed memory leak on `get_code_filename_line`
     </notes>
     <contents>
         <dir name="/">
@@ -682,6 +678,30 @@
             <notes>
                 - Fixed issue #175 support trace_performance automatic logging.
                 - Fixed `%C` in log template, support Class::Action.
+            </notes>
+        </release>
+        <release>
+            <date>2020-01-01</date>
+            <time>21:28:00</time>
+            <version>
+                <release>2.1.0</release>
+                <api>2.1.0</api>
+            </version>
+            <stability>
+                <release>stable</release>
+                <api>stable</api>
+            </stability>
+            <license uri="http://www.php.net/license/3_01.txt">PHP3.01</license>
+            <notes>
+                - Support PHP7.4
+                - Support getBufferCount function and modify flushBuffer function.
+                - Support `%B` in log template, support BasePath.
+                - Enhancement trim_wrap.
+                - Fixed issue #265.
+                - Fixed bug trace_performance core dump by performance_frames init.
+                - Fixed ignore php errors before module initialized.
+                - Fixed php-stream use update in php7.
+                - Fixed can`t append to file after stream changed in php7.
             </notes>
         </release>
     </changelog>
