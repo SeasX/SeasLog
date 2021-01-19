@@ -1122,7 +1122,8 @@ PHP_METHOD(SEASLOG_RES_NAME, getBufferCount)
     {
         RETURN_LONG(SEASLOG_G(buffer_count));
     }
-    else{
+    else
+    {
         RETURN_LONG(0);
     }
 }
@@ -1140,13 +1141,16 @@ PHP_METHOD(SEASLOG_RES_NAME, flushBuffer)
         return;
     }
 
-    if(type == 0){
+    if(type == 0)
+    {
         seaslog_clear_buffer(TSRMLS_C);
         seaslog_init_buffer(TSRMLS_C);
-    }else{
+    }
+    else
+    {
         seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_CC);
     }
-    
+
 
     RETURN_TRUE;
 }

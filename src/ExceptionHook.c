@@ -22,6 +22,7 @@ static void (*old_throw_exception_hook)(zval *exception TSRMLS_DC);
 #else
 static void (*old_throw_exception_hook)(zend_object *exception);
 #endif
+
 static void process_event_exception(int type, char * error_filename, SEASLOG_UINT error_lineno, char * msg TSRMLS_DC)
 {
     char *event_str;
@@ -34,9 +35,11 @@ static void process_event_exception(int type, char * error_filename, SEASLOG_UIN
 }
 
 #if PHP_VERSION_ID < 80000
-void seaslog_throw_exception_hook(zval *exception TSRMLS_DC){
+void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
+{
 #else
- void seaslog_throw_exception_hook(zend_object *exception){
+void seaslog_throw_exception_hook(zend_object *exception)
+{
 #endif
     zval *message, *file, *line, *code;
 #if PHP_VERSION_ID >= 70000

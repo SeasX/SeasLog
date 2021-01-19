@@ -22,6 +22,7 @@
 void seaslog_throw_exception(int type TSRMLS_DC, const char *format, ...);
 void init_exception_hooks(TSRMLS_D);
 void recovery_exception_hooks(TSRMLS_D);
+
 #if PHP_VERSION_ID < 80000
 void seaslog_throw_exception_hook(zval *exception TSRMLS_DC);
 #else

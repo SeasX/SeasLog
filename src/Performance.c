@@ -45,7 +45,7 @@ ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int
 		for (_i = 0; _i < SEASLOG_PERFORMANCE_BUCKET_SLOTS; _i++) { \
             bucket = SEASLOG_G(performance_buckets)[_i]; \
             while (bucket) { \
-
+ 
 #define SEASLOG_PERFORMANCE_BUCKET_FOREACH_END \
             }\
 		} \
