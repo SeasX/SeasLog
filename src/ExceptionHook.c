@@ -17,8 +17,11 @@
 #include "ExceptionHook.h"
 #include "Appender.h"
 
+#if PHP_VERSION_ID < 80000
 static void (*old_throw_exception_hook)(zval *exception TSRMLS_DC);
-
+#else
+static void (*old_throw_exception_hook)(zend_object *exception);
+#endif
 static void process_event_exception(int type, char * error_filename, SEASLOG_UINT error_lineno, char * msg TSRMLS_DC)
 {
     char *event_str;
@@ -30,8 +33,11 @@ static void process_event_exception(int type, char * error_filename, SEASLOG_UIN
     efree(event_str);
 }
 
-void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
-{
+#if PHP_VERSION_ID < 80000
+void seaslog_throw_exception_hook(zval *exception TSRMLS_DC){
+#else
+ void seaslog_throw_exception_hook(zend_object *exception){
+#endif
     zval *message, *file, *line, *code;
 #if PHP_VERSION_ID >= 70000
     zval rv;
@@ -44,7 +50,11 @@ void seaslog_throw_exception_hook(zval *exception TSRMLS_DC)
     }
 
 #if PHP_VERSION_ID >= 70000
+#if PHP_VERSION_ID >= 80000
+    default_ce = exception->ce;
+#else
     default_ce = Z_OBJCE_P(exception);
+#endif
 #else
     default_ce = zend_exception_get_default(TSRMLS_C);
 #endif

@@ -17,7 +17,11 @@
 #include "ErrorHook.h"
 #include "Appender.h"
 
+#if PHP_VERSION_ID < 80000
 void (*old_error_cb)(int type, const char *error_filename, const SEASLOG_UINT error_lineno, const char *format, va_list args);
+#else
+void (*old_error_cb)(int type, const char *error_filename, const SEASLOG_UINT error_lineno, zend_string *message);
+#endif
 
 static void process_event_error(const char *event_type, int type, char * error_filename, SEASLOG_UINT error_lineno, char * msg TSRMLS_DC)
 {
@@ -36,12 +40,20 @@ static void process_event_error(const char *event_type, int type, char * error_f
     SEASLOG_G(in_error) = 0;
 }
 
+#if PHP_VERSION_ID < 80000
 void seaslog_error_cb(int type, const char *error_filename, const SEASLOG_UINT error_lineno, const char *format, va_list args)
+#else
+void seaslog_error_cb(int type, const char *error_filename, const SEASLOG_UINT error_lineno,zend_string *message)
+#endif
 {
     TSRMLS_FETCH();
     if (SEASLOG_G(initRComplete) != SEASLOG_INITR_COMPLETE_YES)
     {
+#if PHP_VERSION_ID < 80000
         return old_error_cb(type, error_filename, error_lineno, format, args);
+#else
+        return old_error_cb(type, error_filename, error_lineno, message);
+#endif
     }
 
     if (SEASLOG_G(trace_error)
@@ -50,13 +62,16 @@ void seaslog_error_cb(int type, const char *error_filename, const SEASLOG_UINT e
             || SEASLOG_G(trace_warning)
             || SEASLOG_G(trace_notice))
     {
+#if PHP_VERSION_ID < 80000
         char *msg;
         va_list args_copy;
 
         va_copy(args_copy, args);
         vspprintf(&msg, 0, format, args_copy);
         va_end(args_copy);
-
+#else
+        char *msg = ZSTR_VAL(message);
+#endif
         if (type == E_ERROR || type == E_PARSE || type == E_CORE_ERROR || type == E_COMPILE_ERROR || type == E_USER_ERROR || type == E_RECOVERABLE_ERROR)
         {
             if (SEASLOG_G(trace_error))
@@ -78,11 +93,15 @@ void seaslog_error_cb(int type, const char *error_filename, const SEASLOG_UINT e
                 process_event_error("Notice", type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
             }
         }
-
+#if PHP_VERSION_ID < 80000
         efree(msg);
+#endif
     }
-
-    old_error_cb(type, error_filename, error_lineno, format, args);
+#if PHP_VERSION_ID < 80000
+    return old_error_cb(type, error_filename, error_lineno, format, args);
+#else
+    return old_error_cb(type, error_filename, error_lineno, message);
+#endif
 }
 
 void init_error_hooks(TSRMLS_D)
