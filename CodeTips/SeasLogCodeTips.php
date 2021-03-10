@@ -31,7 +31,7 @@ class SeasLog
 
     public function __destruct()
     {
-        #SeasLog distroy
+        #SeasLog destroy
     }
 
     /**
