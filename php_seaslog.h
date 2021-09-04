@@ -50,12 +50,15 @@ typedef long zend_long;
 #endif
 
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
+    char *default_file_prefix;
     char *default_basepath;
     char *default_logger;
     char *default_datetime_format;
     char *current_datetime_format;
     int  current_datetime_format_len;
     char *base_path;
+
+    char *file_prefix;
 
     char *host_name;
     int  host_name_len;
@@ -165,6 +168,8 @@ PHP_FUNCTION(seaslog_get_author);
 extern zend_class_entry *seaslog_ce;
 PHP_METHOD(SEASLOG_RES_NAME, __construct);
 PHP_METHOD(SEASLOG_RES_NAME, __destruct);
+PHP_METHOD(SEASLOG_RES_NAME, setFilePrefix);
+PHP_METHOD(SEASLOG_RES_NAME, getFilePrefix);
 PHP_METHOD(SEASLOG_RES_NAME, setBasePath);
 PHP_METHOD(SEASLOG_RES_NAME, getBasePath);
 PHP_METHOD(SEASLOG_RES_NAME, setRequestID);

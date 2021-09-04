@@ -134,11 +134,11 @@ static int appender_handle_file(char *message, int message_len, char *level, int
     real_date = make_real_date(TSRMLS_C);
     if (SEASLOG_G(disting_type))
     {
-        log_file_path_len = spprintf(&log_file_path, 0, "%s%s%s.%s.log", logger->logger_path, SEASLOG_G(slash_or_underline), real_date, level);
+        log_file_path_len = spprintf(&log_file_path, 0, "%s%s%s%s.%s.log", logger->logger_path, SEASLOG_G(slash_or_underline), SEASLOG_G(file_prefix),real_date, level);
     }
     else
     {
-        log_file_path_len = spprintf(&log_file_path, 0, "%s%s%s.log", logger->logger_path, SEASLOG_G(slash_or_underline), real_date);
+        log_file_path_len = spprintf(&log_file_path, 0, "%s%s%s%s.log", logger->logger_path, SEASLOG_G(slash_or_underline), SEASLOG_G(file_prefix),real_date);
     }
 
     log_len = seaslog_spprintf(&log_info TSRMLS_CC, SEASLOG_GENERATE_LOG_INFO, level, 0, message);

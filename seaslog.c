@@ -60,6 +60,13 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(seaslog_destruct_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(seaslog_setFilePrefix_arginfo, 0, 0, 1)
+ZEND_ARG_INFO(0, file_prefix)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(seaslog_getFilePrefix_arginfo, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(seaslog_setBasePath_arginfo, 0, 0, 1)
 ZEND_ARG_INFO(0, base_path)
 ZEND_END_ARG_INFO()
@@ -157,6 +164,9 @@ const zend_function_entry seaslog_methods[] =
     PHP_ME(SEASLOG_RES_NAME, __construct, seaslog_contruct_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(SEASLOG_RES_NAME, __destruct,  seaslog_destruct_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
 
+    PHP_ME(SEASLOG_RES_NAME, setFilePrefix,  seaslog_setFilePrefix_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+    PHP_ME(SEASLOG_RES_NAME, getFilePrefix,  seaslog_getFilePrefix_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+
     PHP_ME(SEASLOG_RES_NAME, setBasePath,       seaslog_setBasePath_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, getBasePath,       seaslog_getBasePath_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
     PHP_ME(SEASLOG_RES_NAME, setLogger,         seaslog_setLogger_arginfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
@@ -195,6 +205,7 @@ const zend_function_entry seaslog_methods[] =
 };
 
 PHP_INI_BEGIN()
+STD_PHP_INI_ENTRY("seaslog.default_file_prefix", "", PHP_INI_SYSTEM, OnUpdateString, default_file_prefix, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_basepath", "/var/log/www", PHP_INI_SYSTEM, OnUpdateString, default_basepath, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_logger", "default", PHP_INI_SYSTEM, OnUpdateString, default_logger, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_datetime_format", "Y-m-d H:i:s", PHP_INI_SYSTEM, OnUpdateString, default_datetime_format, zend_seaslog_globals, seaslog_globals)
@@ -598,6 +609,43 @@ PHP_METHOD(SEASLOG_RES_NAME, __destruct)
     seaslog_shutdown_buffer(SEASLOG_BUFFER_RE_INIT_YES TSRMLS_CC);
     RETURN_TRUE;
 }
+
+/* {{{ proto bool setFilePrefix(string file_prefix)
+   Set SeasLog base path */
+PHP_METHOD(SEASLOG_RES_NAME, setFilePrefix)
+{
+    zval *_file_prefix;
+    int argc = ZEND_NUM_ARGS();
+
+    if (zend_parse_parameters(argc TSRMLS_CC, "z", &_file_prefix) == FAILURE)
+    {
+        return;
+    }
+
+    if (argc > 0 && (IS_STRING == Z_TYPE_P(_file_prefix) && Z_STRLEN_P(_file_prefix) > 0))
+    {
+        if (SEASLOG_G(file_prefix))
+        {
+            efree(SEASLOG_G(file_prefix));
+
+            SEASLOG_G(file_prefix) = estrdup(Z_STRVAL_P(_file_prefix));
+
+            seaslog_init_default_last_logger(TSRMLS_C);
+        }
+
+        RETURN_TRUE;
+    }
+
+    RETURN_FALSE;
+}
+
+/* {{{ proto string getFilePrefix()
+   Get SeasLog FilePrefix path */
+PHP_METHOD(SEASLOG_RES_NAME, getFilePrefix)
+{
+    SEASLOG_RETURN_STRINGL(SEASLOG_G(file_prefix), strlen(SEASLOG_G(file_prefix)));
+}
+/* }}} */
 
 /* {{{ proto bool setBasePath(string base_path)
    Set SeasLog base path */
