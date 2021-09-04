@@ -28,16 +28,18 @@ var_dump(is_array($aLogsAll) && count($aLogsAll) > 1);
 $aLogsWithType = SeasLog::analyzerDetail(SEASLOG_INFO);
 var_dump(is_array($aLogsWithType) && count($aLogsWithType) > 1);
 
-$aLogsWithLogger = SeasLog::analyzerDetail(SEASLOG_DEBUG, date('Ymd', time()));
+$filePath=SeasLog::getFilePrefix().date('Ymd', time());
+
+$aLogsWithLogger = SeasLog::analyzerDetail(SEASLOG_DEBUG,$filePath);
 var_dump(is_array($aLogsWithLogger) && count($aLogsWithLogger) > 1);
 
-$aLogsWithKeyWord = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace');
+$aLogsWithKeyWord = SeasLog::analyzerDetail(SEASLOG_NOTICE, $filePath,'replace');
 var_dump(is_array($aLogsWithKeyWord) && count($aLogsWithKeyWord) > 1);
 
-$aLogsWithLimit = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace',1,3);
+$aLogsWithLimit = SeasLog::analyzerDetail(SEASLOG_NOTICE, $filePath,'replace',1,3);
 var_dump(is_array($aLogsWithLimit) && count($aLogsWithLimit) == 3);
 
-$aLogsWithOrder = SeasLog::analyzerDetail(SEASLOG_NOTICE, date('Ymd', time()),'replace',1,3,SEASLOG_DETAIL_ORDER_DESC);
+$aLogsWithOrder = SeasLog::analyzerDetail(SEASLOG_NOTICE, $filePath,'replace',1,3,SEASLOG_DETAIL_ORDER_DESC);
 var_dump(is_array($aLogsWithOrder) && count($aLogsWithOrder) == 3);
 
 ?>

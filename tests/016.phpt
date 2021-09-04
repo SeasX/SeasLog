@@ -17,7 +17,9 @@ var_dump(SeasLog::debug('this is a debug log {test}.',array('test' => 'replace')
 var_dump(SeasLog::info('this is a info log {test}.',array('test' => 'replace')));
 var_dump(SeasLog::notice('this is a notice log {test}.',array('test' => 'replace')));
 var_dump(SeasLog::warning('this is a warning log {test}.',array('test' => 'replace')));
-$iInfoCountWithLogger = SeasLog::analyzerCount(SEASLOG_INFO, date('Ymd', time()));
+
+$filePath=SeasLog::getFilePrefix().date('Ymd', time());
+$iInfoCountWithLogger = SeasLog::analyzerCount(SEASLOG_INFO,$filePath );
 var_dump((int)$iInfoCountWithLogger > 0);
 
 $iInfoCountWithType = SeasLog::analyzerCount(SEASLOG_INFO);
