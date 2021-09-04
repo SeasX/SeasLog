@@ -111,6 +111,9 @@ extension = seaslog.so
 ;Default Log Base Path
 seaslog.default_basepath = "/var/log/www"
 
+;Default log file prefix, for example "app-"  default empty string
+seaslog.default_file_prefix = ""
+
 ;Default Logger Path
 seaslog.default_logger = "default"
 

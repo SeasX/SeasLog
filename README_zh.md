@@ -117,6 +117,9 @@ extension = seaslog.so
 ;默认log根目录
 seaslog.default_basepath = "/var/log/www"
 
+;默认log文件前缀 如 "app-" 默认空字符串
+seaslog.default_file_prefix = ""
+
 ;默认logger目录
 seaslog.default_logger = "default"
 
