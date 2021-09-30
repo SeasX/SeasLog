@@ -81,14 +81,21 @@ char *seaslog_process_last_min(int now, int if_first TSRMLS_DC)
 
     SEASLOG_G(last_min)->sec = now;
 
+    char *format, *separator = SEASLOG_G(file_datetime_separator);
+    int format_len;
+
     if (SEASLOG_G(disting_by_hour))
     {
-        SEASLOG_G(last_min)->real_time = seaslog_format_date("YmdH", 4, now TSRMLS_CC);
+        format_len = spprintf(&format, 0, "Y%sm%sd%sH", separator, separator, separator);
+        SEASLOG_G(last_min)->real_time = seaslog_format_date(format, format_len, now TSRMLS_CC);
     }
     else
     {
-        SEASLOG_G(last_min)->real_time = seaslog_format_date("Ymd",  3, now TSRMLS_CC);
+        format_len = spprintf(&format, 0, "Y%sm%sd", separator, separator);
+        SEASLOG_G(last_min)->real_time = seaslog_format_date(format, format_len, now TSRMLS_CC);
     }
+
+    efree(format);
 
     return SEASLOG_G(last_min)->real_time;
 }
