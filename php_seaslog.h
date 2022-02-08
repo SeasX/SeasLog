@@ -51,6 +51,7 @@ typedef long zend_long;
 
 ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *default_file_prefix;
+    char *default_file_datetime_separator;
     char *default_basepath;
     char *default_logger;
     char *default_datetime_format;
@@ -59,6 +60,7 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     char *base_path;
 
     char *file_prefix;
+    char *file_datetime_separator;
 
     char *host_name;
     int  host_name_len;

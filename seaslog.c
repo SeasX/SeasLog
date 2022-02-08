@@ -207,6 +207,7 @@ const zend_function_entry seaslog_methods[] =
 PHP_INI_BEGIN()
 STD_PHP_INI_ENTRY("seaslog.default_basepath", "/var/log/www", PHP_INI_SYSTEM, OnUpdateString, default_basepath, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_file_prefix", "", PHP_INI_SYSTEM, OnUpdateString, default_file_prefix, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.default_file_datetime_separator", "", PHP_INI_SYSTEM, OnUpdateString, default_file_datetime_separator, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_logger", "default", PHP_INI_SYSTEM, OnUpdateString, default_logger, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_datetime_format", "Y-m-d H:i:s", PHP_INI_SYSTEM, OnUpdateString, default_datetime_format, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.default_template", "%T | %L | %P | %Q | %t | %M", PHP_INI_SYSTEM, OnUpdateString, default_template, zend_seaslog_globals, seaslog_globals)

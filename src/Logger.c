@@ -34,6 +34,7 @@ void seaslog_init_last_time(TSRMLS_D)
 {
     int now;
 
+    SEASLOG_G(file_datetime_separator)      = estrdup(SEASLOG_G(default_file_datetime_separator));
     SEASLOG_G(current_datetime_format)      = estrdup(SEASLOG_G(default_datetime_format));
     SEASLOG_G(current_datetime_format_len)  = strlen(SEASLOG_G(current_datetime_format));
 

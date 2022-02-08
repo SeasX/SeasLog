@@ -114,6 +114,9 @@ seaslog.default_basepath = "/var/log/www"
 ;Default log file prefix, for example "app-"  default empty string
 seaslog.default_file_prefix = ""
 
+;Default log file datetime separator, for example "-"  default empty string
+seaslog.default_file_datetime_separator=""
+
 ;Default Logger Path
 seaslog.default_logger = "default"
 

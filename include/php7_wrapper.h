@@ -32,7 +32,7 @@ typedef uint SEASLOG_UINT;
 # define SEASLOG_RETURN_STRINGL(k, l) RETURN_STRINGL(k, l)
 # define SEASLOG_ADD_INDEX_STRINGL(z, i, s, l) add_index_stringl(&z, i, s, l)
 # define SEASLOG_ADD_INDEX_LONG(z, i, l) add_index_long(&z, i, l)
-# define SEASLOG_ADD_INDEX_ZVAL(z, i, zn) add_index_zval(&z, i, &zn)
+# define SEASLOG_ADD_INDEX_ZVAL(z, i, zn) zend_hash_index_update(Z_ARRVAL_P(&z), i, &zn)
 # define SEASLOG_ADD_ASSOC_ZVAL_EX(z, s, l, zn) add_assoc_zval_ex(&z, s, l, &zn)
 # define SEASLOG_ADD_ASSOC_ZVAL_EX_EX(z, sl, zn) add_assoc_zval_ex(&z, sl, &zn)
 # define SEASLOG_ADD_ASSOC_STRING_EX(a, k, s) add_assoc_string_ex(&a, k, s)
