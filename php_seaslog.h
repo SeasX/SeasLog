@@ -96,6 +96,12 @@ ZEND_BEGIN_MODULE_GLOBALS(seaslog)
     zend_bool trace_error;
     zend_bool trace_exception;
 
+    int trace_performance_include_class_prefix_count;
+    int trace_performance_include_function_prefix_count;
+    char *trace_performance_include_class_prefix;
+    char *trace_performance_include_function_prefix;
+    char **trace_performance_include_class_prefix_list;
+    char **trace_performance_include_function_prefix_list;
     int trace_performance_active;
     int trace_performance_sample_active;
     zend_bool trace_performance;
