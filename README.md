@@ -226,6 +226,12 @@ seaslog.trace_performance_start_depth = 1
 ;Performance Tracking Depth Level. 5(Default)
 seaslog.trace_performance_max_depth = 5
 
+;Performance trace namespace/class filtering, empty default, multiple values concatenated with a comma (used to limit the scope of the class trace, the following example will trace App\xxoo or Service\xxoo, commonly used in frameworks, specifying the trace namespace)
+seaslog.trace_performance_include_class_prefix=App,Services
+
+;Performance trace Function name filter, default null, multiple values concatenated with a comma (used to limit the scope of Function tracing for non-class members, the following example will trace only two functions, config() and app()).
+seaslog.trace_performance_include_function_prefix=config,app
+
 ;Maximum number of functions per layer in descending order of wall_time for performance tracking.
 ;Top default top5
 seaslog.trace_performance_max_functions_per_depth = 5

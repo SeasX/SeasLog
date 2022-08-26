@@ -216,6 +216,12 @@ seaslog.trace_performance_start_depth = 1
 ;性能追踪时深度层级 默认5层
 seaslog.trace_performance_max_depth = 5
 
+;性能追踪 命名空间/类 过滤，默认为空，多个值用半角逗号连接（用于限定类追踪范围，下面示例将会追踪 App\xxoo 或 Service\xxoo，常用于框架，指定追踪命名空间）
+seaslog.trace_performance_include_class_prefix=App,Services
+
+;性能追踪 函数名 过滤，默认为空，多个值用半角逗号连接（用于限定非类成员Function追踪范围，下面示例只会追踪 config() 和 app() 两个Function）
+seaslog.trace_performance_include_function_prefix=config,app
+
 ;性能追踪时每层的函数最大数 按wall_time降序排列top 默认top5
 seaslog.trace_performance_max_functions_per_depth = 5
 

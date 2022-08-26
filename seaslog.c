@@ -244,6 +244,8 @@ STD_PHP_INI_BOOLEAN("seaslog.throw_exception", "1", PHP_INI_ALL, OnUpdateBool, t
 STD_PHP_INI_BOOLEAN("seaslog.ignore_warning", "1", PHP_INI_ALL, OnUpdateBool, ignore_warning, zend_seaslog_globals, seaslog_globals)
 
 STD_PHP_INI_BOOLEAN("seaslog.trace_performance", "0", PHP_INI_SYSTEM, OnUpdateBool, trace_performance, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.trace_performance_include_class_prefix", "", PHP_INI_ALL, OnUpdateString, trace_performance_include_class_prefix, zend_seaslog_globals, seaslog_globals)
+STD_PHP_INI_ENTRY("seaslog.trace_performance_include_function_prefix", "", PHP_INI_ALL, OnUpdateString, trace_performance_include_function_prefix, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.trace_performance_sample_rate", "10", PHP_INI_ALL, OnUpdateLongGEZero, trace_performance_sample_rate, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.trace_performance_start_depth", "1", PHP_INI_ALL, OnUpdateLongGEZero, trace_performance_start_depth, zend_seaslog_globals, seaslog_globals)
 STD_PHP_INI_ENTRY("seaslog.trace_performance_max_depth", "5", PHP_INI_ALL, OnUpdateLongGEZero, trace_performance_max_depth, zend_seaslog_globals, seaslog_globals)
@@ -315,12 +317,15 @@ PHP_MINIT_FUNCTION(seaslog)
     init_buffer_switch(TSRMLS_C);
     init_remote_timeout(TSRMLS_C);
     init_zend_hooks(TSRMLS_C);
+    init_performance(TSRMLS_C);
 
     return SUCCESS;
 }
 
 PHP_MSHUTDOWN_FUNCTION(seaslog)
 {
+    clear_performance(TSRMLS_C);
+
     recovery_error_hooks(TSRMLS_C);
     recovery_exception_hooks(TSRMLS_C);
     recovery_zend_hooks(TSRMLS_C);
