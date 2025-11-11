@@ -19,8 +19,10 @@
 
 #if PHP_VERSION_ID < 80000
 void (*old_error_cb)(int type, const char *error_filename, const SEASLOG_UINT error_lineno, const char *format, va_list args);
+#elif PHP_VERSION_ID<80400
+void (*old_error_cb)(int type, const zend_string *error_filename, const SEASLOG_UINT error_lineno, zend_string *message);
 #else
-void (*old_error_cb)(int type, const char *error_filename, const SEASLOG_UINT error_lineno, zend_string *message);
+void (*old_error_cb)(int type, zend_string *error_filename, const uint32_t error_lineno, zend_string *message);
 #endif
 
 static void process_event_error(const char *event_type, int type, char * error_filename, SEASLOG_UINT error_lineno, char * msg TSRMLS_DC)
@@ -42,8 +44,10 @@ static void process_event_error(const char *event_type, int type, char * error_f
 
 #if PHP_VERSION_ID < 80000
 void seaslog_error_cb(int type, const char *error_filename, const SEASLOG_UINT error_lineno, const char *format, va_list args)
+#elif PHP_VERSION_ID <80400
+void seaslog_error_cb(int type, const char *error_filename, const SEASLOG_UINT error_lineno,zend_string *message)
 #else
-void seaslog_error_cb(int orig_type, const char *error_filename, const SEASLOG_UINT error_lineno,zend_string *message)
+void seaslog_error_cb(int type,zend_string *error_filename,const uint32_t error_lineno,zend_string *message)
 #endif
 {
     TSRMLS_FETCH();
@@ -52,7 +56,7 @@ void seaslog_error_cb(int orig_type, const char *error_filename, const SEASLOG_U
 #if PHP_VERSION_ID < 80000
         return old_error_cb(type, error_filename, error_lineno, format, args);
 #else
-        return old_error_cb(orig_type, error_filename, error_lineno, message);
+        return old_error_cb(type, error_filename, error_lineno, message);
 #endif
     }
 
@@ -71,7 +75,6 @@ void seaslog_error_cb(int orig_type, const char *error_filename, const SEASLOG_U
         va_end(args_copy);
 #else
         char *msg = ZSTR_VAL(message);
-        int type = orig_type & E_ALL;
 #endif
         if (type == E_ERROR || type == E_PARSE || type == E_CORE_ERROR || type == E_COMPILE_ERROR || type == E_USER_ERROR || type == E_RECOVERABLE_ERROR)
         {
@@ -101,7 +104,7 @@ void seaslog_error_cb(int orig_type, const char *error_filename, const SEASLOG_U
 #if PHP_VERSION_ID < 80000
     return old_error_cb(type, error_filename, error_lineno, format, args);
 #else
-    return old_error_cb(orig_type, error_filename, error_lineno, message);
+    return old_error_cb(type, error_filename, error_lineno, message);
 #endif
 }
 

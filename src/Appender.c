@@ -22,6 +22,7 @@
 #include "TemplateFormatter.h"
 #include "StreamWrapper.h"
 #include "ExceptionHook.h"
+#include "ext/standard/basic_functions.h"
 
 static int seaslog_real_log_ex(char *message, int message_len, char *opt, int opt_len TSRMLS_DC)
 {
@@ -134,11 +135,11 @@ static int appender_handle_file(char *message, int message_len, char *level, int
     real_date = make_real_date(TSRMLS_C);
     if (SEASLOG_G(disting_type))
     {
-        log_file_path_len = spprintf(&log_file_path, 0, "%s%s%s%s.%s.log", logger->logger_path, SEASLOG_G(slash_or_underline), SEASLOG_G(file_prefix),real_date, level);
+        log_file_path_len = spprintf(&log_file_path, 0, "%s%s%s.%s.log", logger->logger_path, SEASLOG_G(slash_or_underline), real_date, level);
     }
     else
     {
-        log_file_path_len = spprintf(&log_file_path, 0, "%s%s%s%s.log", logger->logger_path, SEASLOG_G(slash_or_underline), SEASLOG_G(file_prefix),real_date);
+        log_file_path_len = spprintf(&log_file_path, 0, "%s%s%s.log", logger->logger_path, SEASLOG_G(slash_or_underline), real_date);
     }
 
     log_len = seaslog_spprintf(&log_info TSRMLS_CC, SEASLOG_GENERATE_LOG_INFO, level, 0, message);
@@ -269,7 +270,7 @@ int make_log_dir(char *dir TSRMLS_DC)
 
         if (p == buf)
         {
-            ret = php_mkdir_ex(dir, SEASLOG_DIR_MODE, PHP_STREAM_MKDIR_RECURSIVE TSRMLS_CC);
+            ret = php_stream_mkdir(dir, SEASLOG_DIR_MODE, PHP_STREAM_MKDIR_RECURSIVE,NULL);
             if (ret < 0)
             {
                 seaslog_throw_exception(SEASLOG_EXCEPTION_LOGGER_ERROR TSRMLS_CC, "%s %s", dir, strerror(errno));
@@ -277,7 +278,7 @@ int make_log_dir(char *dir TSRMLS_DC)
         }
         else
         {
-            if (!(ret = php_mkdir_ex(buf, SEASLOG_DIR_MODE, PHP_STREAM_MKDIR_RECURSIVE TSRMLS_CC)))
+            if (!(ret = php_stream_mkdir(buf, SEASLOG_DIR_MODE, PHP_STREAM_MKDIR_RECURSIVE,NULL)))
             {
                 if (!p)
                 {
