@@ -7,6 +7,8 @@ An effective,fast,stable log extension for PHP
 
 @author Chitao.Gao [neeke@php.net]
 
+![SeasLog-Logo](https://raw.githubusercontent.com/SeasX/SeasLog/master/src/SeasLog-Logo.png)
+
 [Documentation On php.net](http://php.net/SeasLog)
 
 [中文文档](https://github.com/SeasX/SeasLog/blob/master/README_zh.md)
