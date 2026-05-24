@@ -27,6 +27,11 @@ long get_type_count(char *log_path, char *level, char *key_word TSRMLS_DC)
     long count;
     int is_level_all = 0;
 
+    if (log_path && (strstr(log_path, "..") != NULL || log_path[0] == '/'))
+    {
+        return (long)0;
+    }
+
     if (SEASLOG_G(last_logger)->logger_access == FAILURE)
     {
         return (long)0;
@@ -140,6 +145,11 @@ int get_detail(char *log_path, char *level, char *key_word, long start, long end
     char *command;
     int is_level_all = 0;
     char *level_template = NULL;
+
+    if (log_path && (strstr(log_path, "..") != NULL || log_path[0] == '/'))
+    {
+        return FAILURE;
+    }
 
     memset(buffer, '\0', sizeof(buffer));
 
