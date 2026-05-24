@@ -5,6 +5,8 @@ SeasLog
 
 An effective,fast,stable log extension for PHP
 
+![SeasLog-Logo](https://raw.githubusercontent.com/SeasX/SeasLog/master/src/SeasLog-Logo.png)
+
 @author Chitao.Gao [neeke@php.net]
 
 @交流群 312910117
