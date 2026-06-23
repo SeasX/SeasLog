@@ -25,6 +25,10 @@ void seaslog_peak_memory_usage(smart_str *buf TSRMLS_DC);
 void init_zend_hooks(TSRMLS_D);
 void recovery_zend_hooks(TSRMLS_D);
 
+void init_performance(TSRMLS_D);
+void clear_performance(TSRMLS_D);
+void include_prefix_list(char *include_str, int *res_include_list_count, char ***res_include_list TSRMLS_DC);
+
 void seaslog_rinit_performance(TSRMLS_D);
 void seaslog_clear_performance(zend_class_entry *ce TSRMLS_DC);
 int seaslog_check_performance_active(TSRMLS_D);

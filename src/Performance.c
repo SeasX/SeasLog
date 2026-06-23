@@ -146,6 +146,91 @@ void recovery_zend_hooks(TSRMLS_D)
     }
 }
 
+void init_performance(TSRMLS_D)
+{
+    SEASLOG_G(trace_performance_include_class_prefix_count) = 0;
+    SEASLOG_G(trace_performance_include_function_prefix_count) = 0;
+    SEASLOG_G(trace_performance_include_class_prefix_list) = NULL;
+    SEASLOG_G(trace_performance_include_function_prefix_list) = NULL;
+
+    if (!SEASLOG_G(trace_performance))
+    {
+        return;
+    }
+
+    int include_class_str_len = strlen(SEASLOG_G(trace_performance_include_class_prefix));
+    if (include_class_str_len > 0)
+    {
+        include_prefix_list(
+                SEASLOG_G(trace_performance_include_class_prefix),
+                &SEASLOG_G(trace_performance_include_class_prefix_count),
+                &SEASLOG_G(trace_performance_include_class_prefix_list));
+    }
+
+    int include_function_str_len = strlen(SEASLOG_G(trace_performance_include_function_prefix));
+    if (include_function_str_len > 0)
+    {
+        include_prefix_list(
+                SEASLOG_G(trace_performance_include_function_prefix),
+                &SEASLOG_G(trace_performance_include_function_prefix_count),
+                &SEASLOG_G(trace_performance_include_function_prefix_list));
+    }
+}
+
+void clear_performance(TSRMLS_D)
+{
+    if (SEASLOG_G(trace_performance_include_class_prefix_count) > 0) {
+        for (int i = 0; i < SEASLOG_G(trace_performance_include_class_prefix_count); ++i) {
+            efree(SEASLOG_G(trace_performance_include_class_prefix_list)[i]);
+        }
+
+        efree(SEASLOG_G(trace_performance_include_class_prefix_list));
+    }
+
+    if (SEASLOG_G(trace_performance_include_function_prefix_count) > 0) {
+        for (int i = 0; i < SEASLOG_G(trace_performance_include_function_prefix_count); ++i) {
+            efree(SEASLOG_G(trace_performance_include_function_prefix_list)[i]);
+        }
+
+        efree(SEASLOG_G(trace_performance_include_function_prefix_list));
+    }
+}
+
+void include_prefix_list(char *include_str, int *res_include_list_count, char ***res_include_list TSRMLS_DC)
+{
+    int prefix_index = 0;
+    int prefix_count = 0;
+
+    for (int i = 0; i < strlen(include_str); ++i)
+    {
+        if (include_str[i] == ',')
+        {
+            prefix_count++;
+            prefix_index = i;
+        }
+    }
+
+    if (strlen(include_str) > prefix_index) {
+        prefix_count++;
+    }
+
+    *res_include_list_count = prefix_count;
+
+    char **include_prefix_list = (char **)emalloc(prefix_count * sizeof(char *));
+    char *include_prefix = strtok(include_str, ",");
+
+    while(include_prefix != NULL)
+    {
+        char *prefix = (char *)emalloc(strlen(include_prefix) * sizeof(char));
+        strcpy(prefix, include_prefix);
+        include_prefix_list[prefix_count - 1] = prefix;
+        include_prefix = strtok(NULL, ",");
+        prefix_count--;
+    }
+
+    *res_include_list = include_prefix_list;
+}
+
 void seaslog_rinit_performance(TSRMLS_D)
 {
     if (SEASLOG_G(trace_performance))
@@ -296,11 +381,13 @@ ZEND_DLEXPORT void seaslog_execute_internal(zend_execute_data *execute_data, int
 
 int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
 {
-    char *function;
+    char *function, *class;
     seaslog_frame *current_frame;
     seaslog_frame *p;
     int recurse_level = 0;
     int stack_level = 0;
+    int hit_include_class = -1;
+    int hit_include_function = -1;
 
     if (FAILURE == seaslog_check_performance_sample(TSRMLS_C))
     {
@@ -318,16 +405,67 @@ int performance_frame_begin(zend_execute_data *execute_data TSRMLS_DC)
         return FAILURE;
     }
 
+    class = seaslog_performance_get_class_name(execute_data TSRMLS_CC);
+    if (class != NULL)
+    {
+        for (int i = 0; i < SEASLOG_G(trace_performance_include_class_prefix_count); ++i)
+        {
+            char *class_prefix = SEASLOG_G(trace_performance_include_class_prefix_list)[i];
+
+            if (strlen(class) >= strlen(class_prefix) && !memcmp(class, class_prefix, strlen(class_prefix)))
+            {
+                hit_include_class = i;
+                break;
+            }
+        }
+
+        if (SEASLOG_G(trace_performance_include_class_prefix_count) > 0 && hit_include_class == -1)
+        {
+            efree(class);
+            efree(function);
+            return FAILURE;
+        }
+    }
+
+    if (class == NULL && function != NULL)
+    {
+        for (int i = 0; i < SEASLOG_G(trace_performance_include_function_prefix_count); ++i)
+        {
+            char *function_prefix = SEASLOG_G(trace_performance_include_function_prefix_list)[i];
+
+            if (strlen(function) >= strlen(function_prefix) && !memcmp(function, function_prefix, strlen(function_prefix)))
+            {
+                hit_include_function = i;
+                break;
+            }
+        }
+
+        if (SEASLOG_G(trace_performance_include_function_prefix_count) > 0 && hit_include_function == -1)
+        {
+            efree(function);
+            return FAILURE;
+        }
+    }
+
     SEASLOG_G(stack_level) += 1;
 
     if (SEASLOG_G(stack_level) - SEASLOG_G(trace_performance_start_depth) < 0)
     {
-        efree(function);
+        if (function != NULL)
+        {
+            efree(function);
+        }
+
+        if (class != NULL)
+        {
+            efree(class);
+        }
+
         return SEASLOG_CONTINUE;
     }
 
     current_frame = seaslog_performance_fast_alloc_frame(TSRMLS_C);
-    current_frame->class_name = seaslog_performance_get_class_name(execute_data TSRMLS_CC);
+    current_frame->class_name = class;
     current_frame->function_name = function;
     current_frame->previous_frame = SEASLOG_G(performance_frames);
     current_frame->wt_start = performance_microsecond(TSRMLS_C);
@@ -411,9 +549,29 @@ static inline void seaslog_performance_bucket_process(seaslog_frame* current_fra
         bucket->count = 0;
         bucket->wall_time = 0;
         bucket->memory = 0;
-        bucket->next = SEASLOG_G(performance_buckets)[slot];
+        bucket->next = NULL;
 
-        SEASLOG_G(performance_buckets)[slot] = bucket;
+        seaslog_performance_bucket *slot_bucket_list = SEASLOG_G(performance_buckets)[slot];
+
+        if (slot_bucket_list == NULL)
+        {
+            SEASLOG_G(performance_buckets)[slot] = bucket;
+        }
+        else
+        {
+            int indexxx = 0;
+
+            do {
+                if (slot_bucket_list->next == NULL)
+                {
+                    slot_bucket_list->next = bucket;
+                    break;
+                }
+
+                indexxx+=1;
+                slot_bucket_list = slot_bucket_list->next;
+            } while (slot_bucket_list);
+        }
     }
 
     bucket->count++;
@@ -583,60 +741,22 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
     }
 
     SEASLOG_PERFORMANCE_BUCKET_FOREACH(bucket, i)
-    SEASLOG_G(performance_buckets)[i] = bucket->next;
+    do {
+        SEASLOG_G(performance_buckets)[i] = bucket->next;
 
-    if (bucket->stack_level <= SEASLOG_G(trace_performance_max_depth) && bucket->wall_time >= trace_performance_min_function_wall_time)
-    {
-        stack_level = bucket->stack_level - 1;
-
-        for (n = 0; n < SEASLOG_G(trace_performance_max_functions_per_depth); n++)
+        if (bucket->stack_level <= SEASLOG_G(trace_performance_max_depth) && bucket->wall_time >= trace_performance_min_function_wall_time)
         {
-            if (result_array[stack_level][n]->hash_code == 0 && n == 0)
+            stack_level = bucket->stack_level - 1;
+
+            for (n = 0; n < SEASLOG_G(trace_performance_max_functions_per_depth); n++)
             {
-                result_array[stack_level][n]->hash_code = bucket->hash_code;
-                result_array[stack_level][n]->wall_time = bucket->wall_time;
-                result_array[stack_level][n]->count = bucket->count;
-                result_array[stack_level][n]->memory = bucket->memory;
-
-                if (NULL == bucket->class_name)
+                if (result_array[stack_level][n]->hash_code == 0 && n == 0)
                 {
-                    spprintf(&result_array[stack_level][n]->function,0,"%s",bucket->function_name);
-                }
-                else
-                {
-                    spprintf(&result_array[stack_level][n]->function,0,"%s::%s",bucket->class_name,bucket->function_name);
-                }
-                break;
-            }
-            else
-            {
-                if (result_array[stack_level][n]->wall_time >= bucket->wall_time)
-                {
-                    continue;
-                }
-                else
-                {
-                    for (r = SEASLOG_G(trace_performance_max_functions_per_depth) - 1; r > n; r--)
-                    {
-                        if (result_array[stack_level][r-1]->hash_code == 0 && result_array[stack_level][r-1]->wall_time == 0)
-                        {
-                            continue;
-                        }
-
-                        result_forward = result_array[stack_level][r];
-                        result_array[stack_level][r] = result_array[stack_level][r-1];
-                        result_array[stack_level][r-1] = result_forward;
-                    }
-
-                    if (result_array[stack_level][n]->hash_code > 0)
-                    {
-                        efree(result_array[stack_level][n]->function);
-                    }
-
                     result_array[stack_level][n]->hash_code = bucket->hash_code;
                     result_array[stack_level][n]->wall_time = bucket->wall_time;
                     result_array[stack_level][n]->count = bucket->count;
                     result_array[stack_level][n]->memory = bucket->memory;
+
                     if (NULL == bucket->class_name)
                     {
                         spprintf(&result_array[stack_level][n]->function,0,"%s",bucket->function_name);
@@ -647,11 +767,52 @@ int process_seaslog_performance_log(zend_class_entry *ce TSRMLS_DC)
                     }
                     break;
                 }
+                else
+                {
+                    if (result_array[stack_level][n]->wall_time >= bucket->wall_time)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        for (r = SEASLOG_G(trace_performance_max_functions_per_depth) - 1; r > n; r--)
+                        {
+                            if (result_array[stack_level][r-1]->hash_code == 0 && result_array[stack_level][r-1]->wall_time == 0)
+                            {
+                                continue;
+                            }
+
+                            result_forward = result_array[stack_level][r];
+                            result_array[stack_level][r] = result_array[stack_level][r-1];
+                            result_array[stack_level][r-1] = result_forward;
+                        }
+
+                        if (result_array[stack_level][n]->hash_code > 0)
+                        {
+                            efree(result_array[stack_level][n]->function);
+                        }
+
+                        result_array[stack_level][n]->hash_code = bucket->hash_code;
+                        result_array[stack_level][n]->wall_time = bucket->wall_time;
+                        result_array[stack_level][n]->count = bucket->count;
+                        result_array[stack_level][n]->memory = bucket->memory;
+                        if (NULL == bucket->class_name)
+                        {
+                            spprintf(&result_array[stack_level][n]->function,0,"%s",bucket->function_name);
+                        }
+                        else
+                        {
+                            spprintf(&result_array[stack_level][n]->function,0,"%s::%s",bucket->class_name,bucket->function_name);
+                        }
+                        break;
+                    }
+                }
             }
         }
-    }
-    seaslog_performance_bucket_free(bucket TSRMLS_CC);
-    bucket = SEASLOG_G(performance_buckets)[i];
+        seaslog_performance_bucket_free(bucket TSRMLS_CC);
+
+        bucket = SEASLOG_G(performance_buckets)[i];
+    } while (bucket);
     SEASLOG_PERFORMANCE_BUCKET_FOREACH_END;
 
     SEASLOG_ARRAY_INIT(performance_log_array);
