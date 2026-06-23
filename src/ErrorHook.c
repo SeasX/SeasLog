@@ -19,11 +19,13 @@
 
 #if PHP_VERSION_ID < 80000
 void (*old_error_cb)(int type, const char *error_filename, const SEASLOG_UINT error_lineno, const char *format, va_list args);
-#else
+#elif PHP_VERSION_ID < 80100
 void (*old_error_cb)(int type, const char *error_filename, const SEASLOG_UINT error_lineno, zend_string *message);
+#else
+void (*old_error_cb)(int type, zend_string *error_filename, const SEASLOG_UINT error_lineno, zend_string *message);
 #endif
 
-static void process_event_error(const char *event_type, int type, char * error_filename, SEASLOG_UINT error_lineno, char * msg TSRMLS_DC)
+static void process_event_error(const char *event_type, int type, const char * error_filename, SEASLOG_UINT error_lineno, char * msg TSRMLS_DC)
 {
     char *event_str;
     int event_str_len;
@@ -42,8 +44,10 @@ static void process_event_error(const char *event_type, int type, char * error_f
 
 #if PHP_VERSION_ID < 80000
 void seaslog_error_cb(int type, const char *error_filename, const SEASLOG_UINT error_lineno, const char *format, va_list args)
-#else
+#elif PHP_VERSION_ID < 80100
 void seaslog_error_cb(int orig_type, const char *error_filename, const SEASLOG_UINT error_lineno,zend_string *message)
+#else
+void seaslog_error_cb(int orig_type, zend_string *error_filename, const SEASLOG_UINT error_lineno,zend_string *message)
 #endif
 {
     TSRMLS_FETCH();
@@ -77,21 +81,33 @@ void seaslog_error_cb(int orig_type, const char *error_filename, const SEASLOG_U
         {
             if (SEASLOG_G(trace_error))
             {
-                process_event_error("Error", type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
+#if PHP_VERSION_ID < 80100
+                process_event_error("Error", type, error_filename, error_lineno, msg TSRMLS_CC);
+#else
+                process_event_error("Error", type, ZSTR_VAL(error_filename), error_lineno, msg);
+#endif
             }
         }
         else if (type == E_WARNING || type == E_CORE_WARNING || type == E_COMPILE_WARNING || type == E_USER_WARNING)
         {
             if (SEASLOG_G(trace_warning))
             {
-                process_event_error("Warning", type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
+#if PHP_VERSION_ID < 80100
+                process_event_error("Warning", type, error_filename, error_lineno, msg TSRMLS_CC);
+#else
+                process_event_error("Warning", type, ZSTR_VAL(error_filename), error_lineno, msg);
+#endif
             }
         }
         else if (type == E_NOTICE || type == E_USER_NOTICE || type == E_STRICT || type == E_DEPRECATED || type == E_USER_DEPRECATED)
         {
             if (SEASLOG_G(trace_notice))
             {
-                process_event_error("Notice", type, (char *) error_filename, error_lineno, msg TSRMLS_CC);
+#if PHP_VERSION_ID < 80100
+                process_event_error("Notice", type, error_filename, error_lineno, msg TSRMLS_CC);
+#else
+                process_event_error("Notice", type, ZSTR_VAL(error_filename), error_lineno, msg);
+#endif
             }
         }
 #if PHP_VERSION_ID < 80000
